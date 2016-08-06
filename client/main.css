@@ -1,1 +1,112 @@
-/* CSS declarations go here */
+/* CSS Code Styling
+Tag { Always spaces between values
+	Font:
+	Height
+	Width
+	Margin: [top, right, bottom, left]; 
+	Padding: [top, right, bottom, left];
+	Border
+	Drop-shadow
+	<Newline if 3 or more above>
+	Display
+	Position
+	Float
+	Overflow
+	z-index
+	<Newline between if 3 or more above>
+	Color related items
+	<Newline between>
+	Animation related items
+}*/
+
+@import url(https://fonts.googleapis.com/css?family=Raleway:200,400,600);
+
+html {
+	font-family: 'Raleway';
+	font-weight: 200;
+	overflow: hidden;
+
+	background-image: url("Hourglass.png");
+	background-size: 1920px 1080px;
+}
+
+body {
+	margin: 0;
+}
+
+header {
+	font-weight: 600;
+	width: 100%;
+	margin: 0;
+	box-shadow: 2px 2px 5px 3px #666;
+
+	display: inline-block;
+	position: relative;
+	z-index: 50;
+}
+
+h1,h2,h3,h4,h5 {
+	margin: 0;
+}
+
+h1 {
+	padding: 0.4%;
+	float: left;
+}
+
+#aboveBar {
+	display: inline;
+}
+
+.fa-bars, .fa-cog {
+	font-size: 200%;
+	height: 100%;
+	padding: 0.6%;
+	padding-right: 0.8%;
+	float: left;
+	color: #333;
+
+	-webkit-transition: color 0.5s ease, background-color 0.5s ease;  
+	-moz-transition: color 0.5s ease, background-color 0.5s ease; 
+	-ms-transition: color 0.5s ease, background-color 0.5s ease;
+	transition: color 0.5s ease, background-color 0.5s ease; 
+}
+.fa-cog {
+	padding-left: 0.8%;
+	float: right;
+}
+
+.fa-bars:hover, .fa-cog:hover {
+	background-color: #CCC;
+}
+
+#loadBar, #progress {
+	width: 100%;
+	height: 4px;
+	display: table;
+	background-color: #33ADFF;
+}
+
+#menuContainer, #optionsContainer {
+	min-height: 100%;
+	width: 13.5%;
+	padding: 1%;
+	box-shadow: 2px 2px 5px 3px #666;
+
+	position: absolute;
+	z-index:0;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	background-color: #65839A;
+	
+	-webkit-transition: margin 0.5s ease, background-color 0.5s ease;  
+	-moz-transition: margin 0.5s ease, background-color 0.5s ease; 
+	-ms-transition: margin 0.5s ease, background-color 0.5s ease;
+	transition: margin 0.5s ease, background-color 0.5s ease; 
+}
+
+#optionsContainer {
+	width: 12%;
+	right: 0;
+}

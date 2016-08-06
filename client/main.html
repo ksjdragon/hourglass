@@ -3,23 +3,32 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+  {{> header}}
+  {{> menu}}
+  {{> options}}
 
-  {{> hello}}
-  {{> info}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="header">
+  <header style="background-color:{{headerColor}}">
+    <div id="aboveBar">
+      <i class="fa fa-bars" aria-hidden="true" style="color:{{menuIconColor}}"></i>
+      <h1>Hourglass</h1>
+      <i class="fa fa-cog" aria-hidden="true" style="color:{{optionsIconColor}}"></i>
+    </div>
+    <div id="loadBar">
+      <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
+    </div>
+
+  </header>
 </template>
 
-<template name="info">
-  <h2>Learn Meteor!</h2>
-  <ul>
-    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
-    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
-    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
-    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
-  </ul>
+<template name="menu">
+  <div id="menuContainer" style="margin-left:{{menuStatus}}">
+  </div>
+</template>
+
+<template name="options">
+  <div id="optionsContainer" style="margin-right:{{optionsStatus}}">
+  </div>
 </template>
