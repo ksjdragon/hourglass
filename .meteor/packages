@@ -23,3 +23,6 @@ fortawesome:fontawesome
 session
 proyk:meteor-cookies
 aldeed:simple-schema
+accounts-google
+accounts-ui
+iron:router
