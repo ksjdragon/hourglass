@@ -32,7 +32,7 @@ Template.registerHelper('divColor', (div) => {
 	
 });
 
-Template.header.helpers({
+Template.main.helpers({
 	iconColor(icon) {
 		let status = Session.get(icon+"Open");
 		if(status) {
@@ -40,10 +40,7 @@ Template.header.helpers({
 		} else {
 			return;
 		}
-	}
-});
-
-Template.menu.helpers({
+	},
 	menuStatus() {
   		let status = Session.get("menuOpen");
 	  	if(status) {
@@ -72,10 +69,7 @@ Template.menu.helpers({
 		} else {
 			return false;
 		}
-	}
-});
-
-Template.options.helpers({
+	},
 	optionsStatus() {
 	  	let status = Session.get("optionsOpen");
 	  	if(status) {
@@ -86,16 +80,13 @@ Template.options.helpers({
 	}
 });
 
-Template.header.events({
+Template.main.events({
 	'click .fa-bars' () {
 		Session.set("menuOpen",!Session.get("menuOpen"));
 	},
 	'click .fa-cog' () {
 		Session.set("optionsOpen",!Session.get("optionsOpen"));
-	}
-})
-
-Template.menu.events({
+	},
 	'click .classes' () {
 		Session.set("mode","classes");
 	},

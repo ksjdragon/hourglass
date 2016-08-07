@@ -7,7 +7,7 @@
 
 </body>
 
-<template name="header">
+<template name="main">
   <header style="background-color:{{divColor 'header'}}">
     <div id="aboveBar">
       <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
@@ -18,9 +18,6 @@
       <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
     </div>
   </header>
-</template>
-
-<template name="menu">
   <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
     <div class="mode classes">
       <i class="fa fa-university" aria-hidden="true"></i>
@@ -58,9 +55,6 @@
         {{/if}}
       </div>
   </div>
-</template>
-
-<template name="options">
   <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
   </div>
 </template>

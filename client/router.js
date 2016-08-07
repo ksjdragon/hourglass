@@ -1,8 +1,6 @@
  Router.route('/', function() {
   if (Meteor.user() != null) {
-    this.render("header");
-    this.render("menu");
-    this.render("options");
+    this.render("main");
   } else {
     this.redirect('/login');
   }
