@@ -13,20 +13,20 @@ schools.schema = new SimpleSchema({
 classes.schema = new SimpleSchema({
 	school: {type: String},
 	//icon: {type: String},
-	hour: {type: String},
-	teacher: {type: String},
 	name: {type: String, label: "Class Name"},
+	hour: {type: String, optional: true},
+	teacher: {type: String, optional: true},
 	status: {type: Boolean, defaultValue: false},
 	code: {type: String, optional: true},
 	privacy: {type: String},
 	category: {type: String},
-	/*moderators: {type: [String]},
+	moderators: {type: [String]},
 	banned: {type: [String]},
 	blockEdit: {type: [String]},
-	admin: {type: String}*/
+	admin: {type: String}
 });
 
-homework.schema = new SimpleSchema({
+work.schema = new SimpleSchema({
 	class: {type: String},
 	dueDate: {type: Date},
 	aliases: {type: [String]},
@@ -36,6 +36,13 @@ homework.schema = new SimpleSchema({
 	attachments: {type: [String], optional: true},
 	done: {type: [String], optional: true}
 });
+
+// Meteor.methods({
+// 	createClass: function(client) {
+// 		if 
+// 	}
+
+// });
 
 Meteor.startup(() => {
   Meteor.methods({
