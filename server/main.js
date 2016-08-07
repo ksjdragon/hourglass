@@ -16,7 +16,7 @@ classes.schema = new SimpleSchema({
 	hour: {type: String},
 	teacher: {type: String},
 	name: {type: String, label: "Class Name"},
-	status: {type: boolean, defaultValue: false},
+	status: {type: Boolean, defaultValue: false},
 	code: {type: String, optional: true},
 	privacy: {type: String},
 	category: {type: String},
