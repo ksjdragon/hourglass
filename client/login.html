@@ -1,3 +1,24 @@
 <template name="login">
-{{> loginButtons}}
+	<header id="loginHeader">
+		<img id="logo" src="logo.png" width="{{logo}}" height="{{logo}}">
+		<h1 id="loginTitle">Hourglass</h1>
+		<div id="loadBar">
+	      <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
+	    </div>
+	</header>
+	<div id="loginMain">
+		<img id="banner" src="banner.png" width="{{width}}">
+		<div id="circle" style="width:{{dim}};height:{{dim}};margin:{{margin}}">
+			<div id="loginContent" style="width:{{contDim}};height:{{contDim}};margin:{{contMargin}}">
+				<h2 class="text">Hourglass</h2>
+				<p class="text">Hourglass description here</p>
+				<h3 class="text" id="loginButton">Sign in</h3>
+			</div>
+			
+		</div>
+	</div>
+	<footer id="loginFooter">
+		<p id="github">Visit the <a href="https://github.com/ksjdragon/hourglass">Github!</a></p>
+	</footer>
+	{{> loginButtons}}
 </template>
