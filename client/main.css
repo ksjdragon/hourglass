@@ -5,7 +5,9 @@ Tag { Always spaces between values
 	Width
 	Margin: [top, right, bottom, left]; 
 	Padding: [top, right, bottom, left];
+
 	Border
+	<Newline if 3 or more above>
 	Drop-shadow
 	<Newline if 3 or more above>
 	Display
@@ -54,6 +56,21 @@ h1 {
 	float: left;
 }
 
+h4 {
+	font-size: 130%;
+	font-weight: 200;
+	padding: 5%;
+	-webkit-filter: drop-shadow(2px 2px 5px #333);
+	filter: drop-shadow(2px 2px 5px #333);
+
+	display: inline-block;
+
+	-webkit-transition: color 0.5s ease;  
+	-moz-transition: color 0.5s ease; 
+	-ms-transition: color 0.5s ease;
+	transition: color 0.5s ease; 
+}
+
 #aboveBar {
 	display: inline;
 }
@@ -89,8 +106,8 @@ h1 {
 
 #menuContainer, #optionsContainer {
 	min-height: 100%;
-	width: 13.5%;
-	padding: 1%;
+	width: 15%;
+	padding: 1% 0 1% 0;
 	box-shadow: 2px 2px 5px 3px #666;
 
 	position: absolute;
@@ -110,3 +127,53 @@ h1 {
 	width: 12%;
 	right: 0;
 }
+
+.mode, .function {
+	width: 100%;
+	position: relative;
+	background-color: #849CAE;
+
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease; 
+}
+
+.mode:hover, .function:hover {
+	background-color: #A2B5C3;
+}
+
+.mode:active, .function:active {
+	background-color: #eff3f5;
+
+	-webkit-transition: background-color 0.2s ease;  
+	-moz-transition: background-color 0.2s ease; 
+	-ms-transition: background-color 0.2s ease;
+	transition: background-color 0.2s ease; 
+}
+
+.fa-university, .fa-calendar {
+	font-size: 175%;
+	width: 12%;
+	padding: 10%;
+	-webkit-filter: drop-shadow(2px 2px 5px #666);
+	filter: drop-shadow(2px 2px 5px #666);
+}
+
+.fa-plus, .fa-minus, .fa-tasks {
+	font-size: 130%;
+	padding: 5%;
+	-webkit-filter: drop-shadow(2px 2px 5px #666);
+	filter: drop-shadow(2px 2px 5px #666);
+}
+
+#functions {
+	width: 100%;
+	margin-top: 7%;
+	border-style: solid;
+	border-color: #D9D9D9;
+	border-left: none;
+}
+
+
+
