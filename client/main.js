@@ -11,14 +11,14 @@ var openValues = {
 var themeColors = {
 	"light": {
 		"header":"#EBEBEB",
+		"sidebar":"#65839A",
 		"statusIcons":"#33ADFF",
-		"sidebar":"tbd",
 		"highlightText":"#FF1A1A"
 	},
 	"dark": {
 
 	}
-}
+};
 
 Session.set("menuOpen", false);
 Session.set("optionsOpen", false);
@@ -27,20 +27,14 @@ Session.set("function", null);
 
 Cookie.set("theme","light",{'years':15});
 
+Template.registerHelper('divColor', (div) => {
+	return themeColors[Cookie.get("theme")][div];	
+	
+});
+
 Template.header.helpers({
-	headerColor() {
-		return themeColors[Cookie.get("theme")].header;
-	},
-	menuIconColor() {
-		let status = Session.get("menuOpen");
-		if(status) {
-			return themeColors[Cookie.get("theme")].statusIcons;
-		} else {
-			return;
-		}
-	},
-	optionsIconColor() {
-		let status = Session.get("optionsOpen");
+	iconColor(icon) {
+		let status = Session.get(icon+"Open");
 		if(status) {
 			return themeColors[Cookie.get("theme")].statusIcons;
 		} else {
@@ -58,44 +52,25 @@ Template.menu.helpers({
 	  		return openValues["menu"];
 	  	}
 	},
-	claStatus() {
-		let status = Session.get("mode");
-		if(status === "classes") {
+	modeStatus(status) {
+		if(status === Session.get("mode")) {
 			return themeColors[Cookie.get("theme")].highlightText;
 		} else {
 			return;
 		}
 	},
-	calStatus() {
-		let status = Session.get("mode");
-		if(status === "calendar") {
+	functionStatus(status) {
+		if(status === Session.get("function")) {
 			return themeColors[Cookie.get("theme")].highlightText;
 		} else {
 			return;
 		}
 	},
-	addStatus() {
-		let status = Session.get("function");
-		if(status === "addClass") {
-			return themeColors[Cookie.get("theme")].highlightText;
+	currFunction(name) {
+		if(name === Session.get("function")) {
+			return true;
 		} else {
-			return;
-		}
-	},
-	delStatus() {
-		let status = Session.get("function");
-		if(status === "delClass") {
-			return themeColors[Cookie.get("theme")].highlightText;
-		} else {
-			return;
-		}
-	},
-	manStatus() {
-		let status = Session.get("function");
-		if(status === "manClass") {
-			return themeColors[Cookie.get("theme")].highlightText;
-		} else {
-			return;
+			return false;
 		}
 	}
 });
@@ -135,5 +110,8 @@ Template.menu.events({
 	},
 	'click .manageClass' () {
 		Session.set("function","manClass");
+	},
+	'click .createClass' () {
+		Session.set("function","creClass");
 	}
 })

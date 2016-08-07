@@ -1,5 +1,6 @@
 <head>
   <title>Hourglass</title>
+  <link rel="icon" sizes="16x16 32x32 64x64 128x128 256x256" href="favicon.ico?v=2">
 </head>
 
 <body>
@@ -10,11 +11,11 @@
 </body>
 
 <template name="header">
-  <header style="background-color:{{headerColor}}">
+  <header style="background-color:{{divColor 'header'}}">
     <div id="aboveBar">
-      <i class="fa fa-bars" aria-hidden="true" style="color:{{menuIconColor}}"></i>
+      <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
       <h1>Hourglass</h1>
-      <i class="fa fa-cog" aria-hidden="true" style="color:{{optionsIconColor}}"></i>
+      <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
     </div>
     <div id="loadBar">
       <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
@@ -23,36 +24,54 @@
 </template>
 
 <template name="menu">
-  <div id="menuContainer" style="margin-left:{{menuStatus}}">
+  <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
     <div class="mode classes">
       <i class="fa fa-university" aria-hidden="true"></i>
-      <h4 style="color:{{claStatus}}">Classes</h4>
+      <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
     </div>
     <div class="mode calendar">
       <i class="fa fa-calendar" aria-hidden="true"></i>
-      <h4 style="color:{{calStatus}}">Calendar</h4>
+      <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
     </div>
     <div id="functions">
       <div class="function addClass">
         <i class="fa fa-plus" aria-hidden="true"></i>
-        <h4 style="color:{{addStatus}}">Add Class</h4>
+        <h4 style="color:{{functionStatus 'addClass'}}">Add Class</h4>
       </div>
       <div class="function deleteClass">
         <i class="fa fa-minus" aria-hidden="true"></i>
-        <h4 style="color:{{delStatus}}">Delete Class</h4>
+        <h4 style="color:{{functionStatus 'delClass'}}">Delete Class</h4>
       </div>
       <div class="function manageClass">
         <i class="fa fa-tasks" aria-hidden="true"></i>
-        <h4 style="color:{{manStatus}}">Manage Classes</h4>
+        <h4 style="color:{{functionStatus 'manClass'}}">Manage Classes</h4>
       </div>
-      <div id="functionHolder">
+      <div class="function createClass">
+        <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+        <h4 style="color:{{functionStatus 'creClass'}}">Create Class</h4>
       </div>
     </div>
-    
+    <div id="functionHolder">
+        {{#if currFunction "addClass"}}
+          <p>Add a Class</p>
+        {{/if}}
+
+        {{#if currFunction "delClass"}}
+          <p>Delete a Class</p>
+        {{/if}}
+
+        {{#if currFunction "manClass"}}
+          <p>Manage Classes</p>
+        {{/if}}
+
+        {{#if currFunction "creClass"}}
+          <p>Create a Class</p>
+        {{/if}}
+      </div>
   </div>
 </template>
 
 <template name="options">
-  <div id="optionsContainer" style="margin-right:{{optionsStatus}}">
+  <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
   </div>
 </template>
