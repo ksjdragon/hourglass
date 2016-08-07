@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo';
 
 schools = new Mongo.Collection("Schools");
 classes = new Mongo.Collection("Classes");
-homework = new Mongo.Collection("Homework");
+work = new Mongo.Collection("Work");
 
 schools.schema = new SimpleSchema({
 	name: {type: String},
