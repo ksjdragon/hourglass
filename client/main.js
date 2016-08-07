@@ -105,9 +105,6 @@ Template.menu.events({
 	'click .addClass' () {
 		Session.set("function","addClass");
 	},
-	'click .deleteClass' () {
-		Session.set("function","delClass");
-	},
 	'click .manageClass' () {
 		Session.set("function","manClass");
 	},

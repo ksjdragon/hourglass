@@ -38,10 +38,6 @@
         <i class="fa fa-plus" aria-hidden="true"></i>
         <h4 style="color:{{functionStatus 'addClass'}}">Add Class</h4>
       </div>
-      <div class="function deleteClass">
-        <i class="fa fa-minus" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'delClass'}}">Delete Class</h4>
-      </div>
       <div class="function manageClass">
         <i class="fa fa-tasks" aria-hidden="true"></i>
         <h4 style="color:{{functionStatus 'manClass'}}">Manage Classes</h4>
@@ -54,10 +50,6 @@
     <div id="functionHolder">
         {{#if currFunction "addClass"}}
           <p>Add a Class</p>
-        {{/if}}
-
-        {{#if currFunction "delClass"}}
-          <p>Delete a Class</p>
         {{/if}}
 
         {{#if currFunction "manClass"}}
