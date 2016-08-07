@@ -27,12 +27,10 @@ Session.set("function", null);
 
 Cookie.set("theme","light",{'years':15});
 
-Template.registerHelper('divColor', (div) => {
-	return themeColors[Cookie.get("theme")][div];	
-	
-});
-
 Template.main.helpers({
+	divColor(div) {
+		return themeColors[Cookie.get("theme")][div];	
+	},
 	iconColor(icon) {
 		let status = Session.get(icon+"Open");
 		if(status) {
