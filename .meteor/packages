@@ -27,3 +27,4 @@ accounts-google
 accounts-ui
 iron:router
 ongoworks:security
+mizzao:autocomplete
