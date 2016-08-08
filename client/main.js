@@ -23,7 +23,7 @@ var themeColors = {
 var options = {
 	"school": [],
 	"privacy": ["Public", "Hidden"],
-	"category": ["Class", "Club", "Enrichment"]
+	"category": ["Class", "Club", "Other"]
 }
 
 var searchSchools = [];
