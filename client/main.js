@@ -21,9 +21,12 @@ var themeColors = {
 };
 
 var options = {
+	"school": [],
 	"privacy": ["Public", "Hidden"],
 	"category": ["Class", "Club", "Enrichment"]
 }
+
+var searchSchools = [];
 
 Session.set("menuOpen", false);
 Session.set("optionsOpen", false);
@@ -142,8 +145,16 @@ Template.main.events({
 		var selectBox = document.getElementById("selectBox");
 		closeDivFade(selectBox);
 	},
-	'keyup .creInput' () {
-		//Display and search
+	'keyup .creInput[name="school"]' () {
+		/*searchSchools = [];
+		var curr = document.getElementsByClassName("creInput")[0].value;
+		for(var i = 0; i < schools.length; i++) {
+			var search = schools[i].toLowerCase().search(value);
+			if(search !== -1) {
+				searchSchools.push([schools[i],search])
+			}
+		}
+		dispOptions("school"); Need to get schools from server */
 	},
 	'click .creInput[name="privacy"]' () {
 		Session.set("creInput","privacy");
@@ -216,7 +227,7 @@ function dispOptions(input) {
 		}
 	} catch(err) {}
 
-	var refer = {"privacy":4,"category":5};
+	var refer = {"school":0,"privacy":4,"category":5};
 	for(var i = 0; i < options[input].length; i++) {
 		var p = document.createElement("p");
 		p.appendChild(document.createTextNode(options[input][i]));
