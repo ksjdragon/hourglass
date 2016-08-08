@@ -77,17 +77,17 @@ Template.main.helpers({
 	  		return openValues["options"];
 	  	}
 	},
-	opacity() {
-		if(Session.get("function") !== null) {
-			setTimeout(function() {
-				return "1";
-			}, 300)
-		} else {
-			return "0"
-		}
+	overlayDim(part) {
+		var dim = [window.innerWidth * .2,window.innerHeight * .2];
+		var width = "width:"+dim[0].toString() + "px;";
+		var height = "height:"+dim[1].toString() + "px;";
+		var margin = "margin:"+(-dim[0]/2).toString() + "px 0 0 " + -(dim[1]/2).toString() + "px;";
+		var bg = "background-color:"+themeColors[Cookie.get("theme")]["header"]+";";
+		return width+height+margin+bg;
 	}
 });
 
+;
 Template.main.events({
 	'click .fa-bars' () {
 		Session.set("menuOpen",!Session.get("menuOpen"));
@@ -102,19 +102,34 @@ Template.main.events({
 		Session.set("mode","calendar");
 	},
 	'click .addClass' () {
-		Session.set("function","addClass");
+		var functionHolder = document.getElementById("functionHolder")
+		closeDivFade(functionHolder);
+		setTimeout(function() {
+			Session.set("function","addClass");
+			openDivFade(functionHolder);
+		},300);
 	},
 	'click .manageClass' () {
-		Session.set("function","manClass");
+		var functionHolder = document.getElementById("functionHolder")
+		closeDivFade(functionHolder);
+		setTimeout(function() {
+			Session.set("function","manClass");
+			openDivFade(functionHolder);
+		},300);
 	},
 	'click .createClass' () {
-		Session.set("function","creClass");
+		var functionHolder = document.getElementById("functionHolder")
+		closeDivFade(functionHolder);
+		setTimeout(function() {
+			Session.set("function","creClass");
+			openDivFade(functionHolder);
+		},300);
 	},
 	'keyup .creInput' () {
 		//Display and search
 	},
 	'click .creSubmit' () {
-		confirmOverlay();
+		openDivFade(document.getElementsByClassName("overlay")[0]);
 		setTimeout(function() {
 			document.getElementsByClassName("overlay")[0].style.opacity = "1";
 		}, 200);
@@ -122,61 +137,38 @@ Template.main.events({
 	},
 	'click .fa-check-circle-o' () {
 		sendData();
-		closeOverlay();
-		Session.set("confirm",null);
-		Session.set("function",null);
-		document.getElementsByClassName("create")[0].reset();
+		closeDivFade(document.getElementsByClassName("overlay")[0]);
+		closeDivFade(document.getElementById("functionHolder"));
+		document.getElementById("create").reset();
+		setTimeout(function() {
+			Session.set("confirm",null);
+			Session.set("function",null);
+		}, 300);
 	},
 	'click .fa-times-circle-o' () {
-		closeOverlay();
-		Session.set("confirm",null);
-		Session.set("function",null);
-		document.getElementsByClassName("create")[0].reset();
+		closeDivFade(document.getElementsByClassName("overlay")[0]);
+		closeDivFade(document.getElementById("functionHolder"));
+		document.getElementById("create").reset();
+		setTimeout(function() {
+			Session.set("confirm",null);
+			Session.set("function",null);
+		}, 300);
 	}
 })
 
-function closeOverlay() {
-	var overlay = document.getElementsByClassName("overlay")[0]
-	overlay.style.opacity = "0";
+function openDivFade(div) {
+	div.style.display = "block";
+	div.style.opacity = "0";
 	setTimeout(function() {
-		document.getElementsByTagName("html")[0].removeChild(overlay);
-	})
+		div.style.opacity = "1";
+	}, 300);
 }
 
-function confirmOverlay() {
-	var overlay = document.createElement("div");
-	overlay.className = "overlay";
-
-	var overlayCont = document.createElement("div");
-	overlayCont.className = "overlayCont";
-	overlayCont.style.position = "absolute";
-	overlayCont.style.top = "30%";
-	overlayCont.style.left = "50%";
-	overlayCont.style.backgroundColor = themeColors[Cookie.get("theme")]["header"]
-
-	var dim = [window.innerWidth * .2,window.innerHeight * .2]
-	overlayCont.style.width = dim[0].toString() + "px";
-	overlayCont.style.height = dim[1].toString() + "px";
-	overlayCont.style.marginLeft = -(dim[0]/2).toString() + "px";
-	overlayCont.style.marginTop = -(dim[1]/2).toString() + "px";
-	overlay.appendChild(overlayCont);
-
-	var desc = document.createElement("p");
-	desc.className = "overlayText";
-	desc.appendChild(document.createTextNode("Are you sure?"));
-
-	var yes = document.createElement("i");
-	yes.className = "fa fa-check-circle-o";
-	yes.setAttribute("aria-hidden",true);
-
-	var no = document.createElement("i");
-	no.className = "fa fa-times-circle-o";
-	no.setAttribute("aria-hidden",true);
-
-	overlayCont.appendChild(desc);
-	overlayCont.appendChild(yes);
-	overlayCont.appendChild(no);
-	document.getElementsByTagName("html")[0].appendChild(overlay);
+function closeDivFade(div) {
+	div.style.opacity = "0";
+	setTimeout(function() {
+		div.style.display = "none";
+	}, 300);
 }
 
 function sendData() {

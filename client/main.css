@@ -200,8 +200,10 @@ h4 {
 	margin-bottom: 30%;
 	padding: 8%;
 
+	display: none;
 	position: absolute;
 	overflow-y: auto;
+	opacity: 0;
 
 	-webkit-transition: opacity 0.4s ease;  
 	-moz-transition: opacity 0.4s ease; 
@@ -266,6 +268,7 @@ input {
 	height: 100%;
 	background-color: rgba(0,0,0,0.5);
 
+	display: none;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -287,6 +290,10 @@ input {
 	-webkit-border-radius: 30px;
 	border-radius: 30px;
 
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
 	text-align: center;
 }
 
@@ -300,6 +307,8 @@ input {
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;
 	transition: color 0.4s ease;
+
+	cursor: pointer;
 }
 
 .fa-check-circle-o:hover {

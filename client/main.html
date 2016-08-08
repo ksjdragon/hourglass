@@ -41,7 +41,7 @@
         <h4 style="color:{{functionStatus 'creClass'}}">Create Class</h4>
       </div>
     </div>
-    <div id="functionHolder" style="opacity:{{opacity}}">
+    <div id="functionHolder">
         {{#if currFunction "addClass"}}
           <p>Add a Class</p>
         {{/if}}
@@ -66,5 +66,12 @@
       </div>
   </div>
   <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
+  </div>
+  <div class="overlay">
+    <div class="overlayCont" style="{{overlayDim}};">
+      <p>Are you sure?</p>
+      <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+      <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+    </div>
   </div>
 </template>
