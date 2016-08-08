@@ -37,10 +37,6 @@ work.schema = new SimpleSchema({
 	done: {type: [String], optional: true}
 });
 
-function allow(user, method) {
-	//Switch/case for different permissions per method/function
-}
-
 _uuid4 = function(cc) {
     var rr = Math.random() * 16 | 0; 
     return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
@@ -52,7 +48,7 @@ Meteor.startup(() => {
 	        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, _uuid4);
 		},
   		'createClass': function(input) {
-  			if(allow(Meteor.userId(),"createClass")) {
+  			if(Meteor.user() != null && Meteor.classes.find({status:true, admin:Meteor.userId()}).length < 5){
   				classes.schema.validate(input);
   				classes.insert(input);
   			}
