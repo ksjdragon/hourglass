@@ -41,22 +41,15 @@ function allow(user, method) {
 	//Switch/case for different permissions per method/function
 }
 
-var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+_uuid4 = function(cc) {
+    var rr = Math.random() * 16 | 0; 
+    return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
+}
 
 Meteor.startup(() => {
 	Meteor.methods({
 		'genCode': function() {
-			var text = "";
-			var same = true;
-			while(same) {
-				for(var i = 0; i < 6; i++) {
-        			text += possible.charAt(Math.floor(Math.random() * 52));
-				}
-				if(!classes.find( { code: { $eq: text } } ).limit(1)) {
-					same = false;
-				}
-			}
-        	return text;
+	        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, _uuid4);
 		},
   		'createClass': function(input) {
   			if(allow(Meteor.userId(),"createClass")) {
