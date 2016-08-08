@@ -53,18 +53,29 @@
         {{#if currFunction "creClass"}}
           <h2>Create a Class</h2>
           <form id="create">
-            <p class="input">School:</p><br> <input class="creInput" type="text" name="school"><br>
-            <p class="input">Hour:</p><br> <input class="creInput" type="text" name="hour"><br>
-            <p class="input">Teacher</p>:<br> <input class="creInput" type="text" name="teacher"><br>
-            <p class="input">Class Name:</p><br> <input class="creInput" type="text" name="name"><br>
-            <p class="input">Privacy:</p><br> <input class="creInput" type="text" name="privacy" readonly><br>
-            <p class="input">Category:</p><br> <input class="creInput" type="text" name="category" readonly>
+            <p class="input">School:</p><br>
+              <input class="creInput" type="text" name="school"><br>
+            <p class="input">Hour:</p><br>
+              <input class="creInput" type="text" name="hour"><br>
+            <p class="input">Teacher</p>:<br>
+              <input class="creInput" type="text" name="teacher"><br>
+            <p class="input">Class Name:</p><br>
+              <input class="creInput" type="text" name="classname"><br>
+            <p class="input">Privacy:</p><br>
+              <input class="creInput" type="text" name="privacy" style="background-color:{{creHighlight 'privacy'}}" readonly><br>
+            <p class="input">Category:</p><br>
+              <input class="creInput" type="text" name="category" style="background-color:{{creHighlight 'category'}}" readonly >
             <div class="creSubmit">Submit Request</div>
           </form> 
-
         {{/if}}
       </div>
   </div>
+  
+  <div id="selectBox" style="background-color:{{divColor 'header'}}">
+    <div id="inputOptions"></div>
+    <div id="triTab" style="border-right:30px solid {{divColor 'header'}}"></div>
+  </div>
+  
   <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
   </div>
   <div class="overlay">

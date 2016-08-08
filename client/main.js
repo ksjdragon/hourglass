@@ -20,11 +20,17 @@ var themeColors = {
 	}
 };
 
+var options = {
+	"privacy": ["Public", "Hidden"],
+	"category": ["Class", "Club", "Enrichment"]
+}
+
 Session.set("menuOpen", false);
 Session.set("optionsOpen", false);
 Session.set("mode",null); // Change to user preferences
 Session.set("function", null);
 Session.set("confirm",null);
+Session.set("formCre",null);
 
 Cookie.set("theme","light",{'years':15});
 
@@ -84,6 +90,13 @@ Template.main.helpers({
 		var margin = "margin:"+(-dim[0]/2).toString() + "px 0 0 " + -(dim[1]/2).toString() + "px;";
 		var bg = "background-color:"+themeColors[Cookie.get("theme")]["header"]+";";
 		return width+height+margin+bg;
+	},
+	creHighlight(input) {
+		if(input == Session.get("creInput")) {
+			return "#CCEEFF";
+		} else {
+			return;
+		}
 	}
 });
 
@@ -125,8 +138,30 @@ Template.main.events({
 			openDivFade(functionHolder);
 		},300);
 	},
+	'click .creInput' () {
+		var selectBox = document.getElementById("selectBox");
+		closeDivFade(selectBox);
+	},
 	'keyup .creInput' () {
 		//Display and search
+	},
+	'click .creInput[name="privacy"]' () {
+		Session.set("creInput","privacy");
+		var selectBox = document.getElementById("selectBox");
+		closeDivFade(selectBox);
+		setTimeout(function() {
+			dispOptions("privacy");
+			openDivFade(selectBox);
+		}, 300);
+	},
+	'click .creInput[name="category"]' () {
+		Session.set("creInput","category");
+		var selectBox = document.getElementById("selectBox");
+		closeDivFade(selectBox);
+		setTimeout(function() {
+			dispOptions("category");
+			openDivFade(selectBox);
+		}, 300);
 	},
 	'click .creSubmit' () {
 		openDivFade(document.getElementsByClassName("overlay")[0]);
@@ -169,6 +204,30 @@ function closeDivFade(div) {
 	setTimeout(function() {
 		div.style.display = "none";
 	}, 300);
+}
+
+function dispOptions(input) {
+	var div = document.getElementById("inputOptions")
+	var left = true;
+	try{
+		while(left) {
+			div.removeChild(div.childNodes[0]);
+			if(div.childNodes.length === 0) left = false;
+		}
+	} catch(err) {}
+
+	var refer = {"privacy":4,"category":5};
+	for(var i = 0; i < options[input].length; i++) {
+		var p = document.createElement("p");
+		p.appendChild(document.createTextNode(options[input][i]));
+		p.className = "inputOptionsText";
+		p.onclick = function() {
+			document.getElementsByClassName("creInput")[refer[Session.get("creInput")]].value = this.childNodes[0].nodeValue;
+			Session.set("creInput",null);
+			closeDivFade(this.parentNode.parentNode)
+		}	
+		div.appendChild(p);
+	}
 }
 
 function sendData() {
