@@ -26,3 +26,4 @@ aldeed:simple-schema
 accounts-google
 accounts-ui
 iron:router
+ongoworks:security
