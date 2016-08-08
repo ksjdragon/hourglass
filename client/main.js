@@ -100,10 +100,24 @@ Template.main.helpers({
 		} else {
 			return;
 		}
+	},
+	schoolcomplete() {
+		return {
+		  position: "bottom",
+		  limit: 6,
+		  rules: [
+		    {
+		      token: '',
+		      collection: schools,
+		      field: 'name',
+		      matchAll: true,
+		      template: Template.schoollist
+		    }
+		  ]
+		};
 	}
 });
 
-;
 Template.main.events({
 	'click .fa-bars' () {
 		Session.set("menuOpen",!Session.get("menuOpen"));
@@ -200,7 +214,13 @@ Template.main.events({
 			Session.set("function",null);
 		}, 300);
 	}
-})
+});
+
+Template.schoollist.helpers({
+	name() {
+		return this.name;
+	}
+});
 
 function openDivFade(div) {
 	div.style.display = "block";
