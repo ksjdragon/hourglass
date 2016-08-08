@@ -41,7 +41,7 @@
         <h4 style="color:{{functionStatus 'creClass'}}">Create Class</h4>
       </div>
     </div>
-    <div id="functionHolder">
+    <div id="functionHolder" style="opacity:{{opacity}}">
         {{#if currFunction "addClass"}}
           <p>Add a Class</p>
         {{/if}}
@@ -51,7 +51,17 @@
         {{/if}}
 
         {{#if currFunction "creClass"}}
-          <p>Create a Class</p>
+          <h2>Create a Class</h2>
+          <form id="create">
+            <p class="input">School:</p><br> <input class="creInput" type="text" name="school"><br>
+            <p class="input">Hour:</p><br> <input class="creInput" type="text" name="hour"><br>
+            <p class="input">Teacher</p>:<br> <input class="creInput" type="text" name="teacher"><br>
+            <p class="input">Class Name:</p><br> <input class="creInput" type="text" name="name"><br>
+            <p class="input">Privacy:</p><br> <input class="creInput" type="text" name="privacy" readonly><br>
+            <p class="input">Category:</p><br> <input class="creInput" type="text" name="category" readonly>
+            <div class="creSubmit">Submit Request</div>
+          </form> 
+
         {{/if}}
       </div>
   </div>
