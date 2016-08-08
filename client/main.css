@@ -28,8 +28,8 @@ html {
 	font-weight: 200;
 	overflow: hidden;
 
-	background-image: url("Hourglass.png");
-	background-size: 1920px 1080px;
+	/*background-image: url("Hourglass.png");
+	background-size: 1920px 1080px;*/
 
 	-webkit-touch-callout: none;
     -webkit-user-select: none;
