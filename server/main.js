@@ -16,14 +16,14 @@ classes.schema = new SimpleSchema({
 	name: {type: String, label: "Class Name"},
 	hour: {type: String, optional: true},
 	teacher: {type: String, optional: true},
+	admin: {type: String, optional: true},
 	status: {type: Boolean, defaultValue: false},
 	code: {type: String, optional: true},
 	privacy: {type: String},
 	category: {type: String},
 	moderators: {type: [String], optional: true},
 	banned: {type: [String], optional: true},
-	blockEdit: {type: [String], optional: true},
-	admin: {type: String}
+	blockEdit: {type: [String], optional: true}
 });
 
 work.schema = new SimpleSchema({
