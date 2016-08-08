@@ -20,9 +20,9 @@ classes.schema = new SimpleSchema({
 	code: {type: String, optional: true},
 	privacy: {type: String},
 	category: {type: String},
-	moderators: {type: [String]},
-	banned: {type: [String]},
-	blockEdit: {type: [String]},
+	moderators: {type: [String], optional: true},
+	banned: {type: [String], optional: true},
+	blockEdit: {type: [String], optional: true},
 	admin: {type: String}
 });
 
@@ -37,15 +37,32 @@ work.schema = new SimpleSchema({
 	done: {type: [String], optional: true}
 });
 
-// Meteor.methods({
-// 	createClass: function(client) {
-// 		if 
-// 	}
+function allow(user, method) {
+	//Switch/case for different permissions per method/function
+}
 
-// });
+var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 Meteor.startup(() => {
-  Meteor.methods({
-
-  })
+	Meteor.methods({
+		'genCode': function() {
+			var text = "";
+			var same = true;
+			while(same) {
+				for(var i = 0; i < 6; i++) {
+        			text += possible.charAt(Math.floor(Math.random() * 52));
+				}
+				if(!classes.find( { code: { $eq: text } } ).limit(1)) {
+					same = false;
+				}
+			}
+        	return text;
+		},
+  		'createClass': function(input) {
+  			if(allow(Meteor.userId(),"createClass")) {
+  				classes.schema.validate(input);
+  				classes.insert(input);
+  			}
+  		}
+  	})
 });
