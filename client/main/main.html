@@ -57,13 +57,13 @@
               {{> inputAutocomplete settings=schoolcomplete class="form-control creInput" type="text" name="school" placeholder="Example: International Academy" }}
             <p class="input">Hour:</p><br>
               <input class="creInput" type="text" name="hour"><br>
-            <p class="input">Teacher</p>:<br>
+            <p class="input">Teacher:</p><br>
               <input class="creInput" type="text" name="teacher"><br>
             <p class="input">Class Name:</p><br>
               <input class="creInput" type="text" name="classname"><br>
             <p class="input">Privacy:</p><br>
             <div class="select">
-              <input class="creInput creInputSel" type = "text" name="privacy" readonly><br>
+              <input class="creInputSel creInput" type="text" name="privacy" op="0" readonly><br>
               <div class="creOptions" style="background-color:{{divColor 'header'}}">
                   <p>Public</p>
                   <p>Private</p>
@@ -71,7 +71,7 @@
             </div>
             <p class="input">Category:</p><br>
             <div class="select">
-              <input class="creInput creInputSel" type="text" name="category" readonly><br>
+              <input class="creInputSel creInput" type="text" name="category" op="1" readonly><br>
               <div class="creOptions" style="background-color:{{divColor 'header'}}">
                   <p>Class</p>
                   <p>Club</p>

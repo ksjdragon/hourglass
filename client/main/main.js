@@ -1,5 +1,4 @@
 import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var';
 
 import './main.html';
 
@@ -21,7 +20,6 @@ var themeColors = {
 };
 
 var options = {
-	"school": [],
 	"privacy": ["Public", "Hidden"],
 	"category": ["Class", "Club", "Other"]
 }
@@ -34,6 +32,7 @@ Session.set("mode",null); // Change to user preferences
 Session.set("function", null);
 Session.set("confirm",null);
 Session.set("formCre",null);
+Session.set("inputOpen",null);
 
 Cookie.set("theme","light",{'years':15});
 
@@ -182,12 +181,20 @@ Template.main.events({
 		}, 300);
 	},
 	'click .creInput' (event) {
+		var opened = Session.get("inputOpen");
+		if(opened !== null && opened !== event.target.getAttribute("op")) {
+			closeDivFade(document.getElementsByClassName("creInputSel")[opened].parentNode.childNodes[4]);
+		}
+	},
+	'click .creInputSel' (event) {
+		Session.set("inputOpen", event.target.getAttribute("op"));
 		openDivFade(event.target.parentNode.childNodes[4]);
 	},
 	'click .creOptions p' (event) {
 		var p = event.target;
 		p.parentNode.parentNode.childNodes[1].value = p.childNodes[0].nodeValue;
 		closeDivFade(p.parentNode);
+		Session.set("inputOpen",null)
 	}
 });
 

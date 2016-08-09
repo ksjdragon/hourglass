@@ -25,7 +25,6 @@ Template.login.helpers({
 	},
 	hea() {
 		var w = .09*window.innerWidth;
-		console.log ("width:"+w.toString()+"px;left:"+(-.5*w-content).toString()+"px;");
 		return "width:"+w.toString()+"px;left:"+(-.5*w+content/2).toString()+"px;";
 	}
 })
