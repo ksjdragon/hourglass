@@ -36,10 +36,11 @@ Session.set("inputOpen",null);
 
 Cookie.set("theme","light",{'years':15});
 
+Template.registerHelper( 'divColor', (div) => {
+	return themeColors[Cookie.get("theme")][div];	
+})
+
 Template.main.helpers({
-	divColor(div) {
-		return themeColors[Cookie.get("theme")][div];	
-	},
 	iconColor(icon) {
 		let status = Session.get(icon+"Open");
 		if(status) {
@@ -190,11 +191,25 @@ Template.main.events({
 		Session.set("inputOpen", event.target.getAttribute("op"));
 		openDivFade(event.target.parentNode.childNodes[4]);
 	},
+	'focus .creInputSel' (event) {
+		Session.set("inputOpen", event.target.getAttribute("op"));
+		openDivFade(event.target.parentNode.childNodes[4]);
+	},
 	'click .creOptions p' (event) {
 		var p = event.target;
 		p.parentNode.parentNode.childNodes[1].value = p.childNodes[0].nodeValue;
 		closeDivFade(p.parentNode);
+		p.parentNode.parentNode.childNodes[1].focus();
 		Session.set("inputOpen",null)
+	},
+	'click' (event) {
+		console.log(event.target.className);
+		var e = event.target.className;
+		if(!(e.includes("creInput") || e.includes("select"))) {
+			try {
+				closeDivFade(document.getElementsByClassName("creInputSel")[Session.get("inputOpen")].parentNode.childNodes[4]);
+			} catch(err) {}
+		}
 	}
 });
 
