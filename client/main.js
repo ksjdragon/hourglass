@@ -158,18 +158,7 @@ Template.main.events({
 	'click .creInput' () {
 		var selectBox = document.getElementById("selectBox");
 		closeDivFade(selectBox);
-	},
-	'keyup .creInput[name="school"]' () {
-		/*searchSchools = [];
-		var curr = document.getElementsByClassName("creInput")[0].value;
-		for(var i = 0; i < schools.length; i++) {
-			var search = schools[i].toLowerCase().search(value);
-			if(search !== -1) {
-				searchSchools.push([schools[i],search])
-			}
-		}
-		dispOptions("school"); Need to get schools from server */
-	},
+	}
 	'click .creInput[name="privacy"]' () {
 		Session.set("creInput","privacy");
 		var selectBox = document.getElementById("selectBox");
