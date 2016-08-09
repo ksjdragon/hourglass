@@ -12,14 +12,34 @@ Meteor.methods({
 	},
   //No Security
 	'createClass': function(input) {
-		// if(Meteor.user() != null && classes.find({status:true, admin:Meteor.userId()}).length < 5 &&
-  //     schools.find({name:input.school}).fetch().length > 0){
-			// classes.schema.validate(input);
+    var distinctEntries = _.uniq(classes.find({}, {
+    sort: {teacher: 1}, fields: {teacher: true}
+    }).fetch().map(function(x) {
+        return x.teacher;
+    }), true);
+		classes.schema.validate(input);
+    if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).length < 5 &&
+      schools.find({name:input.school}).fetch().length > 0 && input.status === true) {
+      
+      input.subscribers = 0;
+      input.admin = Meteor.userId()
+      if (input.privacy) {
+        input.code = genCode();
+      } else {
+        input.code = "";
+      }
+      if (input.category != "class" && input.category != "club") {
+        input.category = "other";
+      }
+      input.moderators = []
+      input.banned = []
+      input.blockEdit = []
 			classes.insert(input);
-  //     return 1;
-		// } else {
-  //     return 0;
-  //   }
+      joinClass(input.name, input.code)
+      return 1;
+		} else {
+      return 0;
+    }
 	},
   'editProfile': function(change) {
     current = Meteor.user().profile;
@@ -34,7 +54,7 @@ Meteor.methods({
     }
   },
   'joinClass': function(change, pass) {
-    found = classes.find({name: change}).fetch();
+    found = classes.find({name: change, status: true}).fetch();
     if (Meteor.user() != null && found.length > 0 && pass === found[0].code) {
       current = Meteor.user().profile;
       current.classes.append(change);
