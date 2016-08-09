@@ -158,7 +158,7 @@ Template.main.events({
 	'click .creInput' () {
 		var selectBox = document.getElementById("selectBox");
 		closeDivFade(selectBox);
-	}
+	},
 	'click .creInput[name="privacy"]' () {
 		Session.set("creInput","privacy");
 		var selectBox = document.getElementById("selectBox");

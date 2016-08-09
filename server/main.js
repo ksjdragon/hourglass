@@ -6,10 +6,9 @@ _uuid4 = function(cc) {
     return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
 }
 
-Meteor.startup(() => {
 	Meteor.methods({
 		'genCode': function() {
-	        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, _uuid4);
+	        return 'xxxxxx'.replace(/[x]/g, _uuid4);
 		},
 		'createClass': function(input) {
 			if(Meteor.user() != null && Meteor.classes.find({status:true, admin:Meteor.userId()}).length < 5){
@@ -17,8 +16,16 @@ Meteor.startup(() => {
 				classes.insert(input);
 			}
 		},
-    'editProfile': function(profile) {
-      // profile.name = this.user
+    'editProfile': function(change) {
+      current = Meteor.user().profile;
+      current.school = change[0];
+      current.grade = change[1];
+      if (schools.find({name:current.school}).fetch().length > 0 && Number.isInteger(current.grade) &&
+      current.grade >= 9 && current.grade <= 12) {
+        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}})
+        return 1;
+      } else {
+        return 0;
+      }
     }
-  	})
-});
+  	});
