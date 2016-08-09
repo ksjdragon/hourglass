@@ -57,3 +57,20 @@
 	top: 50%;
 	right: 5%;
 }
+
+#fourtext {
+	font-size: 200%;
+	padding: 1%;
+
+	color: #FFF;
+	background-color: rgba(255,255,255,0.5);
+
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+
+	text-align: center;
+	position: relative;
+	top: 15%;
+	left: 50%;
+}
