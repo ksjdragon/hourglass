@@ -52,13 +52,25 @@ Meteor.methods({
   },
   'joinClass': function(change, pass) {
     found = classes.find({_id: change, status: true}).fetch();
-    if (Meteor.user() != null && found.length > 0 && pass === found[0].code) {
+    if (Meteor.user() != null && found.length > 0 && pass === found[0].code && Meteor.user().profile.classes.indexOf(change) === -1) {
       current = Meteor.user().profile;
       current.classes.append(change);
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
     } else {
       return 0;
+    }
+  },
+  'leaveClass': function(change) {
+    if (Meteor.user() != null) {
+      profile = Meteor.user().profile
+      index = profile.classes.indexOf(change)
+      if (index >= 0) {
+        profile.classes.splice(index, 1);
+        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
+        return 1
+      }
+
     }
   }
 });
