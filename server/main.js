@@ -32,7 +32,7 @@ Meteor.methods({
       input.banned = []
       input.blockEdit = []
 			classes.insert(input);
-      Meteor.call('joinClass',input.name, input.code, function(error,result){});
+      Meteor.call('joinClass',classes.find({input}).fetch()[0]._id, input.code, function(error,result){});
       return 1;
 		} else {
       return 0;
@@ -51,7 +51,7 @@ Meteor.methods({
     }
   },
   'joinClass': function(change, pass) {
-    found = classes.find({name: change, status: true}).fetch();
+    found = classes.find({_id: change, status: true}).fetch();
     if (Meteor.user() != null && found.length > 0 && pass === found[0].code) {
       current = Meteor.user().profile;
       current.classes.append(change);
