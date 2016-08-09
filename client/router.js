@@ -25,5 +25,5 @@ Router.route('/profile', function() {
 });
 
 Router.configure({
-  notFoundTemplate: "404"
+  notFoundTemplate: "NotFound"
 });
