@@ -22,7 +22,18 @@ _uuid4 = function(cc) {
       current.grade = change[1];
       if (schools.find({name:current.school}).fetch().length > 0 && Number.isInteger(current.grade) &&
       current.grade >= 9 && current.grade <= 12) {
-        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}})
+        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+    'joinClass': function(change, pass) {
+      found = classes.find({name: change}).fetch();
+      if (Meteor.user() != null && found.length > 0 && pass === found[0].code) {
+        current = Meteor.user().profile;
+        current.classes.append(change);
+        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
         return 1;
       } else {
         return 0;
