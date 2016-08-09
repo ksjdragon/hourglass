@@ -66,9 +66,13 @@ Meteor.methods({
       profile = Meteor.user().profile
       index = profile.classes.indexOf(change)
       if (index >= 0) {
-        profile.classes.splice(index, 1);
-        Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
-        return 1
+        if (classes.find({_id: change}).fetch()[0].admin != Meteor.userId()) {
+          profile.classes.splice(index, 1);
+          Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
+          return 1
+        } else {
+          throw "You are the admin of this class. Transfer ownership in order to leave this class."
+        }
       }
 
     }
