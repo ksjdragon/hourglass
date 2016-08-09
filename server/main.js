@@ -10,13 +10,16 @@ Meteor.methods({
 	'genCode': function() {
         return 'xxxxxx'.replace(/[x]/g, _uuid4);
 	},
-  //NOT COMPLETE V
+  //No Security
 	'createClass': function(input) {
-		if(Meteor.user() != null && Meteor.classes.find({status:true, admin:Meteor.userId()}).length < 5 &&
-      schools.find({name:input.school}).fetch().length > 0){
-			classes.schema.validate(input);
+		// if(Meteor.user() != null && classes.find({status:true, admin:Meteor.userId()}).length < 5 &&
+  //     schools.find({name:input.school}).fetch().length > 0){
+			// classes.schema.validate(input);
 			classes.insert(input);
-		}
+  //     return 1;
+		// } else {
+  //     return 0;
+  //   }
 	},
   'editProfile': function(change) {
     current = Meteor.user().profile;

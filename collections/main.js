@@ -16,7 +16,7 @@ classes.schema = new SimpleSchema({
 	admin: {type: String, optional: true},
 	status: {type: Boolean, defaultValue: false},
 	code: {type: String, defaultValue: ""},
-	privacy: {type: String},
+	privacy: {type: Boolean},
 	category: {type: String},
 	moderators: {type: [String], optional: true},
 	banned: {type: [String], optional: true},
