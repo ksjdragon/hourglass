@@ -225,23 +225,9 @@ h4 {
 	filter: drop-shadow(2px 2px 5px #666);
 }
 
-.creInput[name="privacy"], .creInput[name="category"] {
-	border: 2px solid #F2F2F2;
-	cursor: pointer;
-}
-
-.creInput[name="privacy"]:hover, .creInput[name="category"]:hover {
-	background-color: #F2F2F2;
-
-	-webkit-transition: background-color 0.5s ease, border 0.5s ease;  
-	-moz-transition: background-color 0.5s ease, border 0.5s ease; 
-	-ms-transition: background-color 0.5s ease, border 0.5s ease;
-	transition: background-color 0.5s ease, border 0.5s ease;
-}
-
 .creSubmit {
 	width: 100%;
-	margin-top: 10%;
+	margin-top: 50%;
 	padding: 3% 0 3% 0;
 	text-align: center;
 	background-color: #849CAE;
@@ -267,7 +253,7 @@ h4 {
 	transition: background-color 0.2s ease; 
 }
 
-input {
+input, select {
 	font-family: 'Raleway';
 	width: 90%;
 	margin-bottom: 4%;
@@ -277,15 +263,20 @@ input {
 	z-index: 0;
 }
 
-#selectBox {
-	width: 10%;
+select {
+	font-family: 'Raleway';
+	width: 100%;
+}
+
+.creOptions {
+	width: 80%;
+	margin-top: -3.4%;
+
 	box-shadow: 2px 2px 5px 3px #666;
 
 	display: none;
 	position: absolute;
-	top: 47%;
-	left: 17%;
-
+	z-index: 5;
 	opacity: 0;
 
 	-webkit-transition: opacity 0.4s ease;  
@@ -294,47 +285,14 @@ input {
 	transition: opacity 0.4s ease; 
 }
 
-#triTab {
-	width: 0;
-	height: 0;
-
-	border-top: 20px solid transparent;
-	border-bottom: 20px solid transparent;
-
-	position: absolute;
-	top: 10%;
-	left: -11.3%;
-	z-index: -1;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #666);
-	filter: drop-shadow(2px 2px 5px #666);
-}
-
-#inputOptions {
-	position: relative;
-}
-
-.inputOptionsText {
-	font-size: 150%;
+.creOptions p {
 	margin: 0;
-	padding: 15%;
-	text-align: center;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #666);
-	filter: drop-shadow(2px 2px 5px #666);
-
-	-webkit-transition: box-shadow 0.4s ease;  
-	-moz-transition: box-shadow 0.4s ease; 
-	-ms-transition: box-shadow 0.4s ease;
-	transition: box-shadow 0.4s ease;
+	padding: 5%;
+	display: block;
 }
 
-.inputOptionsText:hover {
+.creOptions p:hover {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1)
-}
-
-.inputOptionsText:active {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.15)
 }
 
 .overlay {

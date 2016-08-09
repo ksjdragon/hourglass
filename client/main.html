@@ -30,15 +30,15 @@
     <div id="functions">
       <div class="function addClass">
         <i class="fa fa-plus" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'addClass'}}">Add Class</h4>
-      </div>
-      <div class="function manageClass">
-        <i class="fa fa-tasks" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'manClass'}}">Manage Classes</h4>
+        <h4 style="color:{{functionStatus 'addClass'}}">Join Class</h4>
       </div>
       <div class="function createClass">
         <i class="fa fa-graduation-cap" aria-hidden="true"></i>
         <h4 style="color:{{functionStatus 'creClass'}}">Create Class</h4>
+      </div>
+      <div class="function manageClass">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        <h4 style="color:{{functionStatus 'manClass'}}">Manage Classes</h4>
       </div>
     </div>
     <div id="functionHolder">
@@ -62,20 +62,27 @@
             <p class="input">Class Name:</p><br>
               <input class="creInput" type="text" name="classname"><br>
             <p class="input">Privacy:</p><br>
-              <input class="creInput" type="text" name="privacy" style="background-color:{{creHighlight 'privacy'}}" readonly><br>
+            <div class="select">
+              <input class="creInput creInputSel" type = "text" name="privacy" readonly><br>
+              <div class="creOptions" style="background-color:{{divColor 'header'}}">
+                  <p>Public</p>
+                  <p>Private</p>
+              </div>
+            </div>
             <p class="input">Category:</p><br>
-              <input class="creInput" type="text" name="category" style="background-color:{{creHighlight 'category'}}" readonly >
+            <div class="select">
+              <input class="creInput creInputSel" type="text" name="category" readonly><br>
+              <div class="creOptions" style="background-color:{{divColor 'header'}}">
+                  <p>Class</p>
+                  <p>Club</p>
+                  <p>Other</p>
+              </div>
+            </div>
             <div class="creSubmit">Submit Request</div>
           </form> 
         {{/if}}
       </div>
   </div>
-  
-  <div id="selectBox" style="background-color:{{divColor 'header'}}">
-    <div id="inputOptions"></div>
-    <div id="triTab" style="border-right:30px solid {{divColor 'header'}}"></div>
-  </div>
-  
   <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
   </div>
   <div class="overlay">

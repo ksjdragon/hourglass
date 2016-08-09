@@ -155,28 +155,6 @@ Template.main.events({
 			openDivFade(functionHolder);
 		},300);
 	},
-	'click .creInput' () {
-		var selectBox = document.getElementById("selectBox");
-		closeDivFade(selectBox);
-	},
-	'click .creInput[name="privacy"]' () {
-		Session.set("creInput","privacy");
-		var selectBox = document.getElementById("selectBox");
-		closeDivFade(selectBox);
-		setTimeout(function() {
-			dispOptions("privacy");
-			openDivFade(selectBox);
-		}, 300);
-	},
-	'click .creInput[name="category"]' () {
-		Session.set("creInput","category");
-		var selectBox = document.getElementById("selectBox");
-		closeDivFade(selectBox);
-		setTimeout(function() {
-			dispOptions("category");
-			openDivFade(selectBox);
-		}, 300);
-	},
 	'click .creSubmit' () {
 		openDivFade(document.getElementsByClassName("overlay")[0]);
 		setTimeout(function() {
@@ -202,6 +180,14 @@ Template.main.events({
 			Session.set("confirm",null);
 			Session.set("function",null);
 		}, 300);
+	},
+	'click .creInput' (event) {
+		openDivFade(event.target.parentNode.childNodes[4]);
+	},
+	'click .creOptions p' (event) {
+		var p = event.target;
+		p.parentNode.parentNode.childNodes[1].value = p.childNodes[0].nodeValue;
+		closeDivFade(p.parentNode);
 	}
 });
 
@@ -216,40 +202,20 @@ function openDivFade(div) {
 	div.style.opacity = "0";
 	setTimeout(function() {
 		div.style.opacity = "1";
-	}, 300);
+	}, 100);
 }
 
 function closeDivFade(div) {
 	div.style.opacity = "0";
 	setTimeout(function() {
 		div.style.display = "none";
-	}, 300);
-}
-
-function dispOptions(input) {
-	var div = document.getElementById("inputOptions")
-	var left = true;
-	try{
-		while(left) {
-			div.removeChild(div.childNodes[0]);
-			if(div.childNodes.length === 0) left = false;
-		}
-	} catch(err) {}
-
-	var refer = {"school":0,"privacy":4,"category":5};
-	for(var i = 0; i < options[input].length; i++) {
-		var p = document.createElement("p");
-		p.appendChild(document.createTextNode(options[input][i]));
-		p.className = "inputOptionsText";
-		p.onclick = function() {
-			document.getElementsByClassName("creInput")[refer[Session.get("creInput")]].value = this.childNodes[0].nodeValue;
-			Session.set("creInput",null);
-			closeDivFade(this.parentNode.parentNode)
-		}	
-		div.appendChild(p);
-	}
+	}, 100);
 }
 
 function sendData() {
 	// Take form data
+}
+
+function select(div) {
+	div.parentNode.parentNode.childNodes[0].value = div.childNodes[0].nodeValue;
 }
