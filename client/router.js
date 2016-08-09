@@ -10,7 +10,7 @@ Router.route('/login', function() {
   if (Meteor.user() == null) {
     this.render("login");
   } else if (Object.keys(Meteor.user().profile).length <= 1) {
-    this.redirect('/create')
+    this.redirect('/profile')
   } else {
     this.redirect('/')
   }
