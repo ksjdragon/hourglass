@@ -199,6 +199,7 @@ h4 {
 	width: 90%;
 	margin-bottom: 30%;
 	padding: 8%;
+	padding-right: 50%;
 
 	display: none;
 	position: absolute;
@@ -227,7 +228,7 @@ h4 {
 
 .creSubmit {
 	width: 100%;
-	margin-top: 50%;
+	margin-top: 30%;
 	padding: 3% 0 3% 0;
 	text-align: center;
 	background-color: #849CAE;
@@ -315,7 +316,8 @@ select {
 }
 
 .overlayCont {
-	font-size: 150%;
+	font-size: 165%;
+	padding: 1%;
 	box-shadow: 2px 2px 5px 3px #666;
 
 	-moz-border-radius: 30px;
