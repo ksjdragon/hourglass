@@ -18,13 +18,15 @@ Meteor.methods({
         return x.teacher;
     }), true);
 		classes.schema.validate(input);
-    if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).length < 5 &&
-      schools.find({name:input.school}).fetch().length > 0 && input.status === true) {
+    if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
+      schools.find({name:input.school}).fetch().length > 0 && input.status === false) {
       
       input.subscribers = 0;
       input.admin = Meteor.userId()
       if (input.privacy) {
-        input.code = genCode();
+        Meteor.call('genCode', function(error, result) {
+          input.code = result;
+        });
       } else {
         input.code = "";
       }
@@ -35,7 +37,7 @@ Meteor.methods({
       input.banned = []
       input.blockEdit = []
 			classes.insert(input);
-      joinClass(input.name, input.code)
+      Meteor.call('joinClass',input.name, input.code, function(error,result){});
       return 1;
 		} else {
       return 0;
