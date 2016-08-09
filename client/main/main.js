@@ -115,6 +115,20 @@ Template.main.helpers({
 		    }
 		  ]
 		};
+	},
+	teachercomplete() {
+		return {
+		  position: "bottom",
+		  limit: 1,
+		  rules: [
+		    {
+		      token: '',
+		      collection: classes,
+		      field: 'teacher',
+		      template: Template.teacherlist
+		    }
+		  ]
+		};
 	}
 });
 

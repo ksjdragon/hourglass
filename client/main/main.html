@@ -58,7 +58,7 @@
             <p class="input">Hour:</p><br>
               <input class="creInput" type="text" name="hour"><br>
             <p class="input">Teacher:</p><br>
-              <input class="creInput" type="text" name="teacher"><br>
+              {{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
             <p class="input">Class Name:</p><br>
               <input class="creInput" type="text" name="classname"><br>
             <p class="input">Privacy:</p><br>
@@ -98,4 +98,8 @@
 
 <template name="schoollist">
   {{name}}
+</template>
+
+<template name="teacherlist">
+  {{teacher}}
 </template>

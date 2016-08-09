@@ -12,11 +12,6 @@ Meteor.methods({
 	},
   //No Security
 	'createClass': function(input) {
-    var distinctEntries = _.uniq(classes.find({}, {
-    sort: {teacher: 1}, fields: {teacher: true}
-    }).fetch().map(function(x) {
-        return x.teacher;
-    }), true);
 		classes.schema.validate(input);
     if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
       schools.find({name:input.school}).fetch().length > 0 && input.status === false) {
