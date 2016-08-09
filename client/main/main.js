@@ -41,6 +41,9 @@ Template.registerHelper( 'divColor', (div) => {
 })
 
 Template.main.helpers({
+	schoolname() {
+		return " - " + Meteor.user().profile.school;
+	},
 	iconColor(icon) {
 		let status = Session.get(icon+"Open");
 		if(status) {
