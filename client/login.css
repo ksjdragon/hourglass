@@ -38,6 +38,7 @@
 	top: 11%;
 
 	background-color: #E5E5E5;
+	background-image: url("banner100.jpg");
 }
 
 #circle {
@@ -81,13 +82,13 @@ p.text {
 
 #loginButton {
 	font-size: 200%;
-	width: 20%;
-	margin-left: 38%;
 	padding: 2%;
 
 	-webkit-border-radius: 6;
 	-moz-border-radius: 6;
 	border-radius: 6px;
+
+	position: relative;
 
 	background-color: #005CE6;
 

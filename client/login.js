@@ -22,6 +22,11 @@ Template.login.helpers({
 	},
 	logo() {
 		return window.innerHeight * .08;
+	},
+	hea() {
+		var w = .09*window.innerWidth;
+		console.log ("width:"+w.toString()+"px;left:"+(-.5*w-content).toString()+"px;");
+		return "width:"+w.toString()+"px;left:"+(-.5*w+content/2).toString()+"px;";
 	}
 })
 
