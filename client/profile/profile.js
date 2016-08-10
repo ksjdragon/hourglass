@@ -5,6 +5,19 @@ Session.set("profClassTab",null);
 Session.set("modifying",null);
 Session.set("radioDiv",null);
 
+var themeColors = {
+	"light": {
+		"header":"#EBEBEB",
+		"sidebar":"#65839A",
+		"statusIcons":"#33ADFF",
+		"highlightText":"#FF1A1A",
+		"cards":"#FEFEFE"
+	},
+	"dark": {
+
+	}
+};
+
 Template.profile.helpers({
 	classsettings: function() {
 	    return {
@@ -66,7 +79,7 @@ Template.profile.helpers({
 	classes() {
 		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}, {sort: { subscribers: -1 }}).fetch();
 	},
-	profClassTabColor(tab) {
+	profClassTabColor(status) {
         if(status === Session.get("profClassTab")) {
             return themeColors[Cookie.get("theme")].highlightText;
         } else {
@@ -167,7 +180,7 @@ Template.profile.events({
         //var functionHolder = document.getElementById("functionHolder")
         //closeDivFade(functionHolder);
         //setTimeout(function() {
-            Session.set("function","addClass");
+            Session.set("profClassTab","addClass");
         //    openDivFade(functionHolder);
         //},300);
     },
@@ -175,7 +188,7 @@ Template.profile.events({
         //var functionHolder = document.getElementById("functionHolder")
         //closeDivFade(functionHolder);
         //setTimeout(function() {
-            Session.set("function","manClass");
+            Session.set("profClassTab","manClass");
         //    openDivFade(functionHolder);
         //},300);
     },
@@ -183,14 +196,10 @@ Template.profile.events({
         //var functionHolder = document.getElementById("functionHolder")
         //closeDivFade(functionHolder);
         //setTimeout(function() {
-            Session.set("function","creClass");
+            Session.set("profClassTab","creClass");
         //    openDivFade(functionHolder);
         //},300);
     },
-	'click .profFunction' (event) {
-        var name = event.target.className.substring(13);
-        Session.set("profClassTab",name);
-    }
 })
 
 function openDivFade(div) {

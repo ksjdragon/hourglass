@@ -1,5 +1,7 @@
 import { Template } from 'meteor/templating';
 
+Cookie.set("theme","light",{'years':15});
+
 var circle = window.innerHeight * 1.1;
 var content = window.innerHeight * .6;
 Template.login.helpers({
