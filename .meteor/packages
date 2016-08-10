@@ -28,3 +28,4 @@ accounts-ui
 iron:router
 ongoworks:security
 mizzao:autocomplete
+alanning:roles
