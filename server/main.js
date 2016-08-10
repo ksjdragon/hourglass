@@ -76,7 +76,8 @@ Meteor.methods({
 
   },
   'deleteWork': function(workid) {
-
+    // Add security here
+    work.remove({_id: workid});
   },
   'editProfile': function(change) {
     current = Meteor.user().profile;
