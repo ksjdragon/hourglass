@@ -9,6 +9,7 @@ var openValues = {
 
 var themeColors = {
 	"light": {
+		"background":"White.jpg",
 		"header":"#EBEBEB",
 		"sidebar":"#65839A",
 		"statusIcons":"#33ADFF",
@@ -35,8 +36,6 @@ Session.set("confirm",null);
 Session.set("formCre",null);
 Session.set("inputOpen",null);
 
-Cookie.set("theme","light",{'years':15});
-
 Template.registerHelper( 'divColor', (div) => {
 	return themeColors[Cookie.get("theme")][div];	
 })
@@ -52,6 +51,11 @@ Template.main.helpers({
 		} else {
 			return;
 		}
+	},
+	bgSrc() {
+		var dim = [window.innerWidth,window.innerHeight];
+		var pic = themeColors[Cookie.get("theme")].background;
+		return pic;
 	},
 	menuStatus() {
   		let status = Session.get("menuOpen");
@@ -73,6 +77,13 @@ Template.main.helpers({
 			return themeColors[Cookie.get("theme")].highlightText;
 		} else {
 			return;
+		}
+	},
+	currMode(name) {
+		if(name === Session.get("mode")) {
+			return true;
+		} else {
+			return false;
 		}
 	},
 	currFunction(name) {
@@ -133,6 +144,20 @@ Template.main.helpers({
 		    }
 		  ]
 		};
+	},
+	calendarOptions() {
+		return {
+			height: window.innerHeight *.8,
+			events: function() {
+				//Get homeworks
+				//if(homework thing ==test ) backgroundColor = color;
+				//return {title, start, end, className, backgroundColor}
+			}
+		};
+	},
+	calCenter() {
+		var width = window.innerWidth * .85;
+		return "width:"+width.toString()+"px;margin-left:"+(.5*window.innerWidth-.5*width).toString()+"px"; 
 	}
 });
 
@@ -144,10 +169,21 @@ Template.main.events({
 		Session.set("optionsOpen",!Session.get("optionsOpen"));
 	},
 	'click .classes' () {
-		Session.set("mode","classes");
+		var modeHolder = document.getElementById("mainBody");
+		closeDivFade(modeHolder);
+		setTimeout(function() {
+			Session.set("mode","classes");
+			openDivFade(modeHolder);
+		}, 300);
+		
 	},
 	'click .calendar' () {
-		Session.set("mode","calendar");
+		var modeHolder = document.getElementById("mainBody");
+		closeDivFade(modeHolder);
+		setTimeout(function() {
+			Session.set("mode","calendar");
+			openDivFade(modeHolder);
+		}, 300);
 	},
 	'click .addClass' () {
 		var functionHolder = document.getElementById("functionHolder")

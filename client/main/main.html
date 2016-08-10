@@ -85,7 +85,15 @@
   </div>
   <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
   </div>
+  <img id="bg" src={{bgSrc}}>
   <div id="mainBody">
+  {{#if currMode 'classes'}}
+  {{/if}}
+  {{#if currMode 'calendar'}}
+    <div id="calendar" style="{{calCenter}}">
+      {{> fullcalendar calendarOptions id="fullcalendar"}}
+    </div>
+  {{/if}}
   </div>
   <div class="overlay">
     <div class="overlayCont" style="{{overlayDim}};">
