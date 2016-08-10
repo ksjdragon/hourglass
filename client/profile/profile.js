@@ -6,6 +6,21 @@ Session.set("modifying",null);
 Session.set("radioDiv",null);
 
 Template.profile.helpers({
+	classsettings: function() {
+	    return {
+	      position: "bottom",
+	      limit: 6,
+	      rules: [
+	        {
+	          token: '',
+	          collection: classes,
+	          field: "name",
+	          template: Template.classdisplay,
+	          // filter:
+	        }
+	      ]
+	    };
+	  },
 	mainCenter() {
 		var width = window.innerWidth * 1600/1920 + 10;
 		return "width:"+width.toString()+"px;margin-left:"+-.5*width.toString()+"px"; 
@@ -51,9 +66,13 @@ Template.profile.helpers({
 	classes() {
 		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}, {sort: { subscribers: -1 }}).fetch();
 	},
-	profClassOpen(tab) {
-		Session.set("profClassTab",tab);
-	},
+	profClassTabColor(tab) {
+        if(status === Session.get("profClassTab")) {
+            return themeColors[Cookie.get("theme")].highlightText;
+        } else {
+            return;
+        }
+    },
 	profClassTab(tab) {
 		if(tab === Session.get("profClassTab")) {
 			return true;
@@ -143,7 +162,35 @@ Template.profile.events({
 		closeDivFade(p.parentNode);
 		input.focus();
 		Session.set("radioDiv",null)
-	}
+	},
+	'click .addClass' () {
+        //var functionHolder = document.getElementById("functionHolder")
+        //closeDivFade(functionHolder);
+        //setTimeout(function() {
+            Session.set("function","addClass");
+        //    openDivFade(functionHolder);
+        //},300);
+    },
+    'click .manageClass' () {
+        //var functionHolder = document.getElementById("functionHolder")
+        //closeDivFade(functionHolder);
+        //setTimeout(function() {
+            Session.set("function","manClass");
+        //    openDivFade(functionHolder);
+        //},300);
+    },
+    'click .createClass' () {
+        //var functionHolder = document.getElementById("functionHolder")
+        //closeDivFade(functionHolder);
+        //setTimeout(function() {
+            Session.set("function","creClass");
+        //    openDivFade(functionHolder);
+        //},300);
+    },
+	'click .profFunction' (event) {
+        var name = event.target.className.substring(13);
+        Session.set("profClassTab",name);
+    }
 })
 
 function openDivFade(div) {

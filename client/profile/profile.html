@@ -35,15 +35,15 @@
 						<div id="profFunctions">
 							<div class="profFunction manageClass">
 					        	<i class="fa fa-tasks" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTab 'manClass'}}">Manage my Classes</h4>
+					        	<h4 style="color:{{profClassTabColor 'manClass'}}">Manage my Classes</h4>
 					      	</div>
 					      	<div class="profFunction addClass">
 					        	<i class="fa fa-plus" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTab 'addClass'}}">Join a Class</h4>
+					        	<h4 style="color:{{profClassTabColor 'addClass'}}">Join a Class</h4>
 					      	</div>
 					      	<div class="profFunction createClass">
 					        	<i class="fa fa-graduation-cap" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTab 'creClass'}}">Create a Class</h4>
+					        	<h4 style="color:{{profClassTabColor 'creClass'}}">Create a Class</h4>
 					      	</div>
 					    </div>
 						<div id="profClassInfoHolder">
@@ -51,7 +51,7 @@
 							
 						{{/if}}
 						{{#if profClassTab "addClass"}}
-						<!-- put autocomplete stuff here -->
+							{{> inputAutocomplete settings=classsettings placeholder="Search..."}}
 						{{/if}}
 						{{#if profClassTab "creClass"}}
 						{{/if}}
@@ -102,4 +102,8 @@
 			</div>
 		</div>
 	</div>
+</template>
+
+<template name="classdisplay">
+	{{name}}
 </template>
