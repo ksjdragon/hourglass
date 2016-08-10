@@ -30,9 +30,11 @@ work.schema = new SimpleSchema({
 	class: {type: String},
 	dueDate: {type: Date},
 	aliases: {type: [String]},
-	submittor: {type: String},
-	confirmations: {type: [String]},
+	submittor: {type: String, optional: true},
+	confirmations: {type: [String], optional: true},
 	reports: {type: [String], optional: true},
 	attachments: {type: [String], optional: true},
-	done: {type: [String], optional: true}
+	done: {type: [String], optional: true},
+	numberdone: {type: Number, optional: true},
+	type: {type: String}
 });

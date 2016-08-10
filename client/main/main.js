@@ -20,7 +20,12 @@ var themeColors = {
 
 	}
 };
-
+var calendarColors = {
+	"test": "red",
+	"project": "blue",
+	"normal": "green",
+	"quiz": "black"
+}
 var options = {
 	"privacy": ["Public", "Hidden"],
 	"category": ["Class", "Club", "Other"]
@@ -149,9 +154,16 @@ Template.main.helpers({
 		return {
 			height: window.innerHeight *.8,
 			events: function() {
-				//Get homeworks
-				//if(homework thing ==test ) backgroundColor = color;
-				//return {title, start, end, className, backgroundColor}
+				var cursor = work.find({});
+				var current;
+				var donelist;
+				cursor.forEach(function(current) {
+					backgroundColor = calendarColors[current.type];
+					title = current.name;
+					duedate = current.date.toISOString().slice(0,10);
+					donelist.append({start: duedate, title: title, backgroundColor: backgroundColor});			    
+				});
+				return donelist;
 			}
 		};
 	},

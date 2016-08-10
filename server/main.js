@@ -6,6 +6,7 @@ _uuid4 = function(cc) {
     return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
 }
 
+worktype = ["test", "quiz", "project", "normal"];
 Meteor.methods({
 	'genCode': function() {
     return 'xxxxxx'.replace(/[x]/g, _uuid4);
@@ -57,6 +58,26 @@ Meteor.methods({
       classes.remove({_id: classid})
     }
   },
+  'createWork': function(input) {
+    ref = new Date()
+    month = ref.getMonth +1
+    ref = new Date(ref.getFullYear()+ "-" + month.toString() + "-" + ref.getDate()).getTime()
+    work.schema.validate(input);
+    found = Meteor.findOne({_id: input.class})
+    if (Meteor.user() != null && found != null && found.subscribers.indexOf(Meteor.userId()) != -1
+      && found.banned.indexOf(Meteor.userId()) === -1 && found.blockEdit.indexOf(Meteor.userId()) === -1
+      && input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1) {
+      input.submittor = Meteor.userId();
+      input.confirmations = [Meteor.userId()];
+      input.reports = [];
+      input.done = [];
+      input.numberdone = 0;
+    }
+
+  },
+  'deleteWork': function(workid) {
+
+  },
   'editProfile': function(change) {
     current = Meteor.user().profile;
     current.school = change[0];
@@ -74,7 +95,8 @@ Meteor.methods({
   },
   'joinClass': function(change, pass) {
     found = classes.findOne({_id: change, status: true});
-    if (Meteor.user() != null && found != null && pass === found.code && Meteor.user().profile.classes.indexOf(change) === -1) {
+    if (Meteor.user() != null && found != null && pass === found.code 
+      && found.banned.indexOf(Meteor.userId()) === -1 && Meteor.user().profile.classes.indexOf(change) === -1) {
       current = Meteor.user().profile;
       current.classes.append(change);
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
