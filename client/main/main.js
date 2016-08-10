@@ -155,13 +155,12 @@ Template.main.helpers({
 			height: window.innerHeight *.8,
 			events: function() {
 				var cursor = work.find({});
-				var current;
-				var donelist;
+				var donelist = [];
 				cursor.forEach(function(current) {
 					backgroundColor = calendarColors[current.type];
 					title = current.name;
 					duedate = current.date.toISOString().slice(0,10);
-					donelist.append({start: duedate, title: title, backgroundColor: backgroundColor});			    
+					donelist.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
 				});
 				return donelist;
 			}

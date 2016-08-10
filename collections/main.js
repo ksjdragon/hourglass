@@ -29,7 +29,7 @@ classes.schema = new SimpleSchema({
 work.schema = new SimpleSchema({
 	class: {type: String},
 	dueDate: {type: Date},
-	aliases: {type: [String]},
+	aliases: {type: [String], optional: true},
 	submittor: {type: String, optional: true},
 	confirmations: {type: [String], optional: true},
 	reports: {type: [String], optional: true},
