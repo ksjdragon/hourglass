@@ -20,7 +20,7 @@ Template.profile.helpers({
 	},
 	avatar() {
 		var dim = window.innerWidth * 1600/1920 * .16;
-		var pic = "\'defaultavatartemp.png\'"; // User personalization
+		var pic = "defaultAvatars/"+(Math.floor(Math.random() * (10 - 1)) + 1).toString()+".png"; // User personalization
 		return "background-image:url("+pic+");background-size:"+dim.toString()+"px "+dim.toString()+"px";
 	},
 	avatarDim() {
