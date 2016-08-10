@@ -151,20 +151,18 @@ Template.main.helpers({
 		};
 	},
 	calendarOptions() {
+		var cursor = work.find({});
+		var donelist = [];
+		cursor.forEach(function(current) {
+			backgroundColor = calendarColors[current.type];
+			title = current.name;
+			duedate = current.dueDate.toISOString().slice(0,10);
+			donelist.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
+		});
+
 		return {
 			height: window.innerHeight *.8,
-			events: function() {
-				var cursor = work.find({});
-				var donelist = [];
-				cursor.forEach(function(current) {
-					backgroundColor = calendarColors[current.type];
-					title = current.name;
-					duedate = current.dueDate.toISOString().slice(0,10);
-					donelist.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
-				});
-				console.log(donelist);
-				return donelist;
-			}
+			events: donelist
 		};
 	},
 	calCenter() {
