@@ -29,3 +29,4 @@ iron:router
 ongoworks:security
 mizzao:autocomplete
 alanning:roles
+gquemart:meteor-reactive-fullcalendar

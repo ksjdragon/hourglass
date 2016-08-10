@@ -37,6 +37,7 @@ fastclick@1.0.12
 fortawesome:fontawesome@4.5.0
 geojson-utils@1.0.9
 google@1.1.13
+gquemart:meteor-reactive-fullcalendar@1.0.1
 hot-code-push@1.0.4
 html-tools@1.0.10
 htmljs@1.0.10
@@ -70,6 +71,8 @@ modules@0.7.5
 modules-runtime@0.7.5
 mongo@1.1.10
 mongo-id@1.0.5
+mrt:jquery-ui@1.9.2
+mrt:moment@2.8.1
 npm-mongo@1.5.45
 oauth@1.1.11
 oauth2@1.1.10
