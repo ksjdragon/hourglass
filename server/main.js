@@ -11,14 +11,16 @@ Meteor.methods({
     return 'xxxxxx'.replace(/[x]/g, _uuid4);
 	},
   'createSchool': function(schoolname) {
-    if (Meteor.user() != null && schools.find({name:input.school}).fetch().length === 0) {
-      schools.insert({name: schoolname, status: false});
+    if (Meteor.user() != null && schools.findOne({name:input.school}) != null && 
+      schools.findOne({status: false, creator: Meteor.userId()}) != null) {
+
+      schools.insert({name: schoolname, status: false, creator: Meteor.userId()});
     }
   },
 	'createClass': function(input) {
 		classes.schema.validate(input);
     if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
-      schools.find({name:input.school}).fetch().length > 0 && input.status === false) {
+      schools.findOne({name:input.school}) != null && input.status === false) {
       
       input.subscribers = 0;
       input.admin = Meteor.userId()
@@ -36,7 +38,7 @@ Meteor.methods({
       input.banned = []
       input.blockEdit = []
 			classes.insert(input);
-      Meteor.call('joinClass',classes.find({input}).fetch()[0]._id, input.code, function(error,result){});
+      Meteor.call('joinClass',classes.findOne({input})._id, input.code, function(error,result){});
       return 1;
 		} else {
       return 0;
@@ -49,7 +51,7 @@ Meteor.methods({
     current.description = change[2];
     current.avatar = change[3];
     current.banner = change[4];
-    if (schools.find({name:current.school}).fetch().length > 0 && Number.isInteger(current.grade) &&
+    if (schools.findOne({name:current.school}) != null && Number.isInteger(current.grade) &&
     current.grade >= 9 && current.grade <= 12 && current.description.length < 100) {
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
@@ -58,7 +60,7 @@ Meteor.methods({
     }
   },
   'joinClass': function(change, pass) {
-    found = classes.find({_id: change, status: true}).fetch();
+    found = classes.findOne({_id: change, status: true});
     if (Meteor.user() != null && found.length > 0 && pass === found[0].code && Meteor.user().profile.classes.indexOf(change) === -1) {
       current = Meteor.user().profile;
       current.classes.append(change);
@@ -73,7 +75,7 @@ Meteor.methods({
       profile = Meteor.user().profile
       index = profile.classes.indexOf(change)
       if (index >= 0) {
-        if (classes.find({_id: change}).fetch()[0].admin != Meteor.userId()) {
+        if (classes.findOne({_id: change}).admin != Meteor.userId()) {
           profile.classes.splice(index, 1);
           Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
           return 1
