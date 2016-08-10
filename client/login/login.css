@@ -96,6 +96,8 @@ p.text {
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease; 
+
+	cursor: pointer;
 }
 
 #loginButton:hover {

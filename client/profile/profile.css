@@ -1,0 +1,136 @@
+.change {
+	font-size: 150%;
+	color: #8C8C8C;
+	cursor: pointer;
+}
+
+.changeInput {
+	font-size: 100%;
+	padding: 0;
+	color: #8C8C8C;
+	position: relative;
+}
+
+.profTitle {
+	font-size: 150%;
+	font-weight: 400;
+	margin: 0;
+}
+
+.profHea {
+	font-size: 300%;
+	font-weight: 200;
+}
+
+#motda {
+	font-size: 100%;
+	width: 30% !important;
+}
+
+#profPage {
+	width: 100%;
+	overflow-y: auto;
+}
+
+#profMainContainer {
+	position: relative;
+	top: 0;
+	left: 50%;
+}
+
+#profBanner {
+	border: 5px solid #0D0D0D;
+	border-top: 0;
+	border-bottom: 0;
+}
+
+#profAvatar {
+	border: 10px solid #0D0D0D;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+
+	position: absolute;
+	top: 43%;
+	left: 2.5%;
+	float: left;
+	z-index: 5;
+}
+
+#motdBox {
+	width: 100%;
+	height: 5%;
+	padding: 0.5% 0 0.5% 0;
+
+	background-color: #0D0D0D;
+}
+
+#motdBox span {
+	font-size: 130% !important;
+	margin: 0;
+	color: #FFF !important;
+}
+
+.username {
+	margin-left: 20% !important;
+}
+
+.profOptions {
+	box-shadow: 2px 2px 5px 3px #666;
+
+	position: absolute;
+	display: none;
+	opacity: 0;
+
+	-webkit-transition: opacity 0.4s ease;  
+	-moz-transition: opacity 0.4s ease; 
+	-ms-transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease; 
+}
+
+.profOptions p {
+	font-size: 150%;
+	margin: 0;
+	padding: 20%;
+	text-align: center;
+	cursor: pointer;
+	
+	-webkit-transition: box-shadow 0.4s ease;  
+	-moz-transition: box-shadow 0.4s ease; 
+	-ms-transition: box-shadow 0.4s ease;
+	transition: box-shadow 0.4s ease;
+}
+
+.profOptions p:hover {
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
+}
+
+#profCards {
+	margin-top: 3%;
+	margin-bottom: 3%;
+}
+
+.card {
+	padding: 4%;
+	padding-top: 2.5%;
+	padding-right: 6%;
+
+	box-shadow: 2px 2px 5px 3px #666;
+}
+
+#profInfo {
+	width: 30%;
+	border-top: 5px solid #CC4444;
+}
+
+#about {
+	padding: 5%;
+}
+
+#profClasses {
+	width: 44%;
+	margin-top: -21.8%;
+	float: right;
+	border-top: 5px solid #2E4F74;
+}
+

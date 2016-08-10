@@ -12,7 +12,8 @@ var themeColors = {
 		"header":"#EBEBEB",
 		"sidebar":"#65839A",
 		"statusIcons":"#33ADFF",
-		"highlightText":"#FF1A1A"
+		"highlightText":"#FF1A1A",
+		"cards":"#FEFEFE"
 	},
 	"dark": {
 
@@ -220,7 +221,6 @@ Template.main.events({
 		Session.set("inputOpen",null)
 	},
 	'click' (event) {
-		console.log(event.target.className);
 		var e = event.target.className;
 		if(!(e.includes("creInput") || e.includes("select"))) {
 			try {
@@ -253,8 +253,4 @@ function closeDivFade(div) {
 
 function sendData() {
 	// Take form data
-}
-
-function select(div) {
-	div.parentNode.parentNode.childNodes[0].value = div.childNodes[0].nodeValue;
 }
