@@ -159,9 +159,10 @@ Template.main.helpers({
 				cursor.forEach(function(current) {
 					backgroundColor = calendarColors[current.type];
 					title = current.name;
-					duedate = current.date.toISOString().slice(0,10);
+					duedate = current.dueDate.toISOString().slice(0,10);
 					donelist.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
 				});
+				console.log(donelist);
 				return donelist;
 			}
 		};
