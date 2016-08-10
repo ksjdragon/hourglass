@@ -29,7 +29,7 @@ Template.profile.helpers({
 	          collection: classes,
 	          field: "name",
 	          template: Template.classdisplay,
-	          // filter:
+	          filter: {status: true}
 	        }
 	      ]
 	    };
