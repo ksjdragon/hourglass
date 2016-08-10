@@ -42,8 +42,11 @@ Meteor.methods({
     current = Meteor.user().profile;
     current.school = change[0];
     current.grade = change[1];
+    current.description = change[2];
+    current.avatar = change[3];
+    current.banner = change[4];
     if (schools.find({name:current.school}).fetch().length > 0 && Number.isInteger(current.grade) &&
-    current.grade >= 9 && current.grade <= 12) {
+    current.grade >= 9 && current.grade <= 12 && current.description.length < 100) {
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
     } else {
