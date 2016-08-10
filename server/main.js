@@ -71,7 +71,7 @@ Meteor.methods({
           Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
           return 1
         } else {
-          throw "You are the admin of this class. Transfer ownership in order to leave this class."
+          throw "You are currently the admin of this class. Transfer ownership in order to leave this class."
         }
       }
 
