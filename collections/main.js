@@ -4,6 +4,7 @@ work = new Mongo.Collection("Work");
 
 schools.schema = new SimpleSchema({
 	name: {type: String},
+	status: {type: Boolean},
 	aliases: {type: [String]}
 });
 

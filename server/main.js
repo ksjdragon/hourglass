@@ -8,9 +8,13 @@ _uuid4 = function(cc) {
 
 Meteor.methods({
 	'genCode': function() {
-        return 'xxxxxx'.replace(/[x]/g, _uuid4);
+    return 'xxxxxx'.replace(/[x]/g, _uuid4);
 	},
-  //No Security
+  'createSchool': function(schoolname) {
+    if (Meteor.user() != null && schools.find({name:input.school}).fetch().length === 0) {
+      schools.insert({name: schoolname, status: false});
+    }
+  },
 	'createClass': function(input) {
 		classes.schema.validate(input);
     if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
