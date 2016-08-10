@@ -26,8 +26,8 @@ Meteor.methods({
     // if superadmin, no need for approval
 		classes.schema.validate(input);
     if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
-      schools.findOne({name:input.school}) != null && input.status === false) {
-      
+      schools.findOne({name:input.school}) != null) {
+      input.status = false;
       input.subscribers = 0;
       input.admin = Meteor.userId()
       if (input.privacy) {
