@@ -22,7 +22,7 @@ Template.profile.helpers({
 	classsettings: function() {
 	    return {
 	      position: "bottom",
-	      limit: 6,
+	      limit: 10,
 	      rules: [
 	        {
 	          token: '',
