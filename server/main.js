@@ -11,17 +11,23 @@ Meteor.methods({
     return 'xxxxxx'.replace(/[x]/g, _uuid4);
 	},
   'createSchool': function(schoolname) {
+    // if superadmin, no need for approval
     if (Meteor.user() != null && schools.findOne({name:input.school}) != null && 
       schools.findOne({status: false, creator: Meteor.userId()}) != null) {
 
       schools.insert({name: schoolname, status: false, creator: Meteor.userId()});
     }
   },
+  'deleteSchool': function(schoolid) {
+    // alanning:roles implementation here
+    schools.remove({_id: schoolid})
+  },
 	'createClass': function(input) {
+    // if superadmin, no need for approval
 		classes.schema.validate(input);
     if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
-      schools.findOne({name:input.school}) != null && input.status === false) {
-      
+      schools.findOne({name:input.school}) != null) {
+      input.status = false;
       input.subscribers = 0;
       input.admin = Meteor.userId()
       if (input.privacy) {
@@ -44,6 +50,13 @@ Meteor.methods({
       return 0;
     }
 	},
+  'deleteClass': function(classid) {
+    found = classes.findOne({_id: classid});
+    // Add roles
+    if (Meteor.user() != null && found != null && found.admin === Meteor.user()._id) {
+      classes.remove({_id: classid})
+    }
+  },
   'editProfile': function(change) {
     current = Meteor.user().profile;
     current.school = change[0];
@@ -61,7 +74,7 @@ Meteor.methods({
   },
   'joinClass': function(change, pass) {
     found = classes.findOne({_id: change, status: true});
-    if (Meteor.user() != null && found.length > 0 && pass === found[0].code && Meteor.user().profile.classes.indexOf(change) === -1) {
+    if (Meteor.user() != null && found != null && pass === found.code && Meteor.user().profile.classes.indexOf(change) === -1) {
       current = Meteor.user().profile;
       current.classes.append(change);
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
