@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating';
 
 Session.set("profInputOpen",null);
+Session.set("profClassTab",null);
 Session.set("modifying",null);
 Session.set("radioDiv",null);
 
@@ -48,7 +49,17 @@ Template.profile.helpers({
 		}
 	},
 	classes() {
-		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}).sort({ subscribers: -1 }).fetch();
+		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}, {sort: { subscribers: -1 }}).fetch();
+	},
+	profClassOpen(tab) {
+		Session.set("profClassTab",tab);
+	},
+	profClassTab(tab) {
+		if(tab === Session.get("profClassTab")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 })
 
@@ -57,7 +68,7 @@ Template.profile.events({
 		var opened = Session.get("profradioDiv");
 		if(opened !== null && opened !== event.target.getAttribute("op")) {
 			closeDivFade(document.getElementsByClassName("creInputSel")[opened].parentNode.childNodes[4]);
-		}
+		}d
 	},
 	'click .profInputSel' (event) {
 		Session.set("profradioDiv", event.target.getAttribute("op"));
