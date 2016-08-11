@@ -8,6 +8,7 @@ Session.set("notsearching",true);
 Session.set("confirm",null);
 Session.set("serverData",null);
 Session.set("autocompleteDivs", null);
+Session.set("confirmText",null);
 
 var themeColors = {
 	"light": {
@@ -25,19 +26,42 @@ var themeColors = {
 Template.profile.helpers({
 	classsettings: function() {
 	    return {
-	      position: "bottom",
-	      limit: 10,
-	      rules: [
-	        {
-	          token: '',
-	          collection: classes,
-	          field: "name",
-	          template: Template.classDisplay,
-	          filter: {status: true}
-	        }
-	      ]
+			position: "bottom",
+			limit: 10,
+			rules: [{
+				token: '',
+				collection: classes,
+				field: "name",
+				template: Template.classDisplay,
+				filter: {status: true}
+	      	}]
 	    };
-	  },
+	},
+	schoolcomplete() {
+		return {
+			position: "bottom",
+			limit: 6,
+			rules: [{
+				token: '',
+				collection: schools,
+				field: 'name',
+				matchAll: true,
+				template: Template.schoollist
+		    }]
+		};
+	},
+	teachercomplete() {
+		return {
+			position: "bottom",
+			limit: 1,
+			rules: [{
+				token: '',
+				collection: classes,
+				field: 'teacher',
+				template: Template.teacherlist
+		  }]
+		};
+	},
 	mainCenter() {
 		var width = window.innerWidth * 1600/1920 + 10;
 		return "width:"+width.toString()+"px;margin-left:"+-.5*width.toString()+"px"; 
@@ -123,6 +147,9 @@ Template.profile.helpers({
 	},
 	myclasses() {
 		return Meteor.user().profile.classes;
+	},
+	confirmText() {
+		return Session.get("confirmText");
 	}
 })
 
@@ -292,6 +319,7 @@ Template.profile.events({
 		}, 200);
 		Session.set("serverData",[event.target.getAttribute("classid"),""]);
 		Session.set("confirm","joinClass");
+		Session.set("confirmText","Join class?");
 	},
 	'click .fa-check-circle-o' () {
 		sendData(Session.get("confirm"));
@@ -305,6 +333,16 @@ Template.profile.events({
 		Session.set("serverData",null);
 		Session.set("confirm",null);
 	},
+	'click #save' () {
+		openDivFade(document.getElementsByClassName("overlay")[0]);
+		setTimeout(function() {
+			document.getElementsByClassName("overlay")[0].style.opacity = "1";
+		}, 200);
+		getProfileData();
+		Session.set("serverData",getProfileData());
+		Session.set("confirm","editProfile");
+		Session.set("confirmText", "Save new profile settings?");
+	}
 })
 
 function openDivFade(div) {
@@ -341,4 +379,10 @@ function closeInput(sessval) {
 
 function sendData(funcName) {
 	Meteor.call(funcName,Session.get("serverData"));
+}
+
+function getProfileData() {
+	var desc = document.getElementById("motd").childNodes[0].nodeValue;
+	var school = document.getElementById("school").childNodes[0].nodeValue;
+	var grade = document.getElementById("grade").childNodes[0].nodeValue;
 }

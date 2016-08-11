@@ -277,12 +277,6 @@ Template.main.events({
 	}
 });
 
-Template.schoollist.helpers({
-	name() {
-		return this.name;
-	}
-});
-
 function openDivFade(div) {
 	div.style.display = "block";
 	div.style.opacity = "0";
