@@ -29,6 +29,7 @@
 
 #profPage {
 	width: 100%;
+	overflow-x: hidden;
 	overflow-y: auto;
 }
 
@@ -111,15 +112,17 @@
 }
 
 .card {
+	margin-bottom: 5%;
 	padding: 4%;
 	padding-top: 2.5%;
-	padding-right: 6%;
+	padding-right: 4%;
 
 	box-shadow: 2px 2px 5px 3px #666;
 }
 
 #profInfo {
 	width: 30%;
+	float: left;
 	border-top: 5px solid #CC4444;
 }
 
@@ -128,9 +131,148 @@
 }
 
 #profClasses {
-	width: 44%;
-	margin-top: -21.8%;
+	width: 50%;
+	height: 30%;
 	float: right;
 	border-top: 5px solid #2E4F74;
+
+	-webkit-transition: width 0.4s ease;  
+	-moz-transition: width 0.4s ease; 
+	-ms-transition: width 0.4s ease;
+	transition: width 0.4s ease;
+}
+
+#profClassInfoHolder {
+
+
+	-webkit-transition: opacity 0.4s ease;  
+	-moz-transition: opacity 0.4s ease; 
+	-ms-transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease; 
+}
+
+#classes {
+	padding: 4% 0 4% 0;
+}
+
+#profFunctions {
+	display: inline;
+}
+
+.profFunction {
+	margin-right: 1%;
+	padding: 2%;
+
+	border: 2px solid rgba(0,0,0,0.2);
+
+	display: inherit;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.profFunction:hover {
+	background-color: rgba(0,0,0,0.1);
+
+}
+
+.profFunction i, .profFunction h4 {
+	padding: 1%;
+}
+
+#searchBar {
+	display: inline;
+}
+
+#profClassSearch {
+	font-size: 125%;
+	width: 30%;
+	margin-top: 3%;
+	padding: 1.5% 1% 1.5% 1%;
+
+	-webkit-animation: expand .7s ease 1;
+    animation: expand .7s ease 1;
+}
+
+@-webkit-keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 30%; }
+} 
+
+@keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 30%; }
+}
+
+#label {
+	width: 90%;
+	margin-top: 2.5%;
+	margin-bottom: 2%;
+	
+	background-color: rgba(0,0,0,0.2);
+	box-shadow: none;
+
+	display: table;
+	cursor: default;
+}
+
+.classHolder {
+	width: 90%;
+	padding: 1%;
+	padding-right: 100%;
+
+	display: inline-block;
+
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.classBox {
+	font-size: 150%;
+	width: 100%;
+	margin-bottom: 3%;
+	padding: 2%;
+
+	box-shadow: 2px 2px 5px 3px #666;
+	display: table;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.classBox:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+
+.classText {
+	margin-left: .5%;
+	margin-right: 10%;
+	display: table-cell;
+}
+
+.name {
+	width: 40%;
+}
+
+.teacher {
+	width: 25%;
+}
+
+.hour {
+	width: 15%;
+}
+
+.subscribers {
+	width: 13%;
+}
+
+.-autocomplete-container {
+	display: none;
 }
 

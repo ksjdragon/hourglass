@@ -1,9 +1,13 @@
 import { Template } from 'meteor/templating';
 
 Session.set("profInputOpen",null);
-Session.set("profClassTab",null);
+Session.set("profClassTab","manClass");
 Session.set("modifying",null);
 Session.set("radioDiv",null);
+Session.set("notsearching",true);
+Session.set("confirm",null);
+Session.set("serverData",null);
+Session.set("autocompleteDivs", null);
 
 var themeColors = {
 	"light": {
@@ -28,7 +32,7 @@ Template.profile.helpers({
 	          token: '',
 	          collection: classes,
 	          field: "name",
-	          template: Template.classdisplay,
+	          template: Template.classDisplay,
 	          filter: {status: true}
 	        }
 	      ]
@@ -44,12 +48,20 @@ Template.profile.helpers({
 	banner() {
 		var width = window.innerWidth * 1600/1920;
 		var height = width * 615/1600;
-		var banner = "defaultcover.jpg"; // Add personal user banner eventually
+		if(Meteor.user().profile.banner !== undefined) {
+			var banner = Meteor.user().profile.banner;
+		} else {
+			var banner = "defaultcover.jpg";
+		}
 		return "width:"+width.toString()+"px;height:"+height.toString()+"px;background-image:url(\'"+banner+"\');background-size:"+width.toString()+"px "+height.toString()+"px";
 	},
 	avatar() {
 		var dim = window.innerWidth * 1600/1920 * .16;
-		var pic = "defaultAvatars/"+(Math.floor(Math.random() * (10 - 1)) + 1).toString()+".png"; // User personalization
+		if(Meteor.user().profile.avatar !== undefined) {
+			var pic = Meteor.users().profile.avatar;
+		} else {
+			var pic = "defaultAvatars/"+(Math.floor(Math.random() * (10 - 1)) + 1).toString()+".png";
+		}
 		return "background-image:url("+pic+");background-size:"+dim.toString()+"px "+dim.toString()+"px";
 	},
 	avatarDim() {
@@ -60,24 +72,34 @@ Template.profile.helpers({
 		return Meteor.user().profile.name;
 	},
 	motd() {
-		return "Say something about yourself!" // User personalization
+		if(Meteor.user().profile.description !== undefined) {
+			return Meteor.user().profile.description;
+		} else {
+			return "Say something about yourself!";
+		}
 	},
 	school() {
-		if(Meteor.user().profile.school !== null) {
-			return "Click here to edit..."
-		} else {
+		if(Meteor.user().profile.school !== undefined) {
 			return Meteor.user().profile.school;
+		} else {
+			return "Click here to edit...";
 		}
 	},
 	grade() {
-		if(Meteor.user().profile.grade !== null) {
-			return "Click here to edit..."
-		} else {
+		if(Meteor.user().profile.grade !== undefined) {
 			return Meteor.user().profile.grade;
+		} else {
+			return "Click here to edit...";
 		}
 	},
 	classes() {
-		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}, {sort: { subscribers: -1 }}).fetch();
+		return classes.find( { status: { $eq: true }, privacy: { $eq: false }}, {sort: { subscribers: -1 }}, {limit: 20}).fetch();
+	},
+	profClassHeight() {
+		return .6*window.innerHeight.toString()+"px";
+	},
+	classHolderHeight() {
+		return .26*window.innerHeight.toString()+"px";
 	},
 	profClassTabColor(status) {
         if(status === Session.get("profClassTab")) {
@@ -92,6 +114,15 @@ Template.profile.helpers({
 		} else {
 			return false;
 		}
+	},
+	notsearching() {
+		return Session.get("notsearching");
+	},
+	autocompleteClasses() {
+		return Session.get("autocompleteDivs");
+	},
+	myclasses() {
+		return Meteor.user().profile.classes;
 	}
 })
 
@@ -141,9 +172,7 @@ Template.profile.events({
 		} else {
 			input.select();
 		}
-		input.focus();
-
-		
+		input.focus();		
 	},
 	'click' (event) {
 		var sessval = Session.get("modifying");
@@ -177,29 +206,78 @@ Template.profile.events({
 		Session.set("radioDiv",null)
 	},
 	'click .addClass' () {
-        //var functionHolder = document.getElementById("functionHolder")
-        //closeDivFade(functionHolder);
-        //setTimeout(function() {
+        var functionHolder = document.getElementById("profClassInfoHolder")
+        closeDivFade(functionHolder);
+        setTimeout(function() {
             Session.set("profClassTab","addClass");
-        //    openDivFade(functionHolder);
-        //},300);
+            openDivFade(functionHolder);
+        },300);
     },
     'click .manageClass' () {
-        //var functionHolder = document.getElementById("functionHolder")
-        //closeDivFade(functionHolder);
-        //setTimeout(function() {
+        var functionHolder = document.getElementById("profClassInfoHolder")
+        closeDivFade(functionHolder);
+        setTimeout(function() {
             Session.set("profClassTab","manClass");
-        //    openDivFade(functionHolder);
-        //},300);
+            openDivFade(functionHolder);
+        },300);
     },
     'click .createClass' () {
-        //var functionHolder = document.getElementById("functionHolder")
-        //closeDivFade(functionHolder);
-        //setTimeout(function() {
+        var functionHolder = document.getElementById("profClassInfoHolder")
+        closeDivFade(functionHolder);
+        setTimeout(function() {
             Session.set("profClassTab","creClass");
-        //    openDivFade(functionHolder);
-        //},300);
+            openDivFade(functionHolder);
+        },300);
     },
+	'click .fa-search' () {
+		Session.set("searching",true);
+	},
+	'click .fa-times-thin' () {
+		Session.set("searching",false);
+	},
+	'keyup #profClassSearch' (event) {
+		if(event.target.value === "") {
+			Session.set("notsearching",true);
+		} else {
+			Session.set("notsearching",false);
+		}
+		divs = [];
+		try {
+			var items = document.getElementsByClassName("-autocomplete-container")[0].childNodes[3].childNodes;
+			for(var i = 2; i < items.length; i+=3) {
+				var item = items[i].childNodes[3];
+				divs.push({
+						name: item.childNodes[1].childNodes[0].nodeValue,
+						teacher: item.childNodes[3].childNodes[0].nodeValue,
+						hour: item.childNodes[5].childNodes[0].nodeValue,
+						subscribers: item.childNodes[7].childNodes[0].nodeValue,
+						_id:item.getAttribute("classid")
+				});
+				Session.set("autocompleteDivs", divs);
+			}
+		} catch(err) {}
+	},
+	'click .classBox' (event) {
+		if(event.target.getAttribute("classid") === null) return;
+		openDivFade(document.getElementsByClassName("overlay")[0]);
+		setTimeout(function() {
+			document.getElementsByClassName("overlay")[0].style.opacity = "1";
+		}, 200);
+		Session.set("serverData",[event.target.getAttribute("classid"),""]);
+		Session.set("confirm","joinClass");
+	},
+	'click .fa-check-circle-o' () {
+		sendData(Session.get("confirm"));
+		closeDivFade(document.getElementsByClassName("overlay")[0]);
+		Session.set("serverData",null);
+		Session.set("confirm",null);
+	},
+	'click .fa-times-circle-o' () {
+		closeDivFade(document.getElementsByClassName("overlay")[0]);
+		closeDivFade(document.getElementById("functionHolder"));
+		Session.set("serverData",null);
+		Session.set("confirm",null);
+	},
 })
 
 function openDivFade(div) {
@@ -230,3 +308,6 @@ function closeInput(sessval) {
 	Session.set("modifying",null);
 }
 
+function sendData(funcName) {
+	Meteor.call(funcName,Session.get("serverData"));
+}

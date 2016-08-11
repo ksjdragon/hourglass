@@ -45,6 +45,15 @@ Template.registerHelper( 'divColor', (div) => {
 	return themeColors[Cookie.get("theme")][div];	
 })
 
+Template.registerHelper( 'overlayDim', (part) => {
+	var dim = [window.innerWidth * .2,window.innerHeight * .2];
+	var width = "width:"+dim[0].toString() + "px;";
+	var height = "height:"+dim[1].toString() + "px;";
+	var margin = "margin-left:"+(-dim[0]/2).toString() + "px;";
+	var bg = "background-color:"+themeColors[Cookie.get("theme")]["header"]+";";
+	return width+height+margin+bg;
+})
+
 Template.main.helpers({
 	schoolname() {
 		return " - " + Meteor.user().profile.school;
@@ -106,14 +115,6 @@ Template.main.helpers({
 	  		return openValues["options"];
 	  	}
 	},
-	overlayDim(part) {
-		var dim = [window.innerWidth * .2,window.innerHeight * .2];
-		var width = "width:"+dim[0].toString() + "px;";
-		var height = "height:"+dim[1].toString() + "px;";
-		var margin = "margin:"+(-dim[0]/2).toString() + "px 0 0 " + -(dim[1]/2).toString() + "px;";
-		var bg = "background-color:"+themeColors[Cookie.get("theme")]["header"]+";";
-		return width+height+margin+bg;
-	},
 	creHighlight(input) {
 		if(input == Session.get("creInput")) {
 			return "#CCEEFF";
@@ -152,17 +153,17 @@ Template.main.helpers({
 	},
 	calendarOptions() {
 		var cursor = work.find({});
-		var donelist = [];
+		var events = [];
 		cursor.forEach(function(current) {
 			backgroundColor = calendarColors[current.type];
 			title = current.name;
 			duedate = current.dueDate.toISOString().slice(0,10);
-			donelist.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
+			events.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
 		});
-
+		console.log(events);
 		return {
 			height: window.innerHeight *.8,
-			events: donelist
+			events: events
 		};
 	},
 	calCenter() {

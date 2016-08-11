@@ -29,7 +29,7 @@
 			            </div>
 			        </div>
 				</div>
-				<div id="profClasses" class="card" style="background-color:{{divColor 'cards'}}">
+				<div id="profClasses" class="card" style="background-color:{{divColor 'cards'}};height:{{profClassHeight}};">
 					<h3 class="profHea">Classes</h3>
 					<div id="classes">
 						<div id="profFunctions">
@@ -48,65 +48,91 @@
 					    </div>
 						<div id="profClassInfoHolder">
 						{{#if profClassTab "manClass"}}
-							
+							<div id="label" class="classBox">
+								<span class="name classText">Class Name</span>
+								<span class="teacher classText">Teacher</span>
+								<span class="hour classText">Hour</span>
+								<span class="subscriptions classText">Members</span>
+							</div>
+							<div class="classHolder" style="max-height:{{classHolderHeight}}">
+								{{#each myclasses}}
+									{{> classDisplay}}
+								{{/each}}
+							</div>
 						{{/if}}
+
 						{{#if profClassTab "addClass"}}
-							{{> inputAutocomplete settings=classsettings placeholder="Search..."}}
+							<i class="fa fa-search" aria-hidden="true"></i>
+							{{> inputAutocomplete id="profClassSearch" settings=classsettings placeholder="Search..."}}
+							<div id="label" class="classBox">
+								<span class="name classText">Class Name</span>
+								<span class="teacher classText">Teacher</span>
+								<span class="hour classText">Hour</span>
+								<span class="subscriptions classText">Members</span>
+							</div>
+							<div class="classHolder" style="max-height:{{classHolderHeight}}">
+							{{#if notsearching}}
+								{{#each classes}}
+									{{> classDisplay}}
+								{{/each}}
+							{{else}} 
+								{{#each autocompleteClasses}}
+									{{> classDisplay}}
+								{{/each}}
+							{{/if}}
+							</div>
 						{{/if}}
+
 						{{#if profClassTab "creClass"}}
-						{{/if}}
-						<!-- {{#if currFunction "addClass"}}
-					          <p>Add a Class</p>
-					        {{/if}}
-
-					        {{#if currFunction "manClass"}}
-					          <p>Manage Classes</p>
-					        {{/if}}
-
-					        {{#if currFunction "creClass"}}
-					          <h2>Create a Class</h2>
-					          <form id="create">
+							<!-- <form id="create">
 					            <p class="input">School:</p><br>
-					              {{> inputAutocomplete settings=schoolcomplete class="form-control creInput" type="text" name="school" placeholder="Example: International Academy" }}
+				              		{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
 					            <p class="input">Hour:</p><br>
-					              <input class="creInput" type="text" name="hour"><br>
+					              	<input class="creInput" type="text" name="hour"><br>
 					            <p class="input">Teacher:</p><br>
-					              {{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
+					              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
 					            <p class="input">Class Name:</p><br>
-					              <input class="creInput" type="text" name="classname"><br>
+					              	<input class="creInput" type="text" name="classname"><br>
 					            <p class="input">Privacy:</p><br>
 					            <div class="select">
-					              <input class="creInputSel creInput" type="text" name="privacy" op="0" readonly><br>
-					              <div class="creOptions" style="background-color:{{divColor 'header'}}">
-					                  <p>Public</p>
-					                  <p>Private</p>
-					              </div>
+					              	<input class="creInputSel creInput" type="text" name="privacy" op="0" readonly><br>
+					              	<div class="creOptions" style="background-color:{{divColor 'header'}}">
+					                  	<p>Public</p>
+					                  	<p>Private</p>
+					              	</div>
 					            </div>
 					            <p class="input">Category:</p><br>
 					            <div class="select">
-					              <input class="creInputSel creInput" type="text" name="category" op="1" readonly><br>
-					              <div class="creOptions" style="background-color:{{divColor 'header'}}">
-					                  <p>Class</p>
-					                  <p>Club</p>
-					                  <p>Other</p>
-					              </div>
-					            </div>
-					            <div class="creSubmit">Submit Request</div>
-					          </form> 
-					        {{/if}}
-							{{#each classes}}
-							{{/each}} -->
+					              	<input class="creInputSel creInput" type="text" name="category" op="1" readonly><br>
+					              	<div class="creOptions" style="background-color:{{divColor 'header'}}">
+					                  	<p>Class</p>
+					                  	<p>Club</p>
+					                  	<p>Other</p>
+					              	</div>
+					            	</div>
+					         	<div class="creSubmit">Submit Request</div>
+				          	</form> --> 
+						{{/if}}
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="overlay">
+	    <div class="overlayCont" style="{{overlayDim}};">
+	     	<p>Join class?</p>
+	     	<i class="fa fa-check-circle-o" aria-hidden="true"></i>
+      		<i class="fa fa-times-circle-o" aria-hidden="true"></i>
+	    </div>
+  	</div>
 </template>
 
-<template name="classdisplay">
-	{{name}}
-	{{teacher}}
-	{{hour}}
-	<button>join</button>
+<template name="classDisplay">
+	<div class="classBox" classid="{{_id}}">
+		<span class="name classText">{{name}}</span>
+		<span class="teacher classText">{{teacher}}</span>
+		<span class="hour classText">{{hour}}</span>
+		<span class="subscribers classText">{{subscribers}}</span>
+	</div>
 </template>
