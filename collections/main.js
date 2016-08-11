@@ -27,6 +27,7 @@ classes.schema = new SimpleSchema({
 });
 
 work.schema = new SimpleSchema({
+	name: {type: String},
 	class: {type: String},
 	dueDate: {type: Date},
 	aliases: {type: [String], optional: true},

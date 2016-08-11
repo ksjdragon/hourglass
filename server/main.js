@@ -66,12 +66,13 @@ Meteor.methods({
     found = Meteor.findOne({_id: input.class})
     if (Meteor.user() != null && found != null && found.subscribers.indexOf(Meteor.userId()) != -1
       && found.banned.indexOf(Meteor.userId()) === -1 && found.blockEdit.indexOf(Meteor.userId()) === -1
-      && input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1) {
+      && input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 && input.name.length <= 50) {
       input.submittor = Meteor.userId();
       input.confirmations = [Meteor.userId()];
       input.reports = [];
       input.done = [];
       input.numberdone = 0;
+      work.insert(input);
     }
 
   },
