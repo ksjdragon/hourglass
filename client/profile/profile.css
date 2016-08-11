@@ -15,6 +15,7 @@
 	font-size: 150%;
 	font-weight: 400;
 	margin: 0;
+	margin-bottom: 1%;
 }
 
 .profHea {
@@ -82,6 +83,8 @@
 
 	position: absolute;
 	display: none;
+	z-index: 5;
+
 	opacity: 0;
 
 	-webkit-transition: opacity 0.4s ease;  
@@ -94,6 +97,7 @@
 	font-size: 150%;
 	margin: 0;
 	padding: 20%;
+
 	text-align: center;
 	cursor: pointer;
 	
@@ -144,8 +148,6 @@
 }
 
 #profClassInfoHolder {
-
-
 	-webkit-transition: opacity 0.4s ease;  
 	-moz-transition: opacity 0.4s ease; 
 	-ms-transition: opacity 0.4s ease;
@@ -231,6 +233,17 @@
 	overflow-y: scroll;
 }
 
+.classHolder h3 {
+	font-style: italic;
+	font-weight: 200;
+	margin-left: 1%;
+
+	color: #999;
+
+	-webkit-filter :none;
+	filter: none;
+}
+
 .classBox {
 	font-size: 150%;
 	width: 100%;
@@ -273,8 +286,55 @@
 	width: 13%;
 }
 
+#creRules {
+	position: absolute;
+}
+
+#create {
+	margin-top: 2.5%;
+	padding: 5%;
+	padding-top: 1%;
+}
+
+#create div {
+	margin: 2%;
+	margin-left: 11%;
+	margin-bottom: 5%;
+	display: inline-block;
+}
+
+.creInput {
+	font-size: 120%;
+	padding: 3%;
+}
+
+.creOp {
+	margin: 0 !important;
+}
+
 .-autocomplete-container {
+	margin: 0.5% 0 0 0 !important;
 	display: none;
+}
+
+#creSubmit {
+	font-weight: 200;
+	font-size: 140%;
+	margin: 0 35% 0 35%;
+	padding: 2%;
+
+	background-color: rgba(0,0,0,0.25);
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#creSubmit:hover {
+	background-color: rgba(0,0,0,0.15);
 }
 
 #restrict {

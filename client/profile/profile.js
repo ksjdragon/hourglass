@@ -82,15 +82,15 @@ Template.profile.helpers({
 	avatar() {
 		var dim = window.innerWidth * 1600/1920 * .16;
 		if(Meteor.user().profile.avatar !== undefined) {
-			var pic = Meteor.users().profile.avatar;
+			var pic = "\'"+Meteor.user().profile.avatar+"\'";
 		} else {
-			var pic = "defaultAvatars/"+(Math.floor(Math.random() * (10 - 1)) + 1).toString()+".png";
+			var pic = "defaultAvatars/"+(Math.floor(Math.random() * (11 - 1)) + 1).toString()+".png";
 		}
 		return "background-image:url("+pic+");background-size:"+dim.toString()+"px "+dim.toString()+"px";
 	},
 	avatarDim() {
 		var dim = window.innerWidth * 1600/1920 * .16;
-		return "height:"+dim.toString()+"px;width:"+dim.toString()+"px;top:"+.43*window.innerHeight.toString()+"px";
+		return "height:"+dim.toString()+"px;width:"+dim.toString()+"px;top:"+.43*window.innerHeight.toString()+"px;";
 	},
 	username() {
 		return Meteor.user().profile.name;
@@ -146,7 +146,14 @@ Template.profile.helpers({
 		return Session.get("autocompleteDivs");
 	},
 	myclasses() {
-		return Meteor.user().profile.classes;
+		if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+			return [];
+		} else {
+			return Meteor.user().profile.classes;
+		}
+	},
+	notfound() {
+		return Session.get("notfound");
 	},
 	confirmText() {
 		return Session.get("confirmText");
@@ -154,26 +161,17 @@ Template.profile.helpers({
 })
 
 Template.profile.events({
-	'click #profile input' (event) {
-		var opened = Session.get("profradioDiv");
-		if(opened !== null && opened !== event.target.getAttribute("op")) {
-			closeDivFade(document.getElementsByClassName("creInputSel")[opened].parentNode.childNodes[4]);
-		}d
-	},
-	'click .profInputSel' (event) {
-		Session.set("profradioDiv", event.target.getAttribute("op"));
-		openDivFade(event.target.parentNode.childNodes[4]);
-	},
 	'click profOptions p' (event) {
 		var p = event.target;
 		p.parentNode.parentNode.childNodes[1].value = p.childNodes[0].nodeValue;
 		closeDivFade(p.parentNode);
 		Session.set("radioDiv",null);
+		Session.set("radioOffset",null);
 	},
 	'click .change' (event) {
 		var ele = event.target;
 		var sessval = Session.get("modifying");
-		if(ele.id !== sessval && sessval != null) closeInput(sessval);
+		if(ele.id !== sessval && sessval !== null) closeInput(sessval);
 
 		Session.set("modifying", ele.id);
 		var dim = ele.getBoundingClientRect();
@@ -191,9 +189,11 @@ Template.profile.events({
 		input.style.width = "70%";
 		input.style.padding = "0.1%";
 		input.id = ele.id+"a";
+		input.setAttribute("opc",ele.getAttribute("opc"));
 		ele.parentNode.appendChild(input);
 		if(ele.getAttribute("re") == "readonly") {
 			input.readOnly = true;
+			input.className += " op";
 			input.style.cursor = "pointer";
 		} else {
 			input.select();
@@ -219,10 +219,18 @@ Template.profile.events({
 		!event.target.parentNode.className.includes("profOptions")) {
 			closeInput(sessval);
 		}
-		if(!event.target.className.includes("radio") && 
+		if(!event.target.className.includes("radio") &&
 		!Session.equals("radioDiv",null) && 
-		!event.target.parentNode.className.includes("profOptions")) {
-			closeDivFade(document.getElementsByClassName("profOptions")[Session.get("radioDiv")]);
+		!event.target.parentNode.className.includes("profOptions") && 
+		event.target.readOnly !== true) {
+			var opnum = (parseInt(Session.get("radioDiv"))-parseInt(Session.get("radioOffset"))).toString();
+			for(var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
+				try {
+					closeDivFade(document.getElementsByClassName("profOptions")[i]);	
+				} catch(err) {}
+			}
+			Session.set("radioDiv",null);
+			Session.set("radioOffset",null);
 		}	
 	},
 	'keydown' (event) {
@@ -232,37 +240,54 @@ Template.profile.events({
 				closeInput(sessval);
 			} catch(err) {}
 		}
+		if(sessval !== null && event.keyCode !== 13) {
 		var restrict = document.getElementById(sessval).getAttribute("restrict");
-		if(restrict !== null) {
-			var num = parseInt(restrict)-event.target.value.length;
-			var restext = document.getElementById("restrict");
-			if(num === 1) {
-				restext.childNodes[0].nodeValue = num.toString()+" character left";
-				restext.style.setProperty("color","#999","important");
-			} else if(num <= 0) {
-				var input = document.getElementById(sessval+"a");
-				input.value = input.value.substring(0,parseInt(restrict));
-				restext.childNodes[0].nodeValue = "0 characters left";
-				restext.style.setProperty("color","#FF1A1A","important");
-			} else {
-				restext.childNodes[0].nodeValue = num.toString()+" characters left";
-				restext.style.setProperty("color","#999","important");
+			if(restrict !== null) {
+				var num = parseInt(restrict)-event.target.value.length;
+				var restext = document.getElementById("restrict");
+				if(num === 1) {
+					restext.childNodes[0].nodeValue = num.toString()+" character left";
+					restext.style.setProperty("color","#999","important");
+				} else if(num <= 0) {
+					var input = document.getElementById(sessval+"a");
+					input.value = input.value.substring(0,parseInt(restrict));
+					restext.childNodes[0].nodeValue = "0 characters left";
+					restext.style.setProperty("color","#FF1A1A","important");
+				} else {
+					restext.childNodes[0].nodeValue = num.toString()+" characters left";
+					restext.style.setProperty("color","#999","important");
+				}
 			}
 		}
 	},
 	'click .radio' (event) {
-		Session.set("radioDiv", event.target.getAttribute("op"));
-		openDivFade(event.target.parentNode.parentNode.childNodes[3]);
+		var op = event.target;
+		Session.set("radioDiv", op.getAttribute("op"));
+		Session.set("radioOffset", op.getAttribute("opc"));
+		try {
+			for(var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
+				var curr = document.getElementsByClassName("profOptions")[i];
+				if(Session.get("radioDiv") !== i.toString()) {
+					closeDivFade(document.getElementsByClassName("profOptions")[i]);
+				} 		
+			}
+		} catch(err) {}
+		openDivFade(document.getElementsByClassName("profOptions")[op.getAttribute("op")]);
 	},
 	'click .profOptions p' (event) {
 		var sessval = Session.get("modifying");
 		var p = event.target;
-		var input = p.parentNode.parentNode.childNodes[1].childNodes[5];		
+		var opnum = (parseInt(Session.get("radioDiv"))-parseInt(Session.get("radioOffset"))).toString();
+		var input = document.getElementsByClassName("op")[opnum];
 		input.value = p.childNodes[0].nodeValue;
-		closeInput(sessval);
+		try{
+			closeInput(sessval);
+		} catch(err) {}		
+		
 		closeDivFade(p.parentNode);
 		input.focus();
-		Session.set("radioDiv",null)
+		Session.set("radioDiv",null);
+		Session.set("radioOffset",null);
 	},
 	'click .addClass' () {
         var functionHolder = document.getElementById("profClassInfoHolder")
@@ -300,9 +325,15 @@ Template.profile.events({
 		} else {
 			Session.set("notsearching",false);
 		}
-		divs = [];
+		Session.set("autocompleteDivs",null);
+		var divs = [];
 		try {
 			var items = document.getElementsByClassName("-autocomplete-container")[0].childNodes[3].childNodes;
+			if(items.length === 0) {
+				Session.set("notfound",true);
+			} else {
+				Session.set("notfound",false);
+			}
 			for(var i = 2; i < items.length; i+=3) {
 				var item = items[i].childNodes[3];
 				divs.push({
@@ -317,14 +348,21 @@ Template.profile.events({
 		} catch(err) {}
 	},
 	'click .classBox' (event) {
-		if(event.target.getAttribute("classid") === null) return;
+		if(event.target.id === "label") return;
+		if(event.target.className !== "classBox") {
+			var attribute = event.target.parentNode.getAttribute("classid");
+		} else {
+			var attribute = event.target.getAttribute("classid");
+		}
+		var data = [attribute,""];
+		Session.set("serverData",data);
+		Session.set("confirm","joinClass");
+		Session.set("confirmText","Join class?");
+
 		openDivFade(document.getElementsByClassName("overlay")[0]);
 		setTimeout(function() {
 			document.getElementsByClassName("overlay")[0].style.opacity = "1";
 		}, 200);
-		Session.set("serverData",[event.target.getAttribute("classid"),""]);
-		Session.set("confirm","joinClass");
-		Session.set("confirmText","Join class?");
 	},
 	'click .fa-check-circle-o' () {
 		sendData(Session.get("confirm"));
@@ -334,19 +372,33 @@ Template.profile.events({
 	},
 	'click .fa-times-circle-o' () {
 		closeDivFade(document.getElementsByClassName("overlay")[0]);
-		closeDivFade(document.getElementById("functionHolder"));
 		Session.set("serverData",null);
 		Session.set("confirm",null);
 	},
 	'click #save' () {
+		Session.set("serverData",getProfileData());
+		Session.set("confirm","editProfile");
+		Session.set("confirmText", "Save new profile settings?");
+
 		openDivFade(document.getElementsByClassName("overlay")[0]);
 		setTimeout(function() {
 			document.getElementsByClassName("overlay")[0].style.opacity = "1";
 		}, 200);
-		getProfileData();
-		Session.set("serverData",getProfileData());
-		Session.set("confirm","editProfile");
-		Session.set("confirmText", "Save new profile settings?");
+	},
+	'click #creSubmit' () {
+		var data = getCreateFormData();
+		if(data == null) return;
+		Session.set("serverData",data);
+		Session.set("confirm","createClass");
+		Session.set("confirmText", "Submit request?");
+
+		openDivFade(document.getElementsByClassName("overlay")[0]);
+		setTimeout(function() {
+			document.getElementsByClassName("overlay")[0].style.opacity = "1";
+		}, 200);
+	},
+	'focus .op' (event) {
+		event.target.click();
 	}
 })
 
@@ -387,7 +439,55 @@ function sendData(funcName) {
 }
 
 function getProfileData() {
-	var desc = document.getElementById("motd").childNodes[0].nodeValue;
+	var description = document.getElementById("motd").childNodes[0].nodeValue;
 	var school = document.getElementById("school").childNodes[0].nodeValue;
-	var grade = document.getElementById("grade").childNodes[0].nodeValue;
+	var gradein = document.getElementById("grade").childNodes[0].nodeValue;
+	var grade = parseInt(gradein.substring(gradein.length-2,gradein));
+	var avatar = document.getElementById("profAvatar").style.backgroundImage.replace(")","").replace("url(","").replace("\"","").replace("\"","");
+	var banner = document.getElementById("profBanner").style.backgroundImage.replace(")","").replace("url(","").replace("\"","").replace("\"","");
+
+	return {
+		school: school,
+		grade: grade,
+		description: description,
+		avatar: avatar,
+		banner: banner
+	};
+}
+
+function getCreateFormData() {
+	var stop;
+	var form = document.getElementsByClassName("creInput");
+	for(var i = 0; i < form.length; i++) {
+		if(form[i].value === "") {
+			form[i].focus();
+			form[i].placeholder = "Missing field";
+			form[i].className += " formInvalid";
+			stop = true;
+		} else {
+			form[i].className = form[i].className.replace(" formInvalid","");
+		}
+	}
+	if(stop) return null;
+
+	var school = form[0].value;
+	var hour = form[1].value;
+	var teacher = form[2].value;
+	var name = form[3].value;
+	if(form[4].value == "public") {
+		var privacy = false;
+	} else {
+		var privacy = true;
+	}
+	var category = form[5].value;
+	return {
+		school: school,
+		hour: hour,
+		teacher: teacher,
+		name: name,
+		privacy: privacy,
+		category: category,
+		status: false,
+		code: ""
+	};
 }

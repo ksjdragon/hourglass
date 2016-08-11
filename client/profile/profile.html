@@ -19,7 +19,7 @@
 						<div>
 							<div>
 							<p class="profTitle">Grade:</p>
-							<span class="change radio"  op="0" re="readonly" id="grade">{{grade}}</span>
+							<span class="change radio" opc="0" op="0" re="readonly" id="grade">{{grade}}</span>
 							</div>
 				            <div class="profOptions" style="background-color:{{divColor 'header'}}">
 			                  	<p>9th</p>
@@ -80,39 +80,51 @@
 								{{#each autocompleteClasses}}
 									{{> classDisplay}}
 								{{/each}}
+								{{#if notfound}}
+										<h3>No results found...</h3>
+								{{/if}}
 							{{/if}}
 							</div>
 						{{/if}}
 
 						{{#if profClassTab "creClass"}}
-							<!-- <form id="create">
-					            <p class="input">School:</p><br>
-				              		{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
-					            <p class="input">Hour:</p><br>
-					              	<input class="creInput" type="text" name="hour"><br>
-					            <p class="input">Teacher:</p><br>
+							<div id="creRules"><p>Insert description and rules of create a class --Will style later--</p></div>
+							<form id="create">
+								<div>
+					            	<p class="profTitle">School:</p>
+			              			{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
+				              	</div>
+				              	<div>
+					            	<p class="profTitle">Hour:</p>
+					              	<input class="creInput" type="text" name="hour">
+					            </div>
+					            <div>
+					            	<p class="profTitle">Teacher:</p>
 					              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
-					            <p class="input">Class Name:</p><br>
-					              	<input class="creInput" type="text" name="classname"><br>
-					            <p class="input">Privacy:</p><br>
-					            <div class="select">
-					              	<input class="creInputSel creInput" type="text" name="privacy" op="0" readonly><br>
-					              	<div class="creOptions" style="background-color:{{divColor 'header'}}">
+					            </div>
+					            <div>
+					            	<p class="profTitle">Class Name:</p>
+					              	<input class="creInput" type="text" name="classname">
+					            </div>
+					            <div>
+						            <p class="profTitle">Privacy:</p>
+					              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
+					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
 					                  	<p>Public</p>
 					                  	<p>Private</p>
 					              	</div>
-					            </div>
-					            <p class="input">Category:</p><br>
-					            <div class="select">
-					              	<input class="creInputSel creInput" type="text" name="category" op="1" readonly><br>
-					              	<div class="creOptions" style="background-color:{{divColor 'header'}}">
+				              	</div>
+				              	<div>
+						            <p class="profTitle">Category:</p>
+					              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
+					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
 					                  	<p>Class</p>
 					                  	<p>Club</p>
 					                  	<p>Other</p>
 					              	</div>
-					            	</div>
-					         	<div class="creSubmit">Submit Request</div>
-				          	</form> --> 
+						        </div>
+						        <h3 id="creSubmit" style="margin-left:{{submitMargin}}">Submit Request</h3>
+				          	</form> 
 						{{/if}}
 						</div>
 					</div>

@@ -1,29 +1,29 @@
- Router.route('/', function() {
-  if (Meteor.user() != null) {
-    this.render("main");
-  } else {
-    this.redirect('/login');
-  }
+Router.route('/', function() {
+    if (!Meteor.userId()) {
+        this.redirect('/login');
+    } else {
+        this.render("main");
+    }
 });
 
 Router.route('/login', function() {
-  if (Meteor.user() == null) {
-    this.render("login");
-  } else if (Object.keys(Meteor.user().profile).length <= 1) {
-    this.redirect('/profile')
-  } else {
-    this.redirect('/')
-  }
+    if (!Meteor.userId()) {
+        this.render("login");
+    } else if (Object.keys(Meteor.user().profile).length <= 1) {
+        this.redirect('/profile');
+    } else {
+        this.redirect('/')
+    }
 });
 
 Router.route('/profile', function() {
-  if (Meteor.user() != null) {
-    this.render("profile");
-  } else {
-    this.redirect("/login");
-  }
+    if (!Meteor.userId()) {
+        this.redirect("/login");
+    } else {
+        this.render("profile");
+    }
 });
 
 Router.configure({
-  notFoundTemplate: "NotFound"
+    notFoundTemplate: "NotFound"
 });
