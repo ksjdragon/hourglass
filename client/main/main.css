@@ -21,7 +21,7 @@ Tag { Always spaces between values
 	Animation related items
 }*/
 
-@import url(https://fonts.googleapis.com/css?family=Raleway:200,400,600);
+@import url(https://fonts.googleapis.com/css?family=Raleway:200,300italic,400,600);
 
 html {
 	font-family: 'Raleway';
@@ -373,7 +373,7 @@ select {
 }
 
 .fa-times-circle-o:active {
-	color: #ff1A1A;
+	color: #FF1A1A;
 
 	-webkit-transition: background-color 0.2s ease;  
 	-moz-transition: background-color 0.2s ease; 

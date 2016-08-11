@@ -88,7 +88,7 @@ Meteor.methods({
     current.avatar = change[3];
     current.banner = change[4];
     if (schools.findOne({name:current.school}) != null && Number.isInteger(current.grade) &&
-    current.grade >= 9 && current.grade <= 12 && current.description.length <= 100) {
+    current.grade >= 9 && current.grade <= 12 && current.description.length <= 50) {
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
     } else {

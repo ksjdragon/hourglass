@@ -155,7 +155,6 @@ Template.profile.events({
 		
 		if(ele.getAttribute("type") !== null) {
 			input.type = ele.getAttribute("type");
-			
 		} else {
 			input.type = "text";
 		}
@@ -172,7 +171,18 @@ Template.profile.events({
 		} else {
 			input.select();
 		}
-		input.focus();		
+		input.focus();
+		if(ele.getAttribute("restrict") !== null) {
+			var span = document.createElement("span");
+			span.id = "restrict";
+			var num = parseInt(ele.getAttribute("restrict"))-input.value.length;
+			if(num <= 0) {
+				span.style.setProperty("color","#FF1A1A","important");
+				num = 0;
+			}
+			span.appendChild(document.createTextNode(num.toString()+" characters left"));
+			ele.parentNode.appendChild(span);
+		}	
 	},
 	'click' (event) {
 		var sessval = Session.get("modifying");
@@ -183,12 +193,29 @@ Template.profile.events({
 			closeDivFade(document.getElementsByClassName("profOptions")[Session.get("radioDiv")]);
 		}	
 	},
-	'keyup' (event) {
+	'keydown' (event) {
 		var sessval = Session.get("modifying");
 		if(event.keyCode == 13) {
 			try {
 				closeInput(sessval);
 			} catch(err) {}
+		}
+		var restrict = document.getElementById(sessval).getAttribute("restrict");
+		if(restrict !== null) {
+			var num = parseInt(restrict)-event.target.value.length;
+			var restext = document.getElementById("restrict");
+			if(num === 1) {
+				restext.childNodes[0].nodeValue = num.toString()+" character left";
+				restext.style.setProperty("color","#999","important");
+			} else if(num <= 0) {
+				var input = document.getElementById(sessval+"a");
+				input.value = input.value.substring(0,parseInt(restrict));
+				restext.childNodes[0].nodeValue = "0 characters left";
+				restext.style.setProperty("color","#FF1A1A","important");
+			} else {
+				restext.childNodes[0].nodeValue = num.toString()+" characters left";
+				restext.style.setProperty("color","#999","important");
+			}
 		}
 	},
 	'click .radio' (event) {
@@ -235,7 +262,7 @@ Template.profile.events({
 	'click .fa-times-thin' () {
 		Session.set("searching",false);
 	},
-	'keyup #profClassSearch' (event) {
+	'keydown #profClassSearch' (event) {
 		if(event.target.value === "") {
 			Session.set("notsearching",true);
 		} else {
@@ -299,6 +326,10 @@ function closeInput(sessval) {
 	var input = document.getElementById(sessval+"a");
 	var span = document.getElementById(sessval);
 	input.parentNode.removeChild(input);
+	try{
+		var restrict = document.getElementById("restrict");
+		restrict.parentNode.removeChild(restrict)
+	} catch(err) {}
 	if(input.value == "") {
 		span.childNodes[0].nodeValue = "Click here to edit...";
 	} else {

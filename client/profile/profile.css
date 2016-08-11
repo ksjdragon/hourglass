@@ -69,7 +69,7 @@
 #motdBox span {
 	font-size: 130% !important;
 	margin: 0;
-	color: #FFF !important;
+	color: #FFF;
 }
 
 .username {
@@ -274,5 +274,13 @@
 
 .-autocomplete-container {
 	display: none;
+}
+
+#restrict {
+	font-size: 100%;
+	font-style: italic;
+	font-weight: 300;
+	padding-left: 1%;
+	color: #999 !important;
 }
 
