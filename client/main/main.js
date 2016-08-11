@@ -33,13 +33,8 @@ var options = {
 
 var searchSchools = [];
 
-Session.set("menuOpen", false);
-Session.set("optionsOpen", false);
+Session.set("sidebar",null);
 Session.set("mode",null); // Change to user preferences
-Session.set("function", null);
-Session.set("confirm",null);
-Session.set("formCre",null);
-Session.set("inputOpen",null);
 
 Template.registerHelper( 'divColor', (div) => {
 	return themeColors[Cookie.get("theme")][div];	
@@ -55,12 +50,13 @@ Template.registerHelper( 'overlayDim', (part) => {
 })
 
 Template.main.helpers({
-	schoolname() {
+	schoolName() {
 		return " - " + Meteor.user().profile.school;
 	},
 	iconColor(icon) {
-		let status = Session.get(icon+"Open");
-		if(status) {
+		if(Session.get("sidebar") === icon+"Container") {
+			return themeColors[Cookie.get("theme")].statusIcons;
+		} else if(Session.get("sidebar") === "both") {
 			return themeColors[Cookie.get("theme")].statusIcons;
 		} else {
 			return;
@@ -72,22 +68,25 @@ Template.main.helpers({
 		return pic;
 	},
 	menuStatus() {
-  		let status = Session.get("menuOpen");
-	  	if(status) {
+	  	if(Session.get("sidebar") === "menuContainer") {
+	  		return "0%";
+	  	} else if(Session.get("sidebar") === "both") {
 	  		return "0%";
 	  	} else {
 	  		return openValues["menu"];
 	  	}
 	},
+	optionsStatus() {
+	  	if(Session.get("sidebar") === "optionsContainer") {
+	  		return "0%";
+	  	} else if(Session.get("sidebar") === "both") {
+	  		return "0%";
+	  	} else {
+	  		return openValues["options"];
+	  	}
+	},
 	modeStatus(status) {
 		if(status === Session.get("mode")) {
-			return themeColors[Cookie.get("theme")].highlightText;
-		} else {
-			return;
-		}
-	},
-	functionStatus(status) {
-		if(status === Session.get("function")) {
 			return themeColors[Cookie.get("theme")].highlightText;
 		} else {
 			return;
@@ -100,57 +99,6 @@ Template.main.helpers({
 			return false;
 		}
 	},
-	currFunction(name) {
-		if(name === Session.get("function")) {
-			return true;
-		} else {
-			return false;
-		}
-	},
-	optionsStatus() {
-	  	let status = Session.get("optionsOpen");
-	  	if(status) {
-	  		return "0%";
-	  	} else {
-	  		return openValues["options"];
-	  	}
-	},
-	creHighlight(input) {
-		if(input == Session.get("creInput")) {
-			return "#CCEEFF";
-		} else {
-			return;
-		}
-	},
-	schoolcomplete() {
-		return {
-		  position: "bottom",
-		  limit: 6,
-		  rules: [
-		    {
-		      token: '',
-		      collection: schools,
-		      field: 'name',
-		      matchAll: true,
-		      template: Template.schoollist
-		    }
-		  ]
-		};
-	},
-	teachercomplete() {
-		return {
-		  position: "bottom",
-		  limit: 1,
-		  rules: [
-		    {
-		      token: '',
-		      collection: classes,
-		      field: 'teacher',
-		      template: Template.teacherlist
-		    }
-		  ]
-		};
-	},
 	calendarOptions() {
 		var cursor = work.find({});
 		var events = [];
@@ -160,35 +108,64 @@ Template.main.helpers({
 			duedate = current.dueDate.toISOString().slice(0,10);
 			events.push({start: duedate, title: title, backgroundColor: backgroundColor});			    
 		});
-		console.log(events);
 		return {
 			height: window.innerHeight *.8,
-			events: events
+			events: events,
+			buttonText: {
+			    today:    'Today',
+			    month:    'Month',
+			    week:     'Week',
+			    day:      'Day'
+			}
 		};
 	},
 	calCenter() {
 		var width = window.innerWidth * .85;
 		return "width:"+width.toString()+"px;margin-left:"+(.5*window.innerWidth-.5*width).toString()+"px"; 
+	},
+	calbg() {
+		var width = window.innerWidth * .865;
+		var height = window.innerHeight * .76;
+		return "width:"+width.toString()+"px;height:"+height.toString()+"px;margin-left:"+(.5*window.innerWidth-.5*width).toString()+"px;margin-top:"+(.47*window.innerHeight-.5*height).toString()+"px"; 
 	}
 });
 
 Template.main.events({
 	'click .fa-bars' () {
-		Session.set("menuOpen",!Session.get("menuOpen"));
+		var side = Session.get("sidebar");
+		if(side === "menuContainer") {
+			Session.set("sidebar",null)
+		} else if(side === "optionsContainer") {
+			Session.set("sidebar","both");
+		} else if(side === "both") {
+			Session.set("sidebar","optionsContainer");
+		} else {
+			Session.set("sidebar","menuContainer");
+		}
 	},
 	'click .fa-cog' () {
-		Session.set("optionsOpen",!Session.get("optionsOpen"));
+		var side = Session.get("sidebar");
+		if(side === "optionsContainer") {
+			Session.set("sidebar",null)
+		} else if(side === "menuContainer") {
+			Session.set("sidebar","both");
+		} else if(side === "both") {
+			Session.set("sidebar","menuContainer");
+		} else {
+			Session.set("sidebar","optionsContainer");
+		}
 	},
 	'click .classes' () {
+		if(Session.get("mode") === "classes") return;
 		var modeHolder = document.getElementById("mainBody");
 		closeDivFade(modeHolder);
 		setTimeout(function() {
 			Session.set("mode","classes");
 			openDivFade(modeHolder);
-		}, 300);
-		
+		}, 300);	
 	},
 	'click .calendar' () {
+		if(Session.get("mode") === "calendar") return;
 		var modeHolder = document.getElementById("mainBody");
 		closeDivFade(modeHolder);
 		setTimeout(function() {
@@ -196,83 +173,14 @@ Template.main.events({
 			openDivFade(modeHolder);
 		}, 300);
 	},
-	'click .addClass' () {
-		var functionHolder = document.getElementById("functionHolder")
-		closeDivFade(functionHolder);
-		setTimeout(function() {
-			Session.set("function","addClass");
-			openDivFade(functionHolder);
-		},300);
-	},
-	'click .manageClass' () {
-		var functionHolder = document.getElementById("functionHolder")
-		closeDivFade(functionHolder);
-		setTimeout(function() {
-			Session.set("function","manClass");
-			openDivFade(functionHolder);
-		},300);
-	},
-	'click .createClass' () {
-		var functionHolder = document.getElementById("functionHolder")
-		closeDivFade(functionHolder);
-		setTimeout(function() {
-			Session.set("function","creClass");
-			openDivFade(functionHolder);
-		},300);
-	},
-	'click .creSubmit' () {
-		openDivFade(document.getElementsByClassName("overlay")[0]);
-		setTimeout(function() {
-			document.getElementsByClassName("overlay")[0].style.opacity = "1";
-		}, 200);
-		Session.set("confirm","createClass");
-	},
-	'click .fa-check-circle-o' () {
-		sendData();
-		closeDivFade(document.getElementsByClassName("overlay")[0]);
-		closeDivFade(document.getElementById("functionHolder"));
-		document.getElementById("create").reset();
-		setTimeout(function() {
-			Session.set("confirm",null);
-			Session.set("function",null);
-		}, 300);
-	},
-	'click .fa-times-circle-o' () {
-		closeDivFade(document.getElementsByClassName("overlay")[0]);
-		closeDivFade(document.getElementById("functionHolder"));
-		document.getElementById("create").reset();
-		setTimeout(function() {
-			Session.set("confirm",null);
-			Session.set("function",null);
-		}, 300);
-	},
-	'click .creInput' (event) {
-		var opened = Session.get("inputOpen");
-		if(opened !== null && opened !== event.target.getAttribute("op")) {
-			closeDivFade(document.getElementsByClassName("creInputSel")[opened].parentNode.childNodes[4]);
-		}
-	},
-	'click .creInputSel' (event) {
-		Session.set("inputOpen", event.target.getAttribute("op"));
-		openDivFade(event.target.parentNode.childNodes[4]);
-	},
-	'focus .creInputSel' (event) {
-		Session.set("inputOpen", event.target.getAttribute("op"));
-		openDivFade(event.target.parentNode.childNodes[4]);
-	},
-	'click .creOptions p' (event) {
-		var p = event.target;
-		p.parentNode.parentNode.childNodes[1].value = p.childNodes[0].nodeValue;
-		closeDivFade(p.parentNode);
-		p.parentNode.parentNode.childNodes[1].focus();
-		Session.set("inputOpen",null)
-	},
 	'click' (event) {
 		var e = event.target.className;
-		if(!(e.includes("creInput") || e.includes("select"))) {
-			try {
-				closeDivFade(document.getElementsByClassName("creInputSel")[Session.get("inputOpen")].parentNode.childNodes[4]);
-			} catch(err) {}
+		if(e !== Session.get("sidebar") && 
+		!e.includes("fa-cog") && 
+		!e.includes("fa-bars") && 
+		!document.getElementById("menuContainer").contains(event.target) && 
+		!document.getElementById("optionsContainer").contains(event.target)) {
+			Session.set("sidebar", null);
 		}
 	}
 });

@@ -204,7 +204,7 @@ input {
 	z-index: 1;
 }
 
-#functionHolder {
+#classListHolder {
 	max-height: 48%;
 	width: 90%;
 	margin-bottom: 30%;
@@ -220,90 +220,6 @@ input {
 	-moz-transition: opacity 0.4s ease; 
 	-ms-transition: opacity 0.4s ease;
 	transition: opacity 0.4s ease;
-}
-
-#create {
-	font-size: 140%;
-	width: 100%;
-}
-
-.input {
-	margin: 0;
-	margin-top: 3%;
-	margin-bottom: -9%;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #666);
-	filter: drop-shadow(2px 2px 5px #666);
-}
-
-.creSubmit {
-	width: 100%;
-	margin-top: 30%;
-	padding: 3% 0 3% 0;
-	text-align: center;
-	background-color: #849CAE;
-
-	-webkit-transition: background-color 0.5s ease;  
-	-moz-transition: background-color 0.5s ease; 
-	-ms-transition: background-color 0.5s ease;
-	transition: background-color 0.5s ease;
-
-	cursor: pointer;
-}
-
-.creSubmit:hover {
-	background-color: #A2B5C3;
-}
-
-.creSubmit:active {
-	background-color: #EFF3F5;
-
-	-webkit-transition: background-color 0.2s ease;  
-	-moz-transition: background-color 0.2s ease; 
-	-ms-transition: background-color 0.2s ease;
-	transition: background-color 0.2s ease; 
-}
-
-.creInput, select {
-	font-family: 'Raleway';
-	width: 90%;
-	margin-bottom: 4%;
-	padding: 3.5%;
-
-	position: relative;
-	z-index: 0;
-}
-
-select {
-	font-family: 'Raleway';
-	width: 100%;
-}
-
-.creOptions {
-	width: 80%;
-	margin-top: -3.4%;
-
-	box-shadow: 2px 2px 5px 3px #666;
-
-	display: none;
-	position: absolute;
-	z-index: 5;
-	opacity: 0;
-
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease; 
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease; 
-}
-
-.creOptions p {
-	margin: 0;
-	padding: 5%;
-	display: block;
-}
-
-.creOptions p:hover {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1)
 }
 
 .overlay {
@@ -409,6 +325,18 @@ select {
 	height: 100%; 
 }
 
+#calbg {
+	background-color: rgba(255,255,255,0.3);
+	position: absolute;
+}
+
+.fc-view-container, .fc-left {
+	-webkit-transition: opacity 0.4s ease;  
+	-moz-transition: opacity 0.4s ease; 
+	-ms-transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease;
+}
+
 .fc-view-container {
 	background-color: rgba(255,255,255,0.8);
 }
@@ -417,13 +345,16 @@ select {
 	padding: 0.5% 1% 0.5% 1%;
 	background-color: rgba(255,255,255,0.8);
 
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .fc-left h2 {
 	font-weight: 400;
+
+	-webkit-filter: none;
+	filter: none;
 }
 
 .fc-head {
@@ -446,5 +377,4 @@ select {
 
 .fc-button:hover {
 	background-color: rgba(255,255,255,0.9) !important;
-
 }

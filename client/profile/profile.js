@@ -213,10 +213,15 @@ Template.profile.events({
 	},
 	'click' (event) {
 		var sessval = Session.get("modifying");
-		if(event.target.id !== sessval && event.target.id !== sessval+"a" && !Session.equals("modifying",null) && !event.target.parentNode.className.includes("profOptions")) {
+		if(event.target.id !== sessval && 
+		event.target.id !== sessval+"a" && 
+		!Session.equals("modifying",null) && 
+		!event.target.parentNode.className.includes("profOptions")) {
 			closeInput(sessval);
 		}
-		if(!event.target.className.includes("radio") && !Session.equals("radioDiv",null) && !event.target.parentNode.className.includes("profOptions")) {
+		if(!event.target.className.includes("radio") && 
+		!Session.equals("radioDiv",null) && 
+		!event.target.parentNode.className.includes("profOptions")) {
 			closeDivFade(document.getElementsByClassName("profOptions")[Session.get("radioDiv")]);
 		}	
 	},

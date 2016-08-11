@@ -13,8 +13,9 @@ Meteor.methods({
 	},
   'createSchool': function(schoolname) {
     // if superadmin, no need for approval
-    if (Meteor.user() != null && schools.findOne({name:input.school}) != null && 
-      schools.findOne({status: false, creator: Meteor.userId()}) != null) {
+    if (Meteor.user() != null && 
+    schools.findOne({name:input.school}) != null && 
+    schools.findOne({status: false, creator: Meteor.userId()}) != null) {
 
       schools.insert({name: schoolname, status: false, creator: Meteor.userId()});
     }
@@ -26,8 +27,10 @@ Meteor.methods({
 	'createClass': function(input) {
     // if superadmin, no need for approval
 		classes.schema.validate(input);
-    if(Meteor.user() != null && classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
-      schools.findOne({name:input.school}) != null) {
+    if(Meteor.user() != null && 
+    classes.find({status:false, admin:Meteor.userId()}).fetch().length < 5 &&
+    schools.findOne({name:input.school}) != null) {
+
       input.status = false;
       input.subscribers = 0;
       input.admin = Meteor.userId()
@@ -64,9 +67,15 @@ Meteor.methods({
     ref = new Date(ref.getFullYear()+ "-" + month.toString() + "-" + ref.getDate()).getTime()
     work.schema.validate(input);
     found = Meteor.findOne({_id: input.class})
-    if (Meteor.user() != null && found != null && found.subscribers.indexOf(Meteor.userId()) != -1
-      && found.banned.indexOf(Meteor.userId()) === -1 && found.blockEdit.indexOf(Meteor.userId()) === -1
-      && input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 && input.name.length <= 50) {
+
+    if (Meteor.user() != null &&
+    found != null && 
+    found.subscribers.indexOf(Meteor.userId()) != -1 && 
+    found.banned.indexOf(Meteor.userId()) === -1 && 
+    found.blockEdit.indexOf(Meteor.userId()) === -1 && 
+    input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 && 
+    input.name.length <= 50) {
+
       input.submittor = Meteor.userId();
       input.confirmations = [Meteor.userId()];
       input.reports = [];
@@ -87,8 +96,13 @@ Meteor.methods({
     current.description = change[2];
     current.avatar = change[3];
     current.banner = change[4];
-    if (schools.findOne({name:current.school}) != null && Number.isInteger(current.grade) &&
-    current.grade >= 9 && current.grade <= 12 && current.description.length <= 50) {
+
+    if (schools.findOne({name:current.school}) != null && 
+    Number.isInteger(current.grade) &&
+    current.grade >= 9 && 
+    current.grade <= 12 && 
+    current.description.length <= 50) {
+
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
     } else {
@@ -97,8 +111,13 @@ Meteor.methods({
   },
   'joinClass': function(change, pass) {
     found = classes.findOne({_id: change, status: true});
-    if (Meteor.user() != null && found != null && pass === found.code 
-      && found.banned.indexOf(Meteor.userId()) === -1 && Meteor.user().profile.classes.indexOf(change) === -1) {
+
+    if (Meteor.user() != null && 
+    found != null && 
+    pass === found.code && 
+    found.banned.indexOf(Meteor.userId()) === -1 && 
+    Meteor.user().profile.classes.indexOf(change) === -1) {
+      
       current = Meteor.user().profile;
       current.classes.append(change);
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});

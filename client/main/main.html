@@ -1,113 +1,64 @@
 <head>
-  <title>Hourglass</title>
-  <link rel="icon" href="favicon.ico?v=2">
+    <title>Hourglass</title>
+    <link rel="icon" href="favicon.ico?v=2">
 </head>
 
-<body>
-
-</body>
-
 <template name="main">
-  <header style="background-color:{{divColor 'header'}}">
-    <div id="aboveBar">
-      <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
-      <h1>Hourglass</h1> <h2>{{schoolname}}</h2>
-      <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
-    </div>
-    <div id="loadBar">
-      <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
-    </div>
-  </header>
-  <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
-    <div class="mode classes">
-      <i class="fa fa-university" aria-hidden="true"></i>
-      <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
-    </div>
-    <div class="mode calendar">
-      <i class="fa fa-calendar" aria-hidden="true"></i>
-      <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
-    </div>
-    <div id="functions">
-      <div class="function addClass">
-        <i class="fa fa-plus" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'addClass'}}">Join Class</h4>
-      </div>
-      <div class="function createClass">
-        <i class="fa fa-graduation-cap" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'creClass'}}">Create Class</h4>
-      </div>
-      <div class="function manageClass">
-        <i class="fa fa-tasks" aria-hidden="true"></i>
-        <h4 style="color:{{functionStatus 'manClass'}}">Manage Classes</h4>
-      </div>
-    </div>
-    <div id="functionHolder">
-        {{#if currFunction "addClass"}}
-          <p>Add a Class</p>
-        {{/if}}
-
-        {{#if currFunction "manClass"}}
-          <p>Manage Classes</p>
-        {{/if}}
-
-        {{#if currFunction "creClass"}}
-          <h2>Create a Class</h2>
-          <form id="create">
-            <p class="input">School:</p><br>
-              {{> inputAutocomplete settings=schoolcomplete class="form-control creInput" type="text" name="school" placeholder="Example: International Academy" }}
-            <p class="input">Hour:</p><br>
-              <input class="creInput" type="text" name="hour"><br>
-            <p class="input">Teacher:</p><br>
-              {{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
-            <p class="input">Class Name:</p><br>
-              <input class="creInput" type="text" name="classname"><br>
-            <p class="input">Privacy:</p><br>
-            <div class="select">
-              <input class="creInputSel creInput" type="text" name="privacy" op="0" readonly><br>
-              <div class="creOptions" style="background-color:{{divColor 'header'}}">
-                  <p>Public</p>
-                  <p>Private</p>
-              </div>
+    <header style="background-color:{{divColor 'header'}}">
+        <div id="aboveBar">
+            <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
+            <h1>Hourglass</h1><h2>{{schoolName}}</h2>
+            <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
+        </div>
+        <div id="loadBar">
+            <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
+        </div>
+    </header>
+    <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
+        <div class="mode classes">
+            <i class="fa fa-university" aria-hidden="true"></i>
+            <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
+        </div>
+        <div class="mode calendar">
+            <i class="fa fa-calendar" aria-hidden="true"></i>
+            <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
+        </div>
+        <div id="functions">
+            <div class="function manageClass" onclick="window.location='/profile'">
+                <i class="fa fa-tasks" aria-hidden="true"></i>
+                <h4>Manage Classes</h4>
             </div>
-            <p class="input">Category:</p><br>
-            <div class="select">
-              <input class="creInputSel creInput" type="text" name="category" op="1" readonly><br>
-              <div class="creOptions" style="background-color:{{divColor 'header'}}">
-                  <p>Class</p>
-                  <p>Club</p>
-                  <p>Other</p>
-              </div>
-            </div>
-            <div class="creSubmit">Submit Request</div>
-          </form> 
-        {{/if}}
-      </div>
-  </div>
-  <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
-  </div>
-  <img id="bg" src={{bgSrc}}>
-  <div id="mainBody">
-  {{#if currMode 'classes'}}
-  {{/if}}
-  {{#if currMode 'calendar'}}
-    <div id="calendar" style="{{calCenter}}">
-      {{> fullcalendar calendarOptions id="fullcalendar"}}
+        </div>
+        <div id="classListHolder">
+            
+        </div>
     </div>
-  {{/if}}
-  </div>
-  <div class="overlay">
-    <div class="overlayCont" style="{{overlayDim}};">
-      <p>Are you sure?</p>
-      <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-      <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+    <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
     </div>
-  </div>
+    <img id="bg" src={{bgSrc}}>
+    <div id="mainBody">
+    {{#if currMode 'classes'}}
+    {{/if}}
+    {{#if currMode 'calendar'}}
+    <div id="calbg" style="{{calbg}}"></div>
+        <div id="calendar" style="{{calCenter}}">
+            {{> fullcalendar calendarOptions id="fullcalendar"}}
+        </div>
+    {{/if}}
+    </div>
+    <div class="overlay">
+        <div class="overlayCont" style="{{overlayDim}};">
+            <p>Are you sure?</p>
+            <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+        </div>
+    </div>
 </template>
 
 <template name="schoollist">
-  {{name}}
+    {{name}}
 </template>
 
 <template name="teacherlist">
-  {{teacher}}
+    {{teacher}}
 </template>
