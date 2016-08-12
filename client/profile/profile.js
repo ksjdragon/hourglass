@@ -77,19 +77,25 @@ Template.profile.helpers({
     banner() {
         var width = window.innerWidth * 1600 / 1920;
         var height = width * 615 / 1600;
-        if (Meteor.user().profile.banner !== undefined) {
+        if (Meteor.user().profile.banner) {
             var banner = Meteor.user().profile.banner;
         } else {
-            var banner = "defaultcover.jpg";
+            var banner = "Banners/defaultcover.jpg";
+            currentprofile = Meteor.user().profile;
+            currentprofile.banner = banner
+            Meteor.call("editProfile", currentprofile);
         }
-        return "width:" + width.toString() + "px;height:" + height.toString() + "px;background-image:url(\'" + banner + "\');background-size:" + width.toString() + "px " + height.toString() + "px";
+        return "width:" + width.toString() + "px;height:" + height.toString() + "px;background-image:url(" + banner + ");background-size:" + width.toString() + "px " + height.toString() + "px";
     },
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
-        if (Meteor.user().profile.avatar !== undefined) {
-            var pic = "\'" + Meteor.user().profile.avatar + "\'";
+        if (Meteor.user().profile.avatar) {
+            var pic = Meteor.user().profile.avatar;
         } else {
-            var pic = "defaultAvatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
+            var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString(); + ".png";
+            currentprofile = Meteor.user().profile;
+            currentprofile.avatar = pic
+            Meteor.call("editProfile", currentprofile);
         }
         return "background-image:url(" + pic + ");background-size:" + dim.toString() + "px " + dim.toString() + "px";
     },
@@ -101,21 +107,21 @@ Template.profile.helpers({
         return Meteor.user().profile.name;
     },
     motd() {
-        if (Meteor.user().profile.description !== undefined) {
+        if (Meteor.user().profile.description) {
             return Meteor.user().profile.description;
         } else {
             return "Say something about yourself!";
         }
     },
     school() {
-        if (Meteor.user().profile.school !== undefined) {
+        if (Meteor.user().profile.school) {
             return Meteor.user().profile.school;
         } else {
             return "Click here to edit...";
         }
     },
     grade() {
-        if (Meteor.user().profile.grade !== undefined) {
+        if (Meteor.user().profile.grade) {
             return Meteor.user().profile.grade + "th";
         } else {
             return "Click here to edit...";
@@ -457,6 +463,8 @@ function closeInput(sessval) {
     }
     span.style.display = "initial";
     Session.set("modifying", null);
+    Session.set("serverData", getProfileData());
+    sendData("editProfile");
 }
 
 function sendData(funcName) {

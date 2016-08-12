@@ -129,9 +129,11 @@ Meteor.methods({
                 name: current.school
             }) !== null &&
             Number.isInteger(current.grade) &&
-            current.grade >= 9 && current.grade <= 12 &&
-            current.description.length <= 50) {
-
+            current.grade >= 9 && current.grade <= 12) {
+          
+            if (current.description && current.description.length > 50) {
+              current.description = current.description.slice(0,50);
+            }
             Meteor.users.update({
                 _id: Meteor.userId()
             }, {
