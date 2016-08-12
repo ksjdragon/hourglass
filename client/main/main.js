@@ -139,6 +139,18 @@ Template.main.helpers({
         var width = window.innerWidth * 0.865;
         var height = window.innerHeight * 0.76;
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
+    },
+    myclasses() {
+    	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+    		return [];
+    	} else {
+    		var array = [];
+    		var courses = Meteor.user().profile.classes;
+    		for(var i = 0; i < courses.length; i++) {
+    			array.push(classes.findOne({_id:courses[i]}));
+    		}
+    		return array;
+    	}
     }
 });
 
