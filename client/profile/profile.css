@@ -126,7 +126,7 @@
 	margin-bottom: 5%;
 	padding: 4%;
 	padding-top: 2.5%;
-	padding-right: 4%;
+	padding-right: 2%;
 
 	box-shadow: 2px 2px 5px 3px #666;
 }
@@ -142,7 +142,7 @@
 }
 
 #profClasses {
-	width: 50%;
+	width: 52%;
 	height: 30%;
 	float: right;
 	border-top: 5px solid #2E4F74;
