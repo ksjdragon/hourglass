@@ -495,12 +495,12 @@ function getCreateFormData() {
     var hour = form[1].value;
     var teacher = form[2].value;
     var name = form[3].value;
-    if (form[4].value == "public") {
+    if (form[4].value == "Public") {
         var privacy = false;
     } else {
         var privacy = true;
     }
-    var category = form[5].value;
+    var category = form[5].value.toLowerCase();
     return {
         school: school,
         hour: hour,
