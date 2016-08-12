@@ -4,6 +4,7 @@ import {
 
 import './main.html';
 
+
 var openValues = {
     "menu": "-25%",
     "options": "-20%"
@@ -37,6 +38,7 @@ var options = {
 
 var searchSchools = [];
 
+Session.set("calendarclasses", Meteor.user().profile.classes);
 Session.set("sidebar", null);
 Session.set("mode", null); // Change to user preferences
 
@@ -105,7 +107,7 @@ Template.main.helpers({
     },
     calendarOptions() {
         var events = [];
-        userclasses = Meteor.user().profile.classes;
+        calendarclasses = Session.get("calendarclasses");
         var cursor = work.find({class: {$in: userclasses}});
         cursor.forEach(function(current) {
             backgroundColor = calendarColors[current.type];
