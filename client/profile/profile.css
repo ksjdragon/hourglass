@@ -192,6 +192,10 @@
 	padding: 1%;
 }
 
+.profFunction h4 {
+	font-size: 120%;
+}
+
 #searchBar {
 	display: inline;
 }
