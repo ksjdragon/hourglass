@@ -147,19 +147,6 @@ Meteor.methods({
     'joinClass': function(input) {
         change = input[0];
         pass = input[1];
-
-
-        // if (Meteor.user().profile.classes === undefined) {
-        //     curr = Meteor.user().profile;
-        //     curr.classes = [];
-        //     Meteor.users.update({
-        //         _id: Meteor.userId()
-        //     }, {
-        //         $set: {
-        //             profile: curr
-        //         }
-        //     });
-        // }
         prof = Meteor.user().profile;
         found = classes.findOne({
             _id: change,
