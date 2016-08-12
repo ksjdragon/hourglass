@@ -10,13 +10,25 @@ _uuid4 = function(cc) {
     return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
 };
 
+superadmins = [
+    "ybq987@gmail.com",
+    "ksjdragon@gmail.com"
+];
+
+for (var i = 0; i < superadmins.length; i++) {
+    var superadmin = superadmins[i];
+    if (Meteor.users.findOne({"services.google.email": superadmin})) {
+        var userId = Meteor.users.findOne({"services.google.email": superadmin})._id;
+        Roles.addUsersToRoles(userId, ['superadmin']);
+    }
+}
+
 worktype = ["test", "quiz", "project", "normal"];
 Meteor.methods({
     'genCode': function() {
         return 'xxxxxx'.replace(/[x]/g, _uuid4);
     },
     'createSchool': function(schoolname) {
-        // if superadmin, no need for approval
         if (Meteor.user() !== null &&
             schools.findOne({
                 name: input.school
@@ -26,21 +38,26 @@ Meteor.methods({
                 creator: Meteor.userId()
             }) !== null) {
 
+            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+                stat = true;
+            } else {
+                stat = false;
+            }
             schools.insert({
                 name: schoolname,
-                status: false,
+                status: stat,
                 creator: Meteor.userId()
             });
         }
     },
-    'deleteSchool': function(schoolid) {
-        // alanning:roles implementation here
-        schools.remove({
-            _id: schoolid
-        });
+    'deleteSchool': function(schoolId) {
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+            schools.remove({
+                _id: schoolId
+            });
+        }
     },
     'createClass': function(input) {
-        // if superadmin, no need for approval
         classes.schema.validate(input);
         if (Meteor.user() !== null &&
             classes.find({
@@ -50,8 +67,11 @@ Meteor.methods({
             schools.findOne({
                 name: input.school
             }) !== null) {
-
-            input.status = false;
+            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+                input.status = true;
+            } else {
+                input.status = false;
+            }
             input.subscribers = 0;
             input.admin = Meteor.userId();
             if (input.privacy) {
@@ -78,8 +98,7 @@ Meteor.methods({
         found = classes.findOne({
             _id: classid
         });
-        // Add roles
-        if (Meteor.user() !== null && found !== null && found.admin === Meteor.user()._id) {
+        if (Meteor.user() !== null && found !== null && (found.admin === Meteor.user()._id || Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']))) {
             classes.remove({
                 _id: classid
             });
@@ -130,7 +149,7 @@ Meteor.methods({
             }) !== null &&
             Number.isInteger(current.grade) &&
             current.grade >= 9 && current.grade <= 12) {
-          
+
             if (current.description && current.description.length > 50) {
               current.description = current.description.slice(0,50);
             }
@@ -196,6 +215,16 @@ Meteor.methods({
                 }
             }
 
+        }
+    },
+    'createAdmin': function(userId) {
+        if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
+            Roles.addUsersToRoles(userId, ['admin']);
+        }
+    },
+    'deleteAdmin': function(userId) {
+        if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
+            Roles.removeUsersToRoles(userId, ['admin']);
         }
     }
 });
