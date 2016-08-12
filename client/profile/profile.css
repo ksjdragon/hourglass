@@ -20,6 +20,7 @@
 	font-weight: 400;
 	margin: 0;
 	margin-bottom: 1%;
+	margin-right: 10%;
 }
 
 .profHea {
@@ -301,15 +302,22 @@
 	padding-top: 1%;
 }
 
+#formContainer {
+	margin-left: 5% !important;
+	margin-right: 5% !important;
+	margin-bottom: 0 !important;
+	position: relative;
+	
+}
+
 #create div {
-	margin: 2%;
-	margin-left: 11%;
-	margin-bottom: 5%;
+	margin: 3% 6% 5% 6%;
 	display: inline-block;
 }
 
 .creInput {
 	font-size: 120%;
+	width: 100%;
 	padding: 3%;
 }
 
