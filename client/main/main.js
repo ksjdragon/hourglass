@@ -22,12 +22,14 @@ var themeColors = {
 
     }
 };
+
 var calendarColors = {
     "test": "red",
     "project": "blue",
     "normal": "green",
     "quiz": "black"
 };
+
 var options = {
     "privacy": ["Public", "Hidden"],
     "category": ["Class", "Club", "Other"]

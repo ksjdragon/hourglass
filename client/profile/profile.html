@@ -1,6 +1,7 @@
 <template name="profile">
 	<div id="profPage" style="background-color:{{divColor 'header'}};height:{{mainHeight}};">
 		<div id="save"><h2>Save Settings</h2></div>
+		<div id="mainpage" onclick="window.location='/'"><h2>Main Page</h2></div>
 		<div id="profMainContainer" style="{{mainCenter}}">
 			<div id="profBanner" style="{{banner}};"></div>
 			<div id="profAvatar" style="{{avatar}};{{avatarDim}}"></div>
@@ -56,9 +57,9 @@
 								<span class="subscriptions classText">Members</span>
 							</div>
 							<div class="classHolder" style="max-height:{{classHolderHeight}}">
-								<!-- {{#each myclasses}}
+								{{#each myclasses}}
 									{{> classDisplay}}
-								{{/each}} -->
+								{{/each}}
 							</div>
 						{{/if}}
 
