@@ -148,17 +148,18 @@ Meteor.methods({
         change = input[0];
         pass = input[1];
 
-        if (Meteor.user().profile.classes === undefined) {
-            curr = Meteor.user().profile;
-            curr.classes = [];
-            Meteor.users.update({
-                _id: Meteor.userId()
-            }, {
-                $set: {
-                    profile: curr
-                }
-            });
-        }
+
+        // if (Meteor.user().profile.classes === undefined) {
+        //     curr = Meteor.user().profile;
+        //     curr.classes = [];
+        //     Meteor.users.update({
+        //         _id: Meteor.userId()
+        //     }, {
+        //         $set: {
+        //             profile: curr
+        //         }
+        //     });
+        // }
         prof = Meteor.user().profile;
         found = classes.findOne({
             _id: change,
@@ -167,11 +168,11 @@ Meteor.methods({
         if (Meteor.user() !== null &&
             found !== null &&
             pass === found.code &&
-            !found.banned.includes(Meteor.userId()) &&
-            !prof.classes.includes(change)) {
+            found.banned.indexOf(Meteor.userId()) === -1 &&
+            prof.classes.indexOf(change) === -1) {
 
             current = Meteor.user().profile;
-            current.classes.append(change);
+            current.classes.push(change);
             Meteor.users.update({
                 _id: Meteor.userId()
             }, {
