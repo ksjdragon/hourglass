@@ -38,7 +38,7 @@ var options = {
 
 var searchSchools = [];
 
-Session.set("calendarclasses", Meteor.user().profile.classes);
+Session.set("calendarclasses", null);
 Session.set("sidebar", null);
 Session.set("mode", null); // Change to user preferences
 
@@ -57,6 +57,7 @@ Template.registerHelper('overlayDim', (part) => {
 
 Template.main.helpers({
     schoolName() {
+    	Session.set("calendarclasses", Meteor.user().profile.classes);
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) {
