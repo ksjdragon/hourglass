@@ -12,7 +12,7 @@ Router.route('/login', function() {
     } else if (Object.keys(Meteor.user().profile).length <= 1) {
         this.redirect('/profile');
     } else {
-        this.redirect('/')
+        this.redirect('/');
     }
 });
 

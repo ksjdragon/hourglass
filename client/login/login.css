@@ -1,151 +1,134 @@
 #loginHeader {
-	font-weight: 600;
-	width: 100%;
-	margin: 0;
-	box-shadow: 2px 2px 5px 3px #666;
-
-	background-color: #EBEBEB;
-
-	display: inline-block;
-	position: relative;
-	z-index: 50;
+    font-weight: 600;
+    width: 100%;
+    margin: 0;
+    box-shadow: 2px 2px 5px 3px #666;
+    background-color: #EBEBEB;
+    display: inline-block;
+    position: relative;
+    z-index: 50;
 }
 
 #logo {
-	padding: 0.5%;
-	padding-left: 1%;
-	float: left;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #333);
-	filter: drop-shadow(2px 2px 5px #333);
+    padding: 0.5%;
+    padding-left: 1%;
+    float: left;
+    -webkit-filter: drop-shadow(2px 2px 5px #333);
+    filter: drop-shadow(2px 2px 5px #333);
 }
 
 #banner {
-	height: 100%;
-	position: relative;
+    height: 100%;
+    position: relative;
 }
 
 #loginTitle {
-	font-size: 255%;
-	padding: 1.4%;
-	padding-left: 1%;
+    font-size: 255%;
+    padding: 1.4%;
+    padding-left: 1%;
 }
 
 #loginMain {
-	width: 100%;
-	min-height: 100%;
-	position: absolute;
-	top: 11%;
-
-	background-color: #E5E5E5;
-	background-image: url("banner100.jpg");
+    width: 100%;
+    min-height: 100%;
+    position: absolute;
+    top: 11%;
+    background-color: #E5E5E5;
+    background-image: url("banner100.jpg");
 }
 
 #circle {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-
-	-moz-border-radius: 50%;
-	-webkit-border-radius: 50%;
-	border-radius: 50%;
-
-	background-color: rgba(0,0,0,0.2);
-
-	-webkit-filter: drop-shadow(2px 2px 5px #333);
-	filter: drop-shadow(2px 2px 5px #333);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.2);
+    -webkit-filter: drop-shadow(2px 2px 5px #333);
+    filter: drop-shadow(2px 2px 5px #333);
 }
 
 #loginContent {
-	position: fixed;
-	top: 50%;
-	left: 50%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
 }
 
 .text {
-	text-align: center;
-	color: #FFF;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #444);
-	filter: drop-shadow(2px 2px 5px #444);
+    text-align: center;
+    color: #FFF;
+    -webkit-filter: drop-shadow(2px 2px 5px #444);
+    filter: drop-shadow(2px 2px 5px #444);
 }
 
 h2.text {
-	font-size: 400%;
-	padding-bottom: 2%;
-	border-bottom: 1px solid #FEFEFE;
+    font-size: 400%;
+    padding-bottom: 2%;
+    border-bottom: 1px solid #FEFEFE;
 }
 
 p.text {
-	font-size: 150%;
-	margin-bottom: 5%;
+    font-size: 150%;
+    margin-bottom: 5%;
 }
 
 #loginButton {
-	font-size: 200%;
-	padding: 2%;
-
-	-webkit-border-radius: 6;
-	-moz-border-radius: 6;
-	border-radius: 6px;
-
-	position: relative;
-
-	background-color: #005CE6;
-
-	-webkit-transition: background-color 0.4s ease;  
-	-moz-transition: background-color 0.4s ease; 
-	-ms-transition: background-color 0.4s ease;
-	transition: background-color 0.4s ease; 
-
-	cursor: pointer;
+    font-size: 200%;
+    padding: 2%;
+    -webkit-border-radius: 6;
+    -moz-border-radius: 6;
+    border-radius: 6px;
+    position: relative;
+    background-color: #005CE6;
+    -webkit-transition: background-color 0.4s ease;
+    -moz-transition: background-color 0.4s ease;
+    -ms-transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease;
+    cursor: pointer;
 }
 
 #loginButton:hover {
-	background-color: #0066FF;
+    background-color: #0066FF;
 }
 
 #loginButton:active {
-	background-color: #FF4D4D;
-
-	-webkit-transition: background-color 0.1s ease;  
-	-moz-transition: background-color 0.1s ease; 
-	-ms-transition: background-color 0.1s ease;
-	transition: background-color 0.1s ease; 
+    background-color: #FF4D4D;
+    -webkit-transition: background-color 0.1s ease;
+    -moz-transition: background-color 0.1s ease;
+    -ms-transition: background-color 0.1s ease;
+    transition: background-color 0.1s ease;
 }
 
 #loginFooter {
-	width: 100%;
-	box-shadow: 2px 2px 5px 3px #666;
-	background-color: #EBEBEB;
-	position: absolute;
-	bottom: 0;
+    width: 100%;
+    box-shadow: 2px 2px 5px 3px #666;
+    background-color: #EBEBEB;
+    position: absolute;
+    bottom: 0;
 }
 
 .login-button {
-	display: none !important;
+    display: none !important;
 }
 
 #github {
-	font-size: 150%;
-	margin: 0;
-	padding: 1%;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #444);
-	filter: drop-shadow(2px 2px 5px #444);
+    font-size: 150%;
+    margin: 0;
+    padding: 1%;
+    -webkit-filter: drop-shadow(2px 2px 5px #444);
+    filter: drop-shadow(2px 2px 5px #444);
 }
 
 a {
-	color: #0099CC;
-	text-decoration: none;
-
-	-webkit-transition: color 0.4s ease;  
-	-moz-transition: color 0.4s ease; 
-	-ms-transition: color 0.4s ease;
-	transition: color 0.4s ease
+    color: #0099CC;
+    text-decoration: none;
+    -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -ms-transition: color 0.4s ease;
+    transition: color 0.4s ease
 }
 
 a:hover {
-	color: #00BFFF;
+    color: #00BFFF;
 }
-
