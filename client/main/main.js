@@ -104,8 +104,9 @@ Template.main.helpers({
         }
     },
     calendarOptions() {
-        var cursor = work.find({});
         var events = [];
+        userclasses = Meteor.user().profile.classes;
+        var cursor = work.find({class: {$in: userclasses}});
         cursor.forEach(function(current) {
             backgroundColor = calendarColors[current.type];
             title = current.name;
