@@ -36,6 +36,7 @@ Template.profile.helpers({
                 field: "name",
                 template: Template.classDisplay,
                 filter: {
+                    privacy: false,
                     status: true
                 }
             }]
