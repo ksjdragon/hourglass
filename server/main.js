@@ -96,7 +96,7 @@ Meteor.methods({
     current.description = change[2];
     current.avatar = change[3];
     current.banner = change[4];
-    current.theme = change[5];
+    current.preferences = change[5];
 
     if (schools.findOne({name:current.school}) != null && 
     Number.isInteger(current.grade) &&
