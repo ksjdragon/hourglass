@@ -30,21 +30,24 @@
             </div>
         </div>
         <div id="classListHolder">
-            
+        <h3>Enrolled</h3>
+            {{#each myclasses}}
+                {{> sidebarClasses}}  
+            {{/each}}
         </div>
     </div>
     <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
     </div>
     <img id="bg" src={{bgSrc}}>
     <div id="mainBody">
-    {{#if currMode 'classes'}}
-    {{/if}}
-    {{#if currMode 'calendar'}}
-    <div id="calbg" style="{{calbg}}"></div>
-        <div id="calendar" style="{{calCenter}}">
-            {{> fullcalendar calendarOptions id="fullcalendar"}}
-        </div>
-    {{/if}}
+        {{#if currMode 'classes'}}
+        {{/if}}
+        {{#if currMode 'calendar'}}
+        <div id="calbg" style="{{calbg}}"></div>
+            <div id="calendar" style="{{calCenter}}">
+                {{> fullcalendar calendarOptions id="fullcalendar"}}
+            </div>
+        {{/if}}
     </div>
     <div class="overlay">
         <div class="overlayCont" style="{{overlayDim}};">
@@ -52,5 +55,12 @@
             <i class="fa fa-check-circle-o" aria-hidden="true"></i>
             <i class="fa fa-times-circle-o" aria-hidden="true"></i>
         </div>
+    </div>
+</template>
+
+<template name="sidebarClasses">
+    <div class="sideClass">
+        <p class="sideClassName">{{name}}</p>
+        <p class="sideClassHour">{{hour}}</p>
     </div>
 </template>

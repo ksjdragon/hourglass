@@ -238,20 +238,45 @@ input {
 
 #classListHolder {
 	max-height: 48%;
-	width: 90%;
+	width: 100%;
 	margin-bottom: 30%;
-	padding: 8%;
 	padding-right: 50%;
 
-	display: none;
 	position: absolute;
 	overflow-y: auto;
-	opacity: 0;
+}
 
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease; 
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease;
+#classListHolder h3 {
+	font-weight: 200;
+	margin: 5%;
+}
+
+.sideClass {
+	width: 100%;
+	height: 10%;
+	padding: 5%;
+
+	background-color: rgba(255,255,255,0.1);
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+.sideClass:hover {
+	background-color: rgba(255,255,255,0.3);
+}
+
+.sideClassName {
+	font-weight: 600;
+	margin: 0;
+}
+
+.sideClassHour {
+	font-weight: 400;
+	color: #444;
+	margin: 0;
 }
 
 .overlay {
