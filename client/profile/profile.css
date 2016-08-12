@@ -4,6 +4,10 @@
 	cursor: pointer;
 }
 
+.radio {
+	cursor: pointer;
+}
+
 .changeInput {
 	font-size: 100%;
 	padding: 0;
@@ -93,10 +97,11 @@
 	transition: opacity 0.4s ease; 
 }
 
-.profOptions p {
+.profOptionText {
 	font-size: 150%;
+	min-width: 10%;
+	padding: 20px;
 	margin: 0;
-	padding: 20%;
 
 	text-align: center;
 	cursor: pointer;
@@ -376,6 +381,7 @@
 
 #save h2 {
 	font-weight: 200;
+	width: 100%;
 	padding: 8%;
 
 	-webkit-filter: none;

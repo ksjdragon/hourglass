@@ -22,10 +22,10 @@
 							<span class="change radio" opc="0" op="0" re="readonly" id="grade">{{grade}}</span>
 							</div>
 				            <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                  	<p>9th</p>
-				                <p>10th</p>
-				                <p>11th</p>
-				                <p>12th</p>
+			                  	<p class="profOptionText">9th</p>
+				                <p class="profOptionText">10th</p>
+				                <p class="profOptionText">11th</p>
+				                <p class="profOptionText">12th</p>
 				            </div>
 			            </div>
 			        </div>
@@ -56,9 +56,9 @@
 								<span class="subscriptions classText">Members</span>
 							</div>
 							<div class="classHolder" style="max-height:{{classHolderHeight}}">
-								{{#each myclasses}}
+								<!-- {{#each myclasses}}
 									{{> classDisplay}}
-								{{/each}}
+								{{/each}} -->
 							</div>
 						{{/if}}
 
@@ -110,17 +110,17 @@
 						            <p class="profTitle">Privacy:</p>
 					              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
 					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-					                  	<p>Public</p>
-					                  	<p>Private</p>
+					                  	<p class="profOptionText">Public</p>
+					                  	<p class="profOptionText">Private</p>
 					              	</div>
 				              	</div>
 				              	<div>
 						            <p class="profTitle">Category:</p>
 					              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
 					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-					                  	<p>Class</p>
-					                  	<p>Club</p>
-					                  	<p>Other</p>
+					                  	<p class="profOptionText">Class</p>
+					                  	<p class="profOptionText">Club</p>
+					                  	<p class="profOptionText">Other</p>
 					              	</div>
 						        </div>
 						        <h3 id="creSubmit" style="margin-left:{{submitMargin}}">Submit Request</h3>

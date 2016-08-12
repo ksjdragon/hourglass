@@ -111,7 +111,7 @@ Template.profile.helpers({
 	},
 	grade() {
 		if(Meteor.user().profile.grade !== undefined) {
-			return Meteor.user().profile.grade;
+			return Meteor.user().profile.grade+"th";
 		} else {
 			return "Click here to edit...";
 		}
@@ -145,13 +145,13 @@ Template.profile.helpers({
 	autocompleteClasses() {
 		return Session.get("autocompleteDivs");
 	},
-	myclasses() {
+	/*myclasses() {
 		if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
 			return [];
 		} else {
 			return Meteor.user().profile.classes;
 		}
-	},
+	},*/
 	notfound() {
 		return Session.get("notfound");
 	},
@@ -403,7 +403,11 @@ Template.profile.events({
 })
 
 function openDivFade(div) {
-	div.style.display = "block";
+	if(div.className === "profOptions") {
+		div.style.display = "inline-block";
+	} else {
+		div.style.display = "block";
+	}
 	div.style.opacity = "0";
 	setTimeout(function() {
 		div.style.opacity = "1";
