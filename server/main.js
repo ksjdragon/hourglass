@@ -91,17 +91,15 @@ Meteor.methods({
   },
   'editProfile': function(change) {
     current = Meteor.user().profile;
-    current.school = change[0];
-    current.grade = change[1];
-    current.description = change[2];
-    current.avatar = change[3];
-    current.banner = change[4];
-    current.preferences = change[5];
-
+    current.school = change.school;
+    current.grade = change.grade;
+    current.description = change.description;
+    current.avatar = change.avatar;
+    current.banner = change.banner;
+    current.preferences = change.preferences
     if (schools.findOne({name:current.school}) != null && 
     Number.isInteger(current.grade) &&
-    current.grade >= 9 && 
-    current.grade <= 12 && 
+    current.grade >= 9 && current.grade <= 12 && 
     current.description.length <= 50) {
 
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
@@ -110,22 +108,30 @@ Meteor.methods({
       return 0;
     }
   },
-  'joinClass': function(change, pass) {
-    found = classes.findOne({_id: change, status: true});
+  'joinClass': function(input) {
+    change = input[0];
+    pass = input[1];
 
+    if(Meteor.user().profile.classes === undefined) {
+      curr = Meteor.user().profile;
+      curr.classes = [];
+      Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: curr}})
+    }
+    prof = Meteor.user().profile;
+    found = classes.findOne({_id: change, status: true});
     if (Meteor.user() != null && 
     found != null && 
     pass === found.code && 
-    found.banned.indexOf(Meteor.userId()) === -1 && 
-    Meteor.user().profile.classes.indexOf(change) === -1) {
-      
+    !found.banned.includes(Meteor.userId()) &&
+    !prof.classes.includes(change)) {
+
       current = Meteor.user().profile;
       current.classes.append(change);
       Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
       return 1;
     } else {
       return 0;
-    }
+    }     
   },
   'leaveClass': function(change) {
     if (Meteor.user() != null) {
@@ -144,3 +150,10 @@ Meteor.methods({
     }
   }
 });
+
+function has(array, has) {
+  for(var i = 0; i < array.length; i++) {
+    if(array[i] === has) return true;
+  }
+  return false;
+}

@@ -38,6 +38,38 @@ html {
     user-select: none;
 }
 
+::-webkit-input-placeholder {
+   font-size: 70%;
+}
+
+:-moz-placeholder {
+   font-size: 70%;  
+}
+
+::-moz-placeholder {
+   font-size: 70%;  
+}
+
+:-ms-input-placeholder {  
+   font-size: 70%;  
+}
+
+.formInvalid::-webkit-input-placeholder {
+   color: red;
+}
+
+.formInvalid:-moz-placeholder {
+   color: red;  
+}
+
+.formInvalid::-moz-placeholder {
+   color: red;  
+}
+
+.formInvalid:-ms-input-placeholder {  
+   color: red;  
+}
+
 body {
 	margin: 0;
 }

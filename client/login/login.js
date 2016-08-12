@@ -8,6 +8,9 @@ Template.login.helpers({
 	width() {
 		return window.innerWidth.toString() + "px";
 	},
+	height() {
+		return window.innerHeight.toString()+"px";
+	},
 	dim() {
 		return circle.toString() + "px";
 	},
@@ -27,7 +30,7 @@ Template.login.helpers({
 	},
 	hea() {
 		var w = .09*window.innerWidth;
-		return "width:"+w.toString()+"px;left:"+(-.5*w+content/2).toString()+"px;";
+		return "width:"+w.toString()+"px;left:"+(-10+-.5*w+content/2).toString()+"px;";
 	}
 })
 
