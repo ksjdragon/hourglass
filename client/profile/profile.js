@@ -384,6 +384,10 @@ Template.profile.events({
     'click .fa-check-circle-o' () {
         sendData(Session.get("confirm"));
         closeDivFade(document.getElementsByClassName("overlay")[0]);
+        if(Session.get("confirm") === "createClass") {
+        	var form = document.getElementById("create");
+        	for(var i = 0; i < form.length; i++) form[i].value = "";
+        }
         Session.set("serverData", null);
         Session.set("confirm", null);
     },

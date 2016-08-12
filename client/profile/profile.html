@@ -91,40 +91,42 @@
 						{{#if profClassTab "creClass"}}
 							<div id="creRules"><p>Insert description and rules of create a class --Will style later--</p></div>
 							<form id="create">
-								<div>
-					            	<p class="profTitle">School:</p>
-			              			{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
-				              	</div>
-				              	<div>
-					            	<p class="profTitle">Hour:</p>
-					              	<input class="creInput" type="text" name="hour">
-					            </div>
-					            <div>
-					            	<p class="profTitle">Teacher:</p>
-					              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
-					            </div>
-					            <div>
-					            	<p class="profTitle">Class Name:</p>
-					              	<input class="creInput" type="text" name="classname">
-					            </div>
-					            <div>
-						            <p class="profTitle">Privacy:</p>
-					              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
-					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-					                  	<p class="profOptionText">Public</p>
-					                  	<p class="profOptionText">Private</p>
+								<div id="formContainer">
+									<div>
+						            	<p class="profTitle">School:</p>
+				              			{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
 					              	</div>
-				              	</div>
-				              	<div>
-						            <p class="profTitle">Category:</p>
-					              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
-					              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-					                  	<p class="profOptionText">Class</p>
-					                  	<p class="profOptionText">Club</p>
-					                  	<p class="profOptionText">Other</p>
+					              	<div>
+						            	<p class="profTitle">Hour:</p>
+						              	<input class="creInput" type="text" name="hour">
+						            </div>
+						            <div>
+						            	<p class="profTitle">Teacher:</p>
+						              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
+						            </div>
+						            <div>
+						            	<p class="profTitle">Class Name:</p>
+						              	<input class="creInput" type="text" name="classname">
+						            </div>
+						            <div>
+							            <p class="profTitle">Privacy:</p>
+						              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
+						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
+						                  	<p class="profOptionText">Public</p>
+						                  	<p class="profOptionText">Private</p>
+						              	</div>
 					              	</div>
+					              	<div>
+							            <p class="profTitle">Category:</p>
+						              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
+						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
+						                  	<p class="profOptionText">Class</p>
+						                  	<p class="profOptionText">Club</p>
+						                  	<p class="profOptionText">Other</p>
+						              	</div>
+							        </div>
 						        </div>
-						        <h3 id="creSubmit" style="margin-left:{{submitMargin}}">Submit Request</h3>
+						        <h3 id="creSubmit">Submit Request</h3>
 				          	</form> 
 						{{/if}}
 						</div>
