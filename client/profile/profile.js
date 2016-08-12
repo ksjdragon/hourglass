@@ -122,20 +122,14 @@ Template.profile.helpers({
         }
     },
     classes() {
-        return classes.find({
-            status: {
-                $eq: true
-            },
-            privacy: {
-                $eq: false
-            }
-        }, {
-            sort: {
-                subscribers: -1
-            }
-        }, {
-            limit: 20
-        }).fetch();
+        return classes.find(
+        {
+            status: {$eq: true},
+            privacy: {$eq: false}
+        },
+        {sort: {subscribers: -1	}}, 
+    	{limit: 20}
+    	).fetch();
     },
     profClassHeight() {
         return 0.6 * window.innerHeight.toString() + "px";
@@ -163,13 +157,18 @@ Template.profile.helpers({
     autocompleteClasses() {
         return Session.get("autocompleteDivs");
     },
-    /*myclasses() {
+    myclasses() {
     	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
     		return [];
     	} else {
-    		return Meteor.user().profile.classes;
+    		var array = [];
+    		var courses = Meteor.user().profile.classes;
+    		for(var i = 0; i < courses.length; i++) {
+    			array.push(classes.findOne({_id:courses[i]}));
+    		}
+    		return array;
     	}
-    },*/
+    },
     notfound() {
         return Session.get("notfound");
     },
@@ -315,21 +314,21 @@ Template.profile.events({
             openDivFade(functionHolder);        
         }, 300);    
     },
-        'click .manageClass' () {        
-        var functionHolder = document.getElementById("profClassInfoHolder");
-        closeDivFade(functionHolder);        
-        setTimeout(function() {            
-            Session.set("profClassTab", "manClass");            
-            openDivFade(functionHolder);        
-        }, 300);    
+    'click .manageClass' () {        
+	    var functionHolder = document.getElementById("profClassInfoHolder");
+	    closeDivFade(functionHolder);        
+	    setTimeout(function() {            
+	        Session.set("profClassTab", "manClass");            
+	        openDivFade(functionHolder);        
+	    }, 300);    
     },
-        'click .createClass' () {        
-        var functionHolder = document.getElementById("profClassInfoHolder");        
-        closeDivFade(functionHolder);        
-        setTimeout(function() {            
-            Session.set("profClassTab", "creClass");            
-            openDivFade(functionHolder);        
-        }, 300);    
+    'click .createClass' () {        
+	    var functionHolder = document.getElementById("profClassInfoHolder");        
+	    closeDivFade(functionHolder);        
+	    setTimeout(function() {            
+	        Session.set("profClassTab", "creClass");            
+	        openDivFade(functionHolder);        
+	    }, 300);    
     },
     'click .fa-search' () {
         Session.set("searching", true);
@@ -366,7 +365,7 @@ Template.profile.events({
         } catch (err) {}
     },
     'click .classBox' (event) {
-        if (event.target.id === "label") return;
+        if (event.target.id === "label" || Session.get("profClassTab") === "manClass") return;
         if (event.target.className !== "classBox") {
             var attribute = event.target.parentNode.getAttribute("classid");
         } else {
