@@ -31,11 +31,9 @@ work.schema = new SimpleSchema({
 	dueDate: {type: Date},
 	creator: {type: String},
 	comments: {type: [String]},
-	submittor: {type: String, optional: true},
 	confirmations: {type: [String], optional: true},
 	reports: {type: [String], optional: true},
 	attachments: {type: [String], optional: true},
 	done: {type: [String], optional: true},
-	numberdone: {type: Number, optional: true},
 	type: {type: String}
 });
