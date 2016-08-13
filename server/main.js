@@ -208,11 +208,12 @@ Meteor.methods({
     'addComment': function(input) {
         var comment = input[0];
         var workobject = work.findOne({_id: input[1]});
+        var user = Meteor.userId();
         var currentclass = classes.findOne({_id: workobject.class});
         if (typeof comment === "string" && comment.length <= 200 &&
             currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
             currentclass.blockEdit.indexOf(Meteor.userId()) === -1) {
-            var comments = workobject.comments.push(comment);
+            var comments = workobject.comments.push({comment:comment,user:user});
             work.update({_id: input[1]}, {$set: {comments: comments}});
         }
     },
