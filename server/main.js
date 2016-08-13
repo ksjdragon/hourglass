@@ -17,11 +17,63 @@ superadmins = [
 
 for (var i = 0; i < superadmins.length; i++) {
     var superadmin = superadmins[i];
-    if (Meteor.users.findOne({"services.google.email": superadmin})) {
-        var userId = Meteor.users.findOne({"services.google.email": superadmin})._id;
+    if (Meteor.users.findOne({
+        "services.google.email": superadmin
+    })) {
+        var userId = Meteor.users.findOne({
+            "services.google.email": superadmin
+        })._id;
         Roles.addUsersToRoles(userId, ['superadmin']);
     }
 }
+
+Meteor.publish('schools', function() {
+    return schools.find();
+});
+
+Meteor.publish('classes', function() {
+    if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        return classes.find();
+    } else {
+        return classes.find({
+            $or: [{
+                privacy: false
+            }, {
+                _id: {
+                    $in: Meteor.user().profile.classes
+                }
+            }]
+        }, {
+            fields: {
+                school: 1,
+                name: 1,
+                hour: 1,
+                teacher: 1,
+                admin: 1,
+                status: 1,
+                privacy: 1,
+                category: 1,
+                moderators: 1,
+                banned: 1,
+                blockEdit: 1,
+                subscribers: 1
+            }
+        });
+    }
+});
+
+Meteor.publish('work', function() {
+    if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        return work.find();
+    } else {
+        return work.find({
+            class: {
+                $in: Meteor.user().profile.classes
+            }
+        });
+    }
+
+});
 
 worktype = ["test", "quiz", "project", "normal"];
 Meteor.methods({
@@ -145,13 +197,13 @@ Meteor.methods({
         current.banner = change.banner;
         current.preferences = change.preferences;
         if (schools.findOne({
-                name: current.school
-            }) !== null &&
+            name: current.school
+        }) !== null &&
             Number.isInteger(current.grade) &&
             current.grade >= 9 && current.grade <= 12) {
 
             if (current.description && current.description.length > 50) {
-              current.description = current.description.slice(0,50);
+                current.description = current.description.slice(0, 50);
             }
             Meteor.users.update({
                 _id: Meteor.userId()
@@ -199,8 +251,8 @@ Meteor.methods({
             index = profile.classes.indexOf(change);
             if (index >= 0) {
                 if (classes.findOne({
-                        _id: change
-                    }).admin != Meteor.userId()) {
+                    _id: change
+                }).admin != Meteor.userId()) {
                     profile.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()
