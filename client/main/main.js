@@ -72,7 +72,6 @@ Template.registerHelper('myClasses', () => {
 	    			thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
 	    			thisWork[j].typeColor = workColors[thisWork[j].type];
     			}
-    			console.log(thisWork);
     			array[i].thisClassWork = thisWork;
     		}
     		return array;
@@ -173,11 +172,11 @@ Template.main.helpers({
     	return Session.get("currentWork")[value];
     },
     workType() {
-    	type = Session.get("currentWork").type
+    	type = Session.get("currentWork").type;
     	if(type.includes("edit")) {
     		return;
     	} else {
-    		return workColors.type;
+    		return workColors[type];
     	}
     },
     cWorkColor(type) {
@@ -289,7 +288,6 @@ Template.main.events({
     	} else {
     		var attr = event.target.getAttribute("classid");
     	}
-        openDivFade(document.getElementsByClassName("overlay")[0]);
         Session.set("newWork", true);
         Session.set("currentWork",
     		{
@@ -299,6 +297,7 @@ Template.main.events({
     			description:"Click here to edit...",
     			type:"Click here to edit..."
     		});
+        openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
     	var ele = event.target;
@@ -409,7 +408,6 @@ Template.main.events({
     'click #workSubmit' () {
     	data = getHomeworkFormData();
     	if(data === null) return;
-    	console.log(data);
     	Session.set("serverData",data);
     	if(Session.get("newWork")) {
     		sendData("createWork");
@@ -423,7 +421,17 @@ Template.main.events({
    	'focus .op' (event) {
         event.target.click();
     },
-
+    'click .workCard' (event) {
+    	var dom = event.target;
+    	while(event.target.className !== "workCard") event.target = event.target.parentNode;
+    	workid = event.target.getAttribute("workid");
+    	Session.set("newWork",false);
+    	var thisWork = work.findOne({_id:workid});
+    	thisWork.dueDate = getReadableDate(thisWork.dueDate);
+    	thisWork.type = thisWork.type[0].toUpperCase() + thisWork.type.slice(1);
+    	Session.set("currentWork",thisWork);
+    	openDivFade(document.getElementsByClassName("overlay")[0]);
+    }
 });
 
 function openDivFade(div) {
@@ -500,5 +508,5 @@ function getHomeworkFormData() {
 function getReadableDate(date) {
 	var days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 	var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-	return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate();
+	return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
 }

@@ -190,12 +190,12 @@ Meteor.methods({
 
         var currentclass = classes.findOne({
             _id: work.findOne({
-                _id: workId
+                _id: change._id
             }).class
         });
         var authorized = currentclass.moderators.push(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
-            Meteor.update({
+            work.update({
                 _id: change._id
             }, {
                 $set: change
