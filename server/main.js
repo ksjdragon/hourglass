@@ -160,9 +160,7 @@ Meteor.methods({
         }
     },
     'createWork': function(input) {
-        var ref = new Date();
-        var month = ref.getMonth + 1;
-        ref = new Date(ref.getFullYear() + "-" + month.toString() + "-" + ref.getDate()).getTime();
+        var ref = new Date().getTime();
         input.creator = Meteor.userId();
         work.schema.validate(input);
         var found = Meteor.findOne({
@@ -175,7 +173,7 @@ Meteor.methods({
             found.banned.indexOf(Meteor.userId()) === -1 &&
             found.blockEdit.indexOf(Meteor.userId()) === -1 &&
             input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 &&
-            input.name.length <= 50) {
+            input.name.length <= 50 && input.description.length <= 150) {
 
             input.confirmations = [Meteor.userId()];
             input.reports = [];
@@ -187,9 +185,7 @@ Meteor.methods({
 
     },
     'editWork': function(change) {
-        var ref = new Date();
-        var month = ref.getMonth + 1;
-        ref = new Date(ref.getFullYear() + "-" + month.toString() + "-" + ref.getDate()).getTime();
+        var ref = new Date().getTime();
 
         var currentclass = classes.findOne({
             _id: work.findOne({
@@ -204,7 +200,7 @@ Meteor.methods({
                 $set: change
             });
         } else if (authorized.indexOf(Meteor.userId()) != -1) {
-            if (change.name.length <= 50 && worktype.indexOf(type) != -1) {
+            if (change.name.length <= 50 && change.description.length <= 150 && worktype.indexOf(type) != -1) {
                 Meteor.update({
                     _id: change._id
                 }, {
@@ -213,7 +209,8 @@ Meteor.methods({
                         dueDate: change.dueDate,
                         comments: change.comments,
                         attachments: change.attachments,
-                        type: change.type
+                        type: change.type,
+                        description: change.description
                     }
                 });
             }

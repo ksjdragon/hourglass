@@ -68,7 +68,7 @@ Template.registerHelper('myClasses', () => {
     		}
     		return array;
     	}
-})
+});
 
 Template.main.helpers({
     schoolName() {
