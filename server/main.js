@@ -166,13 +166,13 @@ Meteor.methods({
         var found = classes.findOne({
             _id: input.class
         });
-        console.log(input);
+
         if (Meteor.user() !== null &&
             found !== null &&
             Meteor.user().profile.classes.indexOf(input.class) !== -1 &&
             found.banned.indexOf(Meteor.userId()) === -1 &&
             found.blockEdit.indexOf(Meteor.userId()) === -1 &&
-            input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 &&
+            input.dueDate.getTime() >= ref && worktype.indexOf(input.type) != -1 &&
             input.name.length <= 50 && input.description.length <= 150) {
 
             input.confirmations = [Meteor.userId()];
@@ -201,7 +201,7 @@ Meteor.methods({
                 $set: change
             });
         } else if (authorized.indexOf(Meteor.userId()) != -1) {
-            if (change.name.length <= 50 && change.description.length <= 150 && worktype.indexOf(type) != -1) {
+            if (change.name.length <= 50 && change.description.length <= 150 && worktype.indexOf(change.type) != -1) {
                 Meteor.update({
                     _id: change._id
                 }, {
@@ -219,7 +219,7 @@ Meteor.methods({
         } else if (Meteor.userId() === work.findOne({
                 _id: change._id
             }).creator) {
-            if (change.name.length <= 50 && worktype.indexOf(type) != -1 && input.dueDate.getTime() >= ref) {
+            if (change.name.length <= 50 && worktype.indexOf(change.type) != -1 && input.dueDate.getTime() >= ref) {
                 Meteor.update({
                     _id: change._id
                 }, {

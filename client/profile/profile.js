@@ -305,7 +305,7 @@ Template.profile.events({
     'click .profOptions p' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
-        var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"))).toString();
+        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
         var input = document.getElementsByClassName("op")[opnum];
         input.value = p.childNodes[0].nodeValue;
         try {

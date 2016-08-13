@@ -4,11 +4,13 @@
 </head>
 
 <template name="main">
+    {{> loginButtons}}
     <header style="background-color:{{divColor 'header'}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
             <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
+            <div id="logout" onclick='document.getElementById("login-buttons-logout").click();'>Logout</div>
         </div>
         <div id="loadBar">
             <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
@@ -61,39 +63,55 @@
                 <div id="workTypeBar" style="background-color:{{workType}}"></div>
                 <div id="workInfoContainer">
                     <div>
-                        <span class="change" id="workName">{{work 'name'}}</span>
+                        <span class="change req" id="workName">{{work 'name'}}</span>
                     </div>
                     <div id="workInfoNmCont">
                         <div>
                             <span class="workTitle">Due Date:</span>
-                            <span class="change" id="workDate">{{work 'dueDate'}}</span>
+                            <span class="change req" id="workDate">{{work 'dueDate'}}</span>
                         </div>
                         <div>
                             <span class="workTitle">Description:</span><br>
-                            <span class="change" id="workDesc">{{work 'description'}}</span>
+                            <span class="change req" type="textarea" id="workDesc">{{work 'description'}}</span>
                         </div>
                         <div>
-                            <div>
+                            <div  class="inputRadio">
                             <span class="workTitle">Type:</span>
-                            <span class="change radio" opc="0" op="0" re="readonly" id="workType">{{work 'type'}}</span>
+                            <span class="change radio req" opc="0" op="0" re="readonly" id="workType">{{work 'type'}}</span>
                             </div>
-                            <div class="workOptions" style="background-color:{{divColor 'header'}}">
-                                <p class="workOptionText">9th</p>
-                                <p class="workOptionText">10th</p>
-                                <p class="workOptionText">11th</p>
-                                <p class="workOptionText">12th</p>
+                            <div class="workOptions type" style="background-color:{{divColor 'header'}}">
+                                <p class="workOptionText">Normal</p>
+                                <p class="workOptionText">Quiz</p>
+                                <p class="workOptionText">Test</p>
+                                <p class="workOptionText">Project</p>
+                                <p class="workOptionText">Other</p>
                             </div>
                         </div>
                         <div id="workAttach">Attach other files</div>
                         <div id="workAttachmentHolder">
-                            {{#each work 'attach'}}
+                            {{#each work 'attachments'}}
                                 <a href={{link}}>{{filename}}</a>
                             {{/each}}
                         </div>
+                        {{#unless newWork}}
+                            <div id="workComments">
+                                <div>
+                                    <h3>Comments</h3>
+                                    <textarea id="workComment" rows="4" cols="50"></textarea>
+                                </div>
+                                <div id="comment">
+                                    {{#each work 'comments'}}
+                                        {{> comment}}
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/unless}}
                     </div>
                 </div>
                 {{#if newWork}}
-                    <div id="workSubmit">Save</div>
+                    {{#if inRole}}
+                        <div id="workSubmit">Save</div>
+                    {{/if}}
                 {{/if}}
             </div>
         </div>
@@ -119,9 +137,19 @@
             <h4>Add Work</h4>
         </div>
         <div class="workHolder">
-        <!-- {{#each myWork}}
+        {{#each thisClassWork}}
             {{> classModeWork}}
-        {{/each}} -->
+        {{/each}}
+        </div>
+    </div>
+</template>
+
+<template name="classModeWork">
+    <div class="workCard">
+        <div class="cWorkType" style="background-color:{{typeColor}}"></div>
+        <div class="cWorkCont">
+            <p class="cWorkName">{{name}}</p>
+            <span class="cWorkDate">{{dueDate}}</span>
         </div>
     </div>
 </template>

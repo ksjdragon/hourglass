@@ -63,12 +63,21 @@ Template.registerHelper('myClasses', () => {
     	} else {
     		var array = [];
     		var courses = Meteor.user().profile.classes;
+
     		for(var i = 0; i < courses.length; i++) {
     			array.push(classes.findOne({_id:courses[i]}));
+    			var thisWork = work.find({class:array[i]["_id"]}).fetch();
+
+	    		for(var j = 0; j < thisWork.length; j++) {
+	    			thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
+	    			thisWork[j].typeColor = workColors[thisWork[j].type];
+    			}
+    			console.log(thisWork);
+    			array[i].thisClassWork = thisWork;
     		}
     		return array;
     	}
-});
+})
 
 Template.main.helpers({
     schoolName() {
@@ -171,8 +180,21 @@ Template.main.helpers({
     		return workColors.type;
     	}
     },
+    cWorkColor(type) {
+    	return workColors["type"];
+    },
     newWork() {
     	return Session.get("newWork");
+    },
+    inRole() {
+    	if(Session.get("newWork")) {
+    		return true;
+    	} else {
+    		if(Meteor.userId() === work.findOne({_id: Session.get("workId")}).creator || 
+    		Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+    		classes.findOne({_id: work.findOne({_id: Session.get("workId")}).class}).moderators.indexOf(Meteor.userId()) !== -1
+    		) return true;
+    	}
     }
 });
 
@@ -244,7 +266,7 @@ Template.main.events({
         if (event.target.id !== sessval &&
             event.target.id !== sessval + "a" &&
             !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("profOptions")) {
+            !event.target.parentNode.className.includes("workOptions")) {
             closeInput(sessval);
         }
         if (!event.target.className.includes("radio") &&
@@ -262,12 +284,17 @@ Template.main.events({
         }
     },
     'click .creWork' (event) {
+    	if(event.target.className !== "creWork") {
+    		var attr = event.target.parentNode.getAttribute("classid");
+    	} else {
+    		var attr = event.target.getAttribute("classid");
+    	}
         openDivFade(document.getElementsByClassName("overlay")[0]);
         Session.set("newWork", true);
         Session.set("currentWork",
     		{
     			name:"Name | Click here to edit...",
-    			class:event.target.getAttribute("classid"),
+    			class:attr,
     			dueDate:"Click here to edit...",
     			description:"Click here to edit...",
     			type:"Click here to edit..."
@@ -283,14 +310,21 @@ Template.main.events({
         ele.style.display = "none";
         var input = document.createElement("input");
 
-        if (ele.getAttribute("type") !== null) {
-            input.type = ele.getAttribute("type");
+        var typ = ele.getAttribute("type")
+        if (typ === "textarea") {
+            input = document.createElement("textarea");
+            input.style.height = 3 * dim.height.toString() + "px";
+            input.rows = "4";
+        } else if (typ !== null) {
+        	input.type = typ;
+        	input.style.height = 0.9 * dim.height.toString() + "px";
         } else {
-            input.type = "text";
+        	input.typ = "text";
+        	input.style.height = 0.9 * dim.height.toString() + "px";
         }
         input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
-        input.style.height = 0.9 * dim.height.toString() + "px";
+        
         input.style.width = "70%";
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
@@ -316,9 +350,38 @@ Template.main.events({
             ele.parentNode.appendChild(span);
         }
     },
+    'click .radio' (event) {
+        var op = event.target;
+        Session.set("radioDiv", op.getAttribute("op"));
+        Session.set("radioOffset", op.getAttribute("opc"));
+        try {
+            for (var i = 0; i < document.getElementsByClassName("workOptions").length; i++) {
+                var curr = document.getElementsByClassName("workOptions")[i];
+                if (Session.get("radioDiv") !== i.toString()) {
+                    closeDivFade(document.getElementsByClassName("workOptions")[i]);
+                }
+            }
+        } catch (err) {}
+        openDivFade(document.getElementsByClassName("workOptions")[op.getAttribute("op")]);
+    },
+    'click .workOptions p' (event) {
+        var sessval = Session.get("modifying");
+        var p = event.target;
+        var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset")));
+        var input = document.getElementsByClassName("op")[opnum];
+        input.value = p.childNodes[0].nodeValue;
+        try {
+            closeInput(sessval);
+        } catch (err) {}
+
+        closeDivFade(p.parentNode);
+        input.focus();
+        Session.set("radioDiv", null);
+        Session.set("radioOffset", null);
+    },
     'keydown' (event) {
         var sessval = Session.get("modifying");
-        if (event.keyCode == 13) {
+        if (event.keyCode == 13 && sessval != "workDesc") {
             try {
                 closeInput(sessval);
             } catch (err) {}
@@ -344,15 +407,23 @@ Template.main.events({
         }
     },
     'click #workSubmit' () {
-    	Session.set("serverData",getHomeworkFormData());
+    	data = getHomeworkFormData();
+    	if(data === null) return;
+    	console.log(data);
+    	Session.set("serverData",data);
     	if(Session.get("newWork")) {
-    		sendData("editWork");
-    	} else {
     		sendData("createWork");
+    	} else {
+    		sendData("editWork");
     	}
     	Session.set("newWork",null);
-        Session.set("currentWork",null);
-    }
+        closeDivFade(document.getElementsByClassName("overlay")[0]);
+        Session.set("currentWork", null);
+    },
+   	'focus .op' (event) {
+        event.target.click();
+    },
+
 });
 
 function openDivFade(div) {
@@ -377,6 +448,7 @@ function sendData(funcName) {
 function closeInput(sessval) {
     var input = document.getElementById(sessval + "a");
     var span = document.getElementById(sessval);
+    span.style.color = "#8C8C8C";
     input.parentNode.removeChild(input);
     try {
         var restrict = document.getElementById("restrict");
@@ -389,17 +461,44 @@ function closeInput(sessval) {
     }
     span.style.display = "initial";
     Session.set("modifying", null);
-    if(Session.get("newWork")) {
+    if(!Session.get("newWork")) {
     	Session.set("serverData",getHomeworkFormData());
-    	sendData("editProfile");
+    	sendData("editWork");
     }
-
 }
 
 function getHomeworkFormData() {
-	return;
+	var inputs = document.getElementsByClassName("req");
+	var stop;
+	for(var i = 0; i < inputs.length; i++) {
+		var value = inputs[i].childNodes[0].nodeValue;
+		if(i === 2) {
+			if(Date.parse(inputs[i]) === NaN) { // Implement moment.
+				value = "Invalid date";
+				stop = true;
+			}
+		} else {
+			if(value.includes("Click here to edit")) {
+				value = "Missing field";
+				inputs[i].style.color = "#FF1A1A";
+				stop = true;
+			}
+		}	
+	}
+	if(stop) return null;
+
+	var data = Session.get("currentWork");
+	data.name = document.getElementById("workName").childNodes[0].nodeValue;
+	data.dueDate = new Date(document.getElementById("workDate").childNodes[0].nodeValue);
+	data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
+	data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
+	Session.set("currentWork", data);
+
+	return data;
 }
 
-function clearHomeworkForm() {
-	
+function getReadableDate(date) {
+	var days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+	var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+	return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate();
 }
