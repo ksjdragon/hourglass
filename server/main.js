@@ -165,13 +165,13 @@ Meteor.methods({
         ref = new Date(ref.getFullYear() + "-" + month.toString() + "-" + ref.getDate()).getTime();
         input.creator = Meteor.userId();
         work.schema.validate(input);
-        var found = Meteor.findOne({
+        var found = classes.findOne({
             _id: input.class
         });
-
+        console.log(input);
         if (Meteor.user() !== null &&
             found !== null &&
-            found.subscribers.indexOf(Meteor.userId()) != -1 &&
+            Meteor.user().profile.classes.indexOf(input.class) !== -1 &&
             found.banned.indexOf(Meteor.userId()) === -1 &&
             found.blockEdit.indexOf(Meteor.userId()) === -1 &&
             input.dueDate.getTime() >= ref && worktype.indexOf(type) != -1 &&
@@ -182,6 +182,7 @@ Meteor.methods({
             input.done = [];
             input.numberdone = 0;
             input.comments = [];
+            console.log(input);
             work.insert(input);
         }
 
@@ -211,6 +212,7 @@ Meteor.methods({
                     $set: {
                         name: change.name,
                         dueDate: change.dueDate,
+                        description: change.description,
                         comments: change.comments,
                         attachments: change.attachments,
                         type: change.type
@@ -227,6 +229,7 @@ Meteor.methods({
                     $set: {
                         name: change.name,
                         dueDate: change.dueDate,
+                        description: change.description,
                         attachments: change.attachments,
                         type: change.type
                     }
