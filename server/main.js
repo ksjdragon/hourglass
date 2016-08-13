@@ -212,17 +212,18 @@ Meteor.methods({
         if (typeof comment === "string" && comment.length <= 200 &&
             currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
             currentclass.blockEdit.indexOf(Meteor.userId()) === -1) {
-            comments = workobject.comments.push(comment);
+            var comments = workobject.comments.push(comment);
             work.update({_id: input[1]}, {$set: {comments: comments}});
         }
     },
-    'markDone': function(workId) {
-        var workobject = work.findOne({_id: workId});
+    'markWork': function(input) {
+        var workobject = work.findOne({_id: input[0]});
         var currentclass = classes.findOne({_id: workobject.class});
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
-            workobject.done.indexOf(Meteor.userId()) === -1) {
-            currentdone = workobject.done.push(Meteor.userId());
-            work.update({_id: input[1]}, {$set: {done: currentdone}});
+            ["confirmations", "reports", "done"].indexOf(input[1]) != -1 &&
+            workobject[input[1]].indexOf(Meteor.userId()) === -1) {
+            var currentdone = workobject[input[1]].push(Meteor.userId());
+            work.update({_id: input[1]}, {$set: {input[1]: currentdone}});
         }
     },
     'deleteWork': function(workId) {
