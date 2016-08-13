@@ -41,7 +41,13 @@
     <img id="bg" src={{bgSrc}}>
     <div id="mainBody">
         {{#if currMode 'classes'}}
+            <div id="classesMode">
+                {{#each myClasses}}
+                    {{> classesMode}}
+                {{/each}}
+            </div>
         {{/if}}
+
         {{#if currMode 'calendar'}}
         <div id="calbg" style="{{calbg}}"></div>
             <div id="calendar" style="{{calCenter}}">
@@ -62,5 +68,22 @@
     <div class="sideClass">
         <p class="sideClassName">{{name}}</p>
         <p class="sideClassHour">{{hour}}</p>
+    </div>
+</template>
+
+<template name="classesMode">
+    <div class="mainClass" style="background-color:{{divColor 'header'}}">
+        <div class="classInfo"> <!-- class color -->
+            <h3 class="mainClassName">{{name}}</h3>
+            <p class="mainClassHour">{{hour}}</p>
+            <p class="mainClassTeacher">{{teacher}}</p>
+        </div>
+        <div class="creWork">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            <h4>Add Work</h4>
+        </div>
+        <!-- {{#each myWork}}
+            {{> classModeWork}}
+        {{/each}} -->
     </div>
 </template>

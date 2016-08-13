@@ -279,6 +279,52 @@ input {
 	margin: 0;
 }
 
+#classesMode {
+	width: 100%;
+	height: 100%;
+	display: inline-block;
+}
+
+.mainClass {
+	width: 15%;
+	margin: 2%;
+	margin-right: 0;
+
+	box-shadow: 2px 2px 5px 3px #666;
+	float: left;
+}
+
+.classInfo {
+	padding: 6%;
+	background-color: rgba(255,255,255,0.3); /* remove when class color */
+}
+
+.mainClassName {
+	font-size: 160%;
+
+	-webkit-filter: none;
+	filter: none;
+}
+
+.mainClassHour {
+	margin-top: 0;
+}
+
+.creWork {
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease
+}
+
+.creWork:hover {
+	background-color: rgba(0,0,0,0.05);
+}
+
+.creWork h4 {
+	padding-left: 0;
+}
+
 .overlay {
 	width: 100%;
 	height: 100%;

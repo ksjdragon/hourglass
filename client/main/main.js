@@ -33,13 +33,6 @@ var calendarColors = {
     "quiz": "black"
 };
 
-var options = {
-    "privacy": ["Public", "Hidden"],
-    "category": ["Class", "Club", "Other"]
-};
-
-var searchSchools = [];
-
 Session.set("calendarclasses", null);
 Session.set("sidebar", null);
 Session.set("mode", null); // Change to user preferences
