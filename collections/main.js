@@ -29,6 +29,8 @@ work.schema = new SimpleSchema({
 	name: {type: String},
 	class: {type: String},
 	dueDate: {type: Date},
+	creator: {type: String},
+	comments: {type: [String]},
 	submittor: {type: String, optional: true},
 	confirmations: {type: [String], optional: true},
 	reports: {type: [String], optional: true},

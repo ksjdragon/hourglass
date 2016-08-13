@@ -178,15 +178,20 @@ Meteor.methods({
             input.reports = [];
             input.done = [];
             input.numberdone = 0;
+            input.creator = Meteor.userId();
+            input.comments = [];
             work.insert(input);
         }
 
     },
-    'deleteWork': function(workid) {
-        // Add security here
-        work.remove({
-            _id: workid
-        });
+    'deleteWork': function(workId) {
+        var currentclass = classes.findOne({_id: work.findOne({_id: workId}).class});
+        var authorized = currentclass.moderators.push(currentclass.admin);
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) || authorized.indexOf(Meteor.userId()) != -1) {
+          work.remove({
+              _id: workid
+          });
+        }
     },
     'editProfile': function(change) {
         current = Meteor.user().profile;
