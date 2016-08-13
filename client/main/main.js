@@ -4,7 +4,9 @@ import {
 
 import './main.html';
 
-
+Meteor.subscribe('schools');
+Meteor.subscribe('classes');
+Meteor.subscribe('work');
 var openValues = {
     "menu": "-25%",
     "options": "-20%"

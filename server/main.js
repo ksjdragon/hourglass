@@ -32,7 +32,7 @@ Meteor.publish('schools', function() {
 });
 
 Meteor.publish('classes', function() {
-    if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+    if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return classes.find();
     } else {
         return classes.find({
@@ -40,7 +40,7 @@ Meteor.publish('classes', function() {
                 privacy: false
             }, {
                 _id: {
-                    $in: Meteor.user().profile.classes
+                    $in: this.user().profile.classes
                 }
             }]
         }, {
@@ -63,12 +63,12 @@ Meteor.publish('classes', function() {
 });
 
 Meteor.publish('work', function() {
-    if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+    if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
     } else {
         return work.find({
             class: {
-                $in: Meteor.user().profile.classes
+                $in: this.user().profile.classes
             }
         });
     }

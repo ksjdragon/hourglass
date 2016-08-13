@@ -6,7 +6,6 @@ schools.schema = new SimpleSchema({
 	name: {type: String},
 	status: {type: Boolean},
 	creator: {type: String},
-	aliases: {type: [String]}
 });
 
 classes.schema = new SimpleSchema({
@@ -30,7 +29,6 @@ work.schema = new SimpleSchema({
 	name: {type: String},
 	class: {type: String},
 	dueDate: {type: Date},
-	aliases: {type: [String], optional: true},
 	submittor: {type: String, optional: true},
 	confirmations: {type: [String], optional: true},
 	reports: {type: [String], optional: true},
