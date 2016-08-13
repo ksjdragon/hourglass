@@ -253,7 +253,8 @@ Meteor.methods({
             }, {
                 $set: {
                     comments: comments,
-                    user:user
+                    user:user,
+                    time: new Date()
                 }
             });
         }
