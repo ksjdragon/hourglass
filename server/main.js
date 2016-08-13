@@ -222,7 +222,7 @@ Meteor.methods({
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
             ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
             userindex = workobject[input[1]].indexOf(Meteor.userId())
-            if userindex === -1 {
+            if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].push(Meteor.userId());
             } else {
                 workobject[input[1]] = workobject[input[1]].splice(userindex, 1);
@@ -333,10 +333,3 @@ Meteor.methods({
         }
     }
 });
-
-function has(array, has) {
-    for (var i = 0; i < array.length; i++) {
-        if (array[i] === has) return true;
-    }
-    return false;
-}
