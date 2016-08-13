@@ -56,10 +56,46 @@
         {{/if}}
     </div>
     <div class="overlay">
-        <div class="overlayCont" style="{{overlayDim}};">
-            <p>Are you sure?</p>
-            <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+        <div id="editWork">
+            <div id="editWorkCont" style="{{workCenter}};background-color:{{divColor 'header'}}">
+                <div id="workTypeBar" style="background-color:{{workType}}"></div>
+                <div id="workInfoContainer">
+                    <div>
+                        <span class="change" id="workName">{{work 'name'}}</span>
+                    </div>
+                    <div id="workInfoNmCont">
+                        <div>
+                            <span class="workTitle">Due Date:</span>
+                            <span class="change" id="workDate">{{work 'dueDate'}}</span>
+                        </div>
+                        <div>
+                            <span class="workTitle">Description:</span><br>
+                            <span class="change" id="workDesc">{{work 'description'}}</span>
+                        </div>
+                        <div>
+                            <div>
+                            <span class="workTitle">Type:</span>
+                            <span class="change radio" opc="0" op="0" re="readonly" id="workType">{{work 'type'}}</span>
+                            </div>
+                            <div class="workOptions" style="background-color:{{divColor 'header'}}">
+                                <p class="workOptionText">9th</p>
+                                <p class="workOptionText">10th</p>
+                                <p class="workOptionText">11th</p>
+                                <p class="workOptionText">12th</p>
+                            </div>
+                        </div>
+                        <div id="workAttach">Attach other files</div>
+                        <div id="workAttachmentHolder">
+                            {{#each work 'attach'}}
+                                <a href={{link}}>{{filename}}</a>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{#if newWork}}
+                    <div id="workSubmit">Save</div>
+                {{/if}}
+            </div>
         </div>
     </div>
 </template>
@@ -78,12 +114,14 @@
             <p class="mainClassHour">{{hour}}</p>
             <p class="mainClassTeacher">{{teacher}}</p>
         </div>
-        <div class="creWork">
+        <div class="creWork" classid="{{_id}}">
             <i class="fa fa-plus" aria-hidden="true"></i>
             <h4>Add Work</h4>
         </div>
+        <div class="workHolder">
         <!-- {{#each myWork}}
             {{> classModeWork}}
         {{/each}} -->
+        </div>
     </div>
 </template>
