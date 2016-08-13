@@ -216,13 +216,17 @@ Meteor.methods({
             work.update({_id: input[1]}, {$set: {comments: comments}});
         }
     },
-    'markWork': function(input) {
+    'toggleWork': function(input) {
         var workobject = work.findOne({_id: input[0]});
         var currentclass = classes.findOne({_id: workobject.class});
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
-            ["confirmations", "reports", "done"].indexOf(input[1]) != -1 &&
-            workobject[input[1]].indexOf(Meteor.userId()) === -1) {
-            workobject[input[1]] = workobject[input[1]].push(Meteor.userId());
+            ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
+            userindex = workobject[input[1]].indexOf(Meteor.userId())
+            if userindex === -1 {
+                workobject[input[1]] = workobject[input[1]].push(Meteor.userId());
+            } else {
+                workobject[input[1]] = workobject[input[1]].splice(userindex, 1);
+            }
             work.update({_id: input[1]}, {$set: workobject});
         }
     },
