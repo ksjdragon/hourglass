@@ -191,7 +191,7 @@ Meteor.methods({
 
         var currentclass = classes.findOne({_id: work.findOne({_id: workId}).class});
         var authorized = currentclass.moderators.push(currentclass.admin);
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) {
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             Meteor.update({_id: change._id}, {$set: change});
         } else if (authorized.indexOf(Meteor.userId()) != -1) {
             if (change.name.length <= 50 && worktype.indexOf(type) != -1) {
@@ -222,8 +222,8 @@ Meteor.methods({
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
             ["confirmations", "reports", "done"].indexOf(input[1]) != -1 &&
             workobject[input[1]].indexOf(Meteor.userId()) === -1) {
-            var currentdone = workobject[input[1]].push(Meteor.userId());
-            work.update({_id: input[1]}, {$set: {input[1]: currentdone}});
+            workobject[input[1]] = workobject[input[1]].push(Meteor.userId());
+            work.update({_id: input[1]}, {$set: workobject});
         }
     },
     'deleteWork': function(workId) {
