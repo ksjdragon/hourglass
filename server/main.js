@@ -42,7 +42,7 @@ Meteor.publish('classes', function() {
                 privacy: false
             }, {
                 _id: {
-                    $in: this.user().profile.classes
+                    $in: Meteor.users.findOne(this.userId).profile.classes
                 }
             }]
         }, {
@@ -70,12 +70,14 @@ Meteor.publish('work', function() {
     } else {
         return work.find({
             class: {
-                $in: this.user().profile.classes
+                $in: Meteor.users.findOne(this.userId).profile.classes
             }
         });
     }
 
 });
+
+Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
 Meteor.methods({
     'genCode': function() {
@@ -202,7 +204,7 @@ Meteor.methods({
                 Meteor.update({_id: change._id}, {$set: {name: change.name, dueDate: change.dueDate, attachments: change.attachments, type: change.type}});
             }
         } else {
-            throw "Unauthorized."
+            throw "Unauthorized.";
         }
     },
     'addComment': function(input) {
@@ -221,7 +223,7 @@ Meteor.methods({
         var currentclass = classes.findOne({_id: workobject.class});
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
             ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
-            userindex = workobject[input[1]].indexOf(Meteor.userId())
+            userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].push(Meteor.userId());
             } else {
@@ -245,6 +247,10 @@ Meteor.methods({
         var current = Meteor.user().profile;
         current.school = change.school;
         current.grade = change.grade;
+        current.classes = change.classes;
+        if (!current.classes) {
+            current.classes = [];
+        }
         current.description = change.description;
         current.avatar = change.avatar;
         current.banner = change.banner;

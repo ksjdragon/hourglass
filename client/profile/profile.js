@@ -95,7 +95,7 @@ Template.profile.helpers({
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
         if (Meteor.user().profile.avatar) {
-            var pic = Meteor.user().profile.avatar;
+            var pic = Meteor.user().profile.avatar + ".png";
         } else {
             var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString(); + ".png";
             currentprofile = Meteor.user().profile;
