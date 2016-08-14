@@ -447,7 +447,9 @@ Template.main.events({
     'focus #workDatea' () {
     	$('#workDatea').datepicker({
     		format: 'DD, MM d, yyyy',
-    		startDate: 'd'
+    		  startDate: 'mm-dd-yyyy',
+          autoclose: true,
+
     	});
     }
 });
