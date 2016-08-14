@@ -82,7 +82,7 @@ Template.profile.helpers({
     banner() {
         var width = window.innerWidth * 1600 / 1920;
         var height = width * 615 / 1600;
-        if (Meteor.user().profile.banner) {
+        if (Meteor.user().profile.banner !== undefined) {
             var banner = Meteor.user().profile.banner;
         } else {
             var banner = "Banners/defaultcover.jpg";
@@ -94,7 +94,7 @@ Template.profile.helpers({
     },
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
-        if (Meteor.user().profile.avatar) {
+        if (Meteor.user().profile.avatar !== undefined) {
             var pic = Meteor.user().profile.avatar + ".png";
         } else {
             var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString(); + ".png";
