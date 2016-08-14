@@ -59,25 +59,37 @@ Template.registerHelper('overlayDim', (part) => {
 });
 
 Template.registerHelper('myClasses', () => {
-	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+    var invalid = [];
+	  if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
     		return [];
-    	} else {
+    } else {
     		var array = [];
     		var courses = Meteor.user().profile.classes;
-
     		for(var i = 0; i < courses.length; i++) {
-    			array.push(classes.findOne({_id:courses[i]}));
-    			var thisWork = work.find({class:array[i]["_id"]}).fetch();
+            found = classes.findOne({_id:courses[i]});
+            if (found) {
+    			      array.push(found);
+    			      var thisWork = work.find({class: array.slice(-1)[0]}).fetch();
 
-	    		for(var j = 0; j < thisWork.length; j++) {
-	    			thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
-	    			thisWork[j].typeColor = workColors[thisWork[j].type];
-    			}
-    			array[i].thisClassWork = thisWork;
+	    		      for(var j = 0; j < thisWork.length; j++) {
+	    			        thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
+	    			        thisWork[j].typeColor = workColors[thisWork[j].type];
+    			      }
+    			      array[i].thisClassWork = thisWork;
+            } else {
+                invalid.push(i);
+            }
     		}
+        for(var i = 0; i < invalid.length; i++) {
+            array.splice(invalid[i], 1);
+            courses.splice(invalid[i], 1);
+        }
+        userprofile = Meteor.user().profile;
+        userprofile.classes = courses;
+        Meteor.call("editProfile", userprofile);
     		return array;
-    	}
-})
+    }
+});
 
 Template.main.helpers({
     schoolName() {
@@ -320,7 +332,7 @@ Template.main.events({
         }
         input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
-        
+
         input.style.width = "70%";
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
