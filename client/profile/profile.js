@@ -136,7 +136,8 @@ Template.profile.helpers({
         return classes.find(
         {
             status: {$eq: true},
-            privacy: {$eq: false}
+            privacy: {$eq: false},
+            _id: {$nin: Meteor.user().profile.classes}
         },
         {sort: {subscribers: -1	}}, 
     	{limit: 20}
@@ -364,6 +365,7 @@ Template.profile.events({
             }
             for (var i = 2; i < items.length; i += 3) {
                 var item = items[i].childNodes[3];
+                if(Meteor.user().profile.classes.indexOf(item.getAttribute("classid")) !== -1) continue;
                 divs.push({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
