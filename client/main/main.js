@@ -251,9 +251,9 @@ Template.main.events({
         if(e === "overlay") {
         	closeDivFade(document.getElementsByClassName("overlay")[0]);
         	if(!Session.get("newWork")) {
-        		Session.set("serverData",getHomeworkFormData())
-        		sendData("editWork");
-        	} else {
+        		if(getHomeworkFormData() === null) return;
+    			Session.set("serverData",Session.get("currentWork"));
+    			sendData("editWork");
         	}
         	Session.set("newWork",null);
         }
