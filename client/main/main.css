@@ -442,6 +442,12 @@ input, textarea {
 	margin-bottom: 5%;
 }
 
+.datepicker {
+	box-shadow: 2px 2px 5px 3px #666;
+	background-color: rgba(255,255,255,0.7);
+	position: absolute;
+}
+
 .inputRadio {
 	margin-bottom: 0 !important;
 }
