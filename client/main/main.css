@@ -144,6 +144,7 @@ input, textarea {
 
 	cursor: pointer;
 }
+
 .fa-cog {
 	padding-left: 0.8%;
 	float: right;
@@ -162,6 +163,28 @@ input, textarea {
 
 #login-buttons {
 	display: none;
+}
+
+#logout {
+    width: initial;
+	padding: 1%;
+
+    background-color: rgba(0,0,0,0.05);
+
+    float: right;
+    text-align: center;
+
+    cursor: pointer;
+
+
+    -webkit-transition: margin 0.5s ease, background-color 0.5s ease;  
+	-moz-transition: margin 0.5s ease, background-color 0.5s ease; 
+	-ms-transition: margin 0.5s ease, background-color 0.5s ease;
+	transition: margin 0.5s ease, background-color 0.5s ease; 
+}
+
+#logout:hover {
+	background-color: rgba(0,0,0,0.1);
 }
 
 #menuContainer, #optionsContainer {
