@@ -28,10 +28,11 @@ var themeColors = {
 };
 
 var workColors = {
-    "test": "red",
-    "project": "blue",
-    "normal": "green",
-    "quiz": "black"
+	"normal": "#2E4F74",
+	"quiz": "#409333",
+    "test": "#AD3C44",
+    "project": "#E6E619",
+    "other": "#852E6D"
 };
 
 Session.set("calendarclasses", null);
@@ -333,6 +334,9 @@ Template.main.events({
         } else {
             input.select();
         }
+        if(ele.id === "workDate") {
+        	input.className += " form-control";
+        }
         input.focus();
         if (ele.getAttribute("restrict") !== null) {
             var span = document.createElement("span");
@@ -345,6 +349,7 @@ Template.main.events({
             span.appendChild(document.createTextNode(num.toString() + " characters left"));
             ele.parentNode.appendChild(span);
         }
+
     },
     'click .radio' (event) {
         var op = event.target;
@@ -426,6 +431,12 @@ Template.main.events({
     	var thisReadWork = formReadable(thisWork);
     	Session.set("currentReadableWork",thisReadWork);
     	openDivFade(document.getElementsByClassName("overlay")[0]);
+    },
+    'focus #workDatea' () {
+    	$('#workDatea').datepicker({
+    		format: 'DD, MM d, yyyy',
+    		startDate: 'd'
+    	});
     }
 });
 
@@ -476,17 +487,10 @@ function getHomeworkFormData() {
 	var stop;
 	for(var i = 0; i < inputs.length; i++) {
 		var value = inputs[i].childNodes[0].nodeValue;
-		if(i === 2) {
-			if(Date.parse(inputs[i]) === NaN) { // Implement moment.
-				value = "Invalid date";
-				stop = true;
-			}
-		} else {
-			if(value.includes("Click here to edit")) {
-				inputs[i].childNodes[0].nodeValue = "Missing field";
-				inputs[i].style.color = "#FF1A1A";
-				stop = true;
-			}
+		if(value.includes("Click here to edit")) {
+			inputs[i].childNodes[0].nodeValue = "Missing field";
+			inputs[i].style.color = "#FF1A1A";
+			stop = true;
 		}	
 	}
 	var desc = document.getElementById("workDesc");
@@ -499,7 +503,7 @@ function getHomeworkFormData() {
 
 	var data = Session.get("currentWork");
 	data.name = document.getElementById("workName").childNodes[0].nodeValue;
-	data.dueDate = new Date(document.getElementById("workDate").childNodes[0].nodeValue);
+	data.dueDate = toDate(document.getElementById("workDate").childNodes[0].nodeValue);
 	data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
 	data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
 	
@@ -508,14 +512,23 @@ function getHomeworkFormData() {
 	Session.set("currentReadableWork", readableData);
 }
 
+var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
 function getReadableDate(date) {
-	var days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-	var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 	return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
 }
 
+function toDate(date) {
+	date = date.substring(date.search(",")+2,date.length);
+	month = months.indexOf(date.substring(0,date.search(" ")));
+	day = date.substring(date.search(" ")+1,date.search(","));
+	year = date.substring(date.search(",")+2,date.length);
+	return new Date(year,month,day,11,59,59);
+}
+
 function formReadable(input) {
-	input.dueDate = input.dueDate.getFullYear()+"-"+input.dueDate.getMonth()+"-"+input.dueDate.getDate();
+	input.dueDate = getReadableDate(input.dueDate);
 	input.type = input.type[0].toUpperCase() + input.type.slice(1);
 	return input;
 }
