@@ -39,6 +39,7 @@ Session.set("sidebar", null);
 Session.set("mode", null); // Change to user preferences
 Session.set("newWork",null);
 Session.set("currentWork",null);
+Session.set("currentReadableWork",null);
 Session.set("modifying",null);
 Session.set("radioDiv",null);
 Session.set("radioOffset",null);
@@ -169,7 +170,7 @@ Template.main.helpers({
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-.5*w.toString()+"px;margin-top:"+-.5*h.toString()+"px";
     },
     work(value) {
-    	return Session.get("currentWork")[value];
+    	return Session.get("currentReadableWork")[value];
     },
     workType() {
     	type = Session.get("currentWork").type;
@@ -179,9 +180,6 @@ Template.main.helpers({
     		return workColors[type];
     	}
     },
-    cWorkColor(type) {
-    	return workColors["type"];
-    },
     newWork() {
     	return Session.get("newWork");
     },
@@ -189,9 +187,9 @@ Template.main.helpers({
     	if(Session.get("newWork")) {
     		return true;
     	} else {
-    		if(Meteor.userId() === work.findOne({_id: Session.get("workId")}).creator || 
+    		if(Meteor.userId() === Session.get("currentWork").creator || 
     		Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-    		classes.findOne({_id: work.findOne({_id: Session.get("workId")}).class}).moderators.indexOf(Meteor.userId()) !== -1
+    		classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1
     		) return true;
     	}
     }
@@ -256,10 +254,8 @@ Template.main.events({
         		Session.set("serverData",getHomeworkFormData())
         		sendData("editWork");
         	} else {
-        		clearHomeworkForm();
         	}
         	Session.set("newWork",null);
-        	Session.set("currentWork",null);
         }
 
         if (event.target.id !== sessval &&
@@ -289,7 +285,7 @@ Template.main.events({
     		var attr = event.target.getAttribute("classid");
     	}
         Session.set("newWork", true);
-        Session.set("currentWork",
+        Session.set("currentReadableWork",
     		{
     			name:"Name | Click here to edit...",
     			class:attr,
@@ -297,6 +293,7 @@ Template.main.events({
     			description:"Click here to edit...",
     			type:"Click here to edit..."
     		});
+       	Session.set("currentWork",{class:attr});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
@@ -406,9 +403,8 @@ Template.main.events({
         }
     },
     'click #workSubmit' () {
-    	data = getHomeworkFormData();
-    	if(data === null) return;
-    	Session.set("serverData",data);
+    	if(getHomeworkFormData() === null) return;
+    	Session.set("serverData",Session.get("currentWork"));
     	if(Session.get("newWork")) {
     		sendData("createWork");
     	} else {
@@ -416,7 +412,6 @@ Template.main.events({
     	}
     	Session.set("newWork",null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
-        Session.set("currentWork", null);
     },
    	'focus .op' (event) {
         event.target.click();
@@ -427,9 +422,9 @@ Template.main.events({
     	workid = event.target.getAttribute("workid");
     	Session.set("newWork",false);
     	var thisWork = work.findOne({_id:workid});
-    	thisWork.dueDate = getReadableDate(thisWork.dueDate);
-    	thisWork.type = thisWork.type[0].toUpperCase() + thisWork.type.slice(1);
     	Session.set("currentWork",thisWork);
+    	var thisReadWork = formReadable(thisWork);
+    	Session.set("currentReadableWork",thisReadWork);
     	openDivFade(document.getElementsByClassName("overlay")[0]);
     }
 });
@@ -470,7 +465,8 @@ function closeInput(sessval) {
     span.style.display = "initial";
     Session.set("modifying", null);
     if(!Session.get("newWork")) {
-    	Session.set("serverData",getHomeworkFormData());
+    	if(getHomeworkFormData() === null) return;
+    	Session.set("serverData",Session.get("currentWork"));
     	sendData("editWork");
     }
 }
@@ -487,11 +483,17 @@ function getHomeworkFormData() {
 			}
 		} else {
 			if(value.includes("Click here to edit")) {
-				value = "Missing field";
+				inputs[i].childNodes[0].nodeValue = "Missing field";
 				inputs[i].style.color = "#FF1A1A";
 				stop = true;
 			}
 		}	
+	}
+	var desc = document.getElementById("workDesc");
+	if(desc.childNodes[0].nodeValue.includes("Click here to edit")) {
+		desc.childNodes[0].nodeValue = "Missing field";
+		desc.style.color = "#FF1A1A";
+		stop = true;
 	}
 	if(stop) return null;
 
@@ -500,13 +502,20 @@ function getHomeworkFormData() {
 	data.dueDate = new Date(document.getElementById("workDate").childNodes[0].nodeValue);
 	data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
 	data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
+	
 	Session.set("currentWork", data);
-
-	return data;
+	var readableData = formReadable(data);
+	Session.set("currentReadableWork", readableData);
 }
 
 function getReadableDate(date) {
 	var days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 	var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 	return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
+}
+
+function formReadable(input) {
+	input.dueDate = input.dueDate.getFullYear()+"-"+input.dueDate.getMonth()+"-"+input.dueDate.getDate();
+	input.type = input.type[0].toUpperCase() + input.type.slice(1);
+	return input;
 }
