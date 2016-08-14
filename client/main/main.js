@@ -68,7 +68,7 @@ Template.registerHelper('myClasses', () => {
     		var courses = Meteor.user().profile.classes;
     		for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
-            if (found) {
+            // if (found !== undefined) {
     			      array.push(found);
     			      var thisWork = work.find({class: array.slice(-1)[0]}).fetch();
 
@@ -77,17 +77,18 @@ Template.registerHelper('myClasses', () => {
 	    			        thisWork[j].typeColor = workColors[thisWork[j].type];
     			      }
     			      array[i].thisClassWork = thisWork;
-            } else {
-                invalid.push(i);
-            }
+            // } else {
+            //     console.log("invalid");
+            //     invalid.push(i);
+            // }
     		}
-        for(var i = 0; i < invalid.length; i++) {
-            array.splice(invalid[i], 1);
-            courses.splice(invalid[i], 1);
-        }
-        userprofile = Meteor.user().profile;
-        userprofile.classes = courses;
-        Meteor.call("editProfile", userprofile);
+        // for(var i = 0; i < invalid.length; i++) {
+        //     array.splice(invalid[i], 1);
+        //     courses.splice(invalid[i], 1);
+        // }
+        // userprofile = Meteor.user().profile;
+        // userprofile.classes = courses;
+        // Meteor.call("editProfile", userprofile);
     		return array;
     }
 });
