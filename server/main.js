@@ -353,7 +353,7 @@ Meteor.methods({
             pass === found.code &&
             found.banned.indexOf(Meteor.userId()) === -1 &&
             prof.classes.indexOf(change) === -1) {
-
+            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers + 1}});
             var current = Meteor.user().profile;
             current.classes.push(change);
             Meteor.users.update({

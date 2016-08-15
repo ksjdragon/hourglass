@@ -60,37 +60,25 @@ Template.registerHelper('overlayDim', (part) => {
 });
 
 Template.registerHelper('myClasses', () => {
-    var invalid = [];
-	  if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
     		return [];
     } else {
-    		var array = [];
-    		var courses = Meteor.user().profile.classes;
-    		for(var i = 0; i < courses.length; i++) {
-            found = classes.findOne({_id:courses[i]});
-            // if (found !== undefined) {
-    			      array.push(found);
-    			      var thisWork = work.find({class: array.slice(-1)[0]}).fetch();
+		var array = [];
+		var courses = Meteor.user().profile.classes;
+		for(var i = 0; i < courses.length; i++) {
+        	found = classes.findOne({_id:courses[i]});
+	      	array.push(found);
+	      	var thisWork = work.find({class: courses[i]}).fetch();
 
-	    		      for(var j = 0; j < thisWork.length; j++) {
-	    			        thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
-	    			        thisWork[j].typeColor = workColors[thisWork[j].type];
-    			      }
-    			      array[i].thisClassWork = thisWork;
-            // } else {
-            //     console.log("invalid");
-            //     invalid.push(i);
-            // }
-    		}
-        // for(var i = 0; i < invalid.length; i++) {
-        //     array.splice(invalid[i], 1);
-        //     courses.splice(invalid[i], 1);
-        // }
-        // userprofile = Meteor.user().profile;
-        // userprofile.classes = courses;
-        // Meteor.call("editProfile", userprofile);
-    		return array;
-    }
+	      	for(var j = 0; j < thisWork.length; j++) {
+		        thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
+		        thisWork[j].typeColor = workColors[thisWork[j].type];
+	      	}
+	     	 array[i].thisClassWork = thisWork;
+        	console.log(array);
+    	}
+    	return array;
+    }	
 });
 
 Template.main.helpers({
