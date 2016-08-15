@@ -499,7 +499,7 @@ function getCreateFormData() {
     var stop;
     var form = document.getElementsByClassName("creInput");
     for (var i = 0; i < form.length; i++) {
-    	if(i === 1) continue;
+    	if(i === 1 || i === 2) continue;
         if (form[i].value === "") {
             form[i].focus();
             form[i].placeholder = "Missing field";
