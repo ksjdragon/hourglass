@@ -374,7 +374,7 @@ Meteor.methods({
                 if (classes.findOne({
                         _id: change
                     }).admin != Meteor.userId()) {
-                    profile.classes.splice(index, 1);
+                    current = profile.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()
                     }, {
