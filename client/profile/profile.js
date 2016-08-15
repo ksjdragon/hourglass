@@ -95,7 +95,7 @@ Template.profile.helpers({
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
         if (Meteor.user().profile.avatar !== undefined) {
-            var pic = Meteor.user().profile.avatar + ".png";
+            var pic = Meteor.user().profile.avatar;;
         } else {
             var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString(); + ".png";
             currentprofile = Meteor.user().profile;
@@ -499,6 +499,7 @@ function getCreateFormData() {
     var stop;
     var form = document.getElementsByClassName("creInput");
     for (var i = 0; i < form.length; i++) {
+    	if(i === 1) continue;
         if (form[i].value === "") {
             form[i].focus();
             form[i].placeholder = "Missing field";
