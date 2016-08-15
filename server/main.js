@@ -127,7 +127,7 @@ Meteor.methods({
             } else {
                 input.status = false;
             }
-            input.subscribers = 0;
+            input.subscribers = [Meteor.userId()];
             input.admin = Meteor.userId();
             if (input.privacy) {
                 Meteor.call('genCode', function(error, result) {
@@ -154,6 +154,16 @@ Meteor.methods({
             _id: classid
         });
         if (Meteor.user() !== null && found !== null && (found.admin === Meteor.user()._id || Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']))) {
+            for (var i = 0; i < found.subscribers.length; i++) {
+                profile.classes.splice(index, 1);
+                Meteor.users.update({
+                    _id: found.subscribers[i]
+                }, {
+                    $set: {
+                        profile: current
+                    }
+                });
+            };
             classes.remove({
                 _id: classid
             });

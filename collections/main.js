@@ -22,7 +22,7 @@ classes.schema = new SimpleSchema({
 	  moderators: {type: [String], optional: true},
 	  banned: {type: [String], optional: true},
 	  blockEdit: {type: [String], optional: true},
-	  subscribers: {type: Number, optional: true}
+	  subscribers: {type: [String], optional: true}
 });
 
 work.schema = new SimpleSchema({
