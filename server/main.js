@@ -169,8 +169,7 @@ Meteor.methods({
         }
     },
     'trackUserInClass': function(input) {
-        var found = input[0];
-        var foundclass = input[1];
+        var foundclass = Meteor.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {userlist: foundclass[userlist].push(input[0])};
@@ -183,8 +182,7 @@ Meteor.methods({
         }
     },
     'untrackUserInClass': function(input) {
-        var found = input[0];
-        var foundclass = input[1];
+        var foundclass = Meteor.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {userlist: foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]))};
