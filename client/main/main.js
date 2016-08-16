@@ -68,15 +68,17 @@ Template.registerHelper('myClasses', () => {
 		var courses = Meteor.user().profile.classes;
 		for(var i = 0; i < courses.length; i++) {
         	found = classes.findOne({_id:courses[i]});
+
+        	if(found.admin === Meteor.userId()) found.box = " owned";
 	      	array.push(found);
+
 	      	var thisWork = work.find({class: courses[i]}).fetch();
 
 	      	for(var j = 0; j < thisWork.length; j++) {
 		        thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
 		        thisWork[j].typeColor = workColors[thisWork[j].type];
 	      	}
-	     	 array[i].thisClassWork = thisWork;
-        	console.log(array);
+	     	array[i].thisClassWork = thisWork;
     	}
     	return array;
     }	
@@ -192,7 +194,9 @@ Template.main.helpers({
     	} else {
     		if(Meteor.userId() === Session.get("currentWork").creator || 
     		Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-    		classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1
+    		classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
+    		classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+    		classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
     		) return true;
     	}
     }
@@ -300,6 +304,13 @@ Template.main.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
+    	if(!(Meteor.userId() === Session.get("currentWork").creator || 
+    		Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+    		classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1 ||
+    		classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+    		classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+    		)) return;
+
     	var ele = event.target;
         var sessval = Session.get("modifying");
         if (ele.id !== sessval && sessval !== null) closeInput(sessval);
