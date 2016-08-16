@@ -125,7 +125,7 @@
 						              	</div>
 							        </div>
 						        </div>
-						        <h3 id="creSubmit">Submit Request</h3>
+					        	<h3 id="creSubmit">Submit Request</h3>
 				          	</form> 
 						{{/if}}
 						</div>
@@ -141,14 +141,54 @@
       		<i class="fa fa-times-circle-o" aria-hidden="true"></i>
 	    </div>
   	</div>
+
+  	<div id="createdClasses" style="background-color:{{divColor 'cards'}}">
+  		<h3>{{selectedClass 'name'}}</h3>
+  		<h4>Code: {{selectedClass 'code'}}</h4>
+  		<div id="moderatorCont">
+  			<div class="userAdder">
+  			<h4>Moderators: </h4>
+  			<i class="fa fa-plus" aria-hidden="true"></i>
+			</div>
+  			{{#each selectedClass 'moderators'}}
+  				{{> userDisplay}}
+  			{{/each}}
+  		</div>
+  		<div id="bannedCont">
+  			<div class="userAdder">
+  			<h4>Banned: </h4>
+  			<i class="fa fa-plus" aria-hidden="true"></i>
+			</div>
+  			{{#each selectedClass 'banned'}}
+  				{{> userDisplay}}
+  			{{/each}}
+  		</div>
+  		<div id="blockEditCont">
+  			<div class="userAdder">
+	  			<h4>View only: </h4>
+	  			<i class="fa fa-plus" aria-hidden="true"></i>
+			</div>	
+  			{{#each selectedClass 'blockEdit'}}
+  				{{> userDisplay}}
+  			{{/each}}
+  		</div>
+  		<div id="deleteClass">Delete Class</div>
+  	</div>
 </template>
 
 <template name="classDisplay">
-	<div class="classBox" classid="{{_id}}">
+	<div class="classBox{{box}}" classid="{{_id}}">
 		<span class="name classText">{{name}}</span>
 		<span class="teacher classText">{{teacher}}</span>
 		<span class="hour classText">{{hour}}</span>
 		<span class="subscribers classText">{{subscribers}}</span>
+	</div>
+</template>
+
+<template name="userDisplay">
+	<div class="userBox" userid="{{_id}}">
+		<span class="email">{{email}}</span>
+		<span class="realname">{{name}}</span>
 	</div>
 </template>
 
