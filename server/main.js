@@ -185,7 +185,8 @@ Meteor.methods({
         var foundclass = Meteor.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
-        var set = {userlist: foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]))};
+        var set = {};
+        set[userlist] = foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]));
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             classes.update({_id: input[1]}, {$set: set});
         } else if (foundclass && foundclass.admin == Meteor.userId() && index !== -1 &&
