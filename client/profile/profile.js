@@ -16,6 +16,8 @@ Session.set("confirm", null);
 Session.set("serverData", null);
 Session.set("autocompleteDivs", null);
 Session.set("confirmText", null);
+Session.set("selectedClass",null); 
+Session.set("adding",null);
 
 var themeColors = {
     "light": {
@@ -95,9 +97,9 @@ Template.profile.helpers({
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
         if (Meteor.user().profile.avatar !== undefined) {
-            var pic = Meteor.user().profile.avatar;;
+            var pic = Meteor.user().profile.avatar;
         } else {
-            var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString(); + ".png";
+            var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
             currentprofile = Meteor.user().profile;
             currentprofile.avatar = pic
             Meteor.call("editProfile", currentprofile);
@@ -169,23 +171,14 @@ Template.profile.helpers({
     autocompleteClasses() {
         return Session.get("autocompleteDivs");
     },
-    myclasses() {
-    	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
-    		return [];
-    	} else {
-    		var array = [];
-    		var courses = Meteor.user().profile.classes;
-    		for(var i = 0; i < courses.length; i++) {
-    			array.push(classes.findOne({_id:courses[i]}));
-    		}
-    		return array;
-    	}
-    },
     notfound() {
         return Session.get("notfound");
     },
     confirmText() {
         return Session.get("confirmText");
+    },
+    selectedClass(val) {
+    	return Session.get("selectedClass")[val];
     }
 });
 
@@ -243,14 +236,14 @@ Template.profile.events({
     'click' (event) {
         var sessval = Session.get("modifying");
         if (event.target.id !== sessval &&
-            event.target.id !== sessval + "a" &&
-            !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("profOptions")) {
+        event.target.id !== sessval + "a" &&
+        !Session.equals("modifying", null) &&
+        !event.target.parentNode.className.includes("profOptions")) {
             closeInput(sessval);
         }
         if (!event.target.className.includes("radio") &&
-            !Session.equals("radioDiv", null) &&
-            !event.target.parentNode.className.includes("profOptions") &&
+        !Session.equals("radioDiv", null) &&
+        !event.target.parentNode.className.includes("profOptions") &&
             event.target.readOnly !== true) {
             var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"))).toString();
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
@@ -261,6 +254,21 @@ Template.profile.events({
             Session.set("radioDiv", null);
             Session.set("radioOffset", null);
         }
+        if(event.target.className !== "userAddInput" && 
+      	Session.get("adding")) {
+      		var inputs = document.getElementsByClassName("userAddInput");
+      		for(var i = 0; i < inputs.length; i++) {
+      			try {
+      				inputs[i].parentNode.removeChild(inputs[i]);
+      			} catch(err) {}
+      		}
+      		Session.set("adding",false);
+      	}
+      	if(!document.getElementById("createdClasses").contains(event.target) &&
+      	Session.get("selectedClass") !== null) {
+      		document.getElementById("createdClasses").style.marginRight = "-40%";
+      		setTimeout(function() { Session.set("selectedClass", null); }, 300);
+      	}
     },
     'keydown' (event) {
         var sessval = Session.get("modifying");
@@ -433,6 +441,38 @@ Template.profile.events({
     },
     'focus .op' (event) {
         event.target.click();
+    },
+    'click .owned' (event) {
+    	if (event.target.id === "label") return;
+        if (!event.target.className.includes("owned")) {
+            var attribute = event.target.parentNode.getAttribute("classid");
+        } else {
+            var attribute = event.target.getAttribute("classid");
+        }
+        var usertype = ["moderators","banned","blockEdit"];
+        var array = classes.findOne({_id:attribute});
+
+        if(array.code === "") array.code = "None";
+        for(var i = 0; i < usertype.length; i++) {
+     		var users = array[usertype[i]];
+        	for(var j = 0; j < users.length; j++) {
+        		var detailusers = {};
+        		var user = Meteor.users.findOne({_id:users[j]});
+        		detailusers._id = user._id;
+        		detailusers.email = user.name + "hi";
+        		detailusers.name = user.name;
+        		array[usertype[i]] = detailusers;
+        	}
+        }
+       	document.getElementById("createdClasses").style.marginRight = "0";
+        Session.set("selectedClass",array);
+    },
+    'click .userAdder .fa-plus' (event) {
+    	if(Session.get("adding")) return;
+    	var input = document.createElement("input");
+    	input.className = "userAddInput";
+    	event.target.parentNode.appendChild(input);
+    	Session.set("adding", true);
     }
 });
 

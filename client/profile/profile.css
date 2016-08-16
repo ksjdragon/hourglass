@@ -20,7 +20,7 @@
 	font-weight: 400;
 	margin: 0;
 	margin-bottom: 1%;
-	margin-right: 10%;
+	margin-right: 30%;
 }
 
 .profHea {
@@ -200,7 +200,7 @@
 	display: inline;
 }
 
-#profClassSearch {
+#profClassSearch, .userAddInput {
 	font-size: 125%;
 	width: 30%;
 	margin-top: 3%;
@@ -274,6 +274,19 @@
 	background-color: rgba(0,0,0,0.1);
 }
 
+.owned {
+	background-color: #27646D;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.owned:hover {
+	background-color: #52848B;
+}
+
 .classText {
 	margin-left: .5%;
 	margin-right: 10%;
@@ -311,17 +324,17 @@
 	margin-right: 5% !important;
 	margin-bottom: 0 !important;
 	position: relative;
-	
+	overflow: hidden !important;
 }
 
-#create div {
+#formContainer div {
 	margin: 3% 6% 5% 6%;
+	width: 35%;
 	display: inline-block;
 }
 
 .creInput {
 	font-size: 120%;
-	width: 100%;
 	padding: 3%;
 }
 
@@ -330,7 +343,8 @@
 }
 
 .-autocomplete-container {
-	margin: 0.5% 0 0 0 !important;
+	margin: 0 0 0 0 !important;
+	position: absolute;
 	display: none;
 }
 
@@ -362,24 +376,7 @@
 	color: #999 !important;
 }
 
-#save {
-	font-size: 90%;
-	background-color: #CC4444;
-
-	box-shadow: -1px 2px 5px 1px #333;
-
-	position: absolute;
-	top: 0;
-	right: 10%;
-	z-index: 50;
-
-	-webkit-transition: transform 0.2s ease, background-color 0.1s ease;  
-	-moz-transition: transform 0.2s ease, background-color 0.1s ease; 
-	-ms-transition: transform 0.2s ease, background-color 0.1s ease;
-	transition: transform 0.2s ease, background-color 0.1s ease;
-}
-
-#save:hover, #mainpage:hover {
+#mainpage:hover {
 	-webkit-transform: scale(1.05);
     -moz-transform: scale(1.05);
     -ms-transform: scale(1.05);
@@ -387,11 +384,7 @@
     transform: scale(1.05);
 }
 
-#save:active {
-	background-color: #34CB34;
-}
-
-#save h2, #mainpage h2 {
+#mainpage h2 {
 	font-weight: 200;
 	width: 100%;
 	padding: 8%;
@@ -421,3 +414,20 @@
 	background-color: #56708D;
 }
 
+#createdClasses {
+	width: 25%;
+	margin-right: -80%;
+	padding: 3%;
+
+	border-top: 5px solid #2E4F74;
+	box-shadow: -1px 2px 5px 1px #444;
+
+	position: absolute;
+	top: 30%;
+	right: 0;
+
+	-webkit-transition: margin 0.4s ease;  
+	-moz-transition: margin 0.4s ease; 
+	-ms-transition: margin 0.4s ease;
+	transition: margin 0.4s ease;	
+}
