@@ -96,12 +96,15 @@ Template.profile.helpers({
     },
     avatar() {
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
-        if (Meteor.user().profile.avatar !== undefined) {
-            var pic = Meteor.user().profile.avatar;
+        var pic = "";
+        var userprofile = Meteor.user().profile.avatar;
+        if (userprofile !== undefined && userprofile !== null) {
+            pic = Meteor.user().profile.avatar;
         } else {
-            var pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
+            pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
+            console.log(pic);
             currentprofile = Meteor.user().profile;
-            currentprofile.avatar = pic
+            currentprofile.avatar = pic;
             Meteor.call("editProfile", currentprofile);
         }
         return "background-image:url(" + pic + ");background-size:" + dim.toString() + "px " + dim.toString() + "px";
