@@ -77,6 +77,14 @@ Meteor.publish('work', function() {
 
 });
 
+Meteor.publish('users', function() {
+    if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
+        return Meteor.users.find();
+    } else {
+        return Meteor.users.find({}, {fields: {'services.google.email': 1}});
+    }
+});
+
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
 Meteor.methods({

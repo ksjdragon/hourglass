@@ -7,6 +7,7 @@ import './main.html';
 Meteor.subscribe('schools');
 Meteor.subscribe('classes');
 Meteor.subscribe('work');
+Meteor.subscribe('users');
 
 var openValues = {
     "menu": "-25%",
@@ -51,7 +52,7 @@ Template.registerHelper('divColor', (div) => {
 });
 
 Template.registerHelper('overlayDim', (part) => {
-    var dim = [window.innerWidth * .2, window.innerHeight * 0.2];
+    var dim = [window.innerWidth * 0.2, window.innerHeight * 0.2];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
@@ -147,7 +148,7 @@ Template.main.helpers({
             });
         });
         return {
-            height: window.innerHeight * .8,
+            height: window.innerHeight * 0.8,
             events: events,
             buttonText: {
                 today: 'Today',
@@ -167,9 +168,9 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
     },
     workCenter() {
-        var w = window.innerWidth * .3;
+        var w = window.innerWidth * 0.3;
         var h = window.innerHeight * 0.7;
-        return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-.5*w.toString()+"px;margin-top:"+-.5*h.toString()+"px";
+        return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
     work(value) {
     	return Session.get("currentReadableWork")[value];
@@ -308,7 +309,7 @@ Template.main.events({
         ele.style.display = "none";
         var input = document.createElement("input");
 
-        var typ = ele.getAttribute("type")
+        var typ = ele.getAttribute("type");
         if (typ === "textarea") {
             input = document.createElement("textarea");
             input.style.height = 3 * dim.height.toString() + "px";
