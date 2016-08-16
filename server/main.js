@@ -169,7 +169,7 @@ Meteor.methods({
         }
     },
     'trackUserInClass': function(input) {
-        var foundclass = Meteor.findOne({_id: input[1]});
+        var foundclass = classes.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {};
@@ -183,11 +183,13 @@ Meteor.methods({
         }
     },
     'untrackUserInClass': function(input) {
-        var foundclass = Meteor.findOne({_id: input[1]});
+        var foundclass = classes.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {};
-        set[userlist] = foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]), 1);
+        foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]), 1);
+        set[userlist] = foundclass[userlist];
+
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             classes.update({_id: input[1]}, {$set: set});
         } else if (foundclass && foundclass.admin == Meteor.userId() && index !== -1 &&
