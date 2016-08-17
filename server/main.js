@@ -16,7 +16,7 @@ superadmins = [
 ];
 
 worktype = ["test", "quiz", "project", "normal"];
-var possiblelist = ["moderators","blockEdit"];
+var possiblelist = ["moderators","banned"];
 
 for (var i = 0; i < superadmins.length; i++) {
     var superadmin = superadmins[i];
@@ -57,7 +57,7 @@ Meteor.publish('classes', function() {
                 privacy: 1,
                 category: 1,
                 moderators: 1,
-                blockEdit: 1,
+                banned: 1,
                 subscribers: 1
             }
         });
@@ -148,7 +148,7 @@ Meteor.methods({
                 input.category = "other";
             }
             input.moderators = [];
-            input.blockEdit = [];
+            input.banned = [];
             classes.insert(input);
             Meteor.call('joinClass', classes.findOne(input)._id, input.code, function(error, result) {});
             return 1;
@@ -162,14 +162,14 @@ Meteor.methods({
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             classes.update({_id: input[1]}, {$set: {admin: input[0]}});
         } else if (found && foundclass && foundclass.admin == Meteor.userId() &&
-                   foundclass.blockEdit.indexOf(input[0]) != -1) {
+                   foundclass.banned.indexOf(input[0]) != -1) {
             classes.update({_id: input[1]}, {$set: {admin: input[0]}});
         } else {
             throw "Unauthorized";
         }
     },
     'trackUserInClass': function(input) {
-        var foundclass = Meteor.findOne({_id: input[1]});
+        var foundclass = classes.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {};
@@ -183,11 +183,13 @@ Meteor.methods({
         }
     },
     'untrackUserInClass': function(input) {
-        var foundclass = Meteor.findOne({_id: input[1]});
+        var foundclass = classes.findOne({_id: input[1]});
         var userlist = input[2];
         var index = possiblelist.indexOf(input[2]);
         var set = {};
-        set[userlist] = foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]), 1);
+        foundclass[userlist].splice(foundclass[userlist].indexOf(input[0]), 1);
+        set[userlist] = foundclass[userlist];
+
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             classes.update({_id: input[1]}, {$set: set});
         } else if (foundclass && foundclass.admin == Meteor.userId() && index !== -1 &&
@@ -227,7 +229,7 @@ Meteor.methods({
         if (Meteor.user() !== null &&
             found !== null &&
             Meteor.user().profile.classes.indexOf(input.class) !== -1 &&
-            found.blockEdit.indexOf(Meteor.userId()) === -1 &&
+            found.banned.indexOf(Meteor.userId()) === -1 &&
             input.dueDate instanceof Date && input.dueDate.getTime() >= ref && 
             worktype.indexOf(input.type) != -1 &&
             input.name.length <= 50 && input.description.length <= 150) {
@@ -303,7 +305,7 @@ Meteor.methods({
         var user = Meteor.userId();
         if (typeof comment === "string" && comment.length <= 200 &&
             currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
-            currentclass.blockEdit.indexOf(Meteor.userId()) === -1) {
+            currentclass.banned.indexOf(Meteor.userId()) === -1) {
             var comments = workobject.comments.concat(comment);
             work.update({
                 _id: input[1]

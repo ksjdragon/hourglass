@@ -91,23 +91,23 @@
 							<div id="creRules"><p>Insert description and rules of create a class --Will style later--</p></div>
 							<form id="create">
 								<div id="formContainer">
-									<div>
+									<div class="formDiv">
 						            	<p class="profTitle">School:</p>
 				              			{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
 					              	</div>
-					              	<div>
+					              	<div class="formDiv">
 						            	<p class="profTitle">Hour:</p>
 						              	<input class="creInput" type="text" name="hour">
 						            </div>
-						            <div>
+						            <div class="formDiv">
 						            	<p class="profTitle">Teacher:</p>
 						              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
 						            </div>
-						            <div>
+						            <div class="formDiv">
 						            	<p class="profTitle">Class Name:</p>
 						              	<input class="creInput" type="text" name="classname">
 						            </div>
-						            <div>
+						            <div class="formDiv">
 							            <p class="profTitle">Privacy:</p>
 						              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
 						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
@@ -115,7 +115,7 @@
 						                  	<p class="profOptionText">Private</p>
 						              	</div>
 					              	</div>
-					              	<div>
+					              	<div class="formDiv">
 							            <p class="profTitle">Category:</p>
 						              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
 						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
@@ -142,27 +142,40 @@
 	    </div>
   	</div>
 
-  	<div id="createdClasses" style="background-color:{{divColor 'cards'}}">
+  	<div id="createdClasses" style="background-color:{{divColor 'cards'}}" classid="{{selectedClass '_id'}}">
   		<h3>{{selectedClass 'name'}}</h3>
-  		<h4>Code: {{selectedClass 'code'}}</h4>
+  		<h4 id="codetext">Code:</h4>
+  		<input id="code" value="{{selectedClass 'code'}}" type="text" readonly>
+  		{{#if code}}
+			<h4 id="copy">Copy Code</h4>
+		{{/if}}
   		<div id="moderatorCont">
   			<div class="userAdder">
-  			<h4>Moderators: </h4>
+  			<h4>Moderators:</h4>
+  			<input class="userAddInput" type="text" placeholder="1234@abc.xyz">
   			<i class="fa fa-plus" aria-hidden="true"></i>
 			</div>
-  			{{#each selectedClass 'moderators'}}
-  				{{> userDisplay}}
-  			{{/each}}
+			<div class="userHolder" style="max-height:{{userHolder}}">
+	  			{{#each selectedClass 'moderators'}}
+	  				{{> userDisplay}}
+	  			{{/each}}
+	  		</div>
   		</div>
-  		<div id="blockEditCont">
+  		<div id="bannedCont">
   			<div class="userAdder">
-	  			<h4>View only: </h4>
+	  			<h4>Banned:</h4>
+	  			<input class="userAddInput" type="text" placeholder="1234@abc.xyz">
 	  			<i class="fa fa-plus" aria-hidden="true"></i>
-			</div>	
-  			{{#each selectedClass 'blockEdit'}}
-  				{{> userDisplay}}
-  			{{/each}}
+			</div>
+			<div class="userHolder" style="max-height:{{userHolder}}">	
+	  			{{#each selectedClass 'banned'}}
+	  				{{> userDisplay}}
+	  			{{/each}}
+  			</div>
   		</div>
+  		<div id="changeAdmin">
+			<span>Change Owner</span>
+		</div>
   		<div id="deleteClass">Delete Class</div>
   	</div>
 </template>
@@ -180,6 +193,7 @@
 	<div class="userBox" userid="{{_id}}">
 		<span class="email">{{email}}</span>
 		<span class="realname">{{name}}</span>
+		<i class="fa fa-times" aria-hidden="true"></i>
 	</div>
 </template>
 

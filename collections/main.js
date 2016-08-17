@@ -20,7 +20,7 @@ classes.schema = new SimpleSchema({
 	  privacy: {type: Boolean},
 	  category: {type: String},
 	  moderators: {type: [String], optional: true},
-	  blockEdit: {type: [String], optional: true},
+	  banned: {type: [String], optional: true},
 	  subscribers: {type: [String], optional: true}
 });
 

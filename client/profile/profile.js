@@ -17,7 +17,8 @@ Session.set("serverData", null);
 Session.set("autocompleteDivs", null);
 Session.set("confirmText", null);
 Session.set("selectedClass",null); 
-Session.set("adding",null);
+Session.set("selectClassId",null);
+Session.set("code",null);
 
 var themeColors = {
     "light": {
@@ -144,9 +145,9 @@ Template.profile.helpers({
             privacy: {$eq: false},
             _id: {$nin: Meteor.user().profile.classes}
         },
-        {sort: {subscribers: -1	}}, 
-    	{limit: 20}
-    	).fetch();
+        {sort: {subscribers: -1 }}, 
+        {limit: 20}
+        ).fetch();
     },
     profClassHeight() {
         return 0.6 * window.innerHeight.toString() + "px";
@@ -181,7 +182,36 @@ Template.profile.helpers({
         return Session.get("confirmText");
     },
     selectedClass(val) {
-    	return Session.get("selectedClass")[val];
+        var usertype = ["moderators","banned"];
+        var attribute = Session.get("selectClassId");
+        var array = classes.findOne({_id:attribute});
+
+        if(array.code === "") {
+            array.code = "None";
+            Session.set("code", false);
+        } else {
+            Session.set("code", true);
+        }
+
+        for(var i = 0; i < usertype.length; i++) {
+            var users = array[usertype[i]];
+            array[usertype[i]] = [];
+            for(var j = 0; j < users.length; j++) {
+                var detailusers = {};
+                var user = Meteor.users.findOne({_id:users[j]});
+                detailusers._id = user._id;
+                detailusers.email = user.services.google.email;
+                detailusers.name = user.profile.name;
+                array[usertype[i]].push(detailusers);
+            }
+        }
+        return array[val];
+    },
+    code() {
+        return Session.get("code");
+    },
+    userHolder() {
+        return 0.15 * window.innerHeight.toString() + "px";
     }
 });
 
@@ -257,21 +287,19 @@ Template.profile.events({
             Session.set("radioDiv", null);
             Session.set("radioOffset", null);
         }
-        if(event.target.className !== "userAddInput" && 
-      	Session.get("adding")) {
-      		var inputs = document.getElementsByClassName("userAddInput");
-      		for(var i = 0; i < inputs.length; i++) {
-      			try {
-      				inputs[i].parentNode.removeChild(inputs[i]);
-      			} catch(err) {}
-      		}
-      		Session.set("adding",false);
-      	}
-      	if(!document.getElementById("createdClasses").contains(event.target) &&
-      	Session.get("selectedClass") !== null) {
-      		document.getElementById("createdClasses").style.marginRight = "-40%";
-      		setTimeout(function() { Session.set("selectedClass", null); }, 300);
-      	}
+        if(!document.getElementById("createdClasses").contains(event.target) &&
+        Session.get("code") !== null &&
+        !event.target.className.includes("fa-times-circle-o")) {
+            document.getElementById("createdClasses").style.marginRight = "-40%";
+            setTimeout(function() { Session.set("selectedClass", null); }, 300);
+        }
+        if(Session.get("changeAdmin") &&
+        !document.getElementById("changeAdmin").contains(event.target)) {
+            Session.set("changeAdmin",false);
+            var div = document.getElementById("changeAdmin");
+            div.removeChild(div.childNodes[3]);
+            div.removeChild(div.childNodes[3]);
+        }
     },
     'keydown' (event) {
         var sessval = Session.get("modifying");
@@ -338,20 +366,20 @@ Template.profile.events({
         }, 300);    
     },
     'click .manageClass' () {        
-	    var functionHolder = document.getElementById("profClassInfoHolder");
-	    closeDivFade(functionHolder);        
-	    setTimeout(function() {            
-	        Session.set("profClassTab", "manClass");            
-	        openDivFade(functionHolder);        
-	    }, 300);    
+        var functionHolder = document.getElementById("profClassInfoHolder");
+        closeDivFade(functionHolder);        
+        setTimeout(function() {            
+            Session.set("profClassTab", "manClass");            
+            openDivFade(functionHolder);        
+        }, 300);    
     },
     'click .createClass' () {        
-	    var functionHolder = document.getElementById("profClassInfoHolder");        
-	    closeDivFade(functionHolder);        
-	    setTimeout(function() {            
-	        Session.set("profClassTab", "creClass");            
-	        openDivFade(functionHolder);        
-	    }, 300);    
+        var functionHolder = document.getElementById("profClassInfoHolder");        
+        closeDivFade(functionHolder);        
+        setTimeout(function() {            
+            Session.set("profClassTab", "creClass");            
+            openDivFade(functionHolder);        
+        }, 300);    
     },
     'click .fa-search' () {
         Session.set("searching", true);
@@ -409,8 +437,8 @@ Template.profile.events({
         sendData(Session.get("confirm"));
         closeDivFade(document.getElementsByClassName("overlay")[0]);
         if(Session.get("confirm") === "createClass") {
-        	var form = document.getElementById("create");
-        	for(var i = 0; i < form.length; i++) form[i].value = "";
+            var form = document.getElementById("create");
+            for(var i = 0; i < form.length; i++) form[i].value = "";
         }
         Session.set("serverData", null);
         Session.set("confirm", null);
@@ -420,16 +448,6 @@ Template.profile.events({
         Session.set("serverData", null);
         Session.set("confirm", null);
     },
-    'click #save' () {
-        Session.set("serverData", getProfileData());
-        Session.set("confirm", "editProfile");
-        Session.set("confirmText", "Save new profile settings?");
-
-        openDivFade(document.getElementsByClassName("overlay")[0]);
-        setTimeout(function() {
-            document.getElementsByClassName("overlay")[0].style.opacity = "1";
-        }, 200);
-    },
     'click #creSubmit' () {
         var data = getCreateFormData();
         if (data === null) return;
@@ -438,44 +456,82 @@ Template.profile.events({
         Session.set("confirmText", "Submit request?");
 
         openDivFade(document.getElementsByClassName("overlay")[0]);
-        setTimeout(function() {
-            document.getElementsByClassName("overlay")[0].style.opacity = "1";
-        }, 200);
     },
     'focus .op' (event) {
         event.target.click();
     },
     'click .owned' (event) {
-    	if (event.target.id === "label") return;
+        if (event.target.id === "label") return;
         if (!event.target.className.includes("owned")) {
             var attribute = event.target.parentNode.getAttribute("classid");
         } else {
             var attribute = event.target.getAttribute("classid");
         }
-        var usertype = ["moderators","banned","blockEdit"];
-        var array = classes.findOne({_id:attribute});
-
-        if(array.code === "") array.code = "None";
-        for(var i = 0; i < usertype.length; i++) {
-     		var users = array[usertype[i]];
-        	for(var j = 0; j < users.length; j++) {
-        		var detailusers = {};
-        		var user = Meteor.users.findOne({_id:users[j]});
-        		detailusers._id = user._id;
-        		detailusers.email = user.name + "hi";
-        		detailusers.name = user.name;
-        		array[usertype[i]] = detailusers;
-        	}
-        }
-       	document.getElementById("createdClasses").style.marginRight = "0";
-        Session.set("selectedClass",array);
+        Session.set("selectClassId",attribute);
+        document.getElementById("createdClasses").style.marginRight = "0";
     },
     'click .userAdder .fa-plus' (event) {
-    	if(Session.get("adding")) return;
-    	var input = document.createElement("input");
-    	input.className = "userAddInput";
-    	event.target.parentNode.appendChild(input);
-    	Session.set("adding", true);
+        var input = event.target.parentNode.childNodes[3];
+        input.placeholder = "1234@abc.xyz";
+        input.className.replace(" formInvalid","");
+        var value = input.value;
+        input.value = "";
+        if(checkUser(value)) {
+            input.className += " formInvalid";
+            input.placeholder = "Not a valid user";
+            return;
+        }
+        var user = Meteor.users.findOne({"services.google.email":input.value});
+        Session.set("serverData", [
+            user._id,
+            document.getElementById("createdClasses").getAttribute("classid"),
+            event.target.parentNode.childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase()
+        ]);
+        sendData("trackUserInClass");
+
+    },
+    'click .userBox .fa-times' (event) {
+        var box = event.target.parentNode;
+        Session.set("serverData", [
+            box.getAttribute("userid"),
+            document.getElementById("createdClasses").getAttribute("classid"),
+            box.parentNode.parentNode.childNodes[1].childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase()
+        ])
+        sendData("untrackUserInClass");
+    },
+    'click #copy' () {
+        if(document.getElementById("code").value === "None") return;
+        document.getElementById("code").select();
+        document.execCommand("copy");
+    },
+    'click #deleteClass' () {
+        Session.set("serverData",document.getElementById("createdClasses").getAttribute("classid"));
+        Session.set("confirm", "deleteClass");
+        Session.set("confirmText", "Delete this class?");
+        openDivFade(document.getElementsByClassName("overlay")[0]);
+    },
+    'click #changeAdmin span' (event) {
+        if(Session.get("changeAdmin")) return;
+        Session.set("changeAdmin",true);
+        var input = document.createElement("input");
+        input.placeholder = "1234@abc.xyz";
+        var i = document.createElement("i");
+        i.className = "fa fa-exchange";
+        i.setAttribute("aria-hidden","true");
+        event.target.parentNode.appendChild(input);
+        event.target.parentNode.appendChild(i);
+    },
+    'click .fa-exchange' (event) {
+        var input = event.target.parentNode.childNodes[3];
+        input.placeholder = "1234@abc.xyz";
+        input.className.replace(" formInvalid","");
+        var value = input.value;
+        input.value = "";
+        if(checkUser(value)) {
+            input.className += " formInvalid";
+            input.placeholder = "Not a valid user";
+            return;
+        }
     }
 });
 
@@ -542,7 +598,7 @@ function getCreateFormData() {
     var stop;
     var form = document.getElementsByClassName("creInput");
     for (var i = 0; i < form.length; i++) {
-    	if(i === 1 || i === 2) continue;
+        if(i === 1 || i === 2) continue;
         if (form[i].value === "") {
             form[i].focus();
             form[i].placeholder = "Missing field";
@@ -574,4 +630,13 @@ function getCreateFormData() {
         status: false,
         code: ""
     };
+}
+
+function checkUser(email) {
+     var user = Meteor.users.findOne({"services.google.email":email});
+     if(user === undefined) {
+        return true;
+     } else {
+        return false;
+     }
 }
