@@ -243,7 +243,7 @@ input, textarea {
 	filter: drop-shadow(2px 2px 5px #666);
 }
 
-.fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap {
+.fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap, .fa-exchange {
 	font-size: 130%;
 	padding: 5%;
 	-webkit-filter: drop-shadow(2px 2px 5px #666);

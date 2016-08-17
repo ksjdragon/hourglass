@@ -52,7 +52,7 @@ Template.registerHelper('divColor', (div) => {
 });
 
 Template.registerHelper('overlayDim', (part) => {
-    var dim = [window.innerWidth * 0.2, window.innerHeight * 0.2];
+    var dim = [window.innerWidth * 0.2, window.innerHeight * 0.25];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
