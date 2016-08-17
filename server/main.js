@@ -415,9 +415,13 @@ Meteor.methods({
         }
     },
     'joinPrivateClass': function(input) {
+        input.status = true;
+        input.privacy = true;
         var found = classes.findOne(input);
-        if (found !== undefined && input.code !== undefined) {
-            current = Meteor.user().profile;
+        current = Meteor.user().profile;
+        if (found !== undefined && input.code !== undefined &&
+            current.classes.indexOf(found._id) === -1) {
+            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers + 1}});
             current.concat(found._id);
             Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
         }
