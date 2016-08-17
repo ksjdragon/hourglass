@@ -162,7 +162,8 @@ Meteor.methods({
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             classes.update({_id: input[1]}, {$set: {admin: input[0]}});
         } else if (found && foundclass && foundclass.admin == Meteor.userId() &&
-                   foundclass.banned.indexOf(input[0]) != -1) {
+                   foundclass.banned.indexOf(input[0]) === -1 &&
+                   foundclass.subscribers.indexOf(input[0]) !== -1) {
             classes.update({_id: input[1]}, {$set: {admin: input[0]}});
         } else {
             throw "Unauthorized";
