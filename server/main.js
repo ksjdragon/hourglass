@@ -400,7 +400,7 @@ Meteor.methods({
             found !== null &&
             pass === found.code &&
             prof.classes.indexOf(change) === -1) {
-            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers + 1}});
+            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
             var current = Meteor.user().profile;
             current.classes.concat(change);
             Meteor.users.update({
@@ -422,7 +422,7 @@ Meteor.methods({
         current = Meteor.user().profile;
         if (found !== undefined && input.code !== undefined &&
             current.classes.indexOf(found._id) === -1) {
-            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers + 1}});
+            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
             current.concat(found._id);
             Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
         }
@@ -443,6 +443,8 @@ Meteor.methods({
                             profile: current
                         }
                     });
+                    var newstudents = classes.findOne({_id: change}).subscribers.splice(Meteor.userId(), 1);
+                    classes.update({_id: change}, {$set: {subscribers: newstudents}});
                     return 1;
                 } else {
                     throw "You are currently the admin of this class. Transfer ownership in order to leave this class.";
