@@ -412,6 +412,14 @@ Meteor.methods({
             return 0;
         }
     },
+    'joinPrivateClass': function(input) {
+        var found = classes.findOne(input);
+        if (found !== undefined && input.code !== undefined) {
+            current = Meteor.user().profile;
+            current.concat(found._id);
+            Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
+        }
+    },
     'leaveClass': function(change) {
         if (Meteor.user() !== null) {
             var profile = Meteor.user().profile;
