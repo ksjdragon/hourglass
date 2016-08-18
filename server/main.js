@@ -88,7 +88,11 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 Meteor.methods({
     'genCode': function() {
-        return Math.random().toString(36).substr(2, 6);
+        currcode = Math.random().toString(36).substr(2, 6);
+        while (classes.findOne({code: currcode}) !== undefined) {
+            currcode = Math.random().toString(36).substr(2, 6);
+        }
+        return currcode;
     },
     'createSchool': function(schoolname) {
         if (Meteor.user() !== null &&
