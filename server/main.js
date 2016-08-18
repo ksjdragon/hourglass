@@ -94,7 +94,7 @@ Meteor.methods({
     'createSchool': function(schoolname) {
         if (Meteor.user() !== null &&
             schools.findOne({
-                name: input.school
+                name: schoolname
             }) !== null &&
             schools.findOne({
                 status: false,
@@ -135,7 +135,7 @@ Meteor.methods({
             } else {
                 input.status = false;
             }
-            input.subscribers = [Meteor.userId()];
+            input.subscribers = [];
             input.admin = Meteor.userId();
             if (input.privacy) {
                 Meteor.call('genCode', function(error, result) {
@@ -149,8 +149,11 @@ Meteor.methods({
             }
             input.moderators = [];
             input.banned = [];
-            classes.insert(input);
-            Meteor.call('joinClass', classes.findOne(input)._id, input.code, function(error, result) {});
+
+            classes.insert(input, function(err, result) {
+                Meteor.call('joinClass', [result, input.code]);
+            });
+            
             return 1;
         } else {
             throw "Unauthorized";
@@ -203,9 +206,12 @@ Meteor.methods({
         var found = classes.findOne({
             _id: classid
         });
-        if (Meteor.user() !== null && found !== null && (found.admin === Meteor.user()._id || Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']))) {
+        if (Meteor.user() !== null && found !== null && 
+        (found.admin === Meteor.user()._id || Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']))) {
             for (var i = 0; i < found.subscribers.length; i++) {
-                profile.classes.splice(index, 1);
+                var current = Meteor.users.findOne({_id:found.subscribers[i]}).profile;
+                var index = current.classes.indexOf(classid);
+                current.classes.splice(index, 1);
                 Meteor.users.update({
                     _id: found.subscribers[i]
                 }, {
@@ -228,19 +234,18 @@ Meteor.methods({
         });
 
         if (Meteor.user() !== null &&
-            found !== null &&
-            Meteor.user().profile.classes.indexOf(input.class) !== -1 &&
-            found.banned.indexOf(Meteor.userId()) === -1 &&
-            input.dueDate instanceof Date && input.dueDate.getTime() >= ref && 
-            worktype.indexOf(input.type) != -1 &&
-            input.name.length <= 50 && input.description.length <= 150) {
+        found !== null &&
+        Meteor.user().profile.classes.indexOf(input.class) !== -1 &&
+        found.banned.indexOf(Meteor.userId()) === -1 &&
+        input.dueDate instanceof Date && input.dueDate.getTime() >= ref && 
+        worktype.indexOf(input.type) != -1 &&
+        input.name.length <= 50 && input.description.length <= 150) {
 
             input.confirmations = [Meteor.userId()];
             input.reports = [];
             input.done = [];
             input.numberdone = 0;
             input.comments = [];
-            console.log(input);
             work.insert(input);
         }
 
@@ -251,7 +256,7 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: work.findOne({
                 _id: change._id
-            }).class
+            })["class"]
         });
         var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
@@ -305,8 +310,8 @@ Meteor.methods({
         });
         var user = Meteor.userId();
         if (typeof comment === "string" && comment.length <= 200 &&
-            currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
-            currentclass.banned.indexOf(Meteor.userId()) === -1) {
+        currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
+        currentclass.banned.indexOf(Meteor.userId()) === -1) {
             var comments = workobject.comments.concat(comment);
             work.update({
                 _id: input[1]
@@ -326,7 +331,8 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: workobject.class
         });
-        if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 && ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
+        if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 && 
+        ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
             userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
@@ -344,7 +350,7 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: work.findOne({
                 _id: workId
-            }).class
+            })["class"]
         });
         var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
@@ -368,10 +374,10 @@ Meteor.methods({
         current.banner = change.banner;
         current.preferences = change.preferences;
         if (schools.findOne({
-                name: current.school
-            }) !== null &&
-            Number.isInteger(current.grade) &&
-            current.grade >= 9 && current.grade <= 12) {
+            name: current.school
+        }) !== null &&
+        Number.isInteger(current.grade) &&
+        current.grade >= 9 && current.grade <= 12) {
 
             if (current.description && current.description.length > 50) {
                 current.description = current.description.slice(0, 50);
@@ -397,12 +403,12 @@ Meteor.methods({
             status: true
         });
         if (Meteor.user() !== null &&
-            found !== null &&
-            pass === found.code &&
-            prof.classes.indexOf(change) === -1) {
-            classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
+        found !== null &&
+        pass === found.code &&
+        prof.classes.indexOf(change) === -1) {
+        classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
             var current = Meteor.user().profile;
-            current.classes.concat(change);
+            current.classes = current.classes.concat(change);
             Meteor.users.update({
                 _id: Meteor.userId()
             }, {
@@ -421,7 +427,7 @@ Meteor.methods({
         var found = classes.findOne(input);
         current = Meteor.user().profile;
         if (found !== undefined && input.code !== undefined &&
-            current.classes.indexOf(found._id) === -1) {
+        current.classes.indexOf(found._id) === -1) {
             classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
             current.concat(found._id);
             Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
