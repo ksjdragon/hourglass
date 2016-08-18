@@ -343,9 +343,7 @@
 }
 
 #formContainer {
-	margin-left: 5% !important;
-	margin-right: 5% !important;
-	margin-bottom: 0 !important;
+	margin: 2% 5% 0 5% !important;
 	position: relative;	
 }
 
