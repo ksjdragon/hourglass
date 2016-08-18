@@ -311,7 +311,7 @@ Meteor.methods({
             });
         } else if (authorized.indexOf(Meteor.userId()) != -1) {
             if (change.name.length <= 50 && change.description.length <= 150 && worktype.indexOf(change.type) != -1) {
-                Meteor.update({
+                work.update({
                     _id: change._id
                 }, {
                     $set: {
@@ -328,8 +328,8 @@ Meteor.methods({
                 _id: change._id
             }).creator) {
             if (change.name.length <= 50 && worktype.indexOf(change.type) != -1 &&
-                input.dueDate instanceof Date && input.dueDate.getTime() >= ref) {
-                Meteor.update({
+                change.dueDate instanceof Date && change.dueDate.getTime() >= ref) {
+                work.update({
                     _id: change._id
                 }, {
                     $set: {
