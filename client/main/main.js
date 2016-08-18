@@ -4,11 +4,6 @@ import {
 
 import './main.html';
 
-Meteor.subscribe('schools');
-Meteor.subscribe('classes');
-Meteor.subscribe('work');
-Meteor.subscribe('users');
-
 var openValues = {
     "menu": "-25%",
     "options": "-20%"
@@ -178,9 +173,11 @@ Template.main.helpers({
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
     work(value) {
+        if(Session.get("currentWork") === null) return;
     	return Session.get("currentReadableWork")[value];
     },
     workType() {
+        if(Session.get("currentWork") === null) return;
     	type = Session.get("currentWork").type;
     	if(type.includes("edit")) {
     		return;

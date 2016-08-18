@@ -195,6 +195,7 @@ Template.profile.helpers({
         return Session.get("confirmText");
     },
     selectedClass(val) {
+        if(Session.get("selectedClass") === null) return;
         var usertype = ["moderators","banned"];
         var attribute = Session.get("selectClassId");
         var array = classes.findOne({_id:attribute});
