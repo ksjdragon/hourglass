@@ -85,13 +85,14 @@ Template.registerHelper('myClasses', () => {
 	     	    array[i].thisClassWork = thisWork;
     	  }
         Session.set("noclass",false);
-    	  return array;
+    	return array;
+
     }	
 });
 
 Template.main.helpers({
     schoolName() {
-    	  Session.set("calendarclasses", Meteor.user().profile.classes);
+        Session.set("calendarclasses", Meteor.user().profile.classes);
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) {
@@ -143,7 +144,7 @@ Template.main.helpers({
     calendarOptions() {
         var events = [];
         calendarclasses = Session.get("calendarclasses");
-        var cursor = work.find({class: {$in: userclasses}});
+        var cursor = work.find({class: {$in: calendarclasses}});
         cursor.forEach(function(current) {
             backgroundColor = calendarColors[current.type];
             title = current.name;
@@ -311,14 +312,16 @@ Template.main.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
-    	  if(!(Meteor.userId() === Session.get("currentWork").creator || 
-    		     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-    		     classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1 ||
-    		     classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-    		     classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
-    		    )) return;
-
-    	  var ele = event.target;
+        if(!Session.get("newWork")) {
+            if(!(Meteor.userId() === Session.get("currentWork").creator || 
+            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+            classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1 ||
+            classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+            classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+            )) return;   
+        }
+    	
+    	var ele = event.target;
         var sessval = Session.get("modifying");
         if (ele.id !== sessval && sessval !== null) closeInput(sessval);
 
