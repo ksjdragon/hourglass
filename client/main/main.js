@@ -85,22 +85,14 @@ Template.registerHelper('myClasses', () => {
 	     	    array[i].thisClassWork = thisWork;
     	  }
         Session.set("noclass",false);
-<<<<<<< HEAD
-        console.log(array);
     	return array;
-=======
-    	  return array;
->>>>>>> afd60acb9ab69a32ee86ae92e86e0d67e39af7be
+
     }	
 });
 
 Template.main.helpers({
     schoolName() {
-<<<<<<< HEAD
         Session.set("calendarclasses", Meteor.user().profile.classes);
-=======
-    	  Session.set("calendarclasses", Meteor.user().profile.classes);
->>>>>>> afd60acb9ab69a32ee86ae92e86e0d67e39af7be
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) {
