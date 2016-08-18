@@ -210,7 +210,7 @@
     animation: expand .7s ease 1;
 }
 
-#profClassSearch .-autocomplete-container {
+.-autocomplete-container {
 	display: none;
 }
 
@@ -278,6 +278,25 @@
 	background-color: rgba(0,0,0,0.1);
 }
 
+#private {
+	margin: 3% 35% 0 4%;
+	padding: 1.5%;
+
+	background-color: rgba(0,0,0,0.2);
+
+	float: right;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#private:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+
 .owned {
 	background-color: #27646D;
 
@@ -327,8 +346,7 @@
 	margin-left: 5% !important;
 	margin-right: 5% !important;
 	margin-bottom: 0 !important;
-	position: relative;
-	
+	position: relative;	
 }
 
 .formDiv {
@@ -346,9 +364,10 @@
 	margin: 0 !important;
 }
 
-.-autocomplete-container {
+.formDiv .-autocomplete-container {
 	margin: 0 0 0 0 !important;
 	position: absolute;
+	display: inherit !important;
 }
 
 #creSubmit {

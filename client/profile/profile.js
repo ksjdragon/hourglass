@@ -2,7 +2,6 @@ import {
     Template
 } from 'meteor/templating';
 
-
 Meteor.subscribe('schools');
 Meteor.subscribe('classes');
 Meteor.subscribe('work');
@@ -19,6 +18,8 @@ Session.set("confirmText", null);
 Session.set("selectedClass",null); 
 Session.set("selectClassId",null);
 Session.set("code",null);
+Session.set("noclass",null);
+Session.set("notfound",null);
 
 var themeColors = {
     "light": {
@@ -103,7 +104,6 @@ Template.profile.helpers({
             pic = Meteor.user().profile.avatar;
         } else {
             pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
-            console.log(pic);
             currentprofile = Meteor.user().profile;
             currentprofile.avatar = pic;
             Meteor.call("editProfile", currentprofile);
@@ -139,7 +139,7 @@ Template.profile.helpers({
         }
     },
     classes() {
-        return classes.find(
+        var array = classes.find(
         {
             status: {$eq: true},
             privacy: {$eq: false},
@@ -148,6 +148,16 @@ Template.profile.helpers({
         {sort: {subscribers: -1 }}, 
         {limit: 20}
         ).fetch();
+
+        for(var i = 0; i < array.length; i++) {
+            array[i].subscribers = array[i].subscribers.length;
+        }
+        if(array.length === 0) {
+            Session.set("noclass",true);
+        } else {
+            Session.set("noclass",false);
+        }
+        return array;
     },
     profClassHeight() {
         return 0.6 * window.innerHeight.toString() + "px";
@@ -177,6 +187,9 @@ Template.profile.helpers({
     },
     notfound() {
         return Session.get("notfound");
+    },
+    noclass()  {
+        return Session.get("noclass");
     },
     confirmText() {
         return Session.get("confirmText");
@@ -387,8 +400,8 @@ Template.profile.events({
     'click .fa-times-thin' () {
         Session.set("searching", false);
     },
-    'keydown #profClassSearch' (event) {
-        if (event.target.value === "") {
+    'keyup #profClassSearch' (event) {
+        if (event.target.value.length === 0) {
             Session.set("notsearching", true);
         } else {
             Session.set("notsearching", false);
@@ -409,7 +422,7 @@ Template.profile.events({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
                     hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: item.childNodes[7].childNodes[0].nodeValue,
+                    subscribers: item.childNodes[7].childNodes[0].nodeValue.length/17,
                     _id: item.getAttribute("classid")
                 });
                 Session.set("autocompleteDivs", divs);
@@ -475,16 +488,17 @@ Template.profile.events({
         input.placeholder = "1234@abc.xyz";
         input.className.replace(" formInvalid","");
         var value = input.value;
+        var classid = document.getElementById("createdClasses").getAttribute("classid");
         input.value = "";
-        if(checkUser(value)) {
+        if(checkUser(value,classid)) {
             input.className += " formInvalid";
             input.placeholder = "Not a valid user";
             return;
         }
-        var user = Meteor.users.findOne({"services.google.email":input.value});
+        var user = Meteor.users.findOne({"services.google.email":value});
         Session.set("serverData", [
             user._id,
-            document.getElementById("createdClasses").getAttribute("classid"),
+            classid,
             event.target.parentNode.childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase()
         ]);
         sendData("trackUserInClass");
@@ -526,12 +540,19 @@ Template.profile.events({
         input.placeholder = "1234@abc.xyz";
         input.className.replace(" formInvalid","");
         var value = input.value;
+        var classid = document.getElementById("createdClasses").getAttribute("classid");
         input.value = "";
-        if(checkUser(value)) {
+        if(checkUser(value,classid)) {
             input.className += " formInvalid";
             input.placeholder = "Not a valid user";
             return;
         }
+        var user = Meteor.users.findOne({"services.google.email":value});
+        Session.set("serverData", [user._id,classid]);
+        Session.set("confirm","changeAdmin");
+        Session.set("confirmText", "Are you really sure?");
+        openDivFade(document.getElementsByClassName("overlay")[0])
+        document.getElementById("createdClasses").style.marginRight = "-40%";
     }
 });
 
@@ -632,11 +653,12 @@ function getCreateFormData() {
     };
 }
 
-function checkUser(email) {
+function checkUser(email,classid) {
      var user = Meteor.users.findOne({"services.google.email":email});
      if(user === undefined) {
         return true;
      } else {
+        if(classes.findOne({_id:classid}).subscribers)
         return false;
      }
 }

@@ -59,12 +59,16 @@
 								{{#each myClasses}}
 									{{> classDisplay}}
 								{{/each}}
+								{{#if noclass}}
+									<h3>No results found...</h3>
+								{{/if}}
 							</div>
 						{{/if}}
 
 						{{#if profClassTab "addClass"}}
 							<i class="fa fa-search" aria-hidden="true"></i>
 							{{> inputAutocomplete id="profClassSearch" settings=classsettings placeholder="Search..."}}
+							<h4 id="private">Join Private Class</h4>
 							<div id="label" class="classBox">
 								<span class="name classText">Class Name</span>
 								<span class="teacher classText">Teacher</span>
@@ -76,12 +80,15 @@
 								{{#each classes}}
 									{{> classDisplay}}
 								{{/each}}
+								{{#if noclass}}
+									<h3>No results found...</h3>
+								{{/if}}
 							{{else}} 
 								{{#each autocompleteClasses}}
 									{{> classDisplay}}
 								{{/each}}
 								{{#if notfound}}
-										<h3>No results found...</h3>
+									<h3>No results found...</h3>
 								{{/if}}
 							{{/if}}
 							</div>

@@ -46,6 +46,7 @@ Session.set("modifying",null);
 Session.set("radioDiv",null);
 Session.set("radioOffset",null);
 Session.set("serverData",null);
+Session.set("noclass",null);
 
 Template.registerHelper('divColor', (div) => {
     return themeColors[Cookie.get("theme")][div];
@@ -62,13 +63,14 @@ Template.registerHelper('overlayDim', (part) => {
 
 Template.registerHelper('myClasses', () => {
 	if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+            Session.set("noclass",true);
     		return [];
     } else {
 		var array = [];
 		var courses = Meteor.user().profile.classes;
 		for(var i = 0; i < courses.length; i++) {
         	found = classes.findOne({_id:courses[i]});
-
+            found.subscribers = found.subscribers.length;
         	if(found.admin === Meteor.userId()) found.box = " owned";
 	      	array.push(found);
 
@@ -80,6 +82,7 @@ Template.registerHelper('myClasses', () => {
 	      	}
 	     	array[i].thisClassWork = thisWork;
     	}
+        Session.set("noclass",false);
     	return array;
     }	
 });

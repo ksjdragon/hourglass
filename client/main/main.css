@@ -131,7 +131,7 @@ input, textarea {
 .fa-bars, .fa-cog {
 	font-size: 200%;
 	height: 100%;
-	padding: 0.6%;
+	padding: 0.65%;
 	padding-right: 0.8%;
 
 	float: left;
@@ -166,7 +166,6 @@ input, textarea {
 }
 
 #logout {
-    width: initial;
 	padding: 1%;
 
     background-color: rgba(0,0,0,0.05);
