@@ -72,7 +72,14 @@ Template.registerHelper('myClasses', () => {
 	      	  var thisWork = work.find({class: courses[i]}).fetch();
 
 	      	  for(var j = 0; j < thisWork.length; j++) {
-		            thisWork[j].dueDate = getReadableDate(thisWork[j].dueDate);
+		            thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
+                    sameDay: '[Today]',
+                    nextDay: '[Tomorrow]',
+                    nextWeek: 'dddd',
+                    lastDay: '[Yesterday]',
+                    lastWeek: '[Last] dddd',
+                    sameElse: 'MMMM Do'
+                });
 		            thisWork[j].typeColor = workColors[thisWork[j].type];
 	      	  }
 	     	    array[i].thisClassWork = thisWork;
