@@ -5,11 +5,6 @@ import {
     Mongo
 } from 'meteor/mongo';
 
-_uuid4 = function(cc) {
-    var rr = Math.random() * 16 | 0;
-    return (cc === 'x' ? rr : (rr & 0x3 | 0x8)).toString(16);
-};
-
 superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com"
@@ -93,7 +88,7 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 Meteor.methods({
     'genCode': function() {
-        return 'xxxxxx'.replace(/[x]/g, _uuid4);
+        return Math.random().toString(36).substring(7);
     },
     'createSchool': function(schoolname) {
         if (Meteor.user() !== null &&
