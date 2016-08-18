@@ -10,7 +10,7 @@ superadmins = [
     "ksjdragon@gmail.com"
 ];
 
-worktype = ["test", "quiz", "project", "normal"];
+worktype = ["test", "quiz", "project", "normal", "other"];
 var possiblelist = ["moderators", "banned"];
 
 for (var i = 0; i < superadmins.length; i++) {
@@ -263,7 +263,9 @@ Meteor.methods({
         }
     },
     'createWork': function(input) {
-        var ref = new Date().getTime();
+        var ref = new Date();
+        ref.setHours(0,0,0,0);
+        ref = ref.getTime();
         input.creator = Meteor.userId();
         work.schema.validate(input);
         var found = classes.findOne({
@@ -288,8 +290,9 @@ Meteor.methods({
 
     },
     'editWork': function(change) {
-        var ref = new Date().getTime();
-
+        var ref = new Date();
+        ref.setHours(0,0,0,0);
+        ref = ref.getTime();
         var currentclass = classes.findOne({
             _id: work.findOne({
                 _id: change._id
