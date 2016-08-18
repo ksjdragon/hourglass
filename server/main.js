@@ -422,15 +422,16 @@ Meteor.methods({
         }
     },
     'joinPrivateClass': function(input) {
-        input.status = true;
-        input.privacy = true;
-        var found = classes.findOne(input);
-        current = Meteor.user().profile;
-        if (found !== undefined && input.code !== undefined &&
+        var found = classes.findOne({status: true, privacy: true, code:input});
+        var current = Meteor.user().profile;
+        if (found !== undefined && input !== undefined &&
         current.classes.indexOf(found._id) === -1) {
             classes.update({_id: found._id}, {$set: {subscribers: found.subscribers.concat(Meteor.userId())}});
-            current.concat(found._id);
+            current.classes = current.classes.concat(found._id);
             Meteor.users.update({_id: Meteor.userId()}, {$set: {profile: current}});
+            return true;
+        } else {
+            return false;
         }
     },
     'leaveClass': function(change) {

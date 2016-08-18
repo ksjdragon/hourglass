@@ -195,7 +195,7 @@ Template.profile.helpers({
         return Session.get("confirmText");
     },
     selectedClass(val) {
-        if(Session.get("selectedClass") === null) return;
+        if(Session.get("selectClassId") === null) return;
         var usertype = ["moderators","banned"];
         var attribute = Session.get("selectClassId");
         var array = classes.findOne({_id:attribute});
@@ -313,6 +313,11 @@ Template.profile.events({
             var div = document.getElementById("changeAdmin");
             div.removeChild(div.childNodes[3]);
             div.removeChild(div.childNodes[3]);
+        }
+        if(Session.get("privateClass") &&
+        !document.getElementById("joinPrivClass").contains(event.target)) {
+            Session.set("privateClass",false);
+            document.getElementById("joinPrivClass").style.marginBottom = "-10%";
         }
     },
     'keydown' (event) {
@@ -554,6 +559,27 @@ Template.profile.events({
         Session.set("confirmText", "Are you really sure?");
         openDivFade(document.getElementsByClassName("overlay")[0])
         document.getElementById("createdClasses").style.marginRight = "-40%";
+    },
+    'click #private' (event) {
+        Session.set("privateClass",true);
+        var input = document.getElementById("privateCode");
+        input.className = "";
+        input.placeholder = "Enter code here...";
+        document.getElementById("joinPrivClass").style.marginBottom = "0";
+    },
+    'click #privSubmit' () {
+        var input = document.getElementById("privateCode");
+        var code = input.value;
+        input.value = "";
+        Session.set("serverData", code);
+        Meteor.call("joinPrivateClass", code, function(error, result) {
+            if(result) {
+                document.getElementById("joinPrivClass").style.marginBottom = "-10%";
+            } else {
+                input.className = "formInvalid";
+                input.placeholder = "Invalid code.";
+            }
+        });
     }
 });
 

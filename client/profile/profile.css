@@ -568,7 +568,7 @@
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
-	transition: background-color 0.4s ease
+	transition: background-color 0.4s ease;
 }
 
 #changeAdmin span:hover {
@@ -602,9 +602,56 @@
 	-webkit-transition: color 0.4s ease;  
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;
-	transition: color 0.4s ease
+	transition: color 0.4s ease;
 }
 
 .fa-exchange:hover {
 	color: #CC4444;
+}
+
+#joinPrivClass {
+	width: 18%;
+	margin-bottom: -10%;
+	padding: 1.5%;
+	padding-bottom: 2%;
+
+	border-top: 5px solid #852E6D;
+	box-shadow: -2px 0px 5px 1px #444;
+
+	position: absolute;
+	right: 5%;
+	bottom: 0;
+
+	-webkit-transition: margin 0.4s ease;  
+	-moz-transition: margin 0.4s ease; 
+	-ms-transition: margin 0.4s ease;
+	transition: margin 0.4s ease;
+}
+
+#joinPrivClass h3 {
+	font-weight: 400;
+	font-size: 150%;
+	margin-bottom: 3%;
+}
+
+#privateCode {
+	font-size: 130%;
+	padding: 1%;
+}
+
+#privSubmit {
+	font-size: 120%;
+	margin-left: 5%;
+	padding: 3%;
+	background-color: rgba(0,0,0,0.2);
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.2s ease;  
+	-moz-transition: background-color 0.2s ease; 
+	-ms-transition: background-color 0.2s ease;
+	transition: background-color 0.2s ease;
+}
+
+#privSubmit:hover {
+	background-color: rgba(0,0,0,0.1);
 }
