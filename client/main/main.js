@@ -85,6 +85,7 @@ Template.registerHelper('myClasses', () => {
 	     	    array[i].thisClassWork = thisWork;
     	  }
         Session.set("noclass",false);
+        Session.set("calendarclasses", Meteor.user().profile.classes);
     	return array;
 
     }	
@@ -92,7 +93,6 @@ Template.registerHelper('myClasses', () => {
 
 Template.main.helpers({
     schoolName() {
-        Session.set("calendarclasses", Meteor.user().profile.classes);
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) {
@@ -143,16 +143,18 @@ Template.main.helpers({
     },
     calendarOptions() {
         var events = [];
-        calendarclasses = Session.get("calendarclasses");
-        var cursor = work.find({class: {$in: calendarclasses}});
+        var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
         cursor.forEach(function(current) {
-            backgroundColor = calendarColors[current.type];
+            backgroundColor = workColors[current.type];
             title = current.name;
             duedate = current.dueDate.toISOString().slice(0, 10);
             events.push({
+                id: current._id,
                 start: duedate,
                 title: title,
-                backgroundColor: backgroundColor
+                backgroundColor: backgroundColor,
+                startEditable: true,
+                className: "workevent",
             });
         });
         return {
@@ -163,6 +165,13 @@ Template.main.helpers({
                 month: 'Month',
                 week: 'Week',
                 day: 'Day'
+            },
+            eventDrop: function(event, delta, revertFunc) {
+                var current = work.findOne({_id:event.id});
+                var date = event.start.format().split("-");
+                current.dueDate = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
+                Session.set("serverData",current);
+                sendData("editWork");
             }
         };
     },
@@ -263,14 +272,15 @@ Template.main.events({
             !document.getElementById("optionsContainer").contains(event.target)) {
             Session.set("sidebar", null);
         }
+
         if(e === "overlay") {
-        	  closeDivFade(document.getElementsByClassName("overlay")[0]);
-        	  if(!Session.get("newWork")) {
-        		    if(getHomeworkFormData() === null) return;
-    			      Session.set("serverData",Session.get("currentWork"));
-    			      sendData("editWork");
-        	  }
-        	  Session.set("newWork",null);
+            closeDivFade(document.getElementsByClassName("overlay")[0]);
+            if(!Session.get("newWork")) {
+                if(getHomeworkFormData() === null) return;
+                Session.set("serverData",Session.get("currentWork"));
+                sendData("editWork");
+            }
+            Session.set("newWork",null);
         }
 
         if (event.target.id !== sessval &&
@@ -279,11 +289,12 @@ Template.main.events({
             !event.target.parentNode.className.includes("workOptions")) {
             closeInput(sessval);
         }
+
         if (!event.target.className.includes("radio") &&
             !Session.equals("radioDiv", null) &&
             !event.target.parentNode.className.includes("workOptions") &&
             event.target.readOnly !== true) {
-            var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"))).toString();
+            var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
             for (var i = 0; i < document.getElementsByClassName("workOptions").length; i++) {
                 try {
                     closeDivFade(document.getElementsByClassName("workOptions")[i]);
@@ -294,21 +305,21 @@ Template.main.events({
         }
     },
     'click .creWork' (event) {
-    	  if(event.target.className !== "creWork") {
-    		    var attr = event.target.parentNode.getAttribute("classid");
-    	  } else {
-    		    var attr = event.target.getAttribute("classid");
-    	  }
+        if(event.target.className !== "creWork") {
+            var attr = event.target.parentNode.getAttribute("classid");
+        } else {
+            var attr = event.target.getAttribute("classid");
+        }
         Session.set("newWork", true);
         Session.set("currentReadableWork",
-    		            {
-    			              name:"Name | Click here to edit...",
-    			              class:attr,
-    			              dueDate:"Click here to edit...",
-    			              description:"Click here to edit...",
-    			              type:"Click here to edit..."
-    		            });
-       	Session.set("currentWork",{class:attr});
+        {
+              name:"Name | Click here to edit...",
+              class:attr,
+              dueDate:"Click here to edit...",
+              description:"Click here to edit...",
+              type:"Click here to edit..."
+        });
+        Session.set("currentWork",{class:attr});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
@@ -458,7 +469,7 @@ Template.main.events({
     'focus #workDatea' () {
     	  $('#workDatea').datepicker({
     		    format: 'DD, MM d, yyyy',
-    		    startDate: 'd',
+    		    startDate: (new Date(Date.now())).toISOString().slice(0,10),
             todayHighlight: true,
             autoclose: true
 
