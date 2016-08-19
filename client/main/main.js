@@ -24,8 +24,8 @@ var themeColors = {
 };
 
 var workColors = {
-	  "normal": "#2E4F74",
-	  "quiz": "#409333",
+    "normal": "#2E4F74",
+    "quiz": "#409333",
     "test": "#AD3C44",
     "project": "#E6E619",
     "other": "#852E6D"
@@ -42,6 +42,7 @@ Session.set("radioDiv",null);
 Session.set("radioOffset",null);
 Session.set("serverData",null);
 Session.set("noclass",null);
+Session.set("updateCalWork",true);
 
 Template.registerHelper('divColor', (div) => {
     return themeColors[Cookie.get("theme")][div];
@@ -57,22 +58,23 @@ Template.registerHelper('overlayDim', (part) => {
 });
 
 Template.registerHelper('myClasses', () => {
-	  if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
+    if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
         Session.set("noclass",true);
-    		return [];
+        return [];
     } else {
-		    var array = [];
-		    var courses = Meteor.user().profile.classes;
-		    for(var i = 0; i < courses.length; i++) {
-        	  found = classes.findOne({_id:courses[i]});
+        var array = [];
+        var courses = Meteor.user().profile.classes;
+        for(var i = 0; i < courses.length; i++) {
+            found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length;
-        	  if(found.admin === Meteor.userId()) found.box = " owned";
-	      	  array.push(found);
 
-	      	  var thisWork = work.find({class: courses[i]}).fetch();
+            if(found.admin === Meteor.userId()) found.box = " owned";
+            array.push(found);
 
-	      	  for(var j = 0; j < thisWork.length; j++) {
-		            thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
+            var thisWork = work.find({class: courses[i]}).fetch();
+
+            for(var j = 0; j < thisWork.length; j++) {
+                thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
                     nextWeek: 'dddd',
@@ -80,15 +82,14 @@ Template.registerHelper('myClasses', () => {
                     lastWeek: '[Last] dddd',
                     sameElse: 'MMMM Do'
                 });
-		            thisWork[j].typeColor = workColors[thisWork[j].type];
-	      	  }
-	     	    array[i].thisClassWork = thisWork;
-    	  }
+                thisWork[j].typeColor = workColors[thisWork[j].type];
+            }
+            array[i].thisClassWork = thisWork;
+        }
         Session.set("noclass",false);
         Session.set("calendarclasses", Meteor.user().profile.classes);
-    	return array;
-
-    }	
+        return array;
+    }
 });
 
 Template.main.helpers({
@@ -142,29 +143,33 @@ Template.main.helpers({
         }
     },
     calendarOptions() {
-        var events = [];
-        var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
-        cursor.forEach(function(current) {
-            backgroundColor = workColors[current.type];
-            title = current.name;
-            duedate = current.dueDate.toISOString().slice(0, 10);
-            events.push({
-                id: current._id,
-                start: duedate,
-                title: title,
-                backgroundColor: backgroundColor,
-                startEditable: true,
-                className: "workevent",
-            });
-        });
         return {
+            id: "fullcalendar",
             height: window.innerHeight * 0.8,
-            events: events,
             buttonText: {
                 today: 'Today',
                 month: 'Month',
                 week: 'Week',
                 day: 'Day'
+            },
+            events: function(start, end, timezone, callback) {
+                var events = [];
+                var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
+                cursor.forEach(function(current) {
+                    backgroundColor = workColors[current.type];
+                    title = current.name;
+                    duedate = current.dueDate.toISOString().slice(0, 10);
+                    events.push({
+                        id: current._id,
+                        start: duedate,
+                        title: title,
+                        backgroundColor: backgroundColor,
+                        borderColor: "#444",
+                        startEditable: true,
+                        className: "workevent",
+                    });
+                });
+                callback(events);
             },
             eventDrop: function(event, delta, revertFunc) {
                 var current = work.findOne({_id:event.id});
@@ -172,7 +177,28 @@ Template.main.helpers({
                 current.dueDate = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
                 Session.set("serverData",current);
                 sendData("editWork");
-            }
+            },
+            eventClick: function(event, jsEvent, view) {
+                var thisWork = work.findOne({_id:event.id})
+                Session.set("currentWork",thisWork);
+                var thisReadWork = formReadable(thisWork);
+                Session.set("currentReadableWork",thisReadWork);
+                openDivFade(document.getElementsByClassName("overlay")[0]);
+            },
+            /*dayClick: function(date, jsEvent, view) {
+                //Make user select class
+                Session.set("newWork", true);
+                Session.set("currentReadableWork",
+                {
+                      name:"Name | Click here to edit...",
+                      class:attr,
+                      dueDate:"Click here to edit...",
+                      description:"Click here to edit...",
+                      type:"Click here to edit..."
+                });
+                Session.set("currentWork",{class:attr});
+                openDivFade(document.getElementsByClassName("overlay")[0]);
+            }*/
         };
     },
     calCenter() {
@@ -191,31 +217,31 @@ Template.main.helpers({
     },
     work(value) {
         if(Session.get("currentWork") === null) return;
-    	  return Session.get("currentReadableWork")[value];
+        return Session.get("currentReadableWork")[value];
     },
     workType() {
         if(Session.get("currentWork") === null) return;
-    	  type = Session.get("currentWork").type;
-    	  if(type.includes("edit")) {
-    		    return;
-    	  } else {
-    		    return workColors[type];
-    	  }
+        type = Session.get("currentWork").type;
+        if(type.includes("edit")) {
+            return;
+        } else {
+            return workColors[type];
+        }
     },
     newWork() {
-    	  return Session.get("newWork");
+        return Session.get("newWork");
     },
     inRole() {
-    	  if(Session.get("newWork")) {
-    		    return true;
-    	  } else {
-    		    if(Meteor.userId() === Session.get("currentWork").creator || 
-    		       Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-    		       classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
-    		       classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-    		       classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
-    		      ) return true;
-    	  }
+        if(Session.get("newWork")) {
+            return true;
+        } else {
+            if(Meteor.userId() === Session.get("currentWork").creator || 
+               Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+               classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
+               classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+               classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+              ) return true;
+        }
     }
 });
 
@@ -331,8 +357,8 @@ Template.main.events({
             classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
             )) return;   
         }
-    	
-    	var ele = event.target;
+
+        var ele = event.target;
         var sessval = Session.get("modifying");
         if (ele.id !== sessval && sessval !== null) closeInput(sessval);
 
@@ -347,11 +373,11 @@ Template.main.events({
             input.style.height = 3 * dim.height.toString() + "px";
             input.rows = "4";
         } else if (typ !== null) {
-        	  input.type = typ;
-        	  input.style.height = 0.9 * dim.height.toString() + "px";
+            input.type = typ;
+            input.style.height = 0.9 * dim.height.toString() + "px";
         } else {
-        	  input.typ = "text";
-        	  input.style.height = 0.9 * dim.height.toString() + "px";
+            input.typ = "text";
+            input.style.height = 0.9 * dim.height.toString() + "px";
         }
         input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
@@ -369,7 +395,7 @@ Template.main.events({
             input.select();
         }
         if(ele.id === "workDate") {
-        	  input.className += " form-control";
+            input.className += " form-control";
         }
         input.focus();
         if (ele.getAttribute("restrict") !== null) {
@@ -442,38 +468,37 @@ Template.main.events({
         }
     },
     'click #workSubmit' () {
-    	  if(getHomeworkFormData() === null) return;
-    	  Session.set("serverData",Session.get("currentWork"));
-    	  if(Session.get("newWork")) {
-    		    sendData("createWork");
-    	  } else {
-    		    sendData("editWork");
-    	  }
-    	  Session.set("newWork",null);
+        if(getHomeworkFormData() === null) return;
+        Session.set("serverData",Session.get("currentWork"));
+        if(Session.get("newWork")) {
+            sendData("createWork");
+        } else {
+            sendData("editWork");
+        }
+        Session.set("newWork",null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
-   	'focus .op' (event) {
+    'focus .op' (event) {
         event.target.click();
     },
     'click .workCard' (event) {
-    	  var dom = event.target;
-    	  while(event.target.className !== "workCard") event.target = event.target.parentNode;
-    	  workid = event.target.getAttribute("workid");
-    	  Session.set("newWork",false);
-    	  var thisWork = work.findOne({_id:workid});
-    	  Session.set("currentWork",thisWork);
-    	  var thisReadWork = formReadable(thisWork);
-    	  Session.set("currentReadableWork",thisReadWork);
-    	  openDivFade(document.getElementsByClassName("overlay")[0]);
+        var dom = event.target;
+        while(event.target.className !== "workCard") event.target = event.target.parentNode;
+        workid = event.target.getAttribute("workid");
+        Session.set("newWork",false);
+        var thisWork = work.findOne({_id:workid});
+        Session.set("currentWork",thisWork);
+        var thisReadWork = formReadable(thisWork);
+        Session.set("currentReadableWork",thisReadWork);
+        openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'focus #workDatea' () {
-    	  $('#workDatea').datepicker({
-    		    format: 'DD, MM d, yyyy',
-    		    startDate: (new Date(Date.now())).toISOString().slice(0,10),
+        $('#workDatea').datepicker({
+            format: 'DD, MM d, yyyy',
+            startDate: (new Date(Date.now())).toISOString().slice(0,10),
             todayHighlight: true,
             autoclose: true
-
-    	  });
+        });
     }
 });
 
@@ -494,6 +519,9 @@ function closeDivFade(div) {
 
 function sendData(funcName) {
     Meteor.call(funcName, Session.get("serverData"));
+    if(funcName.includes("Work") && Session.get("mode") === "calendar") {
+        $("#fullcalendar").fullCalendar( 'refetchEvents' );
+    }
 }
 
 function closeInput(sessval) {
@@ -513,59 +541,59 @@ function closeInput(sessval) {
     span.style.display = "initial";
     Session.set("modifying", null);
     if(!Session.get("newWork")) {
-    	  if(getHomeworkFormData() === null) return;
-    	  Session.set("serverData",Session.get("currentWork"));
-    	  sendData("editWork");
+        if(getHomeworkFormData() === null) return;
+        Session.set("serverData",Session.get("currentWork"));
+        sendData("editWork");
     }
 }
 
 function getHomeworkFormData() {
-	  var inputs = document.getElementsByClassName("req");
-	  var stop;
-	  for(var i = 0; i < inputs.length; i++) {
-		    var value = inputs[i].childNodes[0].nodeValue;
-		    if(value.includes("Click here to edit")) {
-			      inputs[i].childNodes[0].nodeValue = "Missing field";
-			      inputs[i].style.color = "#FF1A1A";
-			      stop = true;
-		    }	
-	  }
-	  var desc = document.getElementById("workDesc");
-	  if(desc.childNodes[0].nodeValue.includes("Click here to edit")) {
-		    desc.childNodes[0].nodeValue = "Missing field";
-		    desc.style.color = "#FF1A1A";
-		    stop = true;
-	  }
-	  if(stop) return null;
+    var inputs = document.getElementsByClassName("req");
+    var stop;
+    for(var i = 0; i < inputs.length; i++) {
+        var value = inputs[i].childNodes[0].nodeValue;
+        if(value.includes("Click here to edit")) {
+            inputs[i].childNodes[0].nodeValue = "Missing field";
+            inputs[i].style.color = "#FF1A1A";
+            stop = true;
+        }
+    }
+    var desc = document.getElementById("workDesc");
+    if(desc.childNodes[0].nodeValue.includes("Click here to edit")) {
+        desc.childNodes[0].nodeValue = "Missing field";
+        desc.style.color = "#FF1A1A";
+        stop = true;
+    }
+    if(stop) return null;
 
-	  var data = Session.get("currentWork");
-	  data.name = document.getElementById("workName").childNodes[0].nodeValue;
-	  data.dueDate = toDate(document.getElementById("workDate").childNodes[0].nodeValue);
-	  data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
-	  data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
-	  
-	  Session.set("currentWork", data);
-	  var readableData = formReadable(data);
-	  Session.set("currentReadableWork", readableData);
+    var data = Session.get("currentWork");
+    data.name = document.getElementById("workName").childNodes[0].nodeValue;
+    data.dueDate = toDate(document.getElementById("workDate").childNodes[0].nodeValue);
+    data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
+    data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
+
+    Session.set("currentWork", data);
+    var readableData = formReadable(data);
+    Session.set("currentReadableWork", readableData);
 }
 
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 function getReadableDate(date) {
-	  return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
+    return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
 }
 
 function toDate(date) {
-	  date = date.substring(date.search(",")+2,date.length);
-	  month = months.indexOf(date.substring(0,date.search(" ")));
-	  day = date.substring(date.search(" ")+1,date.search(","));
-	  year = date.substring(date.search(",")+2,date.length);
-	  return new Date(year,month,day,11,59,59);
+    date = date.substring(date.search(",")+2,date.length);
+    month = months.indexOf(date.substring(0,date.search(" ")));
+    day = date.substring(date.search(" ")+1,date.search(","));
+    year = date.substring(date.search(",")+2,date.length);
+    return new Date(year,month,day,11,59,59);
 }
 
 function formReadable(input) {
-	  input.dueDate = getReadableDate(input.dueDate);
-	  input.type = input.type[0].toUpperCase() + input.type.slice(1);
-	  return input;
+    input.dueDate = getReadableDate(input.dueDate);
+    input.type = input.type[0].toUpperCase() + input.type.slice(1);
+    return input;
 }
