@@ -143,6 +143,13 @@ Template.main.helpers({
         }
     },
     calendarOptions() {
+        var inRole = false;
+        if(Meteor.userId() === Session.get("currentWork").creator || 
+               Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+               classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
+               classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+               classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+              ) var inRole = true;
         return {
             id: "fullcalendar",
             height: window.innerHeight * 0.8,
@@ -165,7 +172,7 @@ Template.main.helpers({
                         title: title,
                         backgroundColor: backgroundColor,
                         borderColor: "#444",
-                        startEditable: true,
+                        startEditable: inRole,
                         className: "workevent",
                     });
                 });
