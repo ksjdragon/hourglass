@@ -32,7 +32,7 @@
             </div>
         </div>
         <div id="classListHolder">
-        <h3>Enrolled</h3>
+        <h3>Enrolled</h3><h3 id="calCreWork">{{calCreWork}}</h3>
             {{#each myClasses}}
                 {{> sidebarClasses}}  
             {{/each}}
@@ -119,7 +119,7 @@
 </template>
 
 <template name="sidebarClasses">
-    <div class="sideClass">
+    <div class="sideClass" classid="{{_id}}">
         <p class="sideClassName">{{name}}</p>
         <p class="sideClassHour">{{hour}}</p>
     </div>

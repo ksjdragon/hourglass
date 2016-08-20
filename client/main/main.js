@@ -42,7 +42,8 @@ Session.set("radioDiv",null);
 Session.set("radioOffset",null);
 Session.set("serverData",null);
 Session.set("noclass",null);
-Session.set("updateCalWork",true);
+Session.set("creCalWork",null);
+Session.set("calWorkDate",null);
 
 Template.registerHelper('divColor', (div) => {
     return themeColors[Cookie.get("theme")][div];
@@ -191,21 +192,14 @@ Template.main.helpers({
                 var thisReadWork = formReadable(thisWork);
                 Session.set("currentReadableWork",thisReadWork);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
+            },
+            dayClick: function(date, jsEvent, view) {
+                if(Session.get("sidebar") !== null) return;
+                if(jsEvent.target.className.includes("fc-other-month") || jsEvent.target.className.includes("fc-past")) return;
+                Session.set("calCreWork",true);
+                Session.set("calWorkDate",date.format());
+                Session.set("sidebar","menuContainer");              
             }
-            /*dayClick: function(date, jsEvent, view) {
-                //Make user select class
-                Session.set("newWork", true);
-                Session.set("currentReadableWork",
-                {
-                      name:"Name | Click here to edit...",
-                      class:attr,
-                      dueDate:"Click here to edit...",
-                      description:"Click here to edit...",
-                      type:"Click here to edit..."
-                });
-                Session.set("currentWork",{class:attr});
-                openDivFade(document.getElementsByClassName("overlay")[0]);
-            }*/
         };
     },
     calCenter() {
@@ -216,6 +210,13 @@ Template.main.helpers({
         var width = window.innerWidth * 0.865;
         var height = window.innerHeight * 0.76;
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
+    },
+    calCreWork() {
+        if(Session.get("calCreWork")) {
+            return " -- Pick a Class";
+        } else {
+            return "";
+        }
     },
     workCenter() {
         var w = window.innerWidth * 0.3;
@@ -228,6 +229,7 @@ Template.main.helpers({
     },
     workType() {
         if(Session.get("currentWork") === null) return;
+        if(Session.get("currentWork").type === undefined) return;
         type = Session.get("currentWork").type;
         if(type.includes("edit")) {
             return;
@@ -299,11 +301,15 @@ Template.main.events({
         var e = event.target.className;
         var sessval = Session.get("modifying");
         if (e !== Session.get("sidebar") &&
-            !e.includes("fa-cog") &&
-            !e.includes("fa-bars") &&
-            !document.getElementById("menuContainer").contains(event.target) &&
-            !document.getElementById("optionsContainer").contains(event.target)) {
-            Session.set("sidebar", null);
+        !e.includes("fa-cog") &&
+        !e.includes("fa-bars") &&
+        !document.getElementById("menuContainer").contains(event.target) &&
+        !document.getElementById("optionsContainer").contains(event.target) &&
+        !event.target.className.includes("fc-day")) {
+            if(Session.get("calCreWork")) {
+                Session.set("calCreWork",false);
+            }
+            Session.set("sidebar",null);
         }
 
         if(e === "overlay") {
@@ -506,6 +512,31 @@ Template.main.events({
             todayHighlight: true,
             autoclose: true
         });
+    },
+    'click .sideClass' (event) {
+        if(!Session.equals("mode","calendar")) return;
+        var div = event.target
+        while(div.getAttribute("classid") === null) div = div.parentNode;
+        var classid = div.getAttribute("classid");
+
+        if(Session.get("calCreWork")) {
+            Session.set("calCreWork",null);
+            Session.set("sidebar",null);
+
+            var date = Session.get("calWorkDate").split("-");
+            var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
+            Session.set("newWork", true);
+            Session.set("currentReadableWork",
+            {
+                  name:"Name | Click here to edit...",
+                  class:classid,
+                  dueDate:getReadableDate(date),
+                  description:"Click here to edit...",
+                  type:"Click here to edit..."
+            });
+            Session.set("currentWork",{class:classid,dueDate:date});
+            openDivFade(document.getElementsByClassName("overlay")[0]);
+        } 
     }
 });
 
@@ -525,10 +556,11 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) {
-    Meteor.call(funcName, Session.get("serverData"));
-    if(funcName.includes("Work") && Session.get("mode") === "calendar") {
-        $("#fullcalendar").fullCalendar( 'refetchEvents' );
-    }
+    Meteor.call(funcName, Session.get("serverData") , function(err,result) {
+        if((funcName === "editWork" || funcName === "createWork") && Session.get("mode") === "calendar") {
+            $("#fullcalendar").fullCalendar( 'refetchEvents' );
+        }  
+    });   
 }
 
 function closeInput(sessval) {

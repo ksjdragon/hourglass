@@ -276,6 +276,8 @@ input, textarea {
 #classListHolder h3 {
 	font-weight: 200;
 	margin: 5%;
+	margin-right: 4%;
+	display: inline-block;
 }
 
 .sideClass {
@@ -667,4 +669,50 @@ input, textarea {
 .workevent span {
 	padding: 2%;
 	display: inline-block;
+}
+
+#calCreWork {
+	margin-left: 0 !important;
+	color: #fff;
+	display: inline-block;
+
+	-webkit-animation: neonglow 1.5s ease-in-out infinite alternate;
+    -moz-animation: neonglow 1.5s ease-in-out infinite alternate;
+  	animation: neonglow 1.5s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes neonglow {
+  from {
+    text-shadow: 
+    0 0 10px #fff, 
+    0 0 20px #fff, 
+    0 0 30px #fff, 
+    0 0 40px #228DFF, 
+    0 0 70px #228DFF, 
+    0 0 80px #228DFF, 
+    0 0 100px #228DFF, 
+    0 0 150px #228DFF;
+  }
+  to {
+    text-shadow: 
+    0 0 5px #fff, 
+    0 0 10px #fff, 
+    0 0 15px #fff, 
+    0 0 20px #228DFF, 
+    0 0 35px #228DFF, 
+    0 0 40px #228DFF, 
+    0 0 50px #228DFF, 
+    0 0 75px #228DFF;
+  }
+}
+
+.fc-day:not(.fc-past):not(.fc-other-month) {
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+} 
+
+.fc-day:not(.fc-past):not(.fc-other-month):hover {
+	background-color: rgba(0,0,0,0.1);
 }
