@@ -143,13 +143,6 @@ Template.main.helpers({
         }
     },
     calendarOptions() {
-        var inRole = false;
-        if(Meteor.userId() === Session.get("currentWork").creator || 
-               Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-               classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
-               classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-               classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
-              ) var inRole = true;
         return {
             id: "fullcalendar",
             height: window.innerHeight * 0.8,
@@ -163,6 +156,13 @@ Template.main.helpers({
                 var events = [];
                 var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
                 cursor.forEach(function(current) {
+                    var inRole = false;
+                    if(Meteor.userId() === current.creator || 
+                    Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+                    classes.findOne({_id: current._id}).moderators.indexOf(Meteor.userId()) !== -1||
+                    classes.findOne({_id: current._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
+                    classes.findOne({_id: current._id}).banned.indexOf(Meteor.userId()) !== -1
+                    ) inRole = true;
                     backgroundColor = workColors[current.type];
                     title = current.name;
                     duedate = current.dueDate.toISOString().slice(0, 10);
@@ -191,7 +191,7 @@ Template.main.helpers({
                 var thisReadWork = formReadable(thisWork);
                 Session.set("currentReadableWork",thisReadWork);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
-            },
+            }
             /*dayClick: function(date, jsEvent, view) {
                 //Make user select class
                 Session.set("newWork", true);
