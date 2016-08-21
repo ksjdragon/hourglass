@@ -392,7 +392,7 @@ Template.main.events({
             input.typ = "text";
             input.style.height = 0.9 * dim.height.toString() + "px";
         }
-        input.value = ele.childNodes[0].nodeValue;
+        if(!event.target.id === "workDate") input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
 
         input.style.width = "70%";
@@ -508,8 +508,9 @@ Template.main.events({
     'focus #workDatea' () {
         $('#workDatea').datepicker({
             format: 'DD, MM d, yyyy',
-            startDate: (new Date(Date.now())).toISOString().slice(0,10),
+            startDate: 'd',
             todayHighlight: true,
+            todayBtn: true,
             autoclose: true
         });
     },
