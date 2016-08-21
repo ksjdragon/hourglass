@@ -124,6 +124,8 @@ Meteor.methods({
                 status: stat,
                 creator: Meteor.userId()
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'deleteSchool': function(schoolId) {
@@ -131,6 +133,8 @@ Meteor.methods({
             schools.remove({
                 _id: schoolId
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'createClass': function(input) {
@@ -223,6 +227,8 @@ Meteor.methods({
             }, {
                 $set: set
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'untrackUserInClass': function(input) {
@@ -249,6 +255,8 @@ Meteor.methods({
             }, {
                 $set: set
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'deleteClass': function(classid) {
@@ -274,6 +282,8 @@ Meteor.methods({
             classes.remove({
                 _id: classid
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'createWork': function(input) {
@@ -300,6 +310,8 @@ Meteor.methods({
             input.numberdone = 0;
             input.comments = [];
             work.insert(input);
+        } else {
+            throw "Unauthorized";
         }
 
     },
@@ -352,7 +364,7 @@ Meteor.methods({
                 });
             }
         } else {
-            throw "Unauthorized.";
+            throw "Unauthorized";
         }
     },
     'addComment': function(input) {
@@ -376,6 +388,8 @@ Meteor.methods({
                     time: new Date()
                 }
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'toggleWork': function(input) {
@@ -397,6 +411,8 @@ Meteor.methods({
             }, {
                 $set: workobject
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'deleteWork': function(workId) {
@@ -412,6 +428,8 @@ Meteor.methods({
             work.remove({
                 _id: workId
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'editProfile': function(change) {
@@ -442,9 +460,9 @@ Meteor.methods({
                     profile: current
                 }
             });
-            return 1;
+            return true;
         } else {
-            return 0;
+            throw "Unauthorized";
         }
     },
     'joinClass': function(input) {
@@ -476,9 +494,9 @@ Meteor.methods({
                     profile: current
                 }
             });
-            return 1;
+            return true;
         } else {
-            return 0;
+            throw "Unauthorized";
         }
     },
     'joinPrivateClass': function(input) {
@@ -507,7 +525,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            return false;
+            throw "Unauthorized";
         }
     },
     'leaveClass': function(change) {
@@ -536,7 +554,7 @@ Meteor.methods({
                             subscribers: newstudents
                         }
                     });
-                    return 1;
+                    return true;
                 } else {
                     throw "You are currently the admin of this class. Transfer ownership in order to leave this class.";
                 }
@@ -549,11 +567,15 @@ Meteor.methods({
     'createAdmin': function(userId) {
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.addUsersToRoles(userId, ['admin']);
+        } else {
+            throw "Unauthorized";
         }
     },
     'deleteAdmin': function(userId) {
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.removeUsersToRoles(userId, ['admin']);
+        } else {
+            throw "Unauthorized";
         }
     },
     'createRequest': function(request) {
@@ -563,11 +585,15 @@ Meteor.methods({
                 request: request,
                 timeRequested: new Date()
             });
+        } else {
+            throw "Unauthorized";
         }
     },
     'deleteRequest': function(requestId) {
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             requests.remove({_id: requestId});
+        } else {
+            throw "Unauthorized";
         }
     }
 });
