@@ -2,10 +2,6 @@ import {
     Template
 } from 'meteor/templating';
 
-Meteor.subscribe('schools');
-Meteor.subscribe('classes');
-Meteor.subscribe('work');
-
 Session.set("profInputOpen", null);
 Session.set("profClassTab", "manClass");
 Session.set("modifying", null);
