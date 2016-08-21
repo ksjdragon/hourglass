@@ -449,11 +449,12 @@ Meteor.methods({
             found !== null &&
             pass === found.code &&
             prof.classes.indexOf(change) === -1) {
+            foundsubs = found.subscribers + '';
             classes.update({
                 _id: found._id
             }, {
                 $set: {
-                    subscribers: found.subscribers.concat(Meteor.userId())
+                    subscribers: foundsubs.concat(Meteor.userId())
                 }
             });
             var current = Meteor.user().profile;

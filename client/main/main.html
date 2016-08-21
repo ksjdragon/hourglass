@@ -32,10 +32,13 @@
             </div>
         </div>
         <div id="classListHolder">
-        <h3>Enrolled</h3><h3 id="calCreWork">{{calCreWork}}</h3>
-            {{#each myClasses}}
-                {{> sidebarClasses}}  
-            {{/each}}
+        {{#if myClasses}}
+
+            <h3>Enrolled</h3><h3 id="calCreWork">{{calCreWork}}</h3>
+                {{#each myClasses}}
+                    {{> sidebarClasses}}  
+                {{/each}}
+        {{/if}}
         </div>
     </div>
     <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
