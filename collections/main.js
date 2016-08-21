@@ -1,6 +1,7 @@
 schools = new Mongo.Collection("Schools");
 classes = new Mongo.Collection("Classes");
 work = new Mongo.Collection("Work");
+requests = new Mongo.Collection("Requests");
 
 schools.schema = new SimpleSchema({
 	  name: {type: String},
@@ -36,4 +37,10 @@ work.schema = new SimpleSchema({
 	  attachments: {type: [String], optional: true},
 	  done: {type: [String], optional: true},
 	  type: {type: String}
+});
+
+requests.schema = new SimpleSchema({
+    requestor: {type: String},
+    request: {type: String},
+    timeRequested: {type: Date}
 });

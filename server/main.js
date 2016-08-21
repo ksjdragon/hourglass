@@ -72,6 +72,14 @@ Meteor.publish('work', function() {
 
 });
 
+Meteor.publish('requests', function() {
+    if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
+        return requests.find();
+    } else {
+        return requests.find({requestor: this.userId});
+    }
+});
+
 Meteor.publish('users', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return Meteor.users.find();
@@ -89,7 +97,9 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 Meteor.methods({
     'genCode': function() {
         currcode = Math.random().toString(36).substr(2, 6);
-        while (classes.findOne({code: currcode}) !== undefined) {
+        while (classes.findOne({
+                code: currcode
+            }) !== undefined) {
             currcode = Math.random().toString(36).substr(2, 6);
         }
         return currcode;
@@ -268,7 +278,7 @@ Meteor.methods({
     },
     'createWork': function(input) {
         var ref = new Date();
-        ref.setHours(0,0,0,0);
+        ref.setHours(0, 0, 0, 0);
         ref = ref.getTime();
         input.creator = Meteor.userId();
         work.schema.validate(input);
@@ -295,7 +305,7 @@ Meteor.methods({
     },
     'editWork': function(change) {
         var ref = new Date();
-        ref.setHours(0,0,0,0);
+        ref.setHours(0, 0, 0, 0);
         ref = ref.getTime();
         var currentclass = classes.findOne({
             _id: work.findOne({
@@ -532,6 +542,8 @@ Meteor.methods({
                 }
             }
 
+        } else {
+            throw "Unauthorized";
         }
     },
     'createAdmin': function(userId) {
@@ -542,6 +554,20 @@ Meteor.methods({
     'deleteAdmin': function(userId) {
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.removeUsersToRoles(userId, ['admin']);
+        }
+    },
+    'createRequest': function(request) {
+        if (request.length <= 500 && Meteor.userId() !== null) {
+            requests.insert({
+                requestor: Meteor.userId(),
+                request: request,
+                timeRequested: new Date()
+            });
+        }
+    },
+    'deleteRequest': function(requestId) {
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+            requests.remove({_id: requestId});
         }
     }
 });
