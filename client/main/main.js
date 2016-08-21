@@ -31,9 +31,13 @@ var workColors = {
     "other": "#852E6D"
 };
 
+// Preference settings.
+Session.set("mode", null);
+Session.set("timeHide",null);
+
+// Reactive variables.
 Session.set("calendarclasses", null);
 Session.set("sidebar", null);
-Session.set("mode", null); // Change to user preferences
 Session.set("newWork",null);
 Session.set("currentWork",null);
 Session.set("currentReadableWork",null);
@@ -89,6 +93,7 @@ Template.registerHelper('myClasses', () => {
         }
         Session.set("noclass",false);
         Session.set("calendarclasses", Meteor.user().profile.classes);
+        var hide = Session.get("timeHide");
         return array;
     }
 });
@@ -194,7 +199,6 @@ Template.main.helpers({
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             dayClick: function(date, jsEvent, view) {
-                if(Session.get("sidebar") !== null) return;
                 if(jsEvent.target.className.includes("fc-other-month") || jsEvent.target.className.includes("fc-past")) return;
                 Session.set("calCreWork",true);
                 Session.set("calWorkDate",date.format());
@@ -213,9 +217,18 @@ Template.main.helpers({
     },
     calCreWork() {
         if(Session.get("calCreWork")) {
-            return " -- Pick a Class";
+            var div = document.getElementById("calCreWork");
+            div.style.setProperty("display","inline-block","important");
+            div.style.setProperty("opacity","0","important");
+            setTimeout(function() {
+                div.style.setProperty("opacity","1","important");
+            }, 100);
+            return;
         } else {
-            return "";
+            try {
+                closeDivFade(document.getElementById("calCreWork"));
+            } catch(err) {}
+            return;
         }
     },
     workCenter() {
@@ -305,7 +318,8 @@ Template.main.events({
         !e.includes("fa-bars") &&
         !document.getElementById("menuContainer").contains(event.target) &&
         !document.getElementById("optionsContainer").contains(event.target) &&
-        !event.target.className.includes("fc-day")) {
+        !(event.target.className.includes("fc-today") ||
+        (event.target.className.includes("fc-future") && !event.target.className.includes("fc-other-month")))) {
             if(Session.get("calCreWork")) {
                 Session.set("calCreWork",false);
             }
