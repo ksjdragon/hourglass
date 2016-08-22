@@ -530,13 +530,13 @@ Meteor.methods({
     },
     'leaveClass': function(change) {
         if (Meteor.user() !== null) {
-            var profile = Meteor.user().profile;
-            var index = profile.classes.indexOf(change);
+            var current = Meteor.user().profile;
+            var index = current.classes.indexOf(change);
             if (index >= 0) {
                 if (classes.findOne({
                         _id: change
                     }).admin != Meteor.userId()) {
-                    current = profile.classes.splice(index, 1);
+                    current.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()
                     }, {
