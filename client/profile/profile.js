@@ -506,6 +506,11 @@ Template.profile.events({
         sendData("trackUserInClass");
 
     },
+    'click .classBox .fa-times' (event) {
+        var box = event.target.parentNode;
+        Session.set("serverData", box.getAttribute("classid"));
+        sendData("leaveClass");
+    },
     'click .userBox .fa-times' (event) {
         var box = event.target.parentNode;
         Session.set("serverData", [

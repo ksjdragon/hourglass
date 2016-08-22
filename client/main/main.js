@@ -74,6 +74,7 @@ Template.registerHelper('myClasses', () => {
             found.subscribers = found.subscribers.length;
 
             if(found.admin === Meteor.userId()) found.box = " owned";
+            found.mine = true;
             array.push(found);
 
             var thisWork = work.find({class: courses[i]}).fetch();

@@ -58,6 +58,7 @@
 							<div class="classHolder" style="max-height:{{classHolderHeight}}">
 								{{#each myClasses}}
 									{{> classDisplay}}
+
 								{{/each}}
 								{{#if noclass}}
 									<h3>No results found...</h3>
@@ -199,6 +200,9 @@
 		<span class="teacher classText">{{teacher}}</span>
 		<span class="hour classText">{{hour}}</span>
 		<span class="subscribers classText">{{subscribers}}</span>
+		{{#if mine}}
+			<i class="fa fa-times" aria-hidden="true"></i>
+		{{/if}}
 	</div>
 </template>
 
