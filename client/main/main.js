@@ -407,7 +407,7 @@ Template.main.events({
             input.typ = "text";
             input.style.height = 0.9 * dim.height.toString() + "px";
         }
-        if(!event.target.id === "workDate") input.value = ele.childNodes[0].nodeValue;
+        if(event.target.id !== "workDate") input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
 
         input.style.width = "70%";
@@ -493,6 +493,14 @@ Template.main.events({
                     restext.style.setProperty("color", "#999", "important");
                 }
             }
+        }
+    },
+    'click #commentSubmit' (event) {
+        workId = Session.get("currentWork")._id;
+        comment = document.getElementById('workComment').value;
+        if (comment !== "") {
+            document.getElementById('workComment').value = "";
+            Meteor.call('addComment', [comment, workId]);
         }
     },
     'click #workSubmit' () {
@@ -593,7 +601,7 @@ function closeInput(sessval) {
     } else {
         span.childNodes[0].nodeValue = input.value;
     }
-    span.style.display = "initial";
+span.style.display = "initial";
     Session.set("modifying", null);
     if(!Session.get("newWork")) {
         if(getHomeworkFormData() === null) return;

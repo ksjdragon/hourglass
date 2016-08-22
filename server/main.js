@@ -368,6 +368,7 @@ Meteor.methods({
         }
     },
     'addComment': function(input) {
+        var comment = input[0];
         var workobject = work.findOne({
             _id: input[1]
         });
@@ -375,8 +376,9 @@ Meteor.methods({
             _id: workobject.class
         });
         var user = Meteor.userId();
+        foundsubs = currentclass.subscribers;
         if (typeof comment === "string" && comment.length <= 200 &&
-            currentclass.subscribers.indexOf(Meteor.userId()) != -1 &&
+            foundsubs.indexOf(Meteor.userId()) != -1 &&
             currentclass.banned.indexOf(Meteor.userId()) === -1) {
             var comments = workobject.comments.concat(comment);
             work.update({
