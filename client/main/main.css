@@ -622,9 +622,6 @@ input, textarea {
 	position: absolute;
 	z-index: -1;
 
-	display: none;
-	opacity: 0;
-
 	-webkit-transition: opacity 0.4s ease;  
 	-moz-transition: opacity 0.4s ease; 
 	-ms-transition: opacity 0.4s ease;
@@ -674,6 +671,10 @@ input, textarea {
 
 .fc-day-header {
 	padding: 0.5% 0 0.5% 0 !important;
+}
+
+.fc td {
+	border: solid 1px #C5C5C5;
 }
 
 .fc-button {
@@ -752,5 +753,5 @@ input, textarea {
 }
 
 .inputRadioPref {
-	margin-bottom: 6%;
+	margin-top: 6%;
 }

@@ -5,7 +5,7 @@
 
 <template name="main">
     {{> loginButtons}}
-    <header style="background-color:{{divColor 'header'}}{{textColor}}">
+    <header style="background-color:{{divColor 'header'}}{{textColor}}{{defaultMode}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
@@ -89,7 +89,7 @@
 
         {{#if currMode 'calendar'}}
         <div id="calbg" style="{{calbg}}"></div>
-            <div id="calendar" style="{{calCenter}}">
+            <div id="calendar" style="{{calCenter}}{{calColor}}">
                 {{> fullcalendar calendarOptions}}
             </div>
         {{/if}}
@@ -164,7 +164,7 @@
 </template>
 
 <template name="classesMode">
-    <div class="mainClass" style="background-color:{{divColor 'header'}}">
+    <div class="mainClass" style="background-color:{{divColor 'classes'}}">
         <div class="classInfo"> <!-- class color -->
             <h3 class="mainClassName">{{name}}</h3>
             <p class="mainClassHour">{{hour}}</p>

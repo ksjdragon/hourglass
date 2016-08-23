@@ -18,6 +18,8 @@ var themeColors = {
         "statusIcons": "#33ADFF",
         "highlightText": "#FF1A1A",
         "cards": "#FEFEFE",
+        "classes":"#EBEBEB",
+        "calendar": "#000",
         "text": "#000"
     },
     "dark": {
@@ -28,6 +30,9 @@ var themeColors = {
         "statusIcons": "#33ADFF",
         "highlightText": "#FF1A1A",
         "cards": "#050505",
+        "classes":"#46396E",
+        "calendar": "#000",
+        //30313B
         "text": "#F6F6F6" 
     }
 };
@@ -128,6 +133,10 @@ Template.main.helpers({
             return;
         }
     },
+    defaultMode() {
+        Session.set("mode",Meteor.user().profile.preferences.mode);
+        return;
+    },
     bgSrc() {
         var dim = [window.innerWidth, window.innerHeight];
         var pic = "Backgrounds/"+themeColors[Meteor.user().profile.preferences.theme].background;
@@ -159,7 +168,8 @@ Template.main.helpers({
         }
     },
     currMode(name) {
-        if (name === Session.get("mode")) {
+        var mode = Session.get("mode");
+        if (name === mode) {
             return true;
         } else {
             return false;
@@ -225,7 +235,10 @@ Template.main.helpers({
     },
     calCenter() {
         var width = window.innerWidth * 0.85;
-        return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px";
+        return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
+    },
+    calColor() {
+        return "color:"+themeColors[Meteor.user().profile.preferences.theme].calendar;
     },
     calbg() {
         var width = window.innerWidth * 0.865;
@@ -378,7 +391,7 @@ Template.main.events({
             !event.target.parentNode.className.includes("workOptions") &&
             !event.target.parentNode.className.includes("prefOptions") &&
             event.target.readOnly !== true) {
-            if(Session.equals("sidebar","optionsContainer")) {
+            if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
                 var radio = "prefOptions";
             } else {
                 var radio = "workOptions";
@@ -478,7 +491,7 @@ Template.main.events({
         var op = event.target;
         Session.set("radioDiv", op.getAttribute("op"));
         Session.set("radioOffset", op.getAttribute("opc"));
-        if(Session.equals("sidebar","optionsContainer")) {
+        if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
             var radio = "prefOptions";
         } else {
             var radio = "workOptions";
@@ -645,7 +658,7 @@ function sendData(funcName) {
 function closeInput(sessval) {
     var input = document.getElementById(sessval + "a");
     var span = document.getElementById(sessval);
-    if(Session.equals("sidebar","optionsContainer")) {
+    if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
         var color = "#000";
     } else {
         var color = "#8C8C8C";
@@ -663,14 +676,15 @@ function closeInput(sessval) {
     }
     span.style.display = "initial";
     Session.set("modifying", null);
-    if(!Session.get("newWork") && !Session.equals("sidebar","optionsContainer")) {
+
+    if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
+        Session.set("serverData",getPreferencesData());
+        sendData("editProfile");
+    } else if(!Session.get("newWork")) {
         if(getHomeworkFormData() === null) return;
         Session.set("serverData",Session.get("currentWork"));
         sendData("editWork");
-    } else if(Session.equals("sidebar","optionsContainer")) {
-        Session.set("serverData",getPreferencesData());
-        sendData("editProfile");
-    }
+    }  
 }
 
 function getHomeworkFormData() {
