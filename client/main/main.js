@@ -14,12 +14,21 @@ var themeColors = {
         "background": "White.jpg",
         "header": "#EBEBEB",
         "sidebar": "#65839A",
+        "funcButton": "#849CAE",
         "statusIcons": "#33ADFF",
         "highlightText": "#FF1A1A",
-        "cards": "#FEFEFE"
+        "cards": "#FEFEFE",
+        "text": "#000"
     },
     "dark": {
-
+        "background": "Black.jpg",
+        "header": "#373A56",
+        "sidebar": "#35435D",
+        "funcButton": "#5d75A2",
+        "statusIcons": "#33ADFF",
+        "highlightText": "#FF1A1A",
+        "cards": "#050505",
+        "text": "#F6F6F6" 
     }
 };
 
@@ -31,9 +40,11 @@ var workColors = {
     "other": "#852E6D"
 };
 
-// Preference settings.
-Session.set("mode", null);
-Session.set("timeHide",null);
+var defaults = {
+    "theme":"light",
+    "mode":"classes"
+    //"timeHide":7
+}
 
 // Reactive variables.
 Session.set("calendarclasses", null);
@@ -50,7 +61,12 @@ Session.set("creCalWork",null);
 Session.set("calWorkDate",null);
 
 Template.registerHelper('divColor', (div) => {
-    return themeColors[Cookie.get("theme")][div];
+    return themeColors[Meteor.user().profile.preferences.theme][div];
+});
+
+Template.registerHelper("textColor", () => {
+    document.getElementsByTagName("html")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
+    return; 
 });
 
 Template.registerHelper('overlayDim', (part) => {
@@ -71,7 +87,7 @@ Template.registerHelper('myClasses', () => {
         var courses = Meteor.user().profile.classes;
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
-            found.subscribers = found.subscribers.length;
+            found.subscribers = found.subscribers.length/17;
 
             if(found.admin === Meteor.userId()) found.box = " owned";
             found.mine = true;
@@ -94,7 +110,7 @@ Template.registerHelper('myClasses', () => {
         }
         Session.set("noclass",false);
         Session.set("calendarclasses", Meteor.user().profile.classes);
-        var hide = Session.get("timeHide");
+        var hide = Meteor.user().profile.preferences.timeHide;
         return array;
     }
 });
@@ -105,16 +121,16 @@ Template.main.helpers({
     },
     iconColor(icon) {
         if (Session.get("sidebar") === icon + "Container") {
-            return themeColors[Cookie.get("theme")].statusIcons;
+            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else if (Session.get("sidebar") === "both") {
-            return themeColors[Cookie.get("theme")].statusIcons;
+            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else {
             return;
         }
     },
     bgSrc() {
         var dim = [window.innerWidth, window.innerHeight];
-        var pic = "Backgrounds/"+themeColors[Cookie.get("theme")].background;
+        var pic = "Backgrounds/"+themeColors[Meteor.user().profile.preferences.theme].background;
         return pic;
     },
     menuStatus() {
@@ -265,6 +281,18 @@ Template.main.helpers({
                classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
               ) return true;
         }
+    },
+    pref(val) {
+        if(Meteor.user().profile.preferences === null) {
+            var array = Meteor.user().profile;
+            array.preferences = defaults;
+            Session.set("serverData",array);
+            sendData("editProfile");
+            return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
+        } else {
+            var preferences = Meteor.user().profile.preferences;
+            return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
+        }
     }
 });
 
@@ -340,18 +368,25 @@ Template.main.events({
         if (event.target.id !== sessval &&
             event.target.id !== sessval + "a" &&
             !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("workOptions")) {
+            !event.target.parentNode.className.includes("workOptions") &&
+            !event.target.parentNode.className.includes("prefOptions")) {
             closeInput(sessval);
         }
 
         if (!event.target.className.includes("radio") &&
             !Session.equals("radioDiv", null) &&
             !event.target.parentNode.className.includes("workOptions") &&
+            !event.target.parentNode.className.includes("prefOptions") &&
             event.target.readOnly !== true) {
+            if(Session.equals("sidebar","optionsContainer")) {
+                var radio = "prefOptions";
+            } else {
+                var radio = "workOptions";
+            }
             var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
-            for (var i = 0; i < document.getElementsByClassName("workOptions").length; i++) {
+            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
                 try {
-                    closeDivFade(document.getElementsByClassName("workOptions")[i]);
+                    closeDivFade(document.getElementsByClassName(radio)[i]);
                 } catch (err) {}
             }
             Session.set("radioDiv", null);
@@ -377,7 +412,7 @@ Template.main.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .change' (event) {
-        if(!Session.get("newWork")) {
+        if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             if(!(Meteor.userId() === Session.get("currentWork").creator || 
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1 ||
@@ -443,20 +478,40 @@ Template.main.events({
         var op = event.target;
         Session.set("radioDiv", op.getAttribute("op"));
         Session.set("radioOffset", op.getAttribute("opc"));
+        if(Session.equals("sidebar","optionsContainer")) {
+            var radio = "prefOptions";
+        } else {
+            var radio = "workOptions";
+        }
         try {
-            for (var i = 0; i < document.getElementsByClassName("workOptions").length; i++) {
-                var curr = document.getElementsByClassName("workOptions")[i];
+            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
+                var curr = document.getElementsByClassName(radio)[i];
                 if (Session.get("radioDiv") !== i.toString()) {
-                    closeDivFade(document.getElementsByClassName("workOptions")[i]);
+                    closeDivFade(document.getElementsByClassName(radio)[i]);
                 }
             }
         } catch (err) {}
-        openDivFade(document.getElementsByClassName("workOptions")[op.getAttribute("op")]);
+        openDivFade(document.getElementsByClassName(radio)[op.getAttribute("op")]);
     },
     'click .workOptions p' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
-        var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset")));
+        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
+        var input = document.getElementsByClassName("op")[opnum];
+        input.value = p.childNodes[0].nodeValue;
+        try {
+            closeInput(sessval);
+        } catch (err) {}
+
+        closeDivFade(p.parentNode);
+        input.focus();
+        Session.set("radioDiv", null);
+        Session.set("radioOffset", null);
+    },
+    'click .prefOptions p' (event) {
+        var sessval = Session.get("modifying");
+        var p = event.target;
+        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
         var input = document.getElementsByClassName("op")[opnum];
         input.value = p.childNodes[0].nodeValue;
         try {
@@ -539,7 +594,7 @@ Template.main.events({
     },
     'click .sideClass' (event) {
         if(!Session.equals("mode","calendar")) return;
-        var div = event.target
+        var div = event.target;
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
@@ -590,7 +645,12 @@ function sendData(funcName) {
 function closeInput(sessval) {
     var input = document.getElementById(sessval + "a");
     var span = document.getElementById(sessval);
-    span.style.color = "#8C8C8C";
+    if(Session.equals("sidebar","optionsContainer")) {
+        var color = "#000";
+    } else {
+        var color = "#8C8C8C";
+    }
+    span.style.color = color;
     input.parentNode.removeChild(input);
     try {
         var restrict = document.getElementById("restrict");
@@ -601,12 +661,15 @@ function closeInput(sessval) {
     } else {
         span.childNodes[0].nodeValue = input.value;
     }
-span.style.display = "initial";
+    span.style.display = "initial";
     Session.set("modifying", null);
-    if(!Session.get("newWork")) {
+    if(!Session.get("newWork") && !Session.equals("sidebar","optionsContainer")) {
         if(getHomeworkFormData() === null) return;
         Session.set("serverData",Session.get("currentWork"));
         sendData("editWork");
+    } else if(Session.equals("sidebar","optionsContainer")) {
+        Session.set("serverData",getPreferencesData());
+        sendData("editProfile");
     }
 }
 
@@ -638,6 +701,16 @@ function getHomeworkFormData() {
     Session.set("currentWork", data);
     var readableData = formReadable(data);
     Session.set("currentReadableWork", readableData);
+}
+
+function getPreferencesData() {
+    var profile = Meteor.user().profile;
+    var options = {
+        "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
+        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase()
+    };
+    profile.preferences = options;
+    return profile;
 }
 
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];

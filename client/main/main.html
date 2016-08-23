@@ -5,7 +5,7 @@
 
 <template name="main">
     {{> loginButtons}}
-    <header style="background-color:{{divColor 'header'}}">
+    <header style="background-color:{{divColor 'header'}}{{textColor}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
@@ -17,16 +17,18 @@
         </div>
     </header>
     <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
-        <div class="mode classes">
-            <i class="fa fa-university" aria-hidden="true"></i>
-            <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
-        </div>
-        <div class="mode calendar">
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-            <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
+        <div id="modes">
+            <div class="mode classes" style="background-color:{{divColor 'funcButton'}}">
+                <i class="fa fa-university" aria-hidden="true"></i>
+                <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
+            </div>
+            <div class="mode calendar" style="background-color:{{divColor 'funcButton'}}">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
+            </div>
         </div>
         <div id="functions">
-            <div class="function manageClass" onclick="window.location='/profile'">
+            <div class="function manageClass" onclick="window.location='/profile'" style="background-color:{{divColor 'funcButton'}}">
                 <i class="fa fa-tasks" aria-hidden="true"></i>
                 <h4>Manage Classes</h4>
             </div>
@@ -41,6 +43,39 @@
         </div>
     </div>
     <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
+        <h3>Preferences</h3>
+        <div id="prefCont">
+            <div>
+                <div class="inputRadioPref">
+                <span class="prefTitle">Theme:</span><br>
+                <span class="change radio" opc="0" op="0" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+                </div>
+                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
+                    <p class="prefOptionText">Light</p>
+                    <p class="prefOptionText">Dark</p>
+                </div>
+            </div>
+            <div>
+                <div class="inputRadioPref">
+                <span class="prefTitle">Default Mode:</span><br>
+                <span class="change radio" opc="1" op="1" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+                </div>
+                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
+                    <p class="prefOptionText">Classes</p>
+                    <p class="prefOptionText">Calendar</p>
+                </div>
+            </div>
+<!--             <div>
+                <div  class="inputRadio">
+                <span class="prefTitle">Default Mode:</span>
+                <span class="change radio" opc="2" op="2" re="readonly" id="prefBg">{{pref 'background'}}</span>
+                </div>
+                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
+                    <p class="prefOptionText">White</p>
+                    <p class="prefOptionText">Black</p>
+                </div>
+            </div> -->
+        </div>
     </div>
     <img id="bg" src={{bgSrc}}>
     <div id="mainBody">
