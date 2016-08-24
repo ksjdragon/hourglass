@@ -432,7 +432,10 @@ Template.profile.events({
         } catch (err) {}
     },
     'click .classBox' (event) {
-        if (event.target.id === "label" || Session.get("profClassTab") === "manClass") return;
+        if (event.target.id === "label" || 
+            Session.get("profClassTab") === "manClass" || 
+            event.target.className.includes("fa-times")) return;
+
         if (event.target.className !== "classBox") {
             var attribute = event.target.parentNode.getAttribute("classid");
         } else {
@@ -508,8 +511,11 @@ Template.profile.events({
     },
     'click .classBox .fa-times' (event) {
         var box = event.target.parentNode;
+        var classid = box.getAttribute("classid");
         Session.set("serverData", box.getAttribute("classid"));
-        sendData("leaveClass");
+        Session.set("confirm","leaveClass");
+        Session.set("confirmText", "Leave this class?");
+        openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .userBox .fa-times' (event) {
         var box = event.target.parentNode;

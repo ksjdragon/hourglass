@@ -93,9 +93,11 @@ Template.registerHelper('myClasses', () => {
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length/17;
-
-            if(found.admin === Meteor.userId()) found.box = " owned";
             found.mine = true;
+            if(found.admin === Meteor.userId()) {
+                found.box = " owned";
+                found.mine = false;
+            }
             array.push(found);
 
             var thisWork = work.find({class: courses[i]}).fetch();
