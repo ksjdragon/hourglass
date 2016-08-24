@@ -9,10 +9,11 @@ superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com"
 ];
-
 worktype = ["test", "quiz", "project", "normal", "other"];
 var possiblelist = ["moderators", "banned"];
 
+// Adds roles to superadmins
+// Not necessary on every run
 for (var i = 0; i < superadmins.length; i++) {
     var superadmin = superadmins[i];
     if (Meteor.users.findOne({
@@ -33,6 +34,7 @@ Meteor.publish('classes', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return classes.find();
     } else {
+        // Return user classes (if private) and public classes.
         return classes.find({
             $or: [{
                 privacy: false
@@ -42,6 +44,7 @@ Meteor.publish('classes', function() {
                 }
             }]
         }, {
+            // Return non-sensitive fields
             fields: {
                 school: 1,
                 name: 1,
@@ -64,6 +67,7 @@ Meteor.publish('work', function() {
         return work.find();
     } else {
         return work.find({
+            // Only return work of enrolled classes
             class: {
                 $in: Meteor.users.findOne(this.userId).profile.classes
             }
@@ -85,6 +89,7 @@ Meteor.publish('users', function() {
         return Meteor.users.find();
     } else {
         return Meteor.users.find({}, {
+            // Only return necessary fields
             fields: {
                 'services.google.email': 1
             }
@@ -92,7 +97,9 @@ Meteor.publish('users', function() {
     }
 });
 
+// Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
+
 
 Meteor.methods({
     'genCode': function() {
@@ -104,6 +111,8 @@ Meteor.methods({
         }
         return currcode;
     },
+
+    // School Functions
     'createSchool': function(schoolname) {
         if (Meteor.user() !== null &&
             schools.findOne({
@@ -137,6 +146,8 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+
+    // Class Functions
     'createClass': function(input) {
         classes.schema.validate(input);
         if (Meteor.user() !== null &&
@@ -286,6 +297,8 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+
+    // Work Functions
     'createWork': function(input) {
         var ref = new Date();
         ref.setHours(0, 0, 0, 0);
@@ -434,6 +447,8 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+
+    // User Functions
     'editProfile': function(change) {
         var current = Meteor.user().profile;
         current.school = change.school;
@@ -566,6 +581,8 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+
+    // Admin Functions
     'createAdmin': function(userId) {
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.addUsersToRoles(userId, ['admin']);
