@@ -62,6 +62,7 @@ Meteor.publish('classes', function() {
                 }
             });
         } else {
+            Meteor.call('createProfile', this.userId);
             return classes.find({
                 _id: null
             });
@@ -73,12 +74,20 @@ Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
     } else {
+        userclasses = Meteor.users.findOne(this.userId).profile.classes;
+        if (userclasses !== undefined) {
         return work.find({
             // Only return work of enrolled classes
             class: {
                 $in: Meteor.users.findOne(this.userId).profile.classes
             }
         });
+    } else {
+
+                Meteor.call('createProfile', this.userId);
+                return classes.find({_id: null});
+            }
+
     }
 
 });
