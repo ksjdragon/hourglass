@@ -35,30 +35,37 @@ Meteor.publish('classes', function() {
         return classes.find();
     } else {
         // Return user classes (if private) and public classes.
-        return classes.find({
-            $or: [{
-                privacy: false
+        userclasses = Meteor.users.findOne(this.userId).profile.classes;
+        if (userclasses !== undefined) {
+            return classes.find({
+                $or: [{
+                    privacy: false
+                }, {
+                    _id: {
+                        $in: Meteor.users.findOne(this.userId).profile.classes
+                    }
+                }]
             }, {
-                _id: {
-                    $in: Meteor.users.findOne(this.userId).profile.classes
+                // Return non-sensitive fields
+                fields: {
+                    school: 1,
+                    name: 1,
+                    hour: 1,
+                    teacher: 1,
+                    admin: 1,
+                    status: 1,
+                    privacy: 1,
+                    category: 1,
+                    moderators: 1,
+                    banned: 1,
+                    subscribers: 1
                 }
-            }]
-        }, {
-            // Return non-sensitive fields
-            fields: {
-                school: 1,
-                name: 1,
-                hour: 1,
-                teacher: 1,
-                admin: 1,
-                status: 1,
-                privacy: 1,
-                category: 1,
-                moderators: 1,
-                banned: 1,
-                subscribers: 1
-            }
-        });
+            });
+        } else {
+            return classes.find({
+                _id: null
+            });
+        }
     }
 });
 
@@ -80,7 +87,9 @@ Meteor.publish('requests', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return requests.find();
     } else {
-        return requests.find({requestor: this.userId});
+        return requests.find({
+            requestor: this.userId
+        });
     }
 });
 
@@ -482,6 +491,19 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+    'createProfile': function(userId) {
+        current = Meteor.users.findOne({
+            _id: userId
+        }).profile;
+        current.classes = [];
+        Meteor.users.update({
+            _id: userId
+        }, {
+            $set: {
+                profile: current
+            }
+        });
+    },
     'joinClass': function(input) {
         var change = input[0];
         var pass = input[1];
@@ -610,7 +632,9 @@ Meteor.methods({
     },
     'deleteRequest': function(requestId) {
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
-            requests.remove({_id: requestId});
+            requests.remove({
+                _id: requestId
+            });
         } else {
             throw "Unauthorized";
         }
