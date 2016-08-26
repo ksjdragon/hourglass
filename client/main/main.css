@@ -320,12 +320,26 @@ input, textarea {
 .sideClassName {
 	font-weight: 600;
 	margin: 0;
+	display: table-row;
 }
 
 .sideClassHour {
 	font-weight: 400;
 	color: #444;
 	margin: 0;
+	display: table-row;
+}
+
+.fa-dot-circle-o {
+	font-size: 150%;
+	color: #53BD42;
+	margin-top: -10%;
+	margin-right: 10%;
+
+	float: right;
+
+	-webkit-filter: drop-shadow(2px 2px 5px #666);
+	filter: drop-shadow(2px 2px 5px #666);
 }
 
 #classesMode {
@@ -401,7 +415,7 @@ input, textarea {
 }
 
 .workCard:hover {
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(0,0,0,0.05);
 }
 
 .cWorkCont {

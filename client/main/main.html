@@ -158,9 +158,15 @@
 
 <template name="sidebarClasses">
     <div class="sideClass" classid="{{_id}}">
-        <p class="sideClassName">{{name}}</p>
-        <p class="sideClassHour">{{hour}}</p>
+        <div>
+            <p class="sideClassName">{{name}}</p>
+            <p class="sideClassHour">{{hour}}</p>
+        </div>
+        {{#if selected}}
+            <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
+        {{/if}}
     </div>
+
 </template>
 
 <template name="classesMode">

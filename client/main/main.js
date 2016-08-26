@@ -62,7 +62,7 @@ Session.set("radioDiv",null);
 Session.set("radioOffset",null);
 Session.set("serverData",null);
 Session.set("noclass",null);
-Session.set("creCalWork",null);
+Session.set("calCreWork",null);
 Session.set("calWorkDate",null);
 Session.set("classDisp",[]);
 Session.set("classDispHover",null);
@@ -92,6 +92,7 @@ Template.registerHelper('myClasses', () => {
     } else {
         var array = [];
         var courses = Meteor.user().profile.classes;
+        var classDisp = Session.get("classDisp");
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length/17;
@@ -100,11 +101,17 @@ Template.registerHelper('myClasses', () => {
                 found.box = " owned";
                 found.mine = false;
             }
+            if(classDisp.indexOf(courses[i]) !== -1) found.selected = true;
             array.push(found);
 
             var thisWork = work.find({class: courses[i]}).fetch();
 
-            for(var j = 0; j < thisWork.length; j++) {
+            if(classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) {
+                array[i].thisClassWork = [];
+                continue;
+            }
+
+            for(var j = 0; j < thisWork.length; j++) {    
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -198,8 +205,11 @@ Template.main.helpers({
             events: function(start, end, timezone, callback) {
                 var events = [];
                 var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
-                var hoverHighlight = Session.get("classDispHover");
+                var classDisp = Session.get("classDisp");
                 cursor.forEach(function(current) {
+                    var disp = true;
+                    if(classDisp.length !== 0 && classDisp.indexOf(current.class) === -1) disp = false;
+
                     var inRole = false;
                     if(Meteor.userId() === current.creator || 
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
@@ -210,15 +220,17 @@ Template.main.helpers({
                     backgroundColor = workColors[current.type];
                     title = current.name;
                     duedate = current.dueDate.toISOString().slice(0, 10);
-                    events.push({
-                        id: current._id,
-                        start: duedate,
-                        title: title,
-                        backgroundColor: backgroundColor,
-                        borderColor: "#444",
-                        startEditable: inRole,
-                        className: "workevent "+current.class,
-                    });
+                    if(disp) {
+                        events.push({
+                            id: current._id,
+                            start: duedate,
+                            title: title,
+                            backgroundColor: backgroundColor,
+                            borderColor: "#444",
+                            startEditable: inRole,
+                            className: "workevent "+current.class,
+                        });
+                    }
                 });
                 callback(events);
             },
@@ -287,7 +299,6 @@ Template.main.helpers({
             var id = works[i].className;
             var index = id.indexOf("workevent");
             id = id.substring(index+10,index+27);
-            console.log(id);console.log(hoverHighlight);
             if(id === hoverHighlight) {
                 works[i].style.webkitTransform = 'scale(1.12)';
                 works[i].style.msTransform = 'scale(1.12)';
@@ -650,29 +661,32 @@ Template.main.events({
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
-        if(!Session.equals("mode","calendar")) {  
-            if(Session.get("calCreWork")) {
-                Session.set("calCreWork",null);
-                Session.set("sidebar",null);
+        if(Session.get("calCreWork")) {
+            Session.set("calCreWork",null);
+            Session.set("sidebar",null);
 
-                var date = Session.get("calWorkDate").split("-");
-                var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
-                Session.set("newWork", true);
-                Session.set("currentReadableWork",
-                {
-                      name:"Name | Click here to edit...",
-                      class:classid,
-                      dueDate:getReadableDate(date),
-                      description:"Click here to edit...",
-                      type:"Click here to edit..."
-                });
-                Session.set("currentWork",{class:classid,dueDate:date});
-                openDivFade(document.getElementsByClassName("overlay")[0]);  
-            }
-        } else if(!Session.get("calCreWork")) {
+            var date = Session.get("calWorkDate").split("-");
+            var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
+            Session.set("newWork", true);
+            Session.set("currentReadableWork",
+            {
+                  name:"Name | Click here to edit...",
+                  class:classid,
+                  dueDate:getReadableDate(date),
+                  description:"Click here to edit...",
+                  type:"Click here to edit..."
+            });
+            Session.set("currentWork",{class:classid,dueDate:date});
+            openDivFade(document.getElementsByClassName("overlay")[0]);  
+        } else {
             var array = Session.get("classDisp");
-            array.push(classid);
+            if(array.indexOf(classid) !== -1) {
+                array.splice(array.indexOf(classid),1);
+            } else {
+                array.push(classid);
+            }    
             Session.set("classDisp",array);
+            $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
     },
     'mouseover .sideClass' (event) {
