@@ -89,7 +89,7 @@
 
         {{#if currMode 'calendar'}}
         <div id="calbg" style="{{calbg}}"></div>
-            <div id="calendar" style="{{calCenter}}{{calColor}}">
+            <div id="calendar" style="{{calCenter}}{{calColor}}{{highlight}}">
                 {{> fullcalendar calendarOptions}}
             </div>
         {{/if}}
@@ -175,17 +175,17 @@
             <h4>Add Work</h4>
         </div>
         <div class="workHolder">
-        {{#each thisClassWork}}
-            {{> classModeWork}}
-        {{/each}}
+            {{#each thisClassWork}}
+                {{> classModeWork}}
+            {{/each}}
         </div>
     </div>
 </template>
 
 <template name="classModeWork">
-    <div class="workCard" workid="{{_id}}">
+    <div class="workCard" workid="{{_id}}" style="{{scale}}">
         <div class="cWorkType" style="background-color:{{typeColor}}"></div>
-        <div class="cWorkCont">
+        <div class="cWorkCont" style="background-color:{{divColor 'cards'}}">
             <p class="cWorkName">{{name}}</p>
             <span class="cWorkDate">{{dueDate}}</span>
         </div>

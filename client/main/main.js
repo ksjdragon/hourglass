@@ -64,6 +64,8 @@ Session.set("serverData",null);
 Session.set("noclass",null);
 Session.set("creCalWork",null);
 Session.set("calWorkDate",null);
+Session.set("classDisp",[]);
+Session.set("classDispHover",null);
 
 Template.registerHelper('divColor', (div) => {
     return themeColors[Meteor.user().profile.preferences.theme][div];
@@ -112,6 +114,12 @@ Template.registerHelper('myClasses', () => {
                     sameElse: 'MMMM Do'
                 });
                 thisWork[j].typeColor = workColors[thisWork[j].type];
+                var hoverHighlight = Session.get("classDispHover");
+                if(hoverHighlight !== null && hoverHighlight === found._id) {
+                    thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
+                } else {
+                    thisWork[j].scale = "";
+                }
             }
             array[i].thisClassWork = thisWork;
         }
@@ -190,6 +198,7 @@ Template.main.helpers({
             events: function(start, end, timezone, callback) {
                 var events = [];
                 var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
+                var hoverHighlight = Session.get("classDispHover");
                 cursor.forEach(function(current) {
                     var inRole = false;
                     if(Meteor.userId() === current.creator || 
@@ -208,7 +217,7 @@ Template.main.helpers({
                         backgroundColor: backgroundColor,
                         borderColor: "#444",
                         startEditable: inRole,
-                        className: "workevent",
+                        className: "workevent "+current.class,
                     });
                 });
                 callback(events);
@@ -262,6 +271,36 @@ Template.main.helpers({
             } catch(err) {}
             return;
         }
+    },
+    highlight() {
+        var hoverHighlight = Session.get("classDispHover");
+        if(hoverHighlight === null) {
+           try {
+                works[i].style.webkitTransform = '';
+                works[i].style.msTransform = '';
+                works[i].style.transform = ''; 
+            } catch(err) {} 
+            return;
+        }
+        var works = document.getElementsByClassName("workevent");
+        for(var i = 0; i < works.length; i++) {
+            var id = works[i].className;
+            var index = id.indexOf("workevent");
+            id = id.substring(index+10,index+27);
+            console.log(id);console.log(hoverHighlight);
+            if(id === hoverHighlight) {
+                works[i].style.webkitTransform = 'scale(1.12)';
+                works[i].style.msTransform = 'scale(1.12)';
+                works[i].style.transform = 'scale(1.12)';
+            } else {
+                try {
+                    works[i].style.webkitTransform = '';
+                    works[i].style.msTransform = '';
+                    works[i].style.transform = ''; 
+                } catch(err) {}
+            } 
+        }
+        return;
     },
     workCenter() {
         var w = window.innerWidth * 0.3;
@@ -487,7 +526,6 @@ Template.main.events({
             span.appendChild(document.createTextNode(num.toString() + " characters left"));
             ele.parentNode.appendChild(span);
         }
-
     },
     'click .radio' (event) {
         var op = event.target;
@@ -608,29 +646,51 @@ Template.main.events({
         });
     },
     'click .sideClass' (event) {
-        if(!Session.equals("mode","calendar")) return;
         var div = event.target;
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
-        if(Session.get("calCreWork")) {
-            Session.set("calCreWork",null);
-            Session.set("sidebar",null);
+        if(!Session.equals("mode","calendar")) {  
+            if(Session.get("calCreWork")) {
+                Session.set("calCreWork",null);
+                Session.set("sidebar",null);
 
-            var date = Session.get("calWorkDate").split("-");
-            var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
-            Session.set("newWork", true);
-            Session.set("currentReadableWork",
-            {
-                  name:"Name | Click here to edit...",
-                  class:classid,
-                  dueDate:getReadableDate(date),
-                  description:"Click here to edit...",
-                  type:"Click here to edit..."
-            });
-            Session.set("currentWork",{class:classid,dueDate:date});
-            openDivFade(document.getElementsByClassName("overlay")[0]);
-        } 
+                var date = Session.get("calWorkDate").split("-");
+                var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
+                Session.set("newWork", true);
+                Session.set("currentReadableWork",
+                {
+                      name:"Name | Click here to edit...",
+                      class:classid,
+                      dueDate:getReadableDate(date),
+                      description:"Click here to edit...",
+                      type:"Click here to edit..."
+                });
+                Session.set("currentWork",{class:classid,dueDate:date});
+                openDivFade(document.getElementsByClassName("overlay")[0]);  
+            }
+        } else if(!Session.get("calCreWork")) {
+            var array = Session.get("classDisp");
+            array.push(classid);
+            Session.set("classDisp",array);
+        }
+    },
+    'mouseover .sideClass' (event) {
+        if(event.target.className !== "sideClass") {
+            var div = event.target.parentNode;
+        } else {
+            var div = event.target;  
+        }
+        while(div.getAttribute("classid") === null) div = div.parentNode;
+        var classid = div.getAttribute("classid");
+        Session.set("classDispHover",classid);
+    },
+    'mouseleave .sideClass' (event) {
+        if(event.target.className !== "sideClass") {
+            var div = event.target.parentNode;
+            if(div.contains(event.target)) return;
+        }
+        Session.set("classDispHover",null);
     }
 });
 
@@ -748,4 +808,30 @@ function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
     return input;
+}
+
+function changeColor(hex, amt) {
+
+    hex = hex.slice(1);
+    var num = parseInt(hex,16);
+    var r = (num >> 16) + amt;
+ 
+    if (r > 255) r = 255;
+    else if  (r < 0) r = 0;
+ 
+    var b = ((num >> 8) & 0x00FF) + amt;
+ 
+    if (b > 255) b = 255;
+    else if  (b < 0) b = 0;
+ 
+    var g = (num & 0x0000FF) + amt;
+ 
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+    
+    var final = (g | (b << 8) | (r << 16)).toString(16);
+
+    // Adds preceeding zeros
+    while (final.length < 6) {final = "0" + final};
+    return "#" + final;
 }
