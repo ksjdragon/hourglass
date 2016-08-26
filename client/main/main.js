@@ -274,16 +274,16 @@ Template.main.helpers({
     },
     highlight() {
         var hoverHighlight = Session.get("classDispHover");
-        if(hoverHighlight === null) {
-           try {
-                works[i].style.webkitTransform = '';
-                works[i].style.msTransform = '';
-                works[i].style.transform = ''; 
-            } catch(err) {} 
-            return;
-        }
         var works = document.getElementsByClassName("workevent");
         for(var i = 0; i < works.length; i++) {
+            if(hoverHighlight === null) {
+               try {
+                    works[i].style.webkitTransform = '';
+                    works[i].style.msTransform = '';
+                    works[i].style.transform = ''; 
+                } catch(err) {} 
+                return;
+            }
             var id = works[i].className;
             var index = id.indexOf("workevent");
             id = id.substring(index+10,index+27);
