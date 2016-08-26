@@ -1,6 +1,8 @@
-import {
+﻿import {
     Template
 } from 'meteor/templating';
+
+// Sets up global variables
 
 Session.set("profInputOpen", null);
 Session.set("profClassTab", "manClass");
@@ -16,6 +18,9 @@ Session.set("selectClassId",null);
 Session.set("code",null);
 Session.set("noclass",null);
 Session.set("notfound",null);
+
+
+// Colors of the theme
 
 var themeColors = {
     "light": {
@@ -72,14 +77,14 @@ Template.profile.helpers({
             }]
         };
     },
-    mainCenter() {
+    mainCenter() { // Centers main container
         var width = window.innerWidth * 1600 / 1920 + 10;
         return "width:" + width.toString() + "px;margin-left:" + -0.5 * width.toString() + "px";
     },
     mainHeight() {
         return window.innerHeight.toString() + "px";
     },
-    banner() {
+    banner() { //Styles the banner
         var width = window.innerWidth * 1600 / 1920;
         var height = width * 615 / 1600;
         if (Meteor.user().profile.banner !== undefined) {
@@ -92,7 +97,7 @@ Template.profile.helpers({
         }
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;background-image:url(" + banner + ");background-size:" + width.toString() + "px " + height.toString() + "px";
     },
-    avatar() {
+    avatar() { //Styles the avatar
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
         var pic = "";
         var userprofile = Meteor.user().profile.avatar;
@@ -106,35 +111,35 @@ Template.profile.helpers({
         }
         return "background-image:url(" + pic + ");background-size:" + dim.toString() + "px " + dim.toString() + "px";
     },
-    avatarDim() {
+    avatarDim() { //Dimensions the avatar
         var dim = window.innerWidth * 1600 / 1920 * 0.16;
         return "height:" + dim.toString() + "px;width:" + dim.toString() + "px;top:" + 0.43 * window.innerHeight.toString() + "px;";
     },
-    username() {
+    username() {  //Returns current user's username
         return Meteor.user().profile.name;
     },
-    motd() {
+    motd() { //Returns the current user's description
         if (Meteor.user().profile.description) {
             return Meteor.user().profile.description;
         } else {
             return "Say something about yourself!";
         }
     },
-    school() {
+    school() { //Returns the current user's school's name
         if (Meteor.user().profile.school) {
             return Meteor.user().profile.school;
         } else {
             return "Click here to edit...";
         }
     },
-    grade() {
+    grade() { //Returns the current user's grade
         if (Meteor.user().profile.grade) {
             return Meteor.user().profile.grade + "th";
         } else {
             return "Click here to edit...";
         }
     },
-    classes() {
+    classes() { //Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
         var array = classes.find(
         {
             status: {$eq: true},
@@ -155,30 +160,30 @@ Template.profile.helpers({
         }
         return array;
     },
-    profClassHeight() {
+    profClassHeight() { // Dimensions the class height
         return 0.6 * window.innerHeight.toString() + "px";
     },
-    classHolderHeight() {
+    classHolderHeight() { // Dimensions the container for the classes
         return 0.26 * window.innerHeight.toString() + "px";
     },
-    profClassTabColor(status) {        
+    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]       
         if (status === Session.get("profClassTab")) {            
             return themeColors[Cookie.get("theme")].highlightText;        
         } else {            
             return;        
         }    
     },
-    profClassTab(tab) {
+    profClassTab(tab) { // Tells current class
         if (tab === Session.get("profClassTab")) {
             return true;
         } else {
             return false;
         }
     },
-    notsearching() {
+    notsearching() { // Tells whether user is using the searchbox
         return Session.get("notsearching");
     },
-    autocompleteClasses() {
+    autocompleteClasses() { // Returns current auto-completes for classes
         return Session.get("autocompleteDivs");
     },
     notfound() {

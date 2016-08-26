@@ -1,3 +1,4 @@
+//meteor things
 import {
     Meteor
 } from 'meteor/meteor';
@@ -5,15 +6,20 @@ import {
     Mongo
 } from 'meteor/mongo';
 
+// Defines who the admins are - not added
+
 superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com"
 ];
+
 worktype = ["test", "quiz", "project", "normal", "other"];
 var possiblelist = ["moderators", "banned"];
 
 // Adds roles to superadmins
 // Not necessary on every run
+// Makes superadmins superadmins
+
 for (var i = 0; i < superadmins.length; i++) {
     var superadmin = superadmins[i];
     if (Meteor.users.findOne({
@@ -26,9 +32,13 @@ for (var i = 0; i < superadmins.length; i++) {
     }
 }
 
+//
+ 
 Meteor.publish('schools', function() {
     return schools.find();
 });
+
+//  Returns the code for classes (for debug)
 
 Meteor.publish('classes', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
@@ -70,6 +80,8 @@ Meteor.publish('classes', function() {
     }
 });
 
+//Gives everything in work if superadmin
+
 Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
@@ -92,6 +104,8 @@ Meteor.publish('work', function() {
 
 });
 
+//Returns issues in sites (not implemented on client)
+
 Meteor.publish('requests', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return requests.find();
@@ -101,6 +115,8 @@ Meteor.publish('requests', function() {
         });
     }
 });
+
+//Publishes every-persons email and user-ids
 
 Meteor.publish('users', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
@@ -120,6 +136,9 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 
 Meteor.methods({
+    //Stuff that is accessible in client
+    
+    //Generates private codes for classes - like google classroom
     'genCode': function() {
         currcode = Math.random().toString(36).substr(2, 6);
         while (classes.findOne({
@@ -131,6 +150,8 @@ Meteor.methods({
     },
 
     // School Functions
+
+    //Ability to create schools for selections
     'createSchool': function(schoolname) {
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             schools.insert({
@@ -140,6 +161,7 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+    //Deletes school
     'deleteSchool': function(schoolId) {
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             schools.remove({
@@ -219,6 +241,9 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+
+    // Allows someone to manage the class
+
     'trackUserInClass': function(input) {
         var foundclass = classes.findOne({
             _id: input[1]
@@ -410,6 +435,7 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
+    
     'toggleWork': function(input) {
         var workobject = work.findOne({
             _id: input[0]
