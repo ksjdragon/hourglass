@@ -2,37 +2,33 @@ import {
     Template
 } from 'meteor/templating';
 
-Cookie.set("theme", "light", {
-    'years': 15
-});
-
 var circle = window.innerHeight * 1.1;
 var content = window.innerHeight * 0.6;
 Template.login.helpers({
-    width() {
+    width() { // Returns width of screen
         return window.innerWidth.toString() + "px";
     },
-    height() {
+    height() { // Returns height of screen
         return window.innerHeight.toString() + "px";
     },
-    dim() {
+    dim() { // Dimensions of circle container
         return circle.toString() + "px";
     },
-    margin() {
+    margin() { // Centers circle container
         let margin = (-circle / 2).toString() + "px";
         return margin + " 0 0 " + margin;
     },
-    contDim() {
-        return content.toString() + "px";
+    contDim() { // Dimensions the dimensions of the information container
+        return content.toString() + 	"px";
     },
-    contMargin() {
+    contMargin() { // Centers information container
         let margin = (-content / 2).toString() + "px";
         return margin + " 0 0 " + margin;
     },
-    logo() {
-        return window.innerHeight * .08;
+    logo() { // Dimensions logo
+        return  window.innerHeight * .08;
     },
-    hea() {
+    hea() { // Styles the login button
         var w = .09 * window.innerWidth;
         return "width:" + w.toString() + "px;left:" + (-10 + -.5 * w + content / 2).toString() + "px;";
     }
