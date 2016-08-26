@@ -5,8 +5,6 @@ requests = new Mongo.Collection("Requests");
 
 schools.schema = new SimpleSchema({
 	  name: {type: String},
-	  status: {type: Boolean},
-	  creator: {type: String},
 });
 
 classes.schema = new SimpleSchema({

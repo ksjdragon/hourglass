@@ -132,24 +132,9 @@ Meteor.methods({
 
     // School Functions
     'createSchool': function(schoolname) {
-        if (Meteor.user() !== null &&
-            schools.findOne({
-                name: schoolname
-            }) !== null &&
-            schools.findOne({
-                status: false,
-                creator: Meteor.userId()
-            }) !== null) {
-
-            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
-                var stat = true;
-            } else {
-                var stat = false;
-            }
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             schools.insert({
-                name: schoolname,
-                status: stat,
-                creator: Meteor.userId()
+                name: schoolname
             });
         } else {
             throw "Unauthorized";
