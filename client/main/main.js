@@ -4,6 +4,8 @@ import {
 
 import './main.html';
 
+var load = true;
+
 var openValues = {
     "menu": "-25%",
     "options": "-20%"
@@ -170,7 +172,10 @@ Template.main.helpers({
         }
     },
     defaultMode() {
-        Session.set("mode",Meteor.user().profile.preferences.mode);
+        if(load) {
+            Session.set("mode",Meteor.user().profile.preferences.mode);
+            load = false; 
+        }
         return;
     },
     bgSrc() {
@@ -205,7 +210,6 @@ Template.main.helpers({
     },
     currMode(name) {
         var mode = Session.get("mode");
-        console.log(mode);
         if (name === mode) {
             return true;
         } else {
