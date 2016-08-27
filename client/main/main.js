@@ -130,6 +130,10 @@ Template.registerHelper('myClasses', () => {
                         j = 0;
                     }
                 }
+                if(thisWork[j] !== "no" && thisWork[j].done.indexOf(Meteor.userId()) !== -1) {
+                    thisWork[j] = "no";
+                    j = 0;
+                }
             }
             while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1);
 
