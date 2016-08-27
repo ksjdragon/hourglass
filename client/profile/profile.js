@@ -200,12 +200,13 @@ Template.profile.helpers({
         var usertype = ["moderators","banned"];
         var attribute = Session.get("selectClassId");
         var array = classes.findOne({_id:attribute});
-
-        if(array.code === "") {
+        var code = Meteor.call('getCode',attribute);
+        if(code === "") {
             array.code = "None";
             Session.set("code", false);
         } else {
             Session.set("code", true);
+            array.code = code;
         }
 
         for(var i = 0; i < usertype.length; i++) {
