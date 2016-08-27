@@ -48,7 +48,7 @@ var workColors = {
 var defaults = {
     "theme":"light",
     "mode":"classes"
-    //"timeHide":7
+    "timeHide":7
 }
 
 // Reactive variables.
@@ -93,6 +93,7 @@ Template.registerHelper('myClasses', () => {
         var array = [];
         var courses = Meteor.user().profile.classes;
         var classDisp = Session.get("classDisp");
+        var hide = Meteor.user().profile.preferences.timeHide;
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length/17;
@@ -111,7 +112,16 @@ Template.registerHelper('myClasses', () => {
                 continue;
             }
 
-            for(var j = 0; j < thisWork.length; j++) {    
+            for(var j = 0; j < thisWork.length; j++) {   
+                if(hide !== 0) {
+                    var cont = false;
+                    var today = moment().subtract(hide,'days').format();
+                    if(today > thisWork[j].dueDate) {
+                        cont = true;
+                        continue;
+                    }
+                }
+                if(cont) continue;
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -132,7 +142,6 @@ Template.registerHelper('myClasses', () => {
         }
         Session.set("noclass",false);
         Session.set("calendarclasses", Meteor.user().profile.classes);
-        var hide = Meteor.user().profile.preferences.timeHide;
         return array;
     }
 });
