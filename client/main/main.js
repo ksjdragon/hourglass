@@ -47,9 +47,16 @@ var workColors = {
 
 var defaults = {
     "theme":"light",
-    "mode":"classes"
-    "timeHide":7
-}
+    "mode":"classes",
+    "timeHide":"A Day"
+};
+
+var ref = {
+    "A Day":1,
+    "A Week":7,
+    "A Month":30,
+    "Never":0
+};
 
 // Reactive variables.
 Session.set("calendarclasses", null);
@@ -93,7 +100,7 @@ Template.registerHelper('myClasses', () => {
         var array = [];
         var courses = Meteor.user().profile.classes;
         var classDisp = Session.get("classDisp");
-        var hide = Meteor.user().profile.preferences.timeHide;
+        var hide = ref[Meteor.user().profile.preferences.timeHide];
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length/17;
@@ -112,16 +119,19 @@ Template.registerHelper('myClasses', () => {
                 continue;
             }
 
-            for(var j = 0; j < thisWork.length; j++) {   
+            for(var j = 0; j < thisWork.length; j++) {
                 if(hide !== 0) {
-                    var cont = false;
-                    var today = moment().subtract(hide,'days').format();
-                    if(today > thisWork[j].dueDate) {
-                        cont = true;
-                        continue;
+                    var due = (moment(thisWork[j].dueDate))["_d"];
+                    var today = (moment().subtract(hide,'days'))["_d"];
+                    if(today > due) {
+                        thisWork[j] = "no";
+                        j = 0;
                     }
                 }
-                if(cont) continue;
+            }
+            while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1);
+
+            for(var j = 0; j < thisWork.length; j++) {   
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -195,6 +205,7 @@ Template.main.helpers({
     },
     currMode(name) {
         var mode = Session.get("mode");
+        console.log(mode);
         if (name === mode) {
             return true;
         } else {
@@ -215,9 +226,18 @@ Template.main.helpers({
                 var events = [];
                 var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
                 var classDisp = Session.get("classDisp");
+                var hide = ref[Meteor.user().profile.preferences.timeHide];
                 cursor.forEach(function(current) {
                     var disp = true;
                     if(classDisp.length !== 0 && classDisp.indexOf(current.class) === -1) disp = false;
+
+                    if(hide !== 0) {
+                        var due = (moment(current.dueDate))["_d"];
+                        var today = (moment().subtract(hide,'days'))["_d"];
+                        if(today > due) {
+                            disp = false;
+                        }   
+                    }
 
                     var inRole = false;
                     if(Meteor.userId() === current.creator || 
@@ -357,14 +377,16 @@ Template.main.helpers({
         }
     },
     pref(val) {
-        if(Meteor.user().profile.preferences === null) {
+        if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) {
             var array = Meteor.user().profile;
             array.preferences = defaults;
             Session.set("serverData",array);
             sendData("editProfile");
+            if(val === 'timeHide') return defaults[val];
             return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
         } else {
             var preferences = Meteor.user().profile.preferences;
+            if(val === 'timeHide') return preferences[val];
             return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
         }
     }
@@ -806,7 +828,8 @@ function getPreferencesData() {
     var profile = Meteor.user().profile;
     var options = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
-        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase()
+        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
+        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue
     };
     profile.preferences = options;
     return profile;
@@ -831,30 +854,4 @@ function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
     return input;
-}
-
-function changeColor(hex, amt) {
-
-    hex = hex.slice(1);
-    var num = parseInt(hex,16);
-    var r = (num >> 16) + amt;
- 
-    if (r > 255) r = 255;
-    else if  (r < 0) r = 0;
- 
-    var b = ((num >> 8) & 0x00FF) + amt;
- 
-    if (b > 255) b = 255;
-    else if  (b < 0) b = 0;
- 
-    var g = (num & 0x0000FF) + amt;
- 
-    if (g > 255) g = 255;
-    else if (g < 0) g = 0;
-    
-    var final = (g | (b << 8) | (r << 16)).toString(16);
-
-    // Adds preceeding zeros
-    while (final.length < 6) {final = "0" + final};
-    return "#" + final;
 }
