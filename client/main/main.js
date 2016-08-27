@@ -671,7 +671,9 @@ Template.main.events({
     },
     'click #commentSubmit' (event) {
         workId = Session.get("currentWork")._id;
-        comment = document.getElementById('workComment').value;
+        var input = document.getElementById('workComment');
+        comment = input.value;
+        input.value = "";
         if (comment !== "") {
             document.getElementById('workComment').value = "";
             Meteor.call('addComment', [comment, workId]);
@@ -889,5 +891,18 @@ function toDate(date) {
 function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
+    var comments = input.comments; 
+    for(var k = 0; k < comments.length; k++) {
+        comments[k].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
+        comments[k].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
+            sameDay: '[Today]',
+            nextDay: '[Tomorrow]',
+            nextWeek: 'dddd',
+            lastDay: '[Yesterday]',
+            lastWeek: '[Last] dddd',
+            sameElse: 'MMMM Do'
+        });
+    }
+    input.comments = comments;
     return input;
 }

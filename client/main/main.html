@@ -128,23 +128,23 @@
                                 <p class="workOptionText">Other</p>
                             </div>
                         </div>
-                        <div id="workAttach">Attach other files</div>
+                        <!-- <div id="workAttach">Attach other files</div>
                         <div id="workAttachmentHolder">
                             {{#each work 'attachments'}}
                                 <a href={{link}}>{{filename}}</a>
                             {{/each}}
-                        </div>
+                        </div> -->
                         {{#unless newWork}}
                             <div id="workComments">
-                                <div>
-                                    <h3>Comments</h3>
-                                    <textarea id="workComment" rows="4" cols="50"></textarea>
-                                    <div id="commentSubmit">Submit</div>
-                                </div>
+                                <h3>Comments</h3>
                                 <div id="comment">
                                     {{#each work 'comments'}}
                                         {{> comment}}
                                     {{/each}}
+                                </div>
+                                <div>
+                                    <textarea id="workComment" rows="4" cols="50"></textarea>
+                                    <div id="commentSubmit">Submit</div>
                                 </div>
                             </div>
                         {{/unless}}
@@ -199,5 +199,13 @@
             <p class="cWorkName">{{name}}</p>
             <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dueDate}}</span>
         </div>
+    </div>
+</template>
+
+<template name="comment">
+    <div class="commentBox">
+        <span class="commentComment">{{comment}}</span>
+        <span class="commentUser">{{user}}</span>
+        <span class="commentDate">{{date}}</span>
     </div>
 </template>

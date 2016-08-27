@@ -434,14 +434,17 @@ Meteor.methods({
         if (typeof comment === "string" && comment.length <= 200 &&
             foundsubs.indexOf(Meteor.userId()) != -1 &&
             currentclass.banned.indexOf(Meteor.userId()) === -1) {
-            var comments = workobject.comments.concat(comment);
+            commentInfo = {
+                "comment":input[0],
+                "user":user,
+                "date": new Date()
+            };
+            var comments = workobject.comments.concat(commentInfo);
             work.update({
                 _id: input[1]
             }, {
                 $set: {
-                    comments: comments,
-                    user: user,
-                    time: new Date()
+                    comments: comments
                 }
             });
         } else {
