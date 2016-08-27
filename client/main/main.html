@@ -71,9 +71,10 @@
                 <span class="change radio" opc="2" op="2" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
                 </div>
                 <div class="prefOptions" style="background-color:{{divColor 'header'}}">
-                    <p class="prefOptionText">A Day</p>
-                    <p class="prefOptionText">A Week</p>
-                    <p class="prefOptionText">A Month</p>
+                    <p class="prefOptionText">1 Day</p>
+                    <P class="prefOptionText">2 Days</p>
+                    <p class="prefOptionText">1 Week</p>
+                    <p class="prefOptionText">1 Month</p>
                     <p class="prefOptionText">Never</p>
                 </div>
             </div>
@@ -96,6 +97,7 @@
             </div>
         {{/if}}
     </div>
+
     <div class="overlay">
         <div id="editWork">
             <div id="editWorkCont" style="{{workCenter}};background-color:{{divColor 'header'}}">
@@ -195,7 +197,7 @@
         <div class="cWorkType" style="background-color:{{typeColor}}"></div>
         <div class="cWorkCont">
             <p class="cWorkName">{{name}}</p>
-            <span class="cWorkDate">{{dueDate}}</span>
+            <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dueDate}}</span>
         </div>
     </div>
 </template>

@@ -50,13 +50,14 @@ var workColors = {
 var defaults = {
     "theme":"light",
     "mode":"classes",
-    "timeHide":"A Day"
+    "timeHide":"1 Day"
 };
 
 var ref = {
-    "A Day":1,
-    "A Week":7,
-    "A Month":30,
+    "1 Day":1,
+    "2 Days":2,
+    "1 Week":7,
+    "1 Month":30,
     "Never":0
 };
 
@@ -81,12 +82,12 @@ Template.registerHelper('divColor', (div) => {
 });
 
 Template.registerHelper("textColor", () => {
-    document.getElementsByTagName("html")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
+    document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
     return; 
 });
 
 Template.registerHelper('overlayDim', (part) => {
-    var dim = [window.innerWidth * 0.2, window.innerHeight * 0.25];
+    var dim = [window.innerWidth * 0.25, window.innerHeight * 0.2];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
@@ -105,7 +106,7 @@ Template.registerHelper('myClasses', () => {
         var hide = ref[Meteor.user().profile.preferences.timeHide];
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
-            found.subscribers = found.subscribers.length/17;
+            found.subscribers = found.subscribers.length;
             found.mine = true;
             if(found.admin === Meteor.userId()) {
                 found.box = " owned";
@@ -146,6 +147,11 @@ Template.registerHelper('myClasses', () => {
                     lastWeek: '[Last] dddd',
                     sameElse: 'MMMM Do'
                 });
+                if(thisWork[j].dueDate === "Today") {
+                    thisWork[j].cardDate = "600";
+                } else if(thisWork[j].dueDate === "Tomorrow") {
+                    thisWork[j].cardDate = "400";
+                }
                 thisWork[j].typeColor = workColors[thisWork[j].type];
                 var hoverHighlight = Session.get("classDispHover");
                 if(hoverHighlight !== null && hoverHighlight === found._id) {
@@ -248,15 +254,18 @@ Template.main.helpers({
                     }
 
                     var inRole = false;
+                    var currClass = classes.findOne({_id: current.class})
+
                     if(Meteor.userId() === current.creator || 
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                    classes.findOne({_id: current._id}).moderators.indexOf(Meteor.userId()) !== -1||
-                    classes.findOne({_id: current._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-                    classes.findOne({_id: current._id}).banned.indexOf(Meteor.userId()) !== -1
+                    currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+                    currClass.banned.indexOf(Meteor.userId()) !== -1
                     ) inRole = true;
+
                     backgroundColor = workColors[current.type];
                     title = current.name;
                     duedate = current.dueDate.toISOString().slice(0, 10);
+
                     if(disp) {
                         events.push({
                             id: current._id,
@@ -324,15 +333,15 @@ Template.main.helpers({
     highlight() {
         var hoverHighlight = Session.get("classDispHover");
         var works = document.getElementsByClassName("workevent");
+        var work = $('.workevent');
+        if(hoverHighlight === null) {
+            work.css('-webkit-transform','');
+            work.css('-ms-transform','');
+            work.css('transform','');
+            return;
+        }
+
         for(var i = 0; i < works.length; i++) {
-            if(hoverHighlight === null) {
-               try {
-                    works[i].style.webkitTransform = '';
-                    works[i].style.msTransform = '';
-                    works[i].style.transform = ''; 
-                } catch(err) {} 
-                return;
-            }
             var id = works[i].className;
             var index = id.indexOf("workevent");
             id = id.substring(index+10,index+27);
@@ -341,11 +350,9 @@ Template.main.helpers({
                 works[i].style.msTransform = 'scale(1.12)';
                 works[i].style.transform = 'scale(1.12)';
             } else {
-                try {
-                    works[i].style.webkitTransform = '';
-                    works[i].style.msTransform = '';
-                    works[i].style.transform = ''; 
-                } catch(err) {}
+                works[i].style.webkitTransform = '';
+                works[i].style.msTransform = '';
+                works[i].style.transform = '';
             } 
         }
         return;
@@ -376,11 +383,11 @@ Template.main.helpers({
         if(Session.get("newWork")) {
             return true;
         } else {
+            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]})
             if(Meteor.userId() === Session.get("currentWork").creator || 
                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-               classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1||
-               classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-               classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+               currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+               currClass.banned.indexOf(Meteor.userId()) !== -1
               ) return true;
         }
     },
@@ -517,11 +524,11 @@ Template.main.events({
     },
     'click .change' (event) {
         if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
+            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
             if(!(Meteor.userId() === Session.get("currentWork").creator || 
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-            classes.findOne({_id: Session.get("currentWork")._id}).moderators.indexOf(Meteor.userId()) !== -1 ||
-            classes.findOne({_id: Session.get("currentWork")._id}).blockEdit.indexOf(Meteor.userId()) !== -1 ||
-            classes.findOne({_id: Session.get("currentWork")._id}).banned.indexOf(Meteor.userId()) !== -1
+            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+            currClass.banned.indexOf(Meteor.userId()) !== -1
             )) return;   
         }
 
@@ -578,6 +585,15 @@ Template.main.events({
         }
     },
     'click .radio' (event) {
+        if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
+            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
+            if(!(Meteor.userId() === Session.get("currentWork").creator || 
+            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+            currClass.banned.indexOf(Meteor.userId()) !== -1
+            )) return;   
+        }
+
         var op = event.target;
         Session.set("radioDiv", op.getAttribute("op"));
         Session.set("radioOffset", op.getAttribute("opc"));
@@ -679,11 +695,23 @@ Template.main.events({
         var dom = event.target;
         while(event.target.className !== "workCard") event.target = event.target.parentNode;
         workid = event.target.getAttribute("workid");
+
         Session.set("newWork",false);
         var thisWork = work.findOne({_id:workid});
         Session.set("currentWork",thisWork);
         var thisReadWork = formReadable(thisWork);
         Session.set("currentReadableWork",thisReadWork);
+
+        if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
+            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
+            if(!(Meteor.userId() === Session.get("currentWork").creator || 
+            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+            currClass.banned.indexOf(Meteor.userId()) !== -1)) {
+                var inputs = $('#editWork .change').css("cursor","default");
+            };   
+        }
+
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'focus #workDatea' () {

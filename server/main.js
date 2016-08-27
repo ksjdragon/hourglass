@@ -538,7 +538,7 @@ Meteor.methods({
             found !== null &&
             pass === found.code &&
             prof.classes.indexOf(change) === -1) {
-            foundsubs = found.subscribers + '';
+            foundsubs = found.subscribers;
             classes.update({
                 _id: found._id
             }, {
