@@ -33,7 +33,7 @@ for (var i = 0; i < superadmins.length; i++) {
 }
 
 //
- 
+
 Meteor.publish('schools', function() {
     return schools.find();
 });
@@ -88,17 +88,19 @@ Meteor.publish('work', function() {
     } else {
         userclasses = Meteor.users.findOne(this.userId).profile.classes;
         if (userclasses !== undefined) {
-        return work.find({
-            // Only return work of enrolled classes
-            class: {
-                $in: Meteor.users.findOne(this.userId).profile.classes
-            }
-        });
-    } else {
+            return work.find({
+                // Only return work of enrolled classes
+                class: {
+                    $in: Meteor.users.findOne(this.userId).profile.classes
+                }
+            });
+        } else {
 
-                Meteor.call('createProfile', this.userId);
-                return classes.find({_id: null});
-            }
+            Meteor.call('createProfile', this.userId);
+            return classes.find({
+                _id: null
+            });
+        }
 
     }
 
@@ -137,7 +139,7 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 Meteor.methods({
     //Stuff that is accessible in client
-    
+
     //Generates private codes for classes - like google classroom
     'genCode': function() {
         currcode = Math.random().toString(36).substr(2, 6);
@@ -435,7 +437,7 @@ Meteor.methods({
             throw "Unauthorized";
         }
     },
-    
+
     'toggleWork': function(input) {
         var workobject = work.findOne({
             _id: input[0]
