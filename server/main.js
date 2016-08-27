@@ -216,7 +216,9 @@ Meteor.methods({
     },
     // For class admins to get code
     'getCode': function(classId) {
-        var foundclass = classes.find({_id: classId});
+        var foundclass = classes.find({
+            _id: classId
+        });
         if (foundclass && foundclass.admin == Meteor.userId()) {
             return foundclass.code;
         } else {
