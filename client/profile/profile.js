@@ -19,22 +19,6 @@ Session.set("code",null);
 Session.set("noclass",null);
 Session.set("notfound",null);
 
-
-// Colors of the theme
-
-var themeColors = {
-    "light": {
-        "header": "#EBEBEB",
-        "sidebar": "#65839A",
-        "statusIcons": "#33ADFF",
-        "highlightText": "#FF1A1A",
-        "cards": "#FEFEFE"
-    },
-    "dark": {
-
-    }
-};
-
 Template.profile.helpers({
     classsettings: function() {
         return {
@@ -168,7 +152,7 @@ Template.profile.helpers({
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]       
         if (status === Session.get("profClassTab")) {            
-            return themeColors[Cookie.get("theme")].highlightText;        
+            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].highlightText;        
         } else {            
             return;        
         }    

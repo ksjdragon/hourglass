@@ -11,7 +11,7 @@ var openValues = {
     "options": "-20%"
 };
 
-var themeColors = {
+Session.set('themeColors', {
     "light": {
         "background": "White.jpg",
         "header": "#EBEBEB",
@@ -31,13 +31,13 @@ var themeColors = {
         "funcButton": "#5d75A2",
         "statusIcons": "#33ADFF",
         "highlightText": "#FF1A1A",
-        "cards": "#050505",
+        "cards": "#151A2B",
         "classes":"#46396E",
         "calendar": "#000",
         //30313B
         "text": "#F6F6F6" 
     }
-};
+});
 
 var workColors = {
     "normal": "#2E4F74",
@@ -78,11 +78,11 @@ Session.set("classDisp",[]);
 Session.set("classDispHover",null);
 
 Template.registerHelper('divColor', (div) => {
-    return themeColors[Meteor.user().profile.preferences.theme][div];
+    return Session.get("themeColors")[Meteor.user().profile.preferences.theme][div];
 });
 
 Template.registerHelper("textColor", () => {
-    document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
+    document.getElementsByTagName("body")[0].style.color = Session.get("themeColors")[Meteor.user().profile.preferences.theme].text;
     return; 
 });
 
@@ -91,7 +91,7 @@ Template.registerHelper('overlayDim', (part) => {
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
-    var bg = "background-color:" + themeColors[Cookie.get("theme")].header + ";";
+    var bg = "background-color:" + Session.get("themeColors")[Meteor.user().profile.preferences.theme].header + ";";
     return width + height + margin + bg;
 });
 
@@ -174,9 +174,9 @@ Template.main.helpers({
     },
     iconColor(icon) {
         if (Session.get("sidebar") === icon + "Container") {
-            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
+            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].statusIcons;
         } else if (Session.get("sidebar") === "both") {
-            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
+            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].statusIcons;
         } else {
             return;
         }
@@ -190,7 +190,7 @@ Template.main.helpers({
     },
     bgSrc() {
         var dim = [window.innerWidth, window.innerHeight];
-        var pic = "Backgrounds/"+themeColors[Meteor.user().profile.preferences.theme].background;
+        var pic = "Backgrounds/"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].background;
         return pic;
     },
     menuStatus() {
@@ -213,7 +213,7 @@ Template.main.helpers({
     },
     modeStatus(status) {
         if (status === Session.get("mode")) {
-            return themeColors[Cookie.get("theme")].highlightText;
+            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].highlightText;
         } else {
             return;
         }
@@ -307,7 +307,7 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
     calColor() {
-        return "color:"+themeColors[Meteor.user().profile.preferences.theme].calendar;
+        return "color:"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].calendar;
     },
     calbg() {
         var width = window.innerWidth * 0.865;
