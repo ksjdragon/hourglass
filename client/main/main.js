@@ -972,14 +972,7 @@ function formReadable(input) {
             var re = comments.length-k-1;
             resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
             resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
-            resort[re].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
-                sameDay: '[Today]',
-                nextDay: '[Tomorrow]',
-                nextWeek: 'dddd',
-                lastDay: '[Yesterday]',
-                lastWeek: '[Last] dddd',
-                sameElse: 'MMMM Do'
-            });
+            resort[re].date =  moment(comments[k].date).fromNow();
         }
         input.comments = resort;
     }
