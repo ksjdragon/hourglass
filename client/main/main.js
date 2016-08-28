@@ -169,6 +169,21 @@ Template.registerHelper('myClasses', () => {
     }
 });
 
+Template.registerHelper('pref', (val) => {
+    if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) {
+        var array = Meteor.user().profile;
+        array.preferences = defaults;
+        Session.set("serverData",array);
+        sendData("editProfile");
+        if(val === 'timeHide') return defaults[val];
+        return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
+    } else {
+        var preferences = Meteor.user().profile.preferences;
+        if(val === 'timeHide') return preferences[val];
+        return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
+    }
+});
+
 Template.main.helpers({
     schoolName() {
         return " - " + Meteor.user().profile.school;
@@ -400,20 +415,6 @@ Template.main.helpers({
                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                currClass.banned.indexOf(Meteor.userId()) !== -1
               ) return true;
-        }
-    },
-    pref(val) {
-        if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) {
-            var array = Meteor.user().profile;
-            array.preferences = defaults;
-            Session.set("serverData",array);
-            sendData("editProfile");
-            if(val === 'timeHide') return defaults[val];
-            return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
-        } else {
-            var preferences = Meteor.user().profile.preferences;
-            if(val === 'timeHide') return preferences[val];
-            return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
         }
     }
 });

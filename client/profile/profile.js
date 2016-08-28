@@ -7,7 +7,6 @@
 Session.set("profInputOpen", null);
 Session.set("profClassTab", "manClass");
 Session.set("modifying", null);
-Session.set("radioDiv", null);
 Session.set("notsearching", true);
 Session.set("confirm", null);
 Session.set("serverData", null);
@@ -268,17 +267,13 @@ Template.profile.events({
             closeInput(sessval);
         }
         if (!event.target.className.includes("radio") &&
-        !Session.equals("radioDiv", null) &&
         !event.target.parentNode.className.includes("profOptions") &&
-            event.target.readOnly !== true) {
-            var opnum = (parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"))).toString();
+        event.target.readOnly !== true) {
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
                 try {
                     closeDivFade(document.getElementsByClassName("profOptions")[i]);
                 } catch (err) {}
             }
-            Session.set("radioDiv", null);
-            Session.set("radioOffset", null);
         }
         if(!document.getElementById("createdClasses").contains(event.target) &&
         Session.get("code") !== null &&
@@ -328,23 +323,30 @@ Template.profile.events({
     },
     'click .radio' (event) { // Click on an input that has a drop-down menu
         var op = event.target;
-        Session.set("radioDiv", op.getAttribute("op"));
-        Session.set("radioOffset", op.getAttribute("opc"));
         try {
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
                 var curr = document.getElementsByClassName("profOptions")[i];
-                if (Session.get("radioDiv") !== i.toString()) {
+                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] 
+                    && curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
                     closeDivFade(document.getElementsByClassName("profOptions")[i]);
                 }
             }
         } catch (err) {}
-        openDivFade(document.getElementsByClassName("profOptions")[op.getAttribute("op")]);
+
+        if(event.target.className.includes("op")) {
+            openDivFade(op.nextSibling.nextSibling);  
+        } else {
+            openDivFade(op.parentNode.parentNode.childNodes[3]);
+        }
     },
     'click .profOptionText' (event) { // When someone selects "drop-down item"
         var sessval = Session.get("modifying");
         var p = event.target;
-        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
-        var input = document.getElementsByClassName("op")[opnum];
+        if(p.className.includes("cre")) {
+            var input = p.parentNode.parentNode.childNodes[3]
+        } else {
+            var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
+        }
         input.value = p.childNodes[0].nodeValue;
         try {
             closeInput(sessval);
@@ -352,8 +354,6 @@ Template.profile.events({
 
         closeDivFade(p.parentNode);
         input.focus();
-        Session.set("radioDiv", null);
-        Session.set("radioOffset", null);
     },
     'click .addClass' () {        
         var functionHolder = document.getElementById("profClassInfoHolder");
@@ -568,11 +568,7 @@ Template.profile.events({
 });
 
 function openDivFade(div) {
-    if (div.className === "profOptions") {
-        div.style.display = "inline-block";
-    } else {
-        div.style.display = "block";
-    }
+    div.style.display = "block";
     div.style.opacity = "0";
     setTimeout(function() {
         div.style.opacity = "1";
@@ -617,7 +613,11 @@ function getProfileData() {
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
     profile.avatar = document.getElementById("profAvatar").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
     profile.banner = document.getElementById("profBanner").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
-    profile.preferences = Meteor.user().profile.preferences;
+    profile.preferences = {
+        "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
+        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
+        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue
+    };
 
     return profile;
 }

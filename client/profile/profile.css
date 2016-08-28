@@ -661,3 +661,13 @@
 #privSubmit:hover {
 	background-color: rgba(0,0,0,0.1);
 }
+
+#profPreferences {
+	width: 30%;
+	float: left;
+	border-top: 5px solid #409333;
+}
+
+#preferences {
+	padding: 5%;
+}

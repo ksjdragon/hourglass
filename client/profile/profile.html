@@ -19,7 +19,7 @@
 						<div>
 							<div>
 							<p class="profTitle">Grade:</p>
-							<span class="change radio" opc="0" op="0" re="readonly" id="grade">{{grade}}</span>
+							<span class="change radio" re="readonly" id="grade">{{grade}}</span>
 							</div>
 				            <div class="profOptions" style="background-color:{{divColor 'header'}}">
 			                  	<p class="profOptionText">9th</p>
@@ -117,19 +117,19 @@
 						            </div>
 						            <div class="formDiv">
 							            <p class="profTitle">Privacy:</p>
-						              	<input class="creInput radio op" type="text" name="privacy" opc="1" op="1" readonly>
+						              	<input class="creInput radio op" type="text" name="privacy" readonly>
 						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-						                  	<p class="profOptionText">Public</p>
-						                  	<p class="profOptionText">Private</p>
+						                  	<p class="profOptionText cre">Public</p>
+						                  	<p class="profOptionText cre">Private</p>
 						              	</div>
 					              	</div>
 					              	<div class="formDiv">
 							            <p class="profTitle">Category:</p>
-						              	<input class="creInput radio op" type="text" name="category" opc="1" op="2" readonly>
+						              	<input class="creInput radio op" type="text" name="category" readonly>
 						              	<div class="profOptions creOp" style="background-color:{{divColor 'header'}}">
-						                  	<p class="profOptionText">Class</p>
-						                  	<p class="profOptionText">Club</p>
-						                  	<p class="profOptionText">Other</p>
+						                  	<p class="profOptionText cre">Class</p>
+						                  	<p class="profOptionText cre">Club</p>
+						                  	<p class="profOptionText cre">Other</p>
 						              	</div>
 							        </div>
 						        </div>
@@ -138,6 +138,46 @@
 						{{/if}}
 						</div>
 					</div>
+				</div>
+				<div id="profPreferences" class="card" style="background-color:{{divColor 'cards'}}">
+					<h3 class="profHea">Preferences</h3>
+					<div id="preferences">
+			            <div>
+			                <div class="inputRadio">
+			                <p class="profTitle">Theme:</p>
+			                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+			                </div>
+			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+			                    <p class="profOptionText">Light</p>
+			                    <p class="profOptionText">Dark</p>
+			                </div>
+			            </div>
+			            <br>
+			            <div>
+			                <div class="inputRadio">
+			                <p class="profTitle">Default Mode:</p>
+			                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+			                </div>
+			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+			                    <p class="profOptionText">Classes</p>
+			                    <p class="profOptionText">Calendar</p>
+			                </div>
+			            </div>
+			            <br>
+			            <div>
+			                <div  class="inputRadio">
+			                <p class="profTitle">Hide Homework:</p>
+			                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
+			                </div>
+			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+			                    <p class="profOptionText">1 Day</p>
+			                    <P class="profOptionText">2 Days</p>
+			                    <p class="profOptionText">1 Week</p>
+			                    <p class="profOptionText">1 Month</p>
+			                    <p class="profOptionText">Never</p>
+			                </div>
+			            </div>
+			        </div>
 				</div>
 			</div>
 		</div>
