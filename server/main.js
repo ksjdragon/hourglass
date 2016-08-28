@@ -463,6 +463,13 @@ Meteor.methods({
             userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
+                if (input[1] === "confirmations" &&
+                    workobject.reports.indexOf(Meteor.userId()) !== -1) {
+                    workobject.reports.splice(userindex, 1);
+                } else if (input[1] === "reports" &&
+                    workobject.confirmations.indexOf(Meteor.userId()) !== -1) {
+                    workobject.confirmations.splice(userindex, 1);
+                }
             } else {
                 workobject[input[1]].splice(userindex, 1);
             }
