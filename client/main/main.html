@@ -137,18 +137,24 @@
                         {{#unless newWork}}
                             <div id="workComments">
                                 <h3>Comments</h3>
-                                <div id="comment">
+                                <div id="comment" style="height:{{commentDim}}">
                                     {{#each work 'comments'}}
                                         {{> comment}}
                                     {{/each}}
                                 </div>
                                 <div>
-                                    <textarea id="workComment" rows="4" cols="50"></textarea>
+                                    <textarea id="workComment" rows="4" cols="50" maxlength="200"></textarea><br>
+                                    <div>
+                                    <span id="commentRestrict">{{commentLength}}</span>
                                     <div id="commentSubmit">Submit</div>
+                                    </div>
                                 </div>
                             </div>
                         {{/unless}}
                     </div>
+                </div>
+                <div id="workToggle">
+                    
                 </div>
                 {{#if newWork}}
                     {{#if inRole}}
@@ -204,7 +210,7 @@
 
 <template name="comment">
     <div class="commentBox">
-        <span class="commentComment">{{comment}}</span>
+        <span class="commentComment">{{comment}}</span><br>
         <span class="commentUser">{{user}}</span>
         <span class="commentDate">{{date}}</span>
     </div>

@@ -489,7 +489,16 @@ input, textarea {
 }
 
 #workInfoContainer {
+	width: 70%;
 	padding: 2%;
+	display: inline-block;
+}
+
+#workToggle {
+	width: 25%;
+	height: 100%;
+	display: inline-block;
+	float: right;
 }
 
 #workInfoNmCont {
@@ -773,4 +782,43 @@ input, textarea {
 
 .inputRadioPref {
 	margin-top: 6%;
+}
+
+#workComment {
+	margin-bottom: 3%;
+}
+
+#comment {
+	width: 105%;
+	position: relative;
+	overflow-y: scroll;
+}
+
+.commentBox {
+	margin: 0 !important;
+	padding: 2%;
+	background-color: rgba(255,255,255,0.1);
+	border-bottom: solid 1px #CCC;
+}
+
+.commentUser, .commentDate {
+	font-size: 75%;
+}
+
+#commentSubmit {
+	padding: 2%;
+	background-color: rgba(255,255,255,0.1);
+	
+	display: inline;
+	float: right;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#commentSubmit:hover {
+	background-color: rgba(255,255,255,0.05);
 }

@@ -76,6 +76,7 @@ Session.set("calCreWork",null);
 Session.set("calWorkDate",null);
 Session.set("classDisp",[]);
 Session.set("classDispHover",null);
+Session.set("commentRestrict",null);
 
 Template.registerHelper('divColor', (div) => {
     return Session.get("themeColors")[Meteor.user().profile.preferences.theme][div];
@@ -362,6 +363,12 @@ Template.main.helpers({
         var h = window.innerHeight * 0.7;
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
+    commentDim() {
+        var work = Session.get("currentWork");
+        if(work === null) return;
+        if(work.comments.length <= 3) return;
+        return 0.23*window.innerHeight.toString() + "px";
+    },
     work(value) {
         if(Session.get("currentWork") === null) return;
         return Session.get("currentReadableWork")[value];
@@ -375,6 +382,9 @@ Template.main.helpers({
         } else {
             return workColors[type];
         }
+    },
+    commentLength() {
+        return Session.get("commentRestrict");
     },
     newWork() {
         return Session.get("newWork");
@@ -474,6 +484,8 @@ Template.main.events({
                 sendData("editWork");
             }
             Session.set("newWork",null);
+            Session.set("commentRestrict",null);
+            document.getElementById("workComment").value = "";
         }
 
         if (event.target.id !== sessval &&
@@ -676,8 +688,14 @@ Template.main.events({
         input.value = "";
         if (comment !== "") {
             document.getElementById('workComment').value = "";
-            Meteor.call('addComment', [comment, workId]);
+            Meteor.call('addComment', [comment, workId], function(err,result) {
+                var thisWork = work.findOne({_id:workId});
+                Session.set("currentWork",thisWork);
+                var thisReadWork = formReadable(thisWork);
+                Session.set("currentReadableWork",thisReadWork);
+            });
         }
+
     },
     'click #workSubmit' () {
         if(getHomeworkFormData() === null) return;
@@ -774,6 +792,15 @@ Template.main.events({
             if(div.contains(event.target)) return;
         }
         Session.set("classDispHover",null);
+    },
+    'keydown #workComment' (event) {
+        var chars = event.target.value.length;
+        document.getElementById("commentRestrict").style.color = "#CCC";
+        if(chars === 200) {
+            document.getElementById("commentRestrict").style.color = "#FF1A1A";
+        }
+        Session.set("commentRestrict", "Characters left: " + (200-chars).toString());
+        
     }
 });
 
@@ -891,10 +918,13 @@ function toDate(date) {
 function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
-    var comments = input.comments; 
+    var comments = input.comments;
+    var resort = [];
     for(var k = 0; k < comments.length; k++) {
-        comments[k].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
-        comments[k].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
+        var re = comments.length-k-1;
+        resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
+        resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
+        resort[re].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
             sameDay: '[Today]',
             nextDay: '[Tomorrow]',
             nextWeek: 'dddd',
@@ -903,6 +933,6 @@ function formReadable(input) {
             sameElse: 'MMMM Do'
         });
     }
-    input.comments = comments;
+    input.comments = resort;
     return input;
 }
