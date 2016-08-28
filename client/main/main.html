@@ -47,8 +47,8 @@
         <div id="prefCont">
             <div>
                 <div class="inputRadioPref">
-                <span class="prefTitle">Theme:</span><br>
-                <span class="change radio" opc="0" op="0" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+                <p class="prefTitle">Theme:</p>
+                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
                 </div>
                 <div class="prefOptions" style="background-color:{{divColor 'header'}}">
                     <p class="prefOptionText">Light</p>
@@ -57,8 +57,8 @@
             </div>
             <div>
                 <div class="inputRadioPref">
-                <span class="prefTitle">Default Mode:</span><br>
-                <span class="change radio" opc="1" op="1" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+                <p class="prefTitle">Default Mode:</p>
+                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
                 </div>
                 <div class="prefOptions" style="background-color:{{divColor 'header'}}">
                     <p class="prefOptionText">Classes</p>
@@ -67,8 +67,8 @@
             </div>
             <div>
                 <div  class="inputRadioPref">
-                <span class="prefTitle">Hide Homework:</span><br>
-                <span class="change radio" opc="2" op="2" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
+                <p class="prefTitle">Hide Homework:</p>
+                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
                 </div>
                 <div class="prefOptions" style="background-color:{{divColor 'header'}}">
                     <p class="prefOptionText">1 Day</p>
@@ -118,7 +118,7 @@
                         <div>
                             <div  class="inputRadio">
                             <span class="workTitle">Type:</span>
-                            <span class="change radio req" opc="0" op="0" re="readonly" id="workType">{{work 'type'}}</span>
+                            <span class="change radio req" re="readonly" id="workType">{{work 'type'}}</span>
                             </div>
                             <div class="workOptions type" style="background-color:{{divColor 'header'}}">
                                 <p class="workOptionText">Normal</p>
@@ -154,7 +154,7 @@
                     </div>
                 </div>
                 <div id="workToggle">
-                    
+
                 </div>
                 {{#if newWork}}
                     {{#if inRole}}

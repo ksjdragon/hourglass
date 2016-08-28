@@ -68,8 +68,6 @@ Session.set("newWork",null);
 Session.set("currentWork",null);
 Session.set("currentReadableWork",null);
 Session.set("modifying",null);
-Session.set("radioDiv",null);
-Session.set("radioOffset",null);
 Session.set("serverData",null);
 Session.set("noclass",null);
 Session.set("calCreWork",null);
@@ -465,6 +463,15 @@ Template.main.events({
     'click' (event) {
         var e = event.target.className;
         var sessval = Session.get("modifying");
+
+        if (event.target.id !== sessval &&
+            event.target.id !== sessval + "a" &&
+            !Session.equals("modifying", null) &&
+            !event.target.parentNode.className.includes("workOptions") &&
+            !event.target.parentNode.className.includes("prefOptions")) {
+            closeInput(sessval);
+        }
+        
         if (e !== Session.get("sidebar") &&
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
@@ -491,16 +498,7 @@ Template.main.events({
             
         }
 
-        if (event.target.id !== sessval &&
-            event.target.id !== sessval + "a" &&
-            !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("workOptions") &&
-            !event.target.parentNode.className.includes("prefOptions")) {
-            closeInput(sessval);
-        }
-
         if (!event.target.className.includes("radio") &&
-            !Session.equals("radioDiv", null) &&
             !event.target.parentNode.className.includes("workOptions") &&
             !event.target.parentNode.className.includes("prefOptions") &&
             event.target.readOnly !== true) {
@@ -509,14 +507,11 @@ Template.main.events({
             } else {
                 var radio = "workOptions";
             }
-            var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
             for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
                 try {
                     closeDivFade(document.getElementsByClassName(radio)[i]);
                 } catch (err) {}
             }
-            Session.set("radioDiv", null);
-            Session.set("radioOffset", null);
         }
     },
     'click .creWork' (event) {
@@ -610,8 +605,6 @@ Template.main.events({
         }
 
         var op = event.target;
-        Session.set("radioDiv", op.getAttribute("op"));
-        Session.set("radioOffset", op.getAttribute("opc"));
         if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
             var radio = "prefOptions";
         } else {
@@ -620,18 +613,17 @@ Template.main.events({
         try {
             for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
                 var curr = document.getElementsByClassName(radio)[i];
-                if (Session.get("radioDiv") !== i.toString()) {
+                if(curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
                     closeDivFade(document.getElementsByClassName(radio)[i]);
                 }
             }
         } catch (err) {}
-        openDivFade(document.getElementsByClassName(radio)[op.getAttribute("op")]);
+        openDivFade(op.parentNode.parentNode.childNodes[3]);
     },
     'click .workOptionText' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
-        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
-        var input = document.getElementsByClassName("op")[opnum];
+        var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
         try {
             closeInput(sessval);
@@ -639,14 +631,11 @@ Template.main.events({
 
         closeDivFade(p.parentNode);
         input.focus();
-        Session.set("radioDiv", null);
-        Session.set("radioOffset", null);
     },
     'click .prefOptionText' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
-        var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
-        var input = document.getElementsByClassName("op")[opnum];
+        var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
         try {
             closeInput(sessval);
@@ -654,8 +643,6 @@ Template.main.events({
 
         closeDivFade(p.parentNode);
         input.focus();
-        Session.set("radioDiv", null);
-        Session.set("radioOffset", null);
     },
     'keydown' (event) {
         var sessval = Session.get("modifying");
