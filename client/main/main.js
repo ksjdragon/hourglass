@@ -939,11 +939,15 @@ function formReadable(input) {
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
 
     if(input.done.indexOf(Meteor.userId()) !== -1) {
-        input.done = "#27A127";
+        input.doneCol = "#27A127";
         input.doneText = "Done!";
     } else {
-        input.done = "";
+        input.doneCol = "";
         input.doneText = "Mark done";
+    }
+
+    for(var i = 0; i < input.done.length; i++) {
+        input.done[i] = {"user":Meteor.users.findOne({_id:input.done[i]}).profile.name};
     }
 
     if(input.confirmations.indexOf(Meteor.userId()) !== -1) {

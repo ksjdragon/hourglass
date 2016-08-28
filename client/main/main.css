@@ -825,6 +825,25 @@ input, textarea {
 
 #done {
 	height: 60%;
+	top: 0;
+}
+
+.doneUser {
+	padding: 12%;
+	background-color: rgba(0,0,0,0.1);
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.doneUser:hover {
+	background-color: rgba(0,0,0,0.15);
+}
+
+.doneUser p {
+	margin: 0;
 }
 
 #toggleButtons {

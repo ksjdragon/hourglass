@@ -165,9 +165,12 @@
                 </div>
                 <div id="workToggle">
                     <div id="done">
+                        {{#each work 'done'}}
+                            {{> doneUsers}}
+                        {{/each}}
                     </div>
                     <div id="toggleButtons">
-                        <div id="markDone" style="background-color:{{work 'done'}}">
+                        <div id="markDone" style="background-color:{{work 'doneCol'}}">
                             <i class="fa fa-check-square-o" aria-hidden="true"></i>
                             <p>{{work 'doneText'}}</p>
                         </div>
@@ -238,5 +241,11 @@
         <span class="commentComment">{{comment}}</span><br>
         <span class="commentUser">{{user}}</span>
         <span class="commentDate">{{date}}</span>
+    </div>
+</template>
+
+<template name="doneUsers">
+    <div class="doneUser">
+        <p>{{user}}</p>
     </div>
 </template>
