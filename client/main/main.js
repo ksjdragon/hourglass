@@ -50,7 +50,8 @@ var workColors = {
 var defaults = {
     "theme":"light",
     "mode":"classes",
-    "timeHide":"1 Day"
+    "timeHide":"1 Day",
+    "done":true
 };
 
 var ref = {
@@ -60,6 +61,11 @@ var ref = {
     "1 Month":30,
     "Never":0
 };
+
+var dref = {
+    "Yes":true,
+    "No":false
+}
 
 // Reactive variables.
 Session.set("calendarclasses", null);
@@ -80,7 +86,7 @@ Template.registerHelper('divColor', (div) => {
     return Session.get("themeColors")[Meteor.user().profile.preferences.theme][div];
 });
 
-Template.registerHelper("textColor", () => {
+Template.registerHelper('textColor', () => {
     document.getElementsByTagName("body")[0].style.color = Session.get("themeColors")[Meteor.user().profile.preferences.theme].text;
     return; 
 });
@@ -130,9 +136,11 @@ Template.registerHelper('myClasses', () => {
                         j = 0;
                     }
                 }
-                if(thisWork[j] !== "no" && thisWork[j].done.indexOf(Meteor.userId()) !== -1) {
-                    thisWork[j] = "no";
-                    j = 0;
+                if(thisWork[j] !== "no" && dref[Meteor.user().profile.preferences.done]) {
+                    if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) {
+                        thisWork[j] = "no";
+                        j = 0;
+                    }
                 }
             }
             while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1);
@@ -146,12 +154,14 @@ Template.registerHelper('myClasses', () => {
                     lastWeek: '[Last] dddd',
                     sameElse: 'MMMM Do'
                 });
+
                 if(thisWork[j].dueDate === "Today") {
                     thisWork[j].cardDate = "600";
                 } else if(thisWork[j].dueDate === "Tomorrow") {
                     thisWork[j].cardDate = "400";
                 }
                 thisWork[j].typeColor = workColors[thisWork[j].type];
+
                 var hoverHighlight = Session.get("classDispHover");
                 if(hoverHighlight !== null && hoverHighlight === found._id) {
                     thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
@@ -173,11 +183,11 @@ Template.registerHelper('pref', (val) => {
         array.preferences = defaults;
         Session.set("serverData",array);
         sendData("editProfile");
-        if(val === 'timeHide') return defaults[val];
+        if(val === 'timeHide' || val === 'done') return defaults[val];
         return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
     } else {
         var preferences = Meteor.user().profile.preferences;
-        if(val === 'timeHide') return preferences[val];
+        if(val === 'timeHide' || val === 'done') return preferences[val];
         return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
     }
 });
@@ -377,10 +387,9 @@ Template.main.helpers({
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
     commentDim() {
-        if(Session.get("newWork") || Session.get("newWork") === null) return;
         var work = Session.get("currentWork");
-        if(work === null) return;
-        if(work.comments.length <= 3) return;
+        if(Session.get("newWork") === null || work === null) return;
+        if(Session.get("newWork") || work.comments.length <= 3) return;
         return 0.23*window.innerHeight.toString() + "px";
     },
     work(value) {
@@ -471,7 +480,7 @@ Template.main.events({
             !event.target.parentNode.className.includes("prefOptions")) {
             closeInput(sessval);
         }
-        
+
         if (e !== Session.get("sidebar") &&
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
@@ -789,8 +798,19 @@ Template.main.events({
         if(chars === 200) {
             document.getElementById("commentRestrict").style.color = "#FF1A1A";
         }
-        Session.set("commentRestrict", "Characters left: " + (200-chars).toString());
-        
+        Session.set("commentRestrict", "Characters left: " + (200-chars).toString()); 
+    }, 
+    'click #markDone' () {
+        Session.set("serverData", [Session.get("currentWork")._id, "done"])
+        sendData("toggleWork");
+    },
+    'click #markConfirm' () {
+        Session.set("serverData", [Session.get("currentWork")._id, "confirmations"])
+        sendData("toggleWork");
+    },
+    'click #markReport' () {
+        Session.set("serverData", [Session.get("currentWork")._id, "reports"])
+        sendData("toggleWork");
     }
 });
 
@@ -813,7 +833,15 @@ function sendData(funcName) {
     Meteor.call(funcName, Session.get("serverData") , function(err,result) {
         if((funcName === "editWork" || funcName === "createWork") && Session.get("mode") === "calendar") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
-        }  
+        } else if(funcName === "toggleWork") {
+            var workId = Session.get("currentWork")._id;
+            var thisWork = work.findOne({_id:workId});
+            Session.set("currentWork",thisWork);
+            var thisReadWork = formReadable(thisWork);
+            Session.set("currentReadableWork",thisReadWork);
+        } else if(funcName === "editProfile") {
+            $("#fullcalendar").fullCalendar( 'refetchEvents' );
+        }
     });   
 }
 
@@ -884,7 +912,8 @@ function getPreferencesData() {
     var options = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue
+        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue,
+        "done":document.getElementById("prefDone").childNodes[0].nodeValue
     };
     profile.preferences = options;
     return profile;
@@ -908,6 +937,30 @@ function toDate(date) {
 function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
+
+    if(input.done.indexOf(Meteor.userId()) !== -1) {
+        input.done = "#27A127";
+        input.doneText = "Done!";
+    } else {
+        input.done = "";
+        input.doneText = "Mark done";
+    }
+
+    if(input.confirmations.indexOf(Meteor.userId()) !== -1) {
+        input.userConfirm = "#27A127";
+    } else {
+        input.userConfirm = "";
+    }
+
+    if(input.reports.indexOf(Meteor.userId()) !== -1) {
+        input.userReport = "#FF1A1A";
+    } else {
+        input.userReport = "";
+    }
+
+    input.confirmations = input.confirmations.length;
+    input.reports = input.reports.length;
+
     var comments = input.comments;
     var resort = [];
     if(!Session.get("newWork")) {

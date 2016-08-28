@@ -78,6 +78,16 @@
                     <p class="prefOptionText">Never</p>
                 </div>
             </div>
+            <div>
+                <div class="inputRadioPref">
+                <p class="prefTitle">Hide Done:</p>
+                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
+                </div>
+                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
+                    <p class="prefOptionText">Yes</p>
+                    <p class="prefOptionText">No</p>
+                </div>
+            </div>
         </div>
     </div>
     <img id="bg" src={{bgSrc}}>
@@ -137,7 +147,7 @@
                         {{#unless newWork}}
                             <div id="workComments">
                                 <h3>Comments</h3>
-                                <div id="comment" style="height:{{commentDim}}">
+                                <div id="comment" style="max-height:{{commentDim}}">
                                     {{#each work 'comments'}}
                                         {{> comment}}
                                     {{/each}}
@@ -154,7 +164,22 @@
                     </div>
                 </div>
                 <div id="workToggle">
-
+                    <div id="done">
+                    </div>
+                    <div id="toggleButtons">
+                        <div id="markDone" style="background-color:{{work 'done'}}">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            <p>{{work 'doneText'}}</p>
+                        </div>
+                        <div id="markConfirm" style="color:{{work 'userConfirm'}}">
+                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                            <p>{{work 'confirmations'}}</p>
+                        </div>
+                        <div id="markReport" style="color:{{work 'userReport'}}">
+                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                            <p>{{work 'reports'}}</p>
+                        </div>
+                    </div>
                 </div>
                 {{#if newWork}}
                     {{#if inRole}}

@@ -464,10 +464,10 @@ Meteor.methods({
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
             } else {
-                workobject[input[1]] = workobject[input[1]].splice(userindex, 1);
+                workobject[input[1]].splice(userindex, 1);
             }
             work.update({
-                _id: input[1]
+                _id: input[0]
             }, {
                 $set: workobject
             });
