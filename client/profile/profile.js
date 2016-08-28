@@ -340,7 +340,7 @@ Template.profile.events({
         } catch (err) {}
         openDivFade(document.getElementsByClassName("profOptions")[op.getAttribute("op")]);
     },
-    'click .profOptions p' (event) { // When someone selects "drop-down item"
+    'click .profOptionText' (event) { // When someone selects "drop-down item"
         var sessval = Session.get("modifying");
         var p = event.target;
         var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
@@ -610,20 +610,16 @@ function sendData(funcName) {
 }
 
 function getProfileData() {
-    var description = document.getElementById("motd").childNodes[0].nodeValue;
-    var school = document.getElementById("school").childNodes[0].nodeValue;
+    var profile = Meteor.user().profile;
+    profile.description = document.getElementById("motd").childNodes[0].nodeValue;
+    profile.school = document.getElementById("school").childNodes[0].nodeValue;
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
-    var grade = parseInt(gradein.substring(gradein.length - 2, gradein));
-    var avatar = document.getElementById("profAvatar").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
-    var banner = document.getElementById("profBanner").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
+    profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
+    profile.avatar = document.getElementById("profAvatar").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
+    profile.banner = document.getElementById("profBanner").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
+    profile.preferences = Meteor.user().profile.preferences;
 
-    return {
-        school: school,
-        grade: grade,
-        description: description,
-        avatar: avatar,
-        banner: banner
-    };
+    return profile;
 }
 
 function getCreateFormData() {

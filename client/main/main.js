@@ -364,6 +364,7 @@ Template.main.helpers({
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
     commentDim() {
+        if(Session.get("newWork") || Session.get("newWork") === null) return;
         var work = Session.get("currentWork");
         if(work === null) return;
         if(work.comments.length <= 3) return;
@@ -482,10 +483,11 @@ Template.main.events({
                 if(getHomeworkFormData() === null) return;
                 Session.set("serverData",Session.get("currentWork"));
                 sendData("editWork");
+                document.getElementById("workComment").value = "";
             }
             Session.set("newWork",null);
             Session.set("commentRestrict",null);
-            document.getElementById("workComment").value = "";
+            
         }
 
         if (event.target.id !== sessval &&
@@ -624,7 +626,7 @@ Template.main.events({
         } catch (err) {}
         openDivFade(document.getElementsByClassName(radio)[op.getAttribute("op")]);
     },
-    'click .workOptions p' (event) {
+    'click .workOptionText' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
         var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
@@ -639,7 +641,7 @@ Template.main.events({
         Session.set("radioDiv", null);
         Session.set("radioOffset", null);
     },
-    'click .prefOptions p' (event) {
+    'click .prefOptionText' (event) {
         var sessval = Session.get("modifying");
         var p = event.target;
         var opnum = parseInt(Session.get("radioDiv")) - parseInt(Session.get("radioOffset"));
@@ -920,19 +922,21 @@ function formReadable(input) {
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
     var comments = input.comments;
     var resort = [];
-    for(var k = 0; k < comments.length; k++) {
-        var re = comments.length-k-1;
-        resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
-        resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
-        resort[re].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
-            sameDay: '[Today]',
-            nextDay: '[Tomorrow]',
-            nextWeek: 'dddd',
-            lastDay: '[Yesterday]',
-            lastWeek: '[Last] dddd',
-            sameElse: 'MMMM Do'
-        });
+    if(!Session.get("newWork")) {
+        for(var k = 0; k < comments.length; k++) {
+            var re = comments.length-k-1;
+            resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
+            resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
+            resort[re].date =  moment(comments[k].date).calendar(null, { //change to time if recently posted
+                sameDay: '[Today]',
+                nextDay: '[Tomorrow]',
+                nextWeek: 'dddd',
+                lastDay: '[Yesterday]',
+                lastWeek: '[Last] dddd',
+                sameElse: 'MMMM Do'
+            });
+        }
+        input.comments = resort;
     }
-    input.comments = resort;
     return input;
 }
