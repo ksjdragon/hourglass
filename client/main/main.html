@@ -123,7 +123,7 @@
                         </div>
                         <div>
                             <span class="workTitle">Description:</span><br>
-                            <span class="change req" type="textarea" id="workDesc">{{work 'description'}}</span>
+                            <span class="change" type="textarea" id="workDesc">{{work 'description'}}</span>
                         </div>
                         <div>
                             <div  class="inputRadio">
@@ -163,27 +163,29 @@
                         {{/unless}}
                     </div>
                 </div>
-                <div id="workToggle">
-                    <div id="done">
-                        {{#each work 'done'}}
-                            {{> doneUsers}}
-                        {{/each}}
+                {{#unless newWork}}
+                    <div id="workToggle">
+                        <div id="done">
+                            {{#each work 'done'}}
+                                {{> doneUsers}}
+                            {{/each}}
+                        </div>
+                        <div id="toggleButtons">
+                            <div id="markDone" style="background-color:{{work 'doneCol'}}">
+                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                <p>{{work 'doneText'}}</p>
+                            </div>
+                            <div id="markConfirm" style="color:{{work 'userConfirm'}}">
+                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                <p>{{work 'confirmations'}}</p>
+                            </div>
+                            <div id="markReport" style="color:{{work 'userReport'}}">
+                                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                <p>{{work 'reports'}}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div id="toggleButtons">
-                        <div id="markDone" style="background-color:{{work 'doneCol'}}">
-                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                            <p>{{work 'doneText'}}</p>
-                        </div>
-                        <div id="markConfirm" style="color:{{work 'userConfirm'}}">
-                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                            <p>{{work 'confirmations'}}</p>
-                        </div>
-                        <div id="markReport" style="color:{{work 'userReport'}}">
-                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                            <p>{{work 'reports'}}</p>
-                        </div>
-                    </div>
-                </div>
+                {{/unless}}
                 {{#if newWork}}
                     {{#if inRole}}
                         <div id="workSubmit">Save</div>

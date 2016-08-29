@@ -264,6 +264,7 @@
 	margin-bottom: 3%;
 	padding: 2%;
 
+	background-color: #19B3B3;
 	box-shadow: 2px 2px 5px 3px #666;
 	display: table;
 	cursor: pointer;
@@ -275,7 +276,7 @@
 }
 
 .classBox:hover {
-	background-color: rgba(0,0,0,0.1);
+	background-color: #138686;
 }
 
 #private {

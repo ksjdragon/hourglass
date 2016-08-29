@@ -65,7 +65,7 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("calendarclasses", null);
+Session.set("calendarclasses", null); //  
 Session.set("sidebar", null);
 Session.set("newWork",null);
 Session.set("currentWork",null);
@@ -79,16 +79,16 @@ Session.set("classDisp",[]);
 Session.set("classDispHover",null);
 Session.set("commentRestrict",null);
 
-Template.registerHelper('divColor', (div) => {
+Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in Session.get("themeColors").
     return Session.get("themeColors")[Meteor.user().profile.preferences.theme][div];
 });
 
-Template.registerHelper('textColor', () => {
+Template.registerHelper('textColor', () => { // Reactive color for text. 
     document.getElementsByTagName("body")[0].style.color = Session.get("themeColors")[Meteor.user().profile.preferences.theme].text;
-    return; 
+    return;
 });
 
-Template.registerHelper('overlayDim', (part) => {
+Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
     var dim = [window.innerWidth * 0.25, window.innerHeight * 0.2];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
@@ -97,7 +97,7 @@ Template.registerHelper('overlayDim', (part) => {
     return width + height + margin + bg;
 });
 
-Template.registerHelper('myClasses', () => {
+Template.registerHelper('myClasses', () => { 
     if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
         Session.set("noclass",true);
         return [];
@@ -505,6 +505,9 @@ Template.main.events({
                 document.getElementById("workComment").value = "";
             }
             Session.set("newWork",null);
+            Session.set("currentWork",null);
+            Session.set("currentReadableWork",null);
+            $('.req').css("color","")
             Session.set("commentRestrict",null);
 
         }
@@ -876,7 +879,7 @@ function closeInput(sessval) {
         if(getHomeworkFormData() === null) return;
         Session.set("serverData",Session.get("currentWork"));
         sendData("editWork");
-    }  
+    }
 }
 
 function getHomeworkFormData() {
@@ -889,12 +892,6 @@ function getHomeworkFormData() {
             inputs[i].style.color = "#FF1A1A";
             stop = true;
         }
-    }
-    var desc = document.getElementById("workDesc");
-    if(desc.childNodes[0].nodeValue.includes("Click here to edit")) {
-        desc.childNodes[0].nodeValue = "Missing field";
-        desc.style.color = "#FF1A1A";
-        stop = true;
     }
     if(stop) return null;
 
@@ -940,43 +937,45 @@ function formReadable(input) {
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
 
-    if(input.done.indexOf(Meteor.userId()) !== -1) {
-        input.doneCol = "#27A127";
-        input.doneText = "Done!";
-    } else {
-        input.doneCol = "";
-        input.doneText = "Mark done";
-    }
-
-    for(var i = 0; i < input.done.length; i++) {
-        input.done[i] = {"user":Meteor.users.findOne({_id:input.done[i]}).profile.name};
-    }
-
-    if(input.confirmations.indexOf(Meteor.userId()) !== -1) {
-        input.userConfirm = "#27A127";
-    } else {
-        input.userConfirm = "";
-    }
-
-    if(input.reports.indexOf(Meteor.userId()) !== -1) {
-        input.userReport = "#FF1A1A";
-    } else {
-        input.userReport = "";
-    }
-
-    input.confirmations = input.confirmations.length;
-    input.reports = input.reports.length;
-
-    var comments = input.comments;
-    var resort = [];
     if(!Session.get("newWork")) {
-        for(var k = 0; k < comments.length; k++) {
-            var re = comments.length-k-1;
-            resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
-            resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
-            resort[re].date =  moment(comments[k].date).fromNow();
+        if(input.done.indexOf(Meteor.userId()) !== -1) {
+            input.doneCol = "#27A127";
+            input.doneText = "Done!";
+        } else {
+            input.doneCol = "";
+            input.doneText = "Mark done";
         }
-        input.comments = resort;
+
+        for(var i = 0; i < input.done.length; i++) {
+            input.done[i] = {"user":Meteor.users.findOne({_id:input.done[i]}).profile.name};
+        }
+
+        if(input.confirmations.indexOf(Meteor.userId()) !== -1) {
+            input.userConfirm = "#27A127";
+        } else {
+            input.userConfirm = "";
+        }
+
+        if(input.reports.indexOf(Meteor.userId()) !== -1) {
+            input.userReport = "#FF1A1A";
+        } else {
+            input.userReport = "";
+        }
+
+        input.confirmations = input.confirmations.length;
+        input.reports = input.reports.length;
+
+        var comments = input.comments;
+        var resort = [];
+        if(!Session.get("newWork")) {
+            for(var k = 0; k < comments.length; k++) {
+                var re = comments.length-k-1;
+                resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
+                resort[re].user = Meteor.users.findOne({_id:comments[k].user}).profile.name;
+                resort[re].date =  moment(comments[k].date).fromNow();
+            }
+            input.comments = resort;
+        }
     }
     return input;
 }
