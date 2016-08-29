@@ -50,8 +50,8 @@ var workColors = {
 var defaults = {
     "theme":"light",
     "mode":"classes",
-    "timeHide":"1 Day",
-    "done":true
+    "timeHide":1,
+    "done": true
 };
 
 var ref = {
@@ -59,13 +59,10 @@ var ref = {
     "2 Days":2,
     "1 Week":7,
     "1 Month":30,
-    "Never":0
-};
-
-var dref = {
+    "Never":0,
     "Yes":true,
     "No":false
-}
+};
 
 // Reactive variables.
 Session.set("calendarclasses", null);
@@ -108,7 +105,7 @@ Template.registerHelper('myClasses', () => {
         var array = [];
         var courses = Meteor.user().profile.classes;
         var classDisp = Session.get("classDisp");
-        var hide = ref[Meteor.user().profile.preferences.timeHide];
+        var hide = Meteor.user().profile.preferences.timeHide;
         for(var i = 0; i < courses.length; i++) {
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length;
@@ -136,7 +133,7 @@ Template.registerHelper('myClasses', () => {
                         j = 0;
                     }
                 }
-                if(thisWork[j] !== "no" && dref[Meteor.user().profile.preferences.done]) {
+                if(thisWork[j] !== "no" && Meteor.user().profile.preferences.done) {
                     if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) {
                         thisWork[j] = "no";
                         j = 0;
@@ -187,7 +184,10 @@ Template.registerHelper('pref', (val) => {
         return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
     } else {
         var preferences = Meteor.user().profile.preferences;
-        if(val === 'timeHide' || val === 'done') return preferences[val];
+        if(val === 'timeHide' || val === 'done') {
+            var invert = _.invert(ref);
+            return invert[preferences[val]];
+        }
         return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
     }
 });
@@ -264,7 +264,7 @@ Template.main.helpers({
                 var events = [];
                 var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
                 var classDisp = Session.get("classDisp");
-                var hide = ref[Meteor.user().profile.preferences.timeHide];
+                var hide = Meteor.user().profile.preferences.timeHide;
                 cursor.forEach(function(current) {
                     var disp = true;
                     if(classDisp.length !== 0 && classDisp.indexOf(current.class) === -1) disp = false;
@@ -504,7 +504,7 @@ Template.main.events({
             }
             Session.set("newWork",null);
             Session.set("commentRestrict",null);
-            
+
         }
 
         if (!event.target.className.includes("radio") &&
@@ -912,8 +912,8 @@ function getPreferencesData() {
     var options = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue,
-        "done":document.getElementById("prefDone").childNodes[0].nodeValue
+        "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
+        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue]
     };
     profile.preferences = options;
     return profile;

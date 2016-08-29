@@ -32,3 +32,4 @@ momentjs:moment
 eternicode:bootstrap-datepicker
 shell-server@0.2.1
 http@1.2.9
+underscore
