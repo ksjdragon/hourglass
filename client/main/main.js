@@ -11,6 +11,8 @@ var openValues = {
     "options": "-20%"
 };
 
+// Sets values for the different themes
+
 Session.set('themeColors', {
     "light": {
         "background": "White.jpg",
@@ -39,6 +41,8 @@ Session.set('themeColors', {
     }
 });
 
+//Sets colors for different assignment statuses
+
 var workColors = {
     "normal": "#2E4F74",
     "quiz": "#409333",
@@ -47,12 +51,16 @@ var workColors = {
     "other": "#852E6D"
 };
 
+// Sets defaults for new users
+
 var defaults = {
     "theme":"light",
     "mode":"classes",
     "timeHide":1,
     "done": true
 };
+
+//Creates variables for due dates
 
 var ref = {
     "1 Day":1,
@@ -193,10 +201,10 @@ Template.registerHelper('pref', (val) => {
 });
 
 Template.main.helpers({
-    schoolName() {
+    schoolName() { // Finds the name of the user's school
         return " - " + Meteor.user().profile.school;
     },
-    iconColor(icon) {
+    iconColor(icon) { //Sets the color of the user's icon
         if (Session.get("sidebar") === icon + "Container") {
             return Session.get("themeColors")[Meteor.user().profile.preferences.theme].statusIcons;
         } else if (Session.get("sidebar") === "both") {
@@ -205,19 +213,19 @@ Template.main.helpers({
             return;
         }
     },
-    defaultMode() {
+    defaultMode() { //Loads the defaults for a new/uncustomized user
         if(load) {
             Session.set("mode",Meteor.user().profile.preferences.mode);
             load = false; 
         }
         return;
     },
-    bgSrc() {
+    bgSrc() { // Adjusts for different, larger screen sizes
         var dim = [window.innerWidth, window.innerHeight];
         var pic = "Backgrounds/"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].background;
         return pic;
     },
-    menuStatus() {
+    menuStatus() { 
         if (Session.get("sidebar") === "menuContainer") {
             return "0%";
         } else if (Session.get("sidebar") === "both") {
@@ -250,7 +258,7 @@ Template.main.helpers({
             return false;
         }
     },
-    calendarOptions() {
+    calendarOptions() { // Sets up and modifies the calendar code
         return {
             id: "fullcalendar",
             height: window.innerHeight * 0.8,
@@ -328,14 +336,14 @@ Template.main.helpers({
             }
         };
     },
-    calCenter() {
+    calCenter() { // Centers the calendar
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
-    calColor() {
+    calColor() { // Sets the color of the calendar according to theme
         return "color:"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].calendar;
     },
-    calbg() {
+    calbg() { //Sets size of the calendar
         var width = window.innerWidth * 0.865;
         var height = window.innerHeight * 0.76;
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
@@ -356,7 +364,7 @@ Template.main.helpers({
             return;
         }
     },
-    highlight() {
+    highlight() { // Lets someone highlight a section of the calendar
         var hoverHighlight = Session.get("classDispHover");
         var works = document.getElementsByClassName("workevent");
         var work = $('.workevent');
@@ -383,7 +391,7 @@ Template.main.helpers({
         }
         return;
     },
-    workCenter() {
+    workCenter() { // Dimensions the work center
         var w = window.innerWidth * 0.3;
         var h = window.innerHeight * 0.7;
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
@@ -462,7 +470,7 @@ Template.main.events({
             openDivFade(modeHolder);
         }, 300);
     },
-    'click .calendar' () {
+    'click .calendar' () { // Applies on a click of the calendar. First checks if the mode is currently the calendar, and then sets it to that if it isn't.
         if (Session.get("mode") === "calendar") return;
         var modeHolder = document.getElementById("mainBody");
         closeDivFade(modeHolder);
@@ -701,7 +709,7 @@ Template.main.events({
         }
 
     },
-    'click #workSubmit' () {
+    'click #workSubmit' () { // Apples on the work submit button. If the current value, then terminate. Otherwise, create a new work or edit the current piece of work
         if(getHomeworkFormData() === null) return;
         Session.set("serverData",Session.get("currentWork"));
         if(Session.get("newWork")) {
@@ -925,7 +933,7 @@ function getReadableDate(date) {
     return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
 }
 
-function toDate(date) {
+function toDate(date) { //Formats the date into the  format needed for niceness
     date = date.substring(date.search(",")+2,date.length);
     month = months.indexOf(date.substring(0,date.search(" ")));
     day = date.substring(date.search(" ")+1,date.search(","));
