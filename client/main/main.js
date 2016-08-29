@@ -276,6 +276,7 @@ Template.main.helpers({
                             disp = false;
                         }   
                     }
+                    if(Meteor.user().profile.preferences.done && current.done.indexOf(Meteor.userId()) !== -1) disp = false;
 
                     var inRole = false;
                     var currClass = classes.findOne({_id: current.class})
@@ -312,6 +313,7 @@ Template.main.helpers({
                 sendData("editWork");
             },
             eventClick: function(event, jsEvent, view) {
+                Session.set("newWork",false);
                 var thisWork = work.findOne({_id:event.id})
                 Session.set("currentWork",thisWork);
                 var thisReadWork = formReadable(thisWork);
