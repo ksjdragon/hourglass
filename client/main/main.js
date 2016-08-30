@@ -11,6 +11,7 @@ var openValues = {
     "options": "-20%"
 };
 
+<<<<<<< HEAD
 // Sets values for the different themes
 
 Session.set('themeColors', {
@@ -43,6 +44,8 @@ Session.set('themeColors', {
 
 //Sets colors for different assignment statuses
 
+=======
+>>>>>>> origin/master
 var workColors = {
     "normal": "#2E4F74",
     "quiz": "#409333",
@@ -73,13 +76,12 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("calendarclasses", null); //  
+Session.set("calendarclasses", null); //
 Session.set("sidebar", null);
 Session.set("newWork",null);
 Session.set("currentWork",null);
 Session.set("currentReadableWork",null);
 Session.set("modifying",null);
-Session.set("serverData",null);
 Session.set("noclass",null);
 Session.set("calCreWork",null);
 Session.set("calWorkDate",null);
@@ -87,12 +89,12 @@ Session.set("classDisp",[]);
 Session.set("classDispHover",null);
 Session.set("commentRestrict",null);
 
-Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in Session.get("themeColors").
-    return Session.get("themeColors")[Meteor.user().profile.preferences.theme][div];
+Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
+    return themeColors[Meteor.user().profile.preferences.theme][div];
 });
 
 Template.registerHelper('textColor', () => { // Reactive color for text. 
-    document.getElementsByTagName("body")[0].style.color = Session.get("themeColors")[Meteor.user().profile.preferences.theme].text;
+    document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
     return;
 });
 
@@ -101,11 +103,11 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
-    var bg = "background-color:" + Session.get("themeColors")[Meteor.user().profile.preferences.theme].header + ";";
+    var bg = "background-color:" + themeColors[Meteor.user().profile.preferences.theme].header + ";";
     return width + height + margin + bg;
 });
 
-Template.registerHelper('myClasses', () => { 
+Template.registerHelper('myClasses', () => {
     if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
         Session.set("noclass",true);
         return [];
@@ -150,7 +152,7 @@ Template.registerHelper('myClasses', () => {
             }
             while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1);
 
-            for(var j = 0; j < thisWork.length; j++) {   
+            for(var j = 0; j < thisWork.length; j++) {
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -186,7 +188,7 @@ Template.registerHelper('pref', (val) => {
     if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) {
         var array = Meteor.user().profile;
         array.preferences = defaults;
-        Session.set("serverData",array);
+        serverData = array;
         sendData("editProfile");
         if(val === 'timeHide' || val === 'done') return defaults[val];
         return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
@@ -206,9 +208,9 @@ Template.main.helpers({
     },
     iconColor(icon) { //Sets the color of the user's icon
         if (Session.get("sidebar") === icon + "Container") {
-            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].statusIcons;
+            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else if (Session.get("sidebar") === "both") {
-            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].statusIcons;
+            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else {
             return;
         }
@@ -216,13 +218,13 @@ Template.main.helpers({
     defaultMode() { //Loads the defaults for a new/uncustomized user
         if(load) {
             Session.set("mode",Meteor.user().profile.preferences.mode);
-            load = false; 
+            load = false;
         }
         return;
     },
     bgSrc() { // Adjusts for different, larger screen sizes
         var dim = [window.innerWidth, window.innerHeight];
-        var pic = "Backgrounds/"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].background;
+        var pic = "Backgrounds/"+themeColors[Meteor.user().profile.preferences.theme].background;
         return pic;
     },
     menuStatus() { 
@@ -245,7 +247,7 @@ Template.main.helpers({
     },
     modeStatus(status) {
         if (status === Session.get("mode")) {
-            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].highlightText;
+            return themeColors[Meteor.user().profile.preferences.theme].highlightText;
         } else {
             return;
         }
@@ -282,14 +284,14 @@ Template.main.helpers({
                         var today = (moment().subtract(hide,'days'))["_d"];
                         if(today > due) {
                             disp = false;
-                        }   
+                        }
                     }
                     if(Meteor.user().profile.preferences.done && current.done.indexOf(Meteor.userId()) !== -1) disp = false;
 
                     var inRole = false;
                     var currClass = classes.findOne({_id: current.class})
 
-                    if(Meteor.userId() === current.creator || 
+                    if(Meteor.userId() === current.creator ||
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                     currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                     currClass.banned.indexOf(Meteor.userId()) !== -1
@@ -317,7 +319,7 @@ Template.main.helpers({
                 var current = work.findOne({_id:event.id});
                 var date = event.start.format().split("-");
                 current.dueDate = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
-                Session.set("serverData",current);
+                serverData = current;
                 sendData("editWork");
             },
             eventClick: function(event, jsEvent, view) {
@@ -332,7 +334,7 @@ Template.main.helpers({
                 if(jsEvent.target.className.includes("fc-other-month") || jsEvent.target.className.includes("fc-past")) return;
                 Session.set("calCreWork",true);
                 Session.set("calWorkDate",date.format());
-                Session.set("sidebar","menuContainer");              
+                Session.set("sidebar","menuContainer");
             }
         };
     },
@@ -340,8 +342,13 @@ Template.main.helpers({
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
+<<<<<<< HEAD
     calColor() { // Sets the color of the calendar according to theme
         return "color:"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].calendar;
+=======
+    calColor() {
+        return "color:"+themeColors[Meteor.user().profile.preferences.theme].calendar;
+>>>>>>> origin/master
     },
     calbg() { //Sets size of the calendar
         var width = window.innerWidth * 0.865;
@@ -508,14 +515,14 @@ Template.main.events({
             closeDivFade(document.getElementsByClassName("overlay")[0]);
             if(!Session.get("newWork")) {
                 if(getHomeworkFormData() === null) return;
-                Session.set("serverData",Session.get("currentWork"));
+                serverData = Session.get("currentWork");
                 sendData("editWork");
                 document.getElementById("workComment").value = "";
             }
             Session.set("newWork",null);
             Session.set("currentWork",null);
             Session.set("currentReadableWork",null);
-            $('.req').css("color","")
+            $('.req').css("color","");
             Session.set("commentRestrict",null);
 
         }
@@ -561,7 +568,7 @@ Template.main.events({
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
             currClass.banned.indexOf(Meteor.userId()) !== -1
-            )) return;   
+            )) return;
         }
 
         var ele = event.target;
@@ -623,7 +630,7 @@ Template.main.events({
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
             currClass.banned.indexOf(Meteor.userId()) !== -1
-            )) return;   
+            )) return;
         }
 
         var op = event.target;
@@ -711,7 +718,7 @@ Template.main.events({
     },
     'click #workSubmit' () { // Apples on the work submit button. If the current value, then terminate. Otherwise, create a new work or edit the current piece of work
         if(getHomeworkFormData() === null) return;
-        Session.set("serverData",Session.get("currentWork"));
+        serverData = Session.get("currentWork");
         if(Session.get("newWork")) {
             sendData("createWork");
         } else {
@@ -741,7 +748,7 @@ Template.main.events({
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
             currClass.banned.indexOf(Meteor.userId()) !== -1)) {
                 var inputs = $('#editWork .change').css("cursor","default");
-            };   
+            };
         }
 
         openDivFade(document.getElementsByClassName("overlay")[0]);
@@ -783,7 +790,7 @@ Template.main.events({
                 array.splice(array.indexOf(classid),1);
             } else {
                 array.push(classid);
-            }    
+            }
             Session.set("classDisp",array);
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
@@ -792,7 +799,7 @@ Template.main.events({
         if(event.target.className !== "sideClass") {
             var div = event.target.parentNode;
         } else {
-            var div = event.target;  
+            var div = event.target;
         }
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
@@ -814,15 +821,15 @@ Template.main.events({
         Session.set("commentRestrict", "Characters left: " + (200-chars).toString()); 
     }, 
     'click #markDone' () {
-        Session.set("serverData", [Session.get("currentWork")._id, "done"])
+        serverData = [Session.get("currentWork")._id, "done"]
         sendData("toggleWork");
     },
     'click #markConfirm' () {
-        Session.set("serverData", [Session.get("currentWork")._id, "confirmations"])
+        serverData = [Session.get("currentWork")._id, "confirmations"]
         sendData("toggleWork");
     },
     'click #markReport' () {
-        Session.set("serverData", [Session.get("currentWork")._id, "reports"])
+        serverData = [Session.get("currentWork")._id, "reports"]
         sendData("toggleWork");
     }
 });
@@ -843,7 +850,7 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) {
-    Meteor.call(funcName, Session.get("serverData") , function(err,result) {
+    Meteor.call(funcName, serverData , function(err,result) {
         if((funcName === "editWork" || funcName === "createWork") && Session.get("mode") === "calendar") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         } else if(funcName === "toggleWork") {
@@ -855,7 +862,7 @@ function sendData(funcName) {
         } else if(funcName === "editProfile") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
-    });   
+    });
 }
 
 function closeInput(sessval) {
@@ -881,11 +888,11 @@ function closeInput(sessval) {
     Session.set("modifying", null);
 
     if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
-        Session.set("serverData",getPreferencesData());
+        serverData = getPreferencesData();
         sendData("editProfile");
     } else if(!Session.get("newWork")) {
         if(getHomeworkFormData() === null) return;
-        Session.set("serverData",Session.get("currentWork"));
+        serverData = Session.get("currentWork");
         sendData("editWork");
     }
 }
