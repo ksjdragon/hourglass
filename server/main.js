@@ -8,12 +8,12 @@ import {
 
 // Defines who the admins are - not added
 
-superadmins = [
+var superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com"
 ];
 
-worktype = ["test", "quiz", "project", "normal", "other"];
+var worktype = ["test", "quiz", "project", "normal", "other"];
 var possiblelist = ["moderators", "banned"];
 
 // Adds roles to superadmins
@@ -45,7 +45,7 @@ Meteor.publish('classes', function() {
         return classes.find();
     } else {
         // Return user classes (if private) and public classes.
-        userclasses = Meteor.users.findOne(this.userId).profile.classes;
+        var userclasses = Meteor.users.findOne(this.userId).profile.classes;
         if (userclasses !== undefined) {
             return classes.find({
                 $or: [{
@@ -86,7 +86,7 @@ Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
     } else {
-        userclasses = Meteor.users.findOne(this.userId).profile.classes;
+        var userclasses = Meteor.users.findOne(this.userId).profile.classes;
         if (userclasses !== undefined) {
             return work.find({
                 // Only return work of enrolled classes
@@ -142,7 +142,7 @@ Meteor.methods({
 
     //Generates private codes for classes - like google classroom
     'genCode': function() {
-        currcode = Math.random().toString(36).substr(2, 6);
+        var currcode = Math.random().toString(36).substr(2, 6);
         while (classes.findOne({
                 code: currcode
             }) !== undefined) {
@@ -430,11 +430,11 @@ Meteor.methods({
             _id: workobject.class
         });
         var user = Meteor.userId();
-        foundsubs = currentclass.subscribers;
+        var foundsubs = currentclass.subscribers;
         if (typeof comment === "string" && comment.length <= 200 &&
             foundsubs.indexOf(Meteor.userId()) != -1 &&
             currentclass.banned.indexOf(Meteor.userId()) === -1) {
-            commentInfo = {
+            var commentInfo = {
                 "comment":input[0],
                 "user":user,
                 "date": new Date()
@@ -460,7 +460,7 @@ Meteor.methods({
             _id: workobject.class
         });
         if (currentclass.subscribers.indexOf(Meteor.userId()) != -1 && ["confirmations", "reports", "done"].indexOf(input[1]) != -1) {
-            userindex = workobject[input[1]].indexOf(Meteor.userId());
+            var userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
                 if (input[1] === "confirmations" &&
@@ -535,7 +535,7 @@ Meteor.methods({
         }
     },
     'createProfile': function(userId) {
-        current = Meteor.users.findOne({
+        var current = Meteor.users.findOne({
             _id: userId
         }).profile;
         current.classes = [];
@@ -559,7 +559,7 @@ Meteor.methods({
             found !== null &&
             pass === found.code &&
             prof.classes.indexOf(change) === -1) {
-            foundsubs = found.subscribers;
+            var foundsubs = found.subscribers;
             classes.update({
                 _id: found._id
             }, {
