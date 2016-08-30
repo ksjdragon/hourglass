@@ -763,7 +763,7 @@ input, textarea {
   }
 }
 
-.fc-day:not(.fc-past):not(.fc-other-month) {
+.fc-day:not(.fc-past) {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
 
 	-webkit-transition: box-shadow 0.4s ease;  
@@ -772,7 +772,7 @@ input, textarea {
 	transition: box-shadow 0.4s ease; 
 } 
 
-.fc-day:not(.fc-past):not(.fc-other-month):hover {
+.fc-day:not(.fc-past):hover {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.15);
 }
 
@@ -806,6 +806,7 @@ input, textarea {
 }
 
 #commentSubmit {
+	margin-bottom: 0;
 	padding: 2%;
 	background-color: rgba(255,255,255,0.1);
 

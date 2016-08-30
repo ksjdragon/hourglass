@@ -292,7 +292,7 @@ Template.main.helpers({
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             dayClick: function(date, jsEvent, view) {
-                if(jsEvent.target.className.includes("fc-other-month") || jsEvent.target.className.includes("fc-past")) return;
+                if(jsEvent.target.className.includes("fc-past")) return;
                 Session.set("calCreWork",true);
                 Session.set("calWorkDate",date.format());
                 Session.set("sidebar","menuContainer");
@@ -432,6 +432,7 @@ Template.main.events({
             Session.set("mode", "classes");
             openDivFade(modeHolder);
         }, 300);
+        Session.set("sidebar",null);
     },
     'click .calendar' () {
         if (Session.get("mode") === "calendar") return;
@@ -441,6 +442,7 @@ Template.main.events({
             Session.set("mode", "calendar");
             openDivFade(modeHolder);
         }, 300);
+        Session.set("sidebar",null);
     },
     'click' (event) {
         var e = event.target.className;
@@ -458,9 +460,8 @@ Template.main.events({
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
         !document.getElementById("menuContainer").contains(event.target) &&
-        !document.getElementById("optionsContainer").contains(event.target) &&
-        !(event.target.className.includes("fc-today") ||
-        (event.target.className.includes("fc-future") && !event.target.className.includes("fc-other-month")))) {
+        !document.getElementById("optionsContainer").contains(event.target) && 
+        !(event.target.className.includes("fc-day") && !event.target.className.includes("fc-past"))) {
             if(Session.get("calCreWork")) {
                 Session.set("calCreWork",false);
             }

@@ -147,17 +147,17 @@
                         {{#unless newWork}}
                             <div id="workComments">
                                 <h3>Comments</h3>
-                                <div id="comment" style="max-height:{{commentDim}}">
-                                    {{#each work 'comments'}}
-                                        {{> comment}}
-                                    {{/each}}
-                                </div>
                                 <div>
                                     <textarea id="workComment" rows="4" cols="50" maxlength="200"></textarea><br>
                                     <div>
                                     <span id="commentRestrict">{{commentLength}}</span>
                                     <div id="commentSubmit">Submit</div>
                                     </div>
+                                </div>
+                                <div id="comment" style="max-height:{{commentDim}}">
+                                    {{#each work 'comments'}}
+                                        {{> comment}}
+                                    {{/each}}
                                 </div>
                             </div>
                         {{/unless}}
