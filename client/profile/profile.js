@@ -4,15 +4,13 @@
 
 // Sets up global variables
 
-Session.set("profInputOpen", null);
 Session.set("profClassTab", "manClass");
 Session.set("modifying", null);
 Session.set("notsearching", true);
 Session.set("confirm", null);
-Session.set("serverData", null);
 Session.set("autocompleteDivs", null);
 Session.set("confirmText", null);
-Session.set("selectedClass",null); 
+Session.set("selectedClass",null);
 Session.set("selectClassId",null);
 Session.set("code",null);
 Session.set("noclass",null);
@@ -419,7 +417,7 @@ Template.profile.events({
             var attribute = event.target.getAttribute("classid");
         }
         var data = [attribute, ""];
-        Session.set("serverData", data);
+        serverData = data;
         Session.set("confirm", "joinClass");
         Session.set("confirmText", "Join class?");
 
@@ -435,18 +433,18 @@ Template.profile.events({
             var form = document.getElementById("create");
             for(var i = 0; i < form.length; i++) form[i].value = "";
         }
-        Session.set("serverData", null);
+        serverData = null;
         Session.set("confirm", null);
     },
     'click .fa-times-circle-o' () { // Deny Button
         closeDivFade(document.getElementsByClassName("overlay")[0]);
-        Session.set("serverData", null);
+        serverData = null;
         Session.set("confirm", null);
     },
     'click #creSubmit' () { //Submits form data for class
         var data = getCreateFormData();
         if (data === null) return;
-        Session.set("serverData", data);
+        serverData = data;
         Session.set("confirm", "createClass");
         Session.set("confirmText", "Submit request?");
 
@@ -478,29 +476,29 @@ Template.profile.events({
             return;
         }
         var user = Meteor.users.findOne({"services.google.email":value});
-        Session.set("serverData", [
+        serverData = [
             user._id,
             classid,
             event.target.parentNode.childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase()
-        ]);
+        ];
         sendData("trackUserInClass");
 
     },
     'click .classBox .fa-times' (event) { // Leaves a class
         var box = event.target.parentNode;
         var classid = box.getAttribute("classid");
-        Session.set("serverData", box.getAttribute("classid"));
+        serverData = box.getAttribute("classid");
         Session.set("confirm","leaveClass");
         Session.set("confirmText", "Leave this class?");
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click .userBox .fa-times' (event) { // Removes user from permissions
         var box = event.target.parentNode;
-        Session.set("serverData", [
+        serverData = [
             box.getAttribute("userid"),
             document.getElementById("createdClasses").getAttribute("classid"),
             box.parentNode.parentNode.childNodes[1].childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase()
-        ])
+        ];
         sendData("untrackUserInClass");
     },
     'click #copy' () { //Copies googlee-classroom style code
@@ -509,7 +507,7 @@ Template.profile.events({
         document.execCommand("copy");
     },
     'click #deleteClass' () { 
-        Session.set("serverData",document.getElementById("createdClasses").getAttribute("classid"));
+        serverData = document.getElementById("createdClasses").getAttribute("classid");
         Session.set("confirm", "deleteClass");
         Session.set("confirmText", "Delete this class?");
         openDivFade(document.getElementsByClassName("overlay")[0]);
@@ -538,7 +536,7 @@ Template.profile.events({
             return;
         }
         var user = Meteor.users.findOne({"services.google.email":value});
-        Session.set("serverData", [user._id,classid]);
+        serverData = [user._id,classid];
         Session.set("confirm","changeAdmin");
         Session.set("confirmText", "Are you really sure?");
         openDivFade(document.getElementsByClassName("overlay")[0])
@@ -555,7 +553,7 @@ Template.profile.events({
         var input = document.getElementById("privateCode");
         var code = input.value;
         input.value = "";
-        Session.set("serverData", code);
+        serverData = code;
         Meteor.call("joinPrivateClass", code, function(error, result) {
             if(result) {
                 document.getElementById("joinPrivClass").style.marginBottom = "-10%";
@@ -597,12 +595,12 @@ function closeInput(sessval) {
     }
     span.style.display = "initial";
     Session.set("modifying", null);
-    Session.set("serverData", getProfileData());
+    serverData = getProfileData();
     sendData("editProfile");
 }
 
 function sendData(funcName) {
-    Meteor.call(funcName, Session.get("serverData"));
+    Meteor.call(funcName, serverData);
 }
 
 function getProfileData() {
