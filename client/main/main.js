@@ -11,41 +11,7 @@ var openValues = {
     "options": "-20%"
 };
 
-<<<<<<< HEAD
-// Sets values for the different themes
-
-Session.set('themeColors', {
-    "light": {
-        "background": "White.jpg",
-        "header": "#EBEBEB",
-        "sidebar": "#65839A",
-        "funcButton": "#849CAE",
-        "statusIcons": "#33ADFF",
-        "highlightText": "#FF1A1A",
-        "cards": "#FEFEFE",
-        "classes":"#EBEBEB",
-        "calendar": "#000",
-        "text": "#000"
-    },
-    "dark": {
-        "background": "Black.jpg",
-        "header": "#373A56",
-        "sidebar": "#35435D",
-        "funcButton": "#5d75A2",
-        "statusIcons": "#33ADFF",
-        "highlightText": "#FF1A1A",
-        "cards": "#151A2B",
-        "classes":"#46396E",
-        "calendar": "#000",
-        //30313B
-        "text": "#F6F6F6" 
-    }
-});
-
 //Sets colors for different assignment statuses
-
-=======
->>>>>>> origin/master
 var workColors = {
     "normal": "#2E4F74",
     "quiz": "#409333",
@@ -342,13 +308,8 @@ Template.main.helpers({
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
-<<<<<<< HEAD
     calColor() { // Sets the color of the calendar according to theme
-        return "color:"+Session.get("themeColors")[Meteor.user().profile.preferences.theme].calendar;
-=======
-    calColor() {
         return "color:"+themeColors[Meteor.user().profile.preferences.theme].calendar;
->>>>>>> origin/master
     },
     calbg() { //Sets size of the calendar
         var width = window.innerWidth * 0.865;
