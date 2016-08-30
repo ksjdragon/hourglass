@@ -805,6 +805,10 @@ input, textarea {
 	font-size: 75%;
 }
 
+#commentRestrict {
+	font-weight: 400;
+}
+
 #commentSubmit {
 	margin-bottom: 0;
 	padding: 2%;
@@ -832,6 +836,7 @@ input, textarea {
 .doneUser {
 	padding: 12%;
 	background-color: rgba(0,0,0,0.1);
+	overflow-y: auto;
 
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
