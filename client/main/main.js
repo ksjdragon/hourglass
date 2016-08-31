@@ -5,6 +5,8 @@ import {
 import './main.html';
 
 var load = true;
+var calCreWork = null;
+var calWorkDate = null;
 
 var openValues = {
     "menu": "-25%",
@@ -42,18 +44,16 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("calendarclasses", null); //
-Session.set("sidebar", null);
-Session.set("newWork",null);
-Session.set("currentWork",null);
-Session.set("currentReadableWork",null);
-Session.set("modifying",null);
-Session.set("noclass",null);
-Session.set("calCreWork",null);
-Session.set("calWorkDate",null);
-Session.set("classDisp",[]);
-Session.set("classDispHover",null);
-Session.set("commentRestrict",null);
+Session.set("calendarClasses", null);
+Session.set("sidebar", null); // Status of sidebar
+Session.set("newWork",null); // If user creating new work.
+Session.set("currentWork",null); // Stores current selected work info.
+Session.set("currentReadableWork",null); // Stores readable selected work info.
+Session.set("modifying",null); // Stores current open input.
+Session.set("noclass",null); // If user does not have classes.
+Session.set("classDisp",[]); // Stores current filter for classes.
+Session.set("classDispHover",null); // Stores current hovered filter.
+Session.set("commentRestrict",null); // Stores text for comment character restriction.
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
     return themeColors[Meteor.user().profile.preferences.theme][div];
@@ -73,52 +73,54 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
     return width + height + margin + bg;
 });
 
-Template.registerHelper('myClasses', () => {
-    if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) {
-        Session.set("noclass",true);
+Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
+    if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) { // Null checking.
+        Session.set("noclass",true); // Makes sure to display nothing.
         return [];
     } else {
         var array = [];
         var courses = Meteor.user().profile.classes;
-        var classDisp = Session.get("classDisp");
+        var classDisp = Session.get("classDisp"); // Get sidebar class filter.
         var hide = Meteor.user().profile.preferences.timeHide;
-        for(var i = 0; i < courses.length; i++) {
+
+        for(var i = 0; i < courses.length; i++) { // For each user class.
             found = classes.findOne({_id:courses[i]});
             found.subscribers = found.subscribers.length;
             found.mine = true;
-            if(found.admin === Meteor.userId()) {
+            if(found.admin === Meteor.userId()) { // If user owns this class.
                 found.box = " owned";
                 found.mine = false;
             }
-            if(classDisp.indexOf(courses[i]) !== -1) found.selected = true;
+            if(classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
             array.push(found);
 
             var thisWork = work.find({class: courses[i]}).fetch();
 
-            if(classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) {
+            if(classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) { // Filter classes based on filter.
                 array[i].thisClassWork = [];
                 continue;
             }
 
-            for(var j = 0; j < thisWork.length; j++) {
-                if(hide !== 0) {
+            for(var j = 0; j < thisWork.length; j++) { // For each work in class.
+                if(hide !== 0) { // Time to hide isn't never.
                     var due = (moment(thisWork[j].dueDate))["_d"];
-                    var today = (moment().subtract(hide,'days'))["_d"];
-                    if(today > due) {
+                    var offset = (moment().subtract(hide,'days'))["_d"];
+                    if(offset > due) { // If due is before hide days before today
                         thisWork[j] = "no";
                         j = 0;
                     }
                 }
-                if(thisWork[j] !== "no" && Meteor.user().profile.preferences.done) {
-                    if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) {
+                if(thisWork[j] !== "no" && Meteor.user().profile.preferences.done) { // If done filter is true
+                    if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
                         thisWork[j] = "no";
                         j = 0;
                     }
                 }
             }
-            while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1);
+            while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1); // Splice all filtered works.
 
             for(var j = 0; j < thisWork.length; j++) {
+                thisWork[j].realDate = thisWork[j].dueDate;
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -128,14 +130,14 @@ Template.registerHelper('myClasses', () => {
                     sameElse: 'MMMM Do'
                 });
 
-                if(thisWork[j].dueDate === "Today") {
+                if(thisWork[j].dueDate === "Today") { // Font weight based on date proximity.
                     thisWork[j].cardDate = "600";
                 } else if(thisWork[j].dueDate === "Tomorrow") {
                     thisWork[j].cardDate = "400";
                 }
                 thisWork[j].typeColor = workColors[thisWork[j].type];
 
-                var hoverHighlight = Session.get("classDispHover");
+                var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
                 if(hoverHighlight !== null && hoverHighlight === found._id) {
                     thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
                 } else {
@@ -145,13 +147,13 @@ Template.registerHelper('myClasses', () => {
             array[i].thisClassWork = thisWork;
         }
         Session.set("noclass",false);
-        Session.set("calendarclasses", Meteor.user().profile.classes);
+        Session.set("calendarClasses", array);
         return array;
     }
 });
 
-Template.registerHelper('pref', (val) => {
-    if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) {
+Template.registerHelper('pref', (val) => { // Obtains all user preferences.
+    if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) { // Invalid preference checking.
         var array = Meteor.user().profile;
         array.preferences = defaults;
         serverData = array;
@@ -169,10 +171,10 @@ Template.registerHelper('pref', (val) => {
 });
 
 Template.main.helpers({
-    schoolName() { // Finds the name of the user's school
+    schoolName() { // Finds the name of the user's school.
         return " - " + Meteor.user().profile.school;
     },
-    iconColor(icon) { //Sets the color of the user's icon
+    iconColor(icon) { // Sidebar status color
         if (Session.get("sidebar") === icon + "Container") {
             return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else if (Session.get("sidebar") === "both") {
@@ -181,19 +183,19 @@ Template.main.helpers({
             return;
         }
     },
-    defaultMode() { //Loads the defaults for a new/uncustomized user
+    defaultMode() { //Loads the default display mode for user.
         if(load) {
             Session.set("mode",Meteor.user().profile.preferences.mode);
             load = false;
         }
         return;
     },
-    bgSrc() { // Adjusts for different, larger screen sizes
+    bgSrc() { // Adjusts for different, larger screen sizes.
         var dim = [window.innerWidth, window.innerHeight];
         var pic = "Backgrounds/"+themeColors[Meteor.user().profile.preferences.theme].background;
         return pic;
     },
-    menuStatus() { 
+    menuStatus() { // Status of of menu sidebar.
         if (Session.get("sidebar") === "menuContainer") {
             return "0%";
         } else if (Session.get("sidebar") === "both") {
@@ -202,7 +204,7 @@ Template.main.helpers({
             return openValues.menu;
         }
     },
-    optionsStatus() {
+    optionsStatus() { // Status of options sidebar.
         if (Session.get("sidebar") === "optionsContainer") {
             return "0%";
         } else if (Session.get("sidebar") === "both") {
@@ -211,14 +213,14 @@ Template.main.helpers({
             return openValues.options;
         }
     },
-    modeStatus(status) {
+    modeStatus(status) { // Color status of display modes.
         if (status === Session.get("mode")) {
             return themeColors[Meteor.user().profile.preferences.theme].highlightText;
         } else {
             return;
         }
     },
-    currMode(name) {
+    currMode(name) { // Status of display mode.
         var mode = Session.get("mode");
         if (name === mode) {
             return true;
@@ -226,7 +228,7 @@ Template.main.helpers({
             return false;
         }
     },
-    calendarOptions() { // Sets up and modifies the calendar code
+    calendarOptions() { // Settings for the calendar, including work displaying.
         return {
             id: "fullcalendar",
             height: window.innerHeight * 0.8,
@@ -238,57 +240,42 @@ Template.main.helpers({
             },
             events: function(start, end, timezone, callback) {
                 var events = [];
-                var cursor = work.find({class: {$in: Session.get("calendarclasses")}});
-                var classDisp = Session.get("classDisp");
-                var hide = Meteor.user().profile.preferences.timeHide;
-                cursor.forEach(function(current) {
-                    var disp = true;
-                    if(classDisp.length !== 0 && classDisp.indexOf(current.class) === -1) disp = false;
+                var userClasses = Session.get("calendarClasses");
 
-                    if(hide !== 0) {
-                        var due = (moment(current.dueDate))["_d"];
-                        var today = (moment().subtract(hide,'days'))["_d"];
-                        if(today > due) {
-                            disp = false;
-                        }
-                    }
-                    if(Meteor.user().profile.preferences.done && current.done.indexOf(Meteor.userId()) !== -1) disp = false;
+                for(var i = 0; i < userClasses.length; i++) {
+                    var works = userClasses[i].thisClassWork;
+                    for(var j = 0; j < works.length; j++) {
+                        var work = works[j];
+                        var currClass = classes.findOne({_id: work.class})
+                        var inRole = false;
 
-                    var inRole = false;
-                    var currClass = classes.findOne({_id: current.class})
+                        if(Meteor.userId() === work.creator ||
+                        Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+                        currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+                        currClass.banned.indexOf(Meteor.userId()) !== -1
+                        ) inRole = true;
 
-                    if(Meteor.userId() === current.creator ||
-                    Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                    currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                    currClass.banned.indexOf(Meteor.userId()) !== -1
-                    ) inRole = true;
-
-                    backgroundColor = workColors[current.type];
-                    title = current.name;
-                    duedate = current.dueDate.toISOString().slice(0, 10);
-
-                    if(disp) {
                         events.push({
-                            id: current._id,
-                            start: duedate,
-                            title: title,
-                            backgroundColor: backgroundColor,
+                            id: work._id,
+                            start: work.realDate.toISOString().slice(0, 10),
+                            title: work.name,
+                            backgroundColor: workColors[work.type],
                             borderColor: "#444",
                             startEditable: inRole,
-                            className: "workevent "+current.class,
-                        });
+                            className: "workevent "+work.class,
+                        }) 
                     }
-                });
+                }
                 callback(events);
             },
-            eventDrop: function(event, delta, revertFunc) {
+            eventDrop: function(event, delta, revertFunc) { // When user drops from click-dragging.
                 var current = work.findOne({_id:event.id});
                 var date = event.start.format().split("-");
                 current.dueDate = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
                 serverData = current;
                 sendData("editWork");
             },
-            eventClick: function(event, jsEvent, view) {
+            eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork",false);
                 var thisWork = work.findOne({_id:event.id})
                 Session.set("currentWork",thisWork);
@@ -296,10 +283,10 @@ Template.main.helpers({
                 Session.set("currentReadableWork",thisReadWork);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
-            dayClick: function(date, jsEvent, view) {
+            dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if(jsEvent.target.className.includes("fc-past")) return;
-                Session.set("calCreWork",true);
-                Session.set("calWorkDate",date.format());
+                calCreWork = true;
+                calWorkDate = date.format();
                 Session.set("sidebar","menuContainer");
             }
         };
@@ -316,8 +303,8 @@ Template.main.helpers({
         var height = window.innerHeight * 0.76;
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
     },
-    calCreWork() {
-        if(Session.get("calCreWork")) {
+    calCreWork() { // Display instructions for creating a work.
+        if(calCreWork) {
             var div = document.getElementById("calCreWork");
             div.style.setProperty("display","inline-block","important");
             div.style.setProperty("opacity","0","important");
@@ -332,7 +319,7 @@ Template.main.helpers({
             return;
         }
     },
-    highlight() { // Lets someone highlight a section of the calendar
+    highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
         var works = document.getElementsByClassName("workevent");
         var work = $('.workevent');
@@ -359,22 +346,22 @@ Template.main.helpers({
         }
         return;
     },
-    workCenter() { // Dimensions the work center
+    workCenter() { // Centers work overlay.
         var w = window.innerWidth * 0.3;
         var h = window.innerHeight * 0.7;
         return "width:"+w.toString()+"px;height:"+h.toString()+"px;margin-left:"+-0.5*w.toString()+"px;margin-top:"+-0.5*h.toString()+"px";
     },
-    commentDim() {
+    commentDim() { // Dimensions of comment container.
         var work = Session.get("currentWork");
         if(Session.get("newWork") === null || work === null) return;
         if(Session.get("newWork") || work.comments.length <= 3) return;
         return 0.23*window.innerHeight.toString() + "px";
     },
-    work(value) {
+    work(value) { // Returns the specified work value.
         if(Session.get("currentWork") === null) return;
         return Session.get("currentReadableWork")[value];
     },
-    workType() {
+    workType() { // Returns color for respective work type.
         if(Session.get("currentWork") === null) return;
         if(Session.get("currentWork").type === undefined) return;
         type = Session.get("currentWork").type;
@@ -384,13 +371,13 @@ Template.main.helpers({
             return workColors[type];
         }
     },
-    commentLength() {
+    commentLength() { // Returns characters left for comment length.
         return Session.get("commentRestrict");
     },
-    newWork() {
+    newWork() { // If user is creating a new work.
         return Session.get("newWork");
     },
-    inRole() {
+    inRole() { // Checks correct permissions.
         if(Session.get("newWork")) {
             return true;
         } else {
@@ -405,75 +392,31 @@ Template.main.helpers({
 });
 
 Template.main.events({
-    'click .fa-bars' () {
-        var side = Session.get("sidebar");
-        if (side === "menuContainer") {
-            Session.set("sidebar", null);
-        } else if (side === "optionsContainer") {
-            Session.set("sidebar", "both");
-        } else if (side === "both") {
-            Session.set("sidebar", "optionsContainer");
-        } else {
-            Session.set("sidebar", "menuContainer");
-        }
-    },
-    'click .fa-cog' () {
-        var side = Session.get("sidebar");
-        if (side === "optionsContainer") {
-            Session.set("sidebar", null);
-        } else if (side === "menuContainer") {
-            Session.set("sidebar", "both");
-        } else if (side === "both") {
-            Session.set("sidebar", "menuContainer");
-        } else {
-            Session.set("sidebar", "optionsContainer");
-        }
-    },
-    'click .classes' () {
-        if (Session.get("mode") === "classes") return;
-        var modeHolder = document.getElementById("mainBody");
-        closeDivFade(modeHolder);
-        setTimeout(function() {
-            Session.set("mode", "classes");
-            openDivFade(modeHolder);
-        }, 300);
-        Session.set("sidebar",null);
-    },
-    'click .calendar' () { // Applies on a click of the calendar. First checks if the mode is currently the calendar, and then sets it to that if it isn't.
-        if (Session.get("mode") === "calendar") return;
-        var modeHolder = document.getElementById("mainBody");
-        closeDivFade(modeHolder);
-        setTimeout(function() {
-            Session.set("mode", "calendar");
-            openDivFade(modeHolder);
-        }, 300);
-        Session.set("sidebar",null);
-    },
-    'click' (event) {
+    'click' (event) { // Closes respective divs when clicking outside of them. Order matters.
         var e = event.target.className;
-        var sessval = Session.get("modifying");
+        var modifyingInput = Session.get("modifying");
 
-        if (event.target.id !== sessval &&
-            event.target.id !== sessval + "a" &&
+        if (event.target.id !== modifyingInput && // Input for dropdown closing.
+            event.target.id !== modifyingInput + "a" &&
             !Session.equals("modifying", null) &&
             !event.target.parentNode.className.includes("workOptions") &&
             !event.target.parentNode.className.includes("prefOptions")) {
-            closeInput(sessval);
+            closeInput(modifyingInput);
         }
 
-        if (e !== Session.get("sidebar") &&
+        if (e !== Session.get("sidebar") && // Sidebar closing.
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
         !document.getElementById("menuContainer").contains(event.target) &&
         !document.getElementById("optionsContainer").contains(event.target) && 
         !(event.target.className.includes("fc-day") && !event.target.className.includes("fc-past"))) {
-            if(Session.get("calCreWork")) {
-                Session.set("calCreWork",false);
+            if(calCreWork) {
+                calCreWork = false;
             }
             Session.set("sidebar",null);
         }
 
-        if(e === "overlay") {
+        if(e === "overlay") { // Overlay closing.
             closeDivFade(document.getElementsByClassName("overlay")[0]);
             if(!Session.get("newWork")) {
                 if(getHomeworkFormData() === null) return;
@@ -486,10 +429,9 @@ Template.main.events({
             Session.set("currentReadableWork",null);
             $('.req').css("color","");
             Session.set("commentRestrict",null);
-
         }
 
-        if (!event.target.className.includes("radio") &&
+        if (!event.target.className.includes("radio") && // Dropdown closing.
             !event.target.parentNode.className.includes("workOptions") &&
             !event.target.parentNode.className.includes("prefOptions") &&
             event.target.readOnly !== true) {
@@ -505,14 +447,59 @@ Template.main.events({
             }
         }
     },
-    'click .creWork' (event) {
+    // MAIN MENU BUTTONS
+    'click .fa-bars' () { // Click menu button.
+        var side = Session.get("sidebar");
+        if (side === "menuContainer") {
+            Session.set("sidebar", null);
+        } else if (side === "optionsContainer") {
+            Session.set("sidebar", "both");
+        } else if (side === "both") {
+            Session.set("sidebar", "optionsContainer");
+        } else {
+            Session.set("sidebar", "menuContainer");
+        }
+    },
+    'click .fa-cog' () { // Click settings button.
+        var side = Session.get("sidebar");
+        if (side === "optionsContainer") {
+            Session.set("sidebar", null);
+        } else if (side === "menuContainer") {
+            Session.set("sidebar", "both");
+        } else if (side === "both") {
+            Session.set("sidebar", "menuContainer");
+        } else {
+            Session.set("sidebar", "optionsContainer");
+        }
+    },
+    'click .classes' () { // Click classes mode button.
+        if (Session.get("mode") === "classes") return;
+        var modeHolder = document.getElementById("mainBody");
+        closeDivFade(modeHolder);
+        setTimeout(function() {
+            Session.set("mode", "classes");
+            openDivFade(modeHolder);
+        }, 300);
+        Session.set("sidebar",null); // Closes all sidebars.
+    },
+    'click .calendar' () { // Click calendar mode button.
+        if (Session.get("mode") === "calendar") return;
+        var modeHolder = document.getElementById("mainBody");
+        closeDivFade(modeHolder);
+        setTimeout(function() {
+            Session.set("mode", "calendar");
+            openDivFade(modeHolder);
+        }, 300);
+        Session.set("sidebar",null); // Closes all sidebars.
+    },
+    'click .creWork' (event) { // Cick add work button.
         if(event.target.className !== "creWork") {
             var attr = event.target.parentNode.getAttribute("classid");
         } else {
             var attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentReadableWork",
+        Session.set("currentReadableWork", // Default readable work.
         {
               name:"Name | Click here to edit...",
               class:attr,
@@ -522,20 +509,43 @@ Template.main.events({
         });
         Session.set("currentWork",{class:attr});
         openDivFade(document.getElementsByClassName("overlay")[0]);
-    },
-    'click .change' (event) {
+    },   
+    'click .workCard' (event) { // Display work information on work card click.
+        var dom = event.target;
+        while(event.target.className !== "workCard") event.target = event.target.parentNode;
+        workid = event.target.getAttribute("workid");
+
+        Session.set("newWork",false);
+        var thisWork = work.findOne({_id:workid});
+        Session.set("currentWork",thisWork);
+        var thisReadWork = formReadable(thisWork);
+        Session.set("currentReadableWork",thisReadWork);
+
         if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
-            if(!(Meteor.userId() === Session.get("currentWork").creator || 
+            if(!(Meteor.userId() === Session.get("currentWork").creator || // If user has permission.
+            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+            currClass.banned.indexOf(Meteor.userId()) !== -1)) {
+                var inputs = $('#editWork .change').css("cursor","default");
+            };
+        }
+        openDivFade(document.getElementsByClassName("overlay")[0]);
+    },
+    // HANDLING INPUT CHANGING
+    'click .change' (event) { // Click changable inputs. Creates an input where the span is.
+        if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
+            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
+            if(!(Meteor.userId() === Session.get("currentWork").creator || // If user has permission.
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
             currClass.banned.indexOf(Meteor.userId()) !== -1
             )) return;
         }
-
+        // CSS and DOM manipulation.
         var ele = event.target;
-        var sessval = Session.get("modifying");
-        if (ele.id !== sessval && sessval !== null) closeInput(sessval);
+        var modifyingInput = Session.get("modifying");
+        if (ele.id !== modifyingInput && modifyingInput !== null) closeInput(modifyingInput);
 
         Session.set("modifying", ele.id);
         var dim = ele.getBoundingClientRect();
@@ -585,7 +595,7 @@ Template.main.events({
             ele.parentNode.appendChild(span);
         }
     },
-    'click .radio' (event) {
+    'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
         if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
             if(!(Meteor.userId() === Session.get("currentWork").creator || 
@@ -602,7 +612,7 @@ Template.main.events({
             var radio = "workOptions";
         }
         try {
-            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
+            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) { // Close any previously open menus.
                 var curr = document.getElementsByClassName(radio)[i];
                 if(curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
                     closeDivFade(document.getElementsByClassName(radio)[i]);
@@ -611,58 +621,49 @@ Template.main.events({
         } catch (err) {}
         openDivFade(op.parentNode.parentNode.childNodes[3]);
     },
-    'click .workOptionText' (event) {
-        var sessval = Session.get("modifying");
+    'click .workOptionText' (event) { // Click each work setting
+        var modifyingInput = Session.get("modifying");
         var p = event.target;
         var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
         try {
-            closeInput(sessval);
+            closeInput(modifyingInput);
         } catch (err) {}
 
         closeDivFade(p.parentNode);
         input.focus();
     },
-    'click .prefOptionText' (event) {
-        var sessval = Session.get("modifying");
+    'click .prefOptionText' (event) { // Click each preferences setting.
+        var modifyingInput = Session.get("modifying");
         var p = event.target;
         var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
         try {
-            closeInput(sessval);
+            closeInput(modifyingInput);
         } catch (err) {}
 
         closeDivFade(p.parentNode);
         input.focus();
     },
-    'keydown' (event) {
-        var sessval = Session.get("modifying");
-        if (event.keyCode == 13 && sessval != "workDesc") {
+    'keydown' (event) { // Enter to close input.
+        var modifyingInput = Session.get("modifying");
+        if (event.keyCode == 13 && modifyingInput != "workDesc") {
             try {
-                closeInput(sessval);
+                closeInput(modifyingInput);
             } catch (err) {}
         }
-        if (sessval !== null && event.keyCode !== 13) {
-            var restrict = document.getElementById(sessval).getAttribute("restrict");
-            if (restrict !== null) {
-                var num = parseInt(restrict) - event.target.value.length;
-                var restext = document.getElementById("restrict");
-                if (num === 1) {
-                    restext.childNodes[0].nodeValue = num.toString() + " character left";
-                    restext.style.setProperty("color", "#999", "important");
-                } else if (num <= 0) {
-                    var input = document.getElementById(sessval + "a");
-                    input.value = input.value.substring(0, parseInt(restrict));
-                    restext.childNodes[0].nodeValue = "0 characters left";
-                    restext.style.setProperty("color", "#FF1A1A", "important");
-                } else {
-                    restext.childNodes[0].nodeValue = num.toString() + " characters left";
-                    restext.style.setProperty("color", "#999", "important");
-                }
-            }
-        }
     },
-    'click #commentSubmit' (event) {
+    'focus #workDatea' () { // Open date picker.
+        $('#workDatea').datepicker({
+            format: 'DD, MM d, yyyy',
+            startDate: 'd',
+            todayHighlight: true,
+            todayBtn: true,
+            autoclose: true
+        });
+    },
+    // WORK OVERLAY BUTTONS
+    'click #commentSubmit' (event) { // Click to submit a comment.
         workId = Session.get("currentWork")._id;
         var input = document.getElementById('workComment');
         comment = input.value;
@@ -676,10 +677,9 @@ Template.main.events({
                 Session.set("currentReadableWork",thisReadWork);
             });
         }
-
     },
-    'click #workSubmit' () { // Apples on the work submit button. If the current value, then terminate. Otherwise, create a new work or edit the current piece of work
-        if(getHomeworkFormData() === null) return;
+    'click #workSubmit' () { // Click submit work to create a work.
+        if(getHomeworkFormData() === null) return; // Makes sure to check valid homework.
         serverData = Session.get("currentWork");
         if(Session.get("newWork")) {
             sendData("createWork");
@@ -689,51 +689,43 @@ Template.main.events({
         Session.set("newWork",null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
-    'focus .op' (event) {
-        event.target.click();
-    },
-    'click .workCard' (event) {
-        var dom = event.target;
-        while(event.target.className !== "workCard") event.target = event.target.parentNode;
-        workid = event.target.getAttribute("workid");
-
-        Session.set("newWork",false);
-        var thisWork = work.findOne({_id:workid});
-        Session.set("currentWork",thisWork);
-        var thisReadWork = formReadable(thisWork);
-        Session.set("currentReadableWork",thisReadWork);
-
-        if(!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
-            var currClass = classes.findOne({_id: Session.get("currentWork")["class"]});
-            if(!(Meteor.userId() === Session.get("currentWork").creator || 
-            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-            currClass.banned.indexOf(Meteor.userId()) !== -1)) {
-                var inputs = $('#editWork .change').css("cursor","default");
-            };
+    'keydown #workComment' (event) { // Restrict length on comment.
+        var chars = event.target.value.length;
+        document.getElementById("commentRestrict").style.color = "#7E7E7E";
+        if(chars === 0) { // Don't display if nothing in comment.
+            Session.set("commentRestrict","");
+            return;
         }
+        if(chars === 200) {
+            document.getElementById("commentRestrict").style.color = "#FF1A1A"; // Make text red if 0 characters left.
 
-        openDivFade(document.getElementsByClassName("overlay")[0]);
+        }
+        Session.set("commentRestrict", "Characters left: " + (200-chars).toString());
+        
+    }, 
+    'click #markDone' () { // Click done button.
+        serverData = [Session.get("currentWork")._id, "done"]
+        sendData("toggleWork");
     },
-    'focus #workDatea' () {
-        $('#workDatea').datepicker({
-            format: 'DD, MM d, yyyy',
-            startDate: 'd',
-            todayHighlight: true,
-            todayBtn: true,
-            autoclose: true
-        });
+    'click #markConfirm' () { // Click confirm button.
+        serverData = [Session.get("currentWork")._id, "confirmations"]
+        sendData("toggleWork");
     },
-    'click .sideClass' (event) {
+    'click #markReport' () { // Click report button.
+        serverData = [Session.get("currentWork")._id, "reports"]
+        sendData("toggleWork");
+    },
+    // CLASS FILTERS
+    'click .sideClass' (event) { // Click class list in sidebar.
         var div = event.target;
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
-        if(Session.get("calCreWork")) {
-            Session.set("calCreWork",null);
+        if(calCreWork) { // If creating work from calendar.
+            calCreWork = null;
             Session.set("sidebar",null);
 
-            var date = Session.get("calWorkDate").split("-");
+            var date = calWorkDate.split("-");
             var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
             Session.set("newWork", true);
             Session.set("currentReadableWork",
@@ -746,7 +738,7 @@ Template.main.events({
             });
             Session.set("currentWork",{class:classid,dueDate:date});
             openDivFade(document.getElementsByClassName("overlay")[0]);  
-        } else {
+        } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
             if(array.indexOf(classid) !== -1) {
                 array.splice(array.indexOf(classid),1);
@@ -754,10 +746,10 @@ Template.main.events({
                 array.push(classid);
             }
             Session.set("classDisp",array);
-            $("#fullcalendar").fullCalendar( 'refetchEvents' );
+            $("#fullcalendar").fullCalendar( 'refetchEvents' ); // Update calendar events.
         }
     },
-    'mouseover .sideClass' (event) {
+    'mouseover .sideClass' (event) { // Highlight/scale filter on-hover.
         if(event.target.className !== "sideClass") {
             var div = event.target.parentNode;
         } else {
@@ -767,32 +759,12 @@ Template.main.events({
         var classid = div.getAttribute("classid");
         Session.set("classDispHover",classid);
     },
-    'mouseleave .sideClass' (event) {
+    'mouseleave .sideClass' (event) { // Turn off highlight/scale filter on-leave.
         if(event.target.className !== "sideClass") {
             var div = event.target.parentNode;
             if(div.contains(event.target)) return;
         }
         Session.set("classDispHover",null);
-    },
-    'keydown #workComment' (event) {
-        var chars = event.target.value.length;
-        document.getElementById("commentRestrict").style.color = "#CCC";
-        if(chars === 200) {
-            document.getElementById("commentRestrict").style.color = "#FF1A1A";
-        }
-        Session.set("commentRestrict", "Characters left: " + (200-chars).toString()); 
-    }, 
-    'click #markDone' () {
-        serverData = [Session.get("currentWork")._id, "done"]
-        sendData("toggleWork");
-    },
-    'click #markConfirm' () {
-        serverData = [Session.get("currentWork")._id, "confirmations"]
-        sendData("toggleWork");
-    },
-    'click #markReport' () {
-        serverData = [Session.get("currentWork")._id, "reports"]
-        sendData("toggleWork");
     }
 });
 
@@ -811,7 +783,7 @@ function closeDivFade(div) {
     }, 100);
 }
 
-function sendData(funcName) {
+function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
     Meteor.call(funcName, serverData , function(err,result) {
         if((funcName === "editWork" || funcName === "createWork") && Session.get("mode") === "calendar") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
@@ -824,12 +796,13 @@ function sendData(funcName) {
         } else if(funcName === "editProfile") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
+        console.log(err,result);
     });
 }
 
-function closeInput(sessval) {
-    var input = document.getElementById(sessval + "a");
-    var span = document.getElementById(sessval);
+function closeInput(modifyingInput) { // Close a changeable input and change it back to span.
+    var input = document.getElementById(modifyingInput + "a");
+    var span = document.getElementById(modifyingInput);
     if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
         var color = "#000";
     } else {
@@ -841,7 +814,7 @@ function closeInput(sessval) {
         var restrict = document.getElementById("restrict");
         restrict.parentNode.removeChild(restrict);
     } catch (err) {}
-    if (input.value === "") {
+    if (input.value === "") { // If input has nothing.
         span.childNodes[0].nodeValue = "Click here to edit...";
     } else {
         span.childNodes[0].nodeValue = input.value;
@@ -849,7 +822,7 @@ function closeInput(sessval) {
     span.style.display = "initial";
     Session.set("modifying", null);
 
-    if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) {
+    if(Session.equals("sidebar","optionsContainer") || Session.equals("sidebar","both")) { // Close depending on work or preferences.
         serverData = getPreferencesData();
         sendData("editProfile");
     } else if(!Session.get("newWork")) {
@@ -859,7 +832,7 @@ function closeInput(sessval) {
     }
 }
 
-function getHomeworkFormData() {
+function getHomeworkFormData() { // Get all data relating to work creation.
     var inputs = document.getElementsByClassName("req");
     var stop;
     for(var i = 0; i < inputs.length; i++) {
@@ -883,7 +856,7 @@ function getHomeworkFormData() {
     Session.set("currentReadableWork", readableData);
 }
 
-function getPreferencesData() {
+function getPreferencesData() { // Get all data relating to preferences.
     var profile = Meteor.user().profile;
     var options = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
@@ -898,11 +871,11 @@ function getPreferencesData() {
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-function getReadableDate(date) {
+function getReadableDate(date) { // Get readable date from Date constructor.
     return days[date.getDay()]+", "+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear();
 }
 
-function toDate(date) { //Formats the date into the  format needed for niceness
+function toDate(date) { // Turns formatted date back to Date constructor.
     date = date.substring(date.search(",")+2,date.length);
     month = months.indexOf(date.substring(0,date.search(" ")));
     day = date.substring(date.search(" ")+1,date.search(","));
@@ -910,12 +883,12 @@ function toDate(date) { //Formats the date into the  format needed for niceness
     return new Date(year,month,day,11,59,59);
 }
 
-function formReadable(input) {
+function formReadable(input) { // Makes work information readable by users.
     input.dueDate = getReadableDate(input.dueDate);
     input.type = input.type[0].toUpperCase() + input.type.slice(1);
 
     if(!Session.get("newWork")) {
-        if(input.done.indexOf(Meteor.userId()) !== -1) {
+        if(input.done.indexOf(Meteor.userId()) !== -1) { // If user marked as done.
             input.doneCol = "#27A127";
             input.doneText = "Done!";
         } else {
@@ -923,17 +896,17 @@ function formReadable(input) {
             input.doneText = "Mark done";
         }
 
-        for(var i = 0; i < input.done.length; i++) {
+        for(var i = 0; i < input.done.length; i++) { // Display users who marked as done.
             input.done[i] = {"user":Meteor.users.findOne({_id:input.done[i]}).profile.name};
         }
 
-        if(input.confirmations.indexOf(Meteor.userId()) !== -1) {
+        if(input.confirmations.indexOf(Meteor.userId()) !== -1) { // If user confirmed.
             input.userConfirm = "#27A127";
         } else {
             input.userConfirm = "";
         }
 
-        if(input.reports.indexOf(Meteor.userId()) !== -1) {
+        if(input.reports.indexOf(Meteor.userId()) !== -1) { // If user reported.
             input.userReport = "#FF1A1A";
         } else {
             input.userReport = "";
@@ -944,7 +917,7 @@ function formReadable(input) {
 
         var comments = input.comments;
         var resort = [];
-        if(!Session.get("newWork")) {
+        if(!Session.get("newWork")) { // Don't display comments if user is creating work.
             for(var k = 0; k < comments.length; k++) {
                 var re = comments.length-k-1;
                 resort[re] = {"comment":comments[k].comment,"date":null,"user":null};
