@@ -22,15 +22,6 @@ var workColors = {
     "other": "#852E6D"
 };
 
-// Sets defaults for new users
-
-var defaults = {
-    "theme":"light",
-    "mode":"classes",
-    "timeHide":1,
-    "done": true
-};
-
 //Creates variables for due dates
 
 var ref = {
@@ -56,10 +47,12 @@ Session.set("classDispHover",null); // Stores current hovered filter.
 Session.set("commentRestrict",null); // Stores text for comment character restriction.
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
+    if(Meteor.user().profile.preferences === undefined) return;
     return themeColors[Meteor.user().profile.preferences.theme][div];
 });
 
-Template.registerHelper('textColor', () => { // Reactive color for text. 
+Template.registerHelper('textColor', () => { // Reactive color for text.
+    if(Meteor.user().profile.preferences === undefined) return; 
     document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
     return;
 });
@@ -153,6 +146,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
+    if(Meteor.user().profile.preferences === undefined) return;
     if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) { // Invalid preference checking.
         var array = Meteor.user().profile;
         array.preferences = defaults;

@@ -58,6 +58,15 @@ Template.profile.helpers({
             }]
         };
     },
+    loadNew() {
+        if(Meteor.user().profile.preferences === undefined) {
+            var profile = Meteor.user().profile;
+            profile.preferences = defaults;
+            serverData = profile;
+            sendData("editProfile");
+        }
+        return;
+    },
     mainCenter() { // Centers main div container.
         var width = window.innerWidth * 1600 / 1920 + 10;
         return "width:" + width.toString() + "px;margin-left:" + -0.5 * width.toString() + "px";
