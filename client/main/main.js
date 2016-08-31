@@ -93,7 +93,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 array[i].thisClassWork = [];
                 continue;
             }
-
+	
             for(var j = 0; j < thisWork.length; j++) { // For each work in class.
                 if(hide !== 0) { // Time to hide isn't never.
                     var due = (moment(thisWork[j].dueDate))["_d"];
@@ -109,6 +109,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                         j = 0;
                     }
                 }
+			
             }
             while(thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"),1); // Splice all filtered works.
 
@@ -130,6 +131,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 }
                 thisWork[j].typeColor = workColors[thisWork[j].type];
 
+				thisWork[j].confirmationLength = thisWork[j].confirmations.length // Counts the number of confiramtions and reportsfor a particular work
+				thisWork[j].reportLength = thisWork[j].reports.length
+			
                 var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
                 if(hoverHighlight !== null && hoverHighlight === found._id) {
                     thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
@@ -564,7 +568,6 @@ Template.main.events({
         input.style.width = "70%";
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
-        input.setAttribute("opc", ele.getAttribute("opc"));
         ele.parentNode.appendChild(input);
         if (ele.getAttribute("re") == "readonly") {
             input.readOnly = true;
@@ -895,7 +898,7 @@ function formReadable(input) { // Makes work information readable by users.
         }
 
         if(input.confirmations.indexOf(Meteor.userId()) !== -1) { // If user confirmed.
-            input.userConfirm = "#27A127";
+			input.userConfirm = "#27A127";
         } else {
             input.userConfirm = "";
         }
@@ -906,8 +909,6 @@ function formReadable(input) { // Makes work information readable by users.
             input.userReport = "";
         }
 
-        input.confirmations = input.confirmations.length;
-        input.reports = input.reports.length;
 
         var comments = input.comments;
         var resort = [];

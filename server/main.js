@@ -10,7 +10,8 @@ import {
 
 var superadmins = [
     "ybq987@gmail.com",
-    "ksjdragon@gmail.com"
+    "ksjdragon@gmail.com",
+	"aravagarwal3073@gmail.com"
 ];
 
 var worktype = ["test", "quiz", "project", "normal", "other"];
