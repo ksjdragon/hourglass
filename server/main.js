@@ -11,7 +11,7 @@ import {
 var superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com",
-	"aravagarwal3073@gmail.com"
+    //"aravagarwal3073@gmail.com"
 ];
 
 var worktype = ["test", "quiz", "project", "normal", "other"];
@@ -137,8 +137,8 @@ Meteor.methods({
         if (privacy) {
             var currcode = Math.random().toString(36).substr(2, 6);
             while (classes.findOne({
-                code: currcode
-            })) {
+                    code: currcode
+                })) {
                 currcode = Math.random().toString(36).substr(2, 6);
             }
             return currcode;
@@ -224,8 +224,8 @@ Meteor.methods({
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
 
             (found && foundclass && foundclass.admin == Meteor.userId() &&
-             !_.contains(foundclass.banned, userId) &&
-             _.contains(foundclass.subscribers, userId)
+                !_.contains(foundclass.banned, userId) &&
+                _.contains(foundclass.subscribers, userId)
             )) {
             classes.update({
                 _id: classId
@@ -263,8 +263,8 @@ Meteor.methods({
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
 
             (foundclass && foundclass.admin == Meteor.userId() && index !== -1 &&
-             (index === 0 ^ _.contains(foundclass.moderators, Meteor.userId())) &&
-             (!_.contains(classlist, userId) ^ presence))) {
+                (index === 0 ^ _.contains(foundclass.moderators, Meteor.userId())) &&
+                (!_.contains(classlist, userId) ^ presence))) {
             classes.update({
                 _id: classId
             }, {
@@ -363,8 +363,8 @@ Meteor.methods({
                 });
             }
         } else if (Meteor.userId() === work.findOne({
-            _id: change._id
-        }).creator) {
+                _id: change._id
+            }).creator) {
             if (change.name.length <= 50 && _.contains(worktype, change.type) &&
                 change.dueDate instanceof Date && change.dueDate.getTime() >= ref) {
                 work.update({
@@ -397,8 +397,8 @@ Meteor.methods({
             _.contains(foundsubs, Meteor.userId()) &&
             _.contains(currentclass.banned, Meteor.userId())) {
             var commentInfo = {
-                "comment":input[0],
-                "user":user,
+                "comment": input[0],
+                "user": user,
                 "date": new Date()
             };
             var comments = workobject.comments.concat(commentInfo);
@@ -429,7 +429,7 @@ Meteor.methods({
                     _.contains(workobject.reports, Meteor.userId())) {
                     workobject.reports.splice(userindex, 1);
                 } else if (input[1] === "reports" &&
-                           _.contains(workobject.confirmations, Meteor.userId())) {
+                    _.contains(workobject.confirmations, Meteor.userId())) {
                     workobject.confirmations.splice(userindex, 1);
                 }
             } else {
@@ -476,8 +476,8 @@ Meteor.methods({
         current.banner = change.banner;
         current.preferences = change.preferences;
         if (schools.findOne({
-            name: current.school
-        }) !== null &&
+                name: current.school
+            }) !== null &&
             Number.isInteger(current.grade) &&
             current.grade >= 9 && current.grade <= 12) {
 
@@ -508,7 +508,9 @@ Meteor.methods({
                 profile: current
             }
         });
-        return classes.find({_id: null});
+        return classes.find({
+            _id: null
+        });
     },
     'joinClass': function(input) {
         var change = input[0];
@@ -579,8 +581,8 @@ Meteor.methods({
             var index = current.classes.indexOf(change);
             if (index >= 0) {
                 if (classes.findOne({
-                    _id: change
-                }).admin != Meteor.userId()) {
+                        _id: change
+                    }).admin != Meteor.userId()) {
                     current.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()
