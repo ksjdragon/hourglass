@@ -6,6 +6,7 @@ import './main.html';
 
 var load = true;
 var calCreWork = null;
+var calWorkDate = null;
 
 var openValues = {
     "menu": "-25%",
@@ -43,17 +44,16 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("calendarClasses", null); //
-Session.set("sidebar", null);
-Session.set("newWork",null);
-Session.set("currentWork",null);
-Session.set("currentReadableWork",null);
-Session.set("modifying",null);
-Session.set("noclass",null);
-Session.set("calWorkDate",null);
-Session.set("classDisp",[]);
-Session.set("classDispHover",null);
-Session.set("commentRestrict",null);
+Session.set("calendarClasses", null);
+Session.set("sidebar", null); // Status of sidebar
+Session.set("newWork",null); // If user creating new work.
+Session.set("currentWork",null); // Stores current selected work info.
+Session.set("currentReadableWork",null); // Stores readable selected work info.
+Session.set("modifying",null); // Stores current open input.
+Session.set("noclass",null); // If user does not have classes.
+Session.set("classDisp",[]); // Stores current filter for classes.
+Session.set("classDispHover",null); // Stores current hovered filter.
+Session.set("commentRestrict",null); // Stores text for comment character restriction.
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
     return themeColors[Meteor.user().profile.preferences.theme][div];
@@ -286,7 +286,7 @@ Template.main.helpers({
             dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if(jsEvent.target.className.includes("fc-past")) return;
                 calCreWork = true;
-                Session.set("calWorkDate",date.format());
+                calWorkDate = date.format();
                 Session.set("sidebar","menuContainer");
             }
         };
@@ -725,7 +725,7 @@ Template.main.events({
             calCreWork = null;
             Session.set("sidebar",null);
 
-            var date = Session.get("calWorkDate").split("-");
+            var date = calWorkDate.split("-");
             var date = new Date(date[0],parseInt(date[1])-1,date[2],11,59,59);
             Session.set("newWork", true);
             Session.set("currentReadableWork",
@@ -796,6 +796,7 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
         } else if(funcName === "editProfile") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
+        console.log(err,result);
     });
 }
 

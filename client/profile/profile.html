@@ -68,7 +68,7 @@
 
 						{{#if profClassTab "addClass"}}
 							<i class="fa fa-search" aria-hidden="true"></i>
-							{{> inputAutocomplete id="profClassSearch" settings=classsettings placeholder="Search..."}}
+							{{> inputAutocomplete id="profClassSearch" settings=classSettings placeholder="Search..."}}
 							<h4 id="private">Join Private Class</h4>
 							<div id="label" class="classBox">
 								<span class="name classText">Class Name</span>
@@ -101,7 +101,7 @@
 								<div id="formContainer">
 									<div class="formDiv">
 						            	<p class="profTitle">School:</p>
-				              			{{> inputAutocomplete settings=schoolcomplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
+				              			{{> inputAutocomplete settings=schoolComplete class="form-control creInput" 		type="text" name="school" placeholder="Example: International Academy" }}
 					              	</div>
 					              	<div class="formDiv">
 						            	<p class="profTitle">Hour:</p>
@@ -109,7 +109,7 @@
 						            </div>
 						            <div class="formDiv">
 						            	<p class="profTitle">Teacher:</p>
-						              	{{> inputAutocomplete settings=teachercomplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
+						              	{{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
 						            </div>
 						            <div class="formDiv">
 						            	<p class="profTitle">Class Name:</p>
