@@ -41,7 +41,7 @@ Meteor.publish('classes', function() {
     } else {
         // Return user classes and all _public_ classes.
         var userclasses = Meteor.users.findOne(this.userId).profile.classes;
-        if (userclasses) {
+        if (userclasses !== undefined) {
             return classes.find({
                 $or: [{
                     privacy: false
@@ -83,7 +83,7 @@ Meteor.publish('work', function() {
         return work.find();
     } else {
         var userclasses = Meteor.users.findOne(this.userId).profile.classes;
-        if (userclasses) {
+        if (userclasses !== undefined) {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
