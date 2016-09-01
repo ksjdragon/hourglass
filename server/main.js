@@ -156,7 +156,7 @@ Meteor.methods({
                 name: schoolname
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     // Deletes school
@@ -166,7 +166,7 @@ Meteor.methods({
                 _id: schoolId
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -198,7 +198,7 @@ Meteor.methods({
             });
 
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     // For class admins to get code
@@ -209,7 +209,7 @@ Meteor.methods({
         if (foundclass && foundclass.admin == Meteor.userId()) {
             return foundclass.code;
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'changeAdmin': function(input) {
@@ -235,7 +235,7 @@ Meteor.methods({
                 }
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -271,7 +271,7 @@ Meteor.methods({
                 $set: set
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'deleteClass': function(classid) {
@@ -298,7 +298,7 @@ Meteor.methods({
                 _id: classid
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -327,7 +327,7 @@ Meteor.methods({
             input.comments = [];
             work.insert(input);
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
 
     },
@@ -380,7 +380,7 @@ Meteor.methods({
                 });
             }
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'addComment': function(input) {
@@ -410,7 +410,7 @@ Meteor.methods({
                 }
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -441,7 +441,7 @@ Meteor.methods({
                 $set: workobject
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'deleteWork': function(workId) {
@@ -458,7 +458,7 @@ Meteor.methods({
                 _id: workId
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -493,7 +493,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'createProfile': function(userId) {
@@ -549,7 +549,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'joinPrivateClass': function(input) {
@@ -578,7 +578,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'leaveClass': function(change) {
@@ -609,12 +609,12 @@ Meteor.methods({
                     });
                     return true;
                 } else {
-                    throw "You are currently the admin of this class. Transfer ownership in order to leave this class.";
+                    throw new Meteor.Error("unauthorized", "You are currently the admin of this class. Transfer ownership in order to leave this class.");
                 }
             }
 
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
 
@@ -623,14 +623,14 @@ Meteor.methods({
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.addUsersToRoles(userId, ['admin']);
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'deleteAdmin': function(userId) {
         if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
             Roles.removeUsersToRoles(userId, ['admin']);
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'createRequest': function(request) {
@@ -644,7 +644,7 @@ Meteor.methods({
                 timeRequested: new Date()
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
     'deleteRequest': function(requestId) {
@@ -653,7 +653,7 @@ Meteor.methods({
                 _id: requestId
             });
         } else {
-            throw "Unauthorized";
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     }
 });
