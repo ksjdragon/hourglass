@@ -628,10 +628,13 @@ Meteor.methods({
         }
     },
     'createRequest': function(request) {
-        if (request.length <= 500 && Meteor.userId() !== null) {
+        if (request.length <= 500 && Meteor.userId() !== null &&
+            _.contains(['bug', 'feature'], request.type)) {
             requests.insert({
                 requestor: Meteor.userId(),
-                request: request,
+                request: request.content,
+                type: request.type,
+                info: request.info,
                 timeRequested: new Date()
             });
         } else {
