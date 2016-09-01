@@ -67,9 +67,11 @@ Meteor.publish('classes', function() {
                 }
             });
         } else {
+            var empty;
             Meteor.call('createProfile', this.userId, function(error, result) {
-                return result;
+                empty = result;
             });
+            return result;
         }
     }
 });
@@ -89,9 +91,12 @@ Meteor.publish('work', function() {
                 }
             });
         } else {
+            var empty;
             Meteor.call('createProfile', this.userId, function(error, result) {
                 return result;
+                empty = result;
             });
+            return result;
         }
 
     }
