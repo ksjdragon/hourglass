@@ -7,7 +7,6 @@ import {
 } from 'meteor/mongo';
 
 // Defines who the admins are - not added
-
 var superadmins = [
     "ybq987@gmail.com",
     "ksjdragon@gmail.com",
@@ -40,14 +39,14 @@ Meteor.publish('classes', function() {
         return classes.find();
     } else {
         // Return user classes and all _public_ classes.
-        var userprofile = Meteor.users.findOne(this.userId).profile;
-        if (userprofile !== undefined && userprofile.classes !== undefined) {
+        var userprofile = Meteor.users.findOne(this.userId);
+        if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
             return classes.find({
                 $or: [{
                     privacy: false
                 }, {
                     _id: {
-                        $in: userprofile.classes
+                        $in: userprofile.profile.classes
                     }
                 }]
             }, {
@@ -67,11 +66,8 @@ Meteor.publish('classes', function() {
                 }
             });
         } else {
-            var empty;
-            Meteor.call('createProfile', this.userId, function(error, result) {
-                empty = result;
-            });
-            return result;
+            Meteor.call('createProfile', this.userId);
+            return classes.find({_id: null});
         }
     }
 });
@@ -82,20 +78,17 @@ Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
     } else {
-        var userprofile = Meteor.users.findOne(this.userId).profile;
-        if (userprofile !== undefined && userprofile.classes !== undefined) {
+        var userprofile = Meteor.users.findOne(this.userId);
+        if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
-                    $in: userprofile.classes
+                    $in: userprofile.profile.classes
                 }
             });
         } else {
-            var empty;
-            Meteor.call('createProfile', this.userId, function(error, result) {
-                empty = result;
-            });
-            return result;
+            Meteor.call('createProfile', this.userId);
+            return classes.find({_id: null});
         }
 
     }
@@ -517,9 +510,6 @@ Meteor.methods({
             $set: {
                 profile: current
             }
-        });
-        return classes.find({
-            _id: null
         });
     },
     'joinClass': function(input) {
