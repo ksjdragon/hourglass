@@ -150,22 +150,12 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
-    if(Meteor.user().profile.preferences === undefined) return;
-    if(Object.keys(Meteor.user().profile.preferences).length !== Object.keys(defaults).length) { // Invalid preference checking.
-        var array = Meteor.user().profile;
-        array.preferences = defaults;
-        serverData = array;
-        sendData("editProfile");
-        if(val === 'timeHide' || val === 'done') return defaults[val];
-        return defaults[val].charAt(0).toUpperCase() + defaults[val].slice(1);
-    } else {
-        var preferences = Meteor.user().profile.preferences;
-        if(val === 'timeHide' || val === 'done') {
-            var invert = _.invert(ref);
-            return invert[preferences[val]];
-        }
-        return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
+    var preferences = Meteor.user().profile.preferences;
+    if(val === 'timeHide' || val === 'done') {
+        var invert = _.invert(ref);
+        return invert[preferences[val]];
     }
+    return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
 });
 
 Template.main.helpers({
@@ -376,6 +366,7 @@ Template.main.helpers({
         return Session.get("newWork");
     },
     inRole() { // Checks correct permissions.
+        if(Session.get("currentWork") === null) return;
         if(Session.get("newWork")) {
             return true;
         } else {
