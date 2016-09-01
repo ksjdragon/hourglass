@@ -147,9 +147,10 @@ Template.profile.helpers({
     classHolderHeight() { // Dimensions the container for the classes
         return 0.26 * window.innerHeight.toString() + "px";
     },
-    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]     
+    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]
+             
         if (status === Session.get("profClassTab")) {            
-            return Session.get("themeColors")[Meteor.user().profile.preferences.theme].highlightText;        
+            return themeColors[Meteor.user().profile.preferences.theme].highlightText;        
         } else {            
             return;        
         }    
