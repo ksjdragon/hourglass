@@ -472,26 +472,17 @@ Meteor.methods({
         current.avatar = change.avatar;
         current.banner = change.banner;
         current.preferences = change.preferences;
-        if (schools.findOne({
-                name: current.school
-            }) !== null &&
-            Number.isInteger(current.grade) &&
-            current.grade >= 9 && current.grade <= 12) {
 
-            if (current.description && current.description.length > 50) {
-                current.description = current.description.slice(0, 50);
-            }
-            Meteor.users.update({
-                _id: Meteor.userId()
-            }, {
-                $set: {
-                    profile: current
-                }
-            });
-            return true;
-        } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+        if (current.description && current.description.length > 50) {
+            current.description = current.description.slice(0, 50);
         }
+        Meteor.users.update({
+            _id: Meteor.userId()
+        }, {
+            $set: {
+                profile: current
+            }
+        });
     },
     'createProfile': function(userId) {
         var current = Meteor.users.findOne({
