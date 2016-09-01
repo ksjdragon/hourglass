@@ -40,14 +40,14 @@ Meteor.publish('classes', function() {
         return classes.find();
     } else {
         // Return user classes and all _public_ classes.
-        var userclasses = Meteor.users.findOne(this.userId).profile.classes;
-        if (userclasses !== undefined) {
+        var userprofile = Meteor.users.findOne(this.userId).profile;
+        if (userprofile !== undefined && userprofile.classes !== undefined) {
             return classes.find({
                 $or: [{
                     privacy: false
                 }, {
                     _id: {
-                        $in: userclasses
+                        $in: userprofile.classes
                     }
                 }]
             }, {
@@ -82,12 +82,12 @@ Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
     } else {
-        var userclasses = Meteor.users.findOne(this.userId).profile.classes;
-        if (userclasses !== undefined) {
+        var userprofile = Meteor.users.findOne(this.userId).profile;
+        if (userprofile !== undefined && userprofile.classes !== undefined) {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
-                    $in: userclasses
+                    $in: userprofile.classes
                 }
             });
         } else {
