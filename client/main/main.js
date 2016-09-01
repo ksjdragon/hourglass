@@ -164,6 +164,7 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
 
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
+        if(Meteor.user().profile.school === undefined) return;
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) { // Sidebar status color
@@ -279,6 +280,7 @@ Template.main.helpers({
                 if(jsEvent.target.className.includes("fc-past")) return;
                 calCreWork = true;
                 calWorkDate = date.format();
+                Session.set("newWork", true);
                 Session.set("sidebar","menuContainer");
             }
         };
@@ -782,7 +784,7 @@ function closeDivFade(div) {
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
     Meteor.call(funcName, serverData , function(err,result) {
-        if((funcName === "editWork" || funcName === "createWork") && Session.get("mode") === "calendar") {
+        if((funcName === "editWork" || funcName === "createWork" || funcName === "deleteWork") && Session.get("mode") === "calendar") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         } else if(funcName === "toggleWork") {
             var workId = Session.get("currentWork")._id;
