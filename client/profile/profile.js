@@ -246,7 +246,7 @@ Template.profile.events({
         if(Session.get("privateClass") &&
         !document.getElementById("joinPrivClass").contains(event.target)) {
             Session.set("privateClass",false);
-            document.getElementById("joinPrivClass").style.marginBottom = "-10%";
+            document.getElementById("joinPrivClass").style.marginBottom = "-20%";
         }
     },
     // MAIN BUTTONS
