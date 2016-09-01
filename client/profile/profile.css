@@ -401,7 +401,7 @@
 	color: #999 !important;
 }
 
-#mainpage:hover {
+#mainpage:hover, #logout2:hover {
 	-webkit-transform: scale(1.05);
     -moz-transform: scale(1.05);
     -ms-transform: scale(1.05);
@@ -409,7 +409,7 @@
     transform: scale(1.05);
 }
 
-#mainpage h2 {
+#mainpage h2, #logout2 h2 {
 	font-weight: 200;
 	width: 100%;
 	padding: 8%;
@@ -418,8 +418,9 @@
 	filter: none !important;
 }
 
-#mainpage {
+#mainpage, #logout2 {
 	font-size: 90%;
+	padding: 0;
 	background-color: #617C9E;
 
 	box-shadow: -1px 2px 5px 1px #333;
@@ -434,8 +435,13 @@
 	-ms-transition: transform 0.2s ease, background-color 0.1s ease;
 	transition: transform 0.2s ease, background-color 0.1s ease;
 }
-
-#mainpage:active {
+#logout2 {
+	background-color: #DE5050;
+	position: absolute;
+	top: 0;
+	left: 85%;
+}
+#mainpage:active,#logout2:active {
 	background-color: #56708D;
 }
 
