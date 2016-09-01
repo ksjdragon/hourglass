@@ -501,6 +501,12 @@ Meteor.methods({
             _id: userId
         }).profile;
         current.classes = [];
+        current.preferences = {
+            "theme": "light",
+            "mode": "classes",
+            "timeHide": 1,
+            "done": true
+        };
         Meteor.users.update({
             _id: userId
         }, {
