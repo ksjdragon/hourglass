@@ -177,20 +177,20 @@
                             </div>
                             <div id="markConfirm" style="color:{{work 'userConfirm'}}">
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                <p>{{work 'confirmationLength'}}</p>
+                                <p>{{work 'confirmations'}}</p>
                             </div>
                             <div id="markReport" style="color:{{work 'userReport'}}">
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                <p>{{work 'reportLength'}}</p>
-								
+                                <p>{{work 'reports'}}</p>
                             </div>
                         </div>
                     </div>
                 {{/unless}}
-                {{#if newWork}}
-                    {{#if inRole}}
+                {{#if inRole}}
+                    {{#if newWork}}
                         <div id="workSubmit">Save</div>
                     {{/if}}
+                    <div id="workDelete">Delete</div>
                 {{/if}}
             </div>
         </div>

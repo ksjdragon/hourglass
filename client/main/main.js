@@ -131,7 +131,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 }
                 thisWork[j].typeColor = workColors[thisWork[j].type];
 
-				thisWork[j].confirmationLength = thisWork[j].confirmations.length // Counts the number of confiramtions and reportsfor a particular work
+				thisWork[j].confirmationLength = thisWork[j].confirmations.length // Counts the number of confirmations and reports for a particular work.
 				thisWork[j].reportLength = thisWork[j].reports.length
 			
                 var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
@@ -686,6 +686,11 @@ Template.main.events({
         Session.set("newWork",null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
+    'click #workDelete' () {
+        serverData = Session.get("currentWork")._id;
+        sendData("deleteWork");
+        closeDivFade(document.getElementsByClassName("overlay")[0]);
+    },
     'keydown #workComment' (event) { // Restrict length on comment.
         var chars = event.target.value.length;
         document.getElementById("commentRestrict").style.color = "#7E7E7E";
@@ -793,7 +798,6 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
         } else if(funcName === "editProfile") {
             $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
-        console.log(err,result);
     });
 }
 
@@ -909,6 +913,8 @@ function formReadable(input) { // Makes work information readable by users.
             input.userReport = "";
         }
 
+        input.confirmations = input.confirmations.length;
+        input.reports = input.reports.length;
 
         var comments = input.comments;
         var resort = [];
