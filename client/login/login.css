@@ -123,7 +123,9 @@ p.text {
 	bottom: 0;
 }
 
-
+.login-buttons {
+	display: none !important;
+}
 
 #github {
 	font-size: 150%;
