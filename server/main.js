@@ -389,9 +389,8 @@ Meteor.methods({
             _id: workobject.class
         });
         var user = Meteor.userId();
-        var foundsubs = currentclass.subscribers;
         if (typeof comment === "string" && comment.length <= 200 &&
-            _.contains(foundsubs, Meteor.userId()) &&
+            _.contains(currentclass.subscribers, Meteor.userId()) &&
             !_.contains(currentclass.banned, Meteor.userId())) {
             var commentInfo = {
                 "comment": input[0],
