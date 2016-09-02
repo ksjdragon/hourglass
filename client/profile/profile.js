@@ -149,14 +149,14 @@ Template.profile.helpers({
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]
              
-        if (status === Session.get("profClassTab")) {            
+        if (Session.equals("profClassTab",status)) {            
             return themeColors[Meteor.user().profile.preferences.theme].highlightText;        
         } else {            
             return;        
         }    
     },
     profClassTab(tab) { // Tells current class
-        if (tab === Session.get("profClassTab")) {
+        if (Session.get("profClassTab",tab)) {
             return true;
         } else {
             return false;
@@ -178,7 +178,7 @@ Template.profile.helpers({
         return Session.get("confirmText");
     },
     selectedClass(val) { // Returns values for selectedClass
-        if(Session.get("selectClassId") === null) return;
+        if(Session.equals("selectClassId",null)) return;
         var usertype = ["moderators","banned"];
         var attribute = Session.get("selectClassId");
         var array = classes.findOne({_id:attribute});
@@ -232,7 +232,7 @@ Template.profile.events({
             }
         }
         if(!document.getElementById("createdClasses").contains(event.target) &&
-        Session.get("code") !== null &&
+        !Session.equals("code",null) &&
         !event.target.className.includes("fa-times-circle-o")) {
             document.getElementById("createdClasses").style.marginRight = "-40%";
         }
@@ -276,7 +276,7 @@ Template.profile.events({
     },
     'click .classBox' (event) {  // When you click on a box that holds class
         if (event.target.id === "label" || 
-            Session.get("profClassTab") === "manClass" || 
+            Session.equals("profClassTab","manClass") || 
             event.target.className.includes("fa-times")) return;
 
         if (event.target.className !== "classBox") {

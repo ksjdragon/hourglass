@@ -171,9 +171,9 @@ Template.main.helpers({
         return " - " + Meteor.user().profile.school;
     },
     iconColor(icon) { // Sidebar status color
-        if (Session.get("sidebar") === icon + "Container") {
+        if (Session.equals("sidebar",icon + "Container")) {
             return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
-        } else if (Session.get("sidebar") === "both") {
+        } else if (Session.equals("sidebar","both")) {
             return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
         } else {
             return;
@@ -192,25 +192,25 @@ Template.main.helpers({
         return pic;
     },
     menuStatus() { // Status of of menu sidebar.
-        if (Session.get("sidebar") === "menuContainer") {
+        if (Session.equals("sidebar","menuContainer")) {
             return "0%";
-        } else if (Session.get("sidebar") === "both") {
+        } else if (Session.equals("sidebar","both")) {
             return "0%";
         } else {
             return openValues.menu;
         }
     },
     optionsStatus() { // Status of options sidebar.
-        if (Session.get("sidebar") === "optionsContainer") {
+        if (Session.equals("sidebar","optionsContainer")) {
             return "0%";
-        } else if (Session.get("sidebar") === "both") {
+        } else if (Session.equals("sidebar","both")) {
             return "0%";
         } else {
             return openValues.options;
         }
     },
     modeStatus(status) { // Color status of display modes.
-        if (status === Session.get("mode")) {
+        if (Session.equals("mode",status)) {
             return themeColors[Meteor.user().profile.preferences.theme].highlightText;
         } else {
             return;
@@ -344,16 +344,16 @@ Template.main.helpers({
     },
     commentDim() { // Dimensions of comment container.
         var work = Session.get("currentWork");
-        if(Session.get("newWork") === null || work === null) return;
+        if(Session.equals("newWork",null) || work === null) return;
         if(Session.get("newWork") || work.comments.length <= 3) return;
         return 0.23*window.innerHeight.toString() + "px";
     },
     work(value) { // Returns the specified work value.
-        if(Session.get("currentWork") === null) return;
+        if(Session.equals("currentWork",null)) return;
         return Session.get("currentReadableWork")[value];
     },
     workType() { // Returns color for respective work type.
-        if(Session.get("currentWork") === null) return;
+        if(Session.equals("currentWork",null)) return;
         if(Session.get("currentWork").type === undefined) return;
         type = Session.get("currentWork").type;
         if(type.includes("edit")) {
@@ -369,7 +369,7 @@ Template.main.helpers({
         return Session.get("newWork");
     },
     inRole() { // Checks correct permissions.
-        if(Session.get("currentWork") === null) return;
+        if(Session.equals("currentWork",null)) return;
         if(Session.get("newWork")) {
             return true;
         } else {
@@ -401,7 +401,7 @@ Template.main.events({
             closeInput(modifyingInput);
         }
 
-        if (e !== Session.get("sidebar") && // Sidebar closing.
+        if (!Session.equals("sidebar",e) && // Sidebar closing.
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
         !document.getElementById("menuContainer").contains(event.target) &&
@@ -474,7 +474,7 @@ Template.main.events({
         }
     },
     'click .classes' () { // Click classes mode button.
-        if (Session.get("mode") === "classes") return;
+        if (Session.equals("mode","classes")) return;
         var modeHolder = document.getElementById("mainBody");
         closeDivFade(modeHolder);
         setTimeout(function() {
@@ -484,7 +484,7 @@ Template.main.events({
         Session.set("sidebar",null); // Closes all sidebars.
     },
     'click .calendar' () { // Click calendar mode button.
-        if (Session.get("mode") === "calendar") return;
+        if (Session.equals("mode","calendar")) return;
         var modeHolder = document.getElementById("mainBody");
         closeDivFade(modeHolder);
         setTimeout(function() {
