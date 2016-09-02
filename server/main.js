@@ -392,7 +392,7 @@ Meteor.methods({
         var foundsubs = currentclass.subscribers;
         if (typeof comment === "string" && comment.length <= 200 &&
             _.contains(foundsubs, Meteor.userId()) &&
-            _.contains(currentclass.banned, Meteor.userId())) {
+            !_.contains(currentclass.banned, Meteor.userId())) {
             var commentInfo = {
                 "comment": input[0],
                 "user": user,

@@ -802,7 +802,7 @@ input, textarea {
 #comment {
 	width: 105%;
 	position: relative;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .commentBox {

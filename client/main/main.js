@@ -676,6 +676,7 @@ Template.main.events({
         var input = document.getElementById('workComment');
         comment = input.value;
         input.value = "";
+        Session.set("commentRestrict",null);
         if (comment !== "") {
             document.getElementById('workComment').value = "";
             Meteor.call('addComment', [comment, workId], function(err,result) {
@@ -702,18 +703,16 @@ Template.main.events({
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
-    'keydown #workComment' (event) { // Restrict length on comment.
-        var chars = event.target.value.length;
+    'keyup #workComment' (event) { // Restrict length on comment.
+        var chars = 200-event.target.value.length;
         document.getElementById("commentRestrict").style.color = "#7E7E7E";
-        if(chars === 0) { // Don't display if nothing in comment.
+        if(chars === 200) { // Don't display if nothing in comment.
             Session.set("commentRestrict","");
             return;
-        }
-        if(chars === 200) {
+        } else if(chars === 0) {
             document.getElementById("commentRestrict").style.color = "#FF1A1A"; // Make text red if 0 characters left.
-
         }
-        Session.set("commentRestrict", "Characters left: " + (200-chars).toString());
+        Session.set("commentRestrict", "Characters left: " + chars.toString());
         
     }, 
     'click #markDone' () { // Click done button.
