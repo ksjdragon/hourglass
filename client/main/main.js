@@ -303,20 +303,12 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
     },
     calCreWork() { // Display instructions for creating a work.
-        if(Session.get("calCreWork")) {
-            var div = document.getElementById("calCreWork");
-            div.style.setProperty("display","inline-block","important");
-            div.style.setProperty("opacity","0","important");
-            setTimeout(function() {
-                div.style.setProperty("opacity","1","important");
-            }, 100);
-            return;
-        } else {
-            try {
-                closeDivFade(document.getElementById("calCreWork"));
-            } catch(err) {}
-            return;
-        }
+        if(Session.get("calCreWork")) return true;
+        return false;
+    },
+    filterOn() {
+        if(Session.get("classDisp").length !== 0) return true;
+        return false;
     },
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
@@ -758,8 +750,10 @@ Template.main.events({
                 array.push(classid);
             }
             Session.set("classDisp",array);
-            $("#fullcalendar").fullCalendar( 'refetchEvents' ); // Update calendar events.
         }
+    },
+    'click #disableFilter' () {
+        Session.set("classDisp",[]);
     },
     'mouseover .sideClass' (event) { // Highlight/scale filter on-hover.
         if(event.target.className !== "sideClass") {

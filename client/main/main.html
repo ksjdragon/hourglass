@@ -35,7 +35,14 @@
         </div>
         <div id="classListHolder">
         {{#if myClasses}}
-            <h3>Enrolled</h3><h3 id="calCreWork">-- Pick a class{{calCreWork}}</h3>
+            <h3>Enrolled</h3>
+            {{#if calCreWork}}
+                <h3 id="calCreWork">-- Pick a class</h3>
+            {{else}}
+                {{#if filterOn}}
+                    <h3 id="disableFilter">Disable All</h3>
+                {{/if}}
+            {{/if}}
                 {{#each myClasses}}
                     {{> sidebarClasses}}  
                 {{/each}}

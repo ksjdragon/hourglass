@@ -42,7 +42,7 @@ Template.profile.helpers({
                 collection: schools,
                 field: 'name',
                 matchAll: true,
-                template: Template.schoollist
+                template: Template.schoolList
             }]
         };
     },
@@ -54,7 +54,7 @@ Template.profile.helpers({
                 token: '',
                 collection: classes,
                 field: 'teacher',
-                template: Template.teacherlist
+                template: Template.teacherList
             }]
         };
     },
