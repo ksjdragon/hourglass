@@ -5,7 +5,7 @@ import {
 import './main.html';
 
 var load = true;
-var calCreWork = null;
+var calWorkOpen = null;
 var calWorkDate = null;
 
 var openValues = {
@@ -18,7 +18,7 @@ var workColors = {
     "normal": "#2E4F74",
     "quiz": "#409333",
     "test": "#AD3C44",
-    "project": "#E6E619",
+    "project": "#D8831A",
     "other": "#852E6D"
 };
 
@@ -42,8 +42,10 @@ Session.set("currentWork",null); // Stores current selected work info.
 Session.set("currentReadableWork",null); // Stores readable selected work info.
 Session.set("modifying",null); // Stores current open input.
 Session.set("noclass",null); // If user does not have classes.
+Session.set("calCreWork",null); // If user is creating a work from calendar.
 Session.set("classDisp",[]); // Stores current filter for classes.
 Session.set("classDispHover",null); // Stores current hovered filter.
+Session.set("refetchEvents",null); // Stores whether to get calendar events again.
 Session.set("commentRestrict",null); // Stores text for comment character restriction.
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
@@ -149,6 +151,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         }
         Session.set("noclass",false);
         Session.set("calendarClasses", array);
+        Session.set("refetchEvents",true);
         return array;
     }
 });
@@ -231,6 +234,7 @@ Template.main.helpers({
                 week: 'Week',
                 day: 'Day'
             },
+            eventLimit: 3,
             events: function(start, end, timezone, callback) {
                 var events = [];
                 var userClasses = Session.get("calendarClasses");
@@ -278,8 +282,9 @@ Template.main.helpers({
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if(jsEvent.target.className.includes("fc-past")) return;
-                calCreWork = true;
+                Session.set("calCreWork", true);
                 calWorkDate = date.format();
+                calWorkOpen = true;
                 Session.set("newWork", true);
                 Session.set("sidebar","menuContainer");
             }
@@ -298,7 +303,7 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
     },
     calCreWork() { // Display instructions for creating a work.
-        if(calCreWork) {
+        if(Session.get("calCreWork")) {
             var div = document.getElementById("calCreWork");
             div.style.setProperty("display","inline-block","important");
             div.style.setProperty("opacity","0","important");
@@ -383,7 +388,12 @@ Template.main.helpers({
                currClass.banned.indexOf(Meteor.userId()) !== -1
               ) return true;
         }
-    }
+    },
+    refetchEvents() {
+        if(Session.get("refetchEvents")) {
+            $("#fullcalendar").fullCalendar( 'refetchEvents' );
+            Session.set("refetchEvents",null);
+    }   }
 });
 
 Template.main.events({
@@ -403,12 +413,16 @@ Template.main.events({
         !e.includes("fa-cog") &&
         !e.includes("fa-bars") &&
         !document.getElementById("menuContainer").contains(event.target) &&
-        !document.getElementById("optionsContainer").contains(event.target) && 
-        !(event.target.className.includes("fc-day") && !event.target.className.includes("fc-past"))) {
-            if(calCreWork) {
-                calCreWork = false;
-            }
-            Session.set("sidebar",null);
+        !document.getElementById("optionsContainer").contains(event.target)) {
+            if(Session.get("calCreWork")) {
+                if(!calWorkOpen) {
+                    Session.set("calCreWork",false);
+                    Session.set("sidebar",null);
+                }
+                calWorkOpen = false;
+            } else {
+                Session.set("sidebar",null);
+            } 
         }
 
         if(e === "overlay") { // Overlay closing.
@@ -720,8 +734,8 @@ Template.main.events({
         while(div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
-        if(calCreWork) { // If creating work from calendar.
-            calCreWork = null;
+        if(Session.get("calCreWork")) { // If creating work from calendar.
+            Session.get("calCreWork",null);
             Session.set("sidebar",null);
 
             var date = calWorkDate.split("-");
@@ -784,16 +798,12 @@ function closeDivFade(div) {
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
     Meteor.call(funcName, serverData , function(err,result) {
-        if((funcName === "editWork" || funcName === "createWork" || funcName === "deleteWork") && Session.get("mode") === "calendar") {
-            $("#fullcalendar").fullCalendar( 'refetchEvents' );
-        } else if(funcName === "toggleWork") {
+        if(funcName === "toggleWork") {
             var workId = Session.get("currentWork")._id;
             var thisWork = work.findOne({_id:workId});
             Session.set("currentWork",thisWork);
             var thisReadWork = formReadable(thisWork);
             Session.set("currentReadableWork",thisReadWork);
-        } else if(funcName === "editProfile") {
-            $("#fullcalendar").fullCalendar( 'refetchEvents' );
         }
     });
 }

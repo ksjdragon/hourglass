@@ -5,7 +5,7 @@
 
 <template name="main">
     {{> loginButtons}}
-    <header style="background-color:{{divColor 'header'}}{{textColor}}{{defaultMode}}">
+    <header style="background-color:{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
