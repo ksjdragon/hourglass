@@ -157,6 +157,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
+    if(Meteor.user() === null) return;
     var preferences = Meteor.user().profile.preferences;
     if(val === 'timeHide' || val === 'done') {
         var invert = _.invert(ref);

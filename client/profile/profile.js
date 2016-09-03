@@ -68,7 +68,7 @@ Template.profile.helpers({
     banner() { // Styles the banner
         var width = window.innerWidth * 1600 / 1920;
         var height = width * 615 / 1600;
-        if (Meteor.user().profile.banner !== undefined) {
+        if (Meteor.user().profile.banner !== undefined || Meteor.user().profile.banner !== null) {
             var banner = Meteor.user().profile.banner;
         } else {
             var banner = "Banners/defaultcover.jpg";
