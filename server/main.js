@@ -85,12 +85,12 @@ Meteor.publish('work', function() {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
-                    $in: userprofile.profile.classes
+                    $in: userprofile.profile.classes.concat(Meteor.userId())
                 }
             });
         } else {
             Meteor.call('createProfile', this.userId);
-            return classes.find({
+            return work.find({
                 _id: null
             });
         }
