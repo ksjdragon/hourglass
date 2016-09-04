@@ -26,6 +26,7 @@ Tag { Always spaces between values
 html {
 	font-family: 'Raleway';
 	font-weight: 200;
+	height: 100%;
 	overflow: hidden;
 
 	/*background-image: url("Hourglass.png");
@@ -76,6 +77,7 @@ html {
 }
 
 body {
+	height: 100%;
 	margin: 0;
 }
 

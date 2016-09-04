@@ -1,0 +1,22 @@
+<template name="admin">
+	<div id="adminBanner" style="{{banner}}{{textColor}}">
+		<ul id="adminTabs">
+			<li id="aClasses" style="background-color:{{divColor 'adminButtons'}};margin-left:0">Classes</li>
+			<li id="aUsers" style="background-color:{{divColor 'adminButtons'}}">Users</li>
+			<li id="aWork" style="background-color:{{divColor 'adminButtons'}}">Work</li>
+			<li id="aSchools" style="background-color:{{divColor 'adminButtons'}}">Schools</li>
+			<li id="aReports" style="background-color:{{divColor 'adminButtons'}}">Reports</li>
+		</ul>
+	</div>
+	<div id="aContainer">
+		<div id="adminSide" style="background-color:{{divColor 'sidebar'}}">
+			<div id="sectionTop"><i class="fa fa-server" aria-hidden="true"></i><p>Filters</p></div>
+			{{#each filters}}
+				<p class="filter">{{filter}}</p>
+			{{/each}}
+		</div>
+		<div id="adminContent" style="background-color:{{divColor 'header'}}">
+		</div>
+	</div>
+</template>
+

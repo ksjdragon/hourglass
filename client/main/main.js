@@ -49,20 +49,18 @@ Session.set("refetchEvents",null); // Stores whether to get calendar events agai
 Session.set("commentRestrict",null); // Stores text for comment character restriction.
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    if(Meteor.user() === null) return;
-    if(Meteor.user().profile.preferences === undefined) return;
+    if(Meteor.user() === undefined) return;
     return themeColors[Meteor.user().profile.preferences.theme][div];
 });
 
 Template.registerHelper('textColor', () => { // Reactive color for text.
-    if(Meteor.user() === null) return;
-    if(Meteor.user().profile.preferences === undefined) return; 
+    if(Meteor.user() === undefined) return;
     document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
     return;
 });
 
 Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
-    if(Meteor.user() === null) return;
+    if(Meteor.user() === undefined) return;
     var dim = [window.innerWidth * 0.25, window.innerHeight * 0.2];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
@@ -72,8 +70,7 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
-    if(Meteor.user() === null) return;
-    if (Meteor.user().profile.classes === undefined || Meteor.user().profile.classes.length === 0) { // Null checking.
+    if(Meteor.user() === undefined) { // Null checking.
         Session.set("noclass",true); // Makes sure to display nothing.
         return [];
     } else {
@@ -157,7 +154,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
-    if(Meteor.user() === null) return;
+    if(Meteor.user() === undefined) return;
     var preferences = Meteor.user().profile.preferences;
     if(val === 'timeHide' || val === 'done') {
         var invert = _.invert(ref);
