@@ -693,7 +693,7 @@ Template.main.events({
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
-    'keyup #workComment' (event) { // Restrict length on comment.
+    'input #workComment' (event) { // Restrict length on comment.
         var chars = 200-event.target.value.length;
         document.getElementById("commentRestrict").style.color = "#7E7E7E";
         if(chars === 200) { // Don't display if nothing in comment.
