@@ -67,7 +67,9 @@ Meteor.publish('classes', function() {
             });
         } else {
             Meteor.call('createProfile', this.userId);
-            return classes.find({_id: null});
+            return classes.find({
+                _id: null
+            });
         }
     }
 });
@@ -88,7 +90,9 @@ Meteor.publish('work', function() {
             });
         } else {
             Meteor.call('createProfile', this.userId);
-            return classes.find({_id: null});
+            return classes.find({
+                _id: null
+            });
         }
 
     }
@@ -312,8 +316,8 @@ Meteor.methods({
 
         if (Meteor.user() &&
             ((found && _.contains(Meteor.user().profile.classes, input.class) &&
-              !_.contains(found.banned, Meteor.userId())) ||
-            (Meteor.userId() === input.class)) &&
+                    !_.contains(found.banned, Meteor.userId())) ||
+                (Meteor.userId() === input.class)) &&
             input.dueDate instanceof Date && input.dueDate.getTime() >= ref &&
             _.contains(worktype, input.type) &&
             input.name.length <= 50 && input.description.length <= 150) {
@@ -333,38 +337,23 @@ Meteor.methods({
         var ref = new Date();
         ref.setHours(0, 0, 0, 0);
         ref = ref.getTime();
+        var currentwork = change._id;
         var currentclass = classes.findOne({
-            _id: work.findOne({
-                _id: change._id
-            })["class"]
+            _id: currentwork.class
         });
         var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             work.update({
-                _id: change._id
+                _id: currentwork._id
             }, {
                 $set: change
             });
-        } else if (_.contains(authorized, Meteor.userId())) {
-            if (change.name.length <= 50 && change.description.length <= 150 && _.contains(worktype, change.type)) {
-                work.update({
-                    _id: change._id
-                }, {
-                    $set: {
-                        name: change.name,
-                        dueDate: change.dueDate,
-                        description: change.description,
-                        comments: change.comments,
-                        attachments: change.attachments,
-                        type: change.type
-                    }
-                });
-            }
-        } else if (Meteor.userId() === work.findOne({
-                _id: change._id
-            }).creator) {
-            if (change.name.length <= 50 && _.contains(worktype, change.type) &&
-                change.dueDate instanceof Date && change.dueDate.getTime() >= ref) {
+        } else if ((_.contains(authorized, Meteor.userId()) ||
+                   currentwork.class === Meteor.userId() ||
+                   Meteor.userId() === currentwork.creator) &&
+                   change.name.length <= 50 && change.description.length <= 150 &&
+                   change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
+                   _.contains(worktype, change.type)){
                 work.update({
                     _id: change._id
                 }, {
@@ -376,7 +365,6 @@ Meteor.methods({
                         type: change.type
                     }
                 });
-            }
         } else {
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
@@ -442,15 +430,13 @@ Meteor.methods({
         }
     },
     'deleteWork': function(workId) {
+        var currentwork = wokr.findOne({_id: workId});
         var currentclass = classes.findOne({
-            _id: work.findOne({
-                _id: workId
-            })["class"]
+            _id: currentwork.class
         });
         var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-            _.contains(authorized, Meteor.userId())) {
-
+            _.contains(authorized, Meteor.userId()) || Meteor.userId() === currentwork.class) {
             work.remove({
                 _id: workId
             });
