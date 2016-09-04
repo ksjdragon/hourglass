@@ -120,7 +120,13 @@ Meteor.publish('users', function() {
         return Meteor.users.find({}, {
             // Only return necessary fields
             fields: {
-                'services.google.email': 1
+                'services.google.email': 1,
+                'profile.avatar': 1,
+                'profile.banner': 1,
+                'profile.grade': 1,
+                'profile.description': 1,
+                'profile.name': 1,
+                'profile.school': 1
             }
         });
     }
