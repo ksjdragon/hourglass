@@ -37,7 +37,7 @@ Meteor.publish('schools', function() {
 Meteor.publish('classes', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return classes.find();
-    } else if(this.userId !== null) {
+    } else if (this.userId !== null) {
         // Return user classes and all _public_ classes.
         var userprofile = Meteor.users.findOne(this.userId);
         if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
@@ -79,7 +79,7 @@ Meteor.publish('classes', function() {
 Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
-    } else if(this.userId !== null) {
+    } else if (this.userId !== null) {
         var userprofile = Meteor.users.findOne(this.userId);
         if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
             return work.find({
@@ -337,7 +337,9 @@ Meteor.methods({
         var ref = new Date();
         ref.setHours(0, 0, 0, 0);
         ref = ref.getTime();
-        var currentwork = change._id;
+        var currentwork = work.findOne({
+            _id: change._id
+        });
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
@@ -349,22 +351,22 @@ Meteor.methods({
                 $set: change
             });
         } else if ((_.contains(authorized, Meteor.userId()) ||
-                   currentwork.class === Meteor.userId() ||
-                   Meteor.userId() === currentwork.creator) &&
-                   change.name.length <= 50 && change.description.length <= 150 &&
-                   change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
-                   _.contains(worktype, change.type)){
-                work.update({
-                    _id: change._id
-                }, {
-                    $set: {
-                        name: change.name,
-                        dueDate: change.dueDate,
-                        description: change.description,
-                        attachments: change.attachments,
-                        type: change.type
-                    }
-                });
+                currentwork.class === Meteor.userId() ||
+                Meteor.userId() === currentwork.creator) &&
+            change.name.length <= 50 && change.description.length <= 150 &&
+            change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
+            _.contains(worktype, change.type)) {
+            work.update({
+                _id: change._id
+            }, {
+                $set: {
+                    name: change.name,
+                    dueDate: change.dueDate,
+                    description: change.description,
+                    attachments: change.attachments,
+                    type: change.type
+                }
+            });
         } else {
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
@@ -430,7 +432,9 @@ Meteor.methods({
         }
     },
     'deleteWork': function(workId) {
-        var currentwork = wokr.findOne({_id: workId});
+        var currentwork = wokr.findOne({
+            _id: workId
+        });
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
