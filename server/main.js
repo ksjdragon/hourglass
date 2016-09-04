@@ -311,8 +311,9 @@ Meteor.methods({
         });
 
         if (Meteor.user() &&
-            found && _.contains(Meteor.user().profile.classes, input.class) &&
-            found.banned.indexOf(Meteor.userId()) === -1 &&
+            ((found && _.contains(Meteor.user().profile.classes, input.class) &&
+              !_.contains(found.banned, Meteor.userId())) ||
+            (Meteor.userId() === input.class)) &&
             input.dueDate instanceof Date && input.dueDate.getTime() >= ref &&
             _.contains(worktype, input.type) &&
             input.name.length <= 50 && input.description.length <= 150) {
