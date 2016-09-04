@@ -124,7 +124,6 @@ Meteor.publish('users', function() {
                 'profile.avatar': 1,
                 'profile.banner': 1,
                 'profile.grade': 1,
-                'profile.classes': 1,
                 'profile.description': 1,
                 'profile.name': 1,
                 'profile.school': 1
