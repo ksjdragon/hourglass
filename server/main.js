@@ -37,7 +37,7 @@ Meteor.publish('schools', function() {
 Meteor.publish('classes', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return classes.find();
-    } else {
+    } else if(this.userId !== null) {
         // Return user classes and all _public_ classes.
         var userprofile = Meteor.users.findOne(this.userId);
         if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
@@ -79,7 +79,7 @@ Meteor.publish('classes', function() {
 Meteor.publish('work', function() {
     if (Roles.userIsInRole(this.userId, ['superadmin', 'admin'])) {
         return work.find();
-    } else {
+    } else if(this.userId !== null) {
         var userprofile = Meteor.users.findOne(this.userId);
         if (userprofile !== undefined && userprofile.profile.classes !== undefined) {
             return work.find({

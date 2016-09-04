@@ -68,7 +68,7 @@ Template.profile.helpers({
     banner() { // Styles the banner
         var width = window.innerWidth * 1600 / 1920;
         var height = width * 615 / 1600;
-        if (Meteor.user().profile.banner !== undefined) {
+        if (Meteor.user().profile.banner !== undefined || Meteor.user().profile.banner !== null) {
             var banner = Meteor.user().profile.banner;
         } else {
             var banner = "Banners/defaultcover.jpg";
@@ -147,8 +147,7 @@ Template.profile.helpers({
     classHolderHeight() { // Dimensions the container for the classes
         return 0.26 * window.innerHeight.toString() + "px";
     },
-    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]
-             
+    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab",status)) {            
             return themeColors[Meteor.user().profile.preferences.theme].highlightText;        
         } else {            
@@ -156,7 +155,7 @@ Template.profile.helpers({
         }    
     },
     profClassTab(tab) { // Tells current class
-        if (Session.get("profClassTab",tab)) {
+        if (Session.equals("profClassTab",tab)) {
             return true;
         } else {
             return false;
