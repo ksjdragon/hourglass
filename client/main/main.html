@@ -4,7 +4,6 @@
 </head>
 
 <template name="main">
-    {{> loginButtons}}
     <header style="background-color:{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
@@ -203,6 +202,7 @@
             </div>
         </div>
     </div>
+    {{> loginButtons}}
 </template>
 
 <template name="sidebarClasses">
