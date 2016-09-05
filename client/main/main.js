@@ -50,7 +50,7 @@ Session.set("classDispHover", null); // Stores current hovered filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
 
-Template.registerHelper('user', () => {
+Template.registerHelper('userProfile', () => {
     if(Meteor.user() === undefined || Meteor.user() === null) return;
     Session.set("user", Meteor.user().profile);
     return;

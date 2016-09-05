@@ -4,7 +4,7 @@
 </head>
 
 <template name="main">
-    <header style="background-color:{{user}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
+    <header style="background-color:{{userProfile}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
@@ -115,10 +115,9 @@
 
     <div class="overlay">
         <div id="editWork">
-            <div id="editWorkCont" style="{{workCenter}};background-color:{{divColor 'header'}}">
-                <div id="workTypeBar" style="background-color:{{workType}}"></div>
+            <div id="editWorkCont" style="background-color:{{divColor 'header'}};border-top:10px solid {{workType}}">
                 <div id="workInfoContainer">
-                    <div>
+                    <div id="workNameDiv">
                         <span id="workNamerestrict">{{commentLength}}</span>
                         <span class="change req" id="workName" restrict="50">{{work 'name'}}</span>
                     </div>
@@ -263,7 +262,5 @@
 </template>
 
 <template name="doneUsers">
-    <div class="doneUser">
-        <p>{{user}}</p>
-    </div>
+    <p class="doneUser">{{user}}</p>
 </template>

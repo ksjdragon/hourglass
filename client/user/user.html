@@ -1,12 +1,12 @@
 <template name="user">
-	  <div id="mainpage{{user}}" onclick="window.location='/'"><h2>Main Page</h2></div>
+	  <div id="mainpage{{userProfile}}" onclick="window.location='/'"><h2>Main Page</h2></div>
 	  <div id="profPage" style="background-color:{{divColor 'header'}};{{textColor}}{{loadNew}}">
 		    <div id="profMainContainer">
 			      <div id="profTop">
 				        <img id="profBanner" src='{{banner}}' alt="Banner">
 				        <img id="profAvatar" src='{{avatar}}' alt="Avatar">
 				        <div id="motdBox">
-					          <span class="username">{{username}} - </span><span class="change" restrict="50" id="motd">{{motd}}</span>
+					          <span class="username">{{username}} - </span><span class="value" restrict="50" id="motd">{{motd}}</span>
 				        </div>
 			      </div>
 			      <div id="profCards">
@@ -17,12 +17,12 @@
 						            <div id="about">
 							              <div>
 								                <p class="profTitle">School Name:</p>
-								                <span class="change" id="school">{{school}}</span>
+								                <span class="value" id="school">{{school}}</span>
 							              </div>
 							              <br>
                             <div>
                                 <p class="profTitle" >Grade:</p>
-                                <span class="change" re="readonly" id="grade">{{grade}}</span>
+                                <span class="value" re="readonly" id="grade">{{grade}}</span>
                             </div>
 				                </div>
 					          </div>
