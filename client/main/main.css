@@ -822,7 +822,8 @@ input, textarea {
 }
 
 #comment {
-	width: 105%;
+	width: 100%;
+	max-height: 25vh;
 	position: relative;
 	overflow-y: auto;
 }
