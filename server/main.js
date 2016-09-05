@@ -1,4 +1,4 @@
-//meteor things
+/* jshint esversion: 6 */
 import {
     Meteor
 } from 'meteor/meteor';
