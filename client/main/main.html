@@ -4,7 +4,7 @@
 </head>
 
 <template name="main">
-    <header style="background-color:{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
+    <header style="background-color:{{user}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
         <div id="aboveBar">
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
@@ -107,8 +107,7 @@
         {{/if}}
 
         {{#if currMode 'calendar'}}
-        <div id="calbg" style="{{calbg}}"></div>
-            <div id="calendar" style="{{calCenter}}{{calColor}}{{highlight}}">
+            <div id="calendar" style="{{calColor}}{{highlight}}">
                 {{> fullcalendar calendarOptions}}
             </div>
         {{/if}}
