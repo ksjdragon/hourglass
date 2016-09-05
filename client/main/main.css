@@ -438,6 +438,8 @@ input, textarea {
 	width: 40%;
 	margin: auto;
 	margin-top: 5%;
+
+	box-shadow: 2px 2px 5px 3px #333;
 }
 
 #editWorkCont {
@@ -855,13 +857,58 @@ input, textarea {
 
 .commentBox {
 	margin: 0 !important;
+	height: 50%;
 	padding: 2%;
 	background-color: rgba(255,255,255,0.1);
 	border-bottom: solid 1px #CCC;
 }
 
+.commentAvatarCont {
+	margin: 0 1% -3% 0 !important;
+	background-color: rgba(255,255,255,1);
+
+	-moz-border-radius: 10%;
+	-webkit-border-radius: 10%;
+	border-radius: 10%;
+
+	display: inline-block;
+}
+
+.commentAvatar {
+	height: 4vh;
+	width: 4vh;
+	margin-bottom: -10%;
+
+	-moz-border-radius: 10%;
+	-webkit-border-radius: 10%;
+	border-radius: 10%;
+
+	-webkit-transition: opacity 0.4s ease;  
+	-moz-transition: opacity 0.4s ease; 
+	-ms-transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease; 
+}
+
+.commentAvatar:hover {
+	opacity: 0.9;
+}
+
+.commentInfo {
+	max-height: 5%;
+	margin: 0 !important;
+	display: inline-block;
+}
+
+.commentUser:hover {
+	text-decoration: underline;
+}
+
 .commentUser, .commentDate {
 	font-size: 75%;
+}
+
+.commentAvatar, .commentUser {
+	cursor: pointer;
 }
 
 #commentRestrict {
@@ -890,14 +937,17 @@ input, textarea {
 #done {
 	height: 60%;
 	top: 0;
+	overflow-y: auto;
 }
 
 .doneUser {
 	font-size: 110%;
 	margin: 0;
-	padding: 6% 6% 6% 10%;
+	padding: 4% 4% 3% 6%;
 	background-color: rgba(0,0,0,0.1);
-	overflow-y: auto;
+
+	position: relative;
+	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
@@ -909,8 +959,19 @@ input, textarea {
 	background-color: rgba(0,0,0,0.15);
 }
 
-.doneUser p {
-	margin: 0;
+.doneUser img {
+	height: 4vh;
+	width: 4vh;
+	margin-right: 5%;
+
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.doneUser span {
+	position: absolute;
+	top: 32%;
 }
 
 #toggleButtons {
@@ -954,4 +1015,3 @@ input, textarea {
 #markDone:hover, #markConfirm:hover, #markReport:hover {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.15);
 }
-

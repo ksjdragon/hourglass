@@ -255,12 +255,20 @@
 
 <template name="comment">
     <div class="commentBox">
-        <span class="commentComment">{{comment}}</span><br>
-        <span class="commentUser">{{user}}</span>
-        <span class="commentDate">{{date}}</span>
+        <div class="commentAvatarCont">
+            <img class="commentAvatar" src='{{avatar}}' onclick="window.location='/user/{{email}}'">
+        </div>
+        <div class="commentInfo">
+            <span class="commentComment">{{comment}}</span><br>
+            <span class="commentUser" onclick="window.location='/user/{{email}}'">{{user}}</span>
+            <span class="commentDate">{{date}}</span>
+        </div>
     </div>
 </template>
 
 <template name="doneUsers">
-    <p class="doneUser">{{user}}</p>
+    <div class="doneUser" onclick="window.location='/user/{{email}}'">
+        <img src='{{avatar}}'>
+        <span>{{user}}</span>
+    </div>
 </template>

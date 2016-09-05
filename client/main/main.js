@@ -922,10 +922,14 @@ function formReadable(input) { // Makes work information readable by users.
         }
 
         for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
+            var user = Meteor.users.findOne({
+                _id: input.done[i]
+            });
+
             input.done[i] = {
-                "user": Meteor.users.findOne({
-                    _id: input.done[i]
-                }).profile.name
+                "user": user.profile.name,
+                "avatar": user.profile.avatar,
+                "email": user.services.google.email
             };
         }
 
@@ -952,12 +956,17 @@ function formReadable(input) { // Makes work information readable by users.
                 resort[re] = {
                     "comment": comments[k].comment,
                     "date": null,
-                    "user": null
+                    "user": null,
+                    "avatar": null,
+                    "email":null
                 };
-                resort[re].user = Meteor.users.findOne({
+                var user = Meteor.users.findOne({
                     _id: comments[k].user
-                }).profile.name;
+                });
+                resort[re].user = user.profile.name;
                 resort[re].date = moment(comments[k].date).fromNow();
+                resort[re].avatar = user.profile.avatar;
+                resort[re].email = user.services.google.email;
             }
             input.comments = resort;
         }
