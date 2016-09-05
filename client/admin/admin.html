@@ -1,5 +1,5 @@
 <template name="admin">
-	<div id="adminBanner" style="{{banner}}{{textColor}}">
+	<div id="{{user}}adminBanner" style="{{banner}}{{textColor}}">
 		<ul id="adminTabs">
 			<li id="aClasses" style="background-color:{{divColor 'adminButtons'}};margin-left:0">Classes</li>
 			<li id="aUsers" style="background-color:{{divColor 'adminButtons'}}">Users</li>
@@ -10,12 +10,52 @@
 	</div>
 	<div id="aContainer">
 		<div id="adminSide" style="background-color:{{divColor 'sidebar'}}">
-			<div id="sectionTop"><i class="fa fa-server" aria-hidden="true"></i><p>Filters</p></div>
-			{{#each filters}}
-				<p class="filter">{{filter}}</p>
-			{{/each}}
+			<div id="adminFilters">
+				<div class="sectionTop">
+					<i class="fa fa-server" aria-hidden="true"></i>
+					<p>Filters</p>
+				</div>
+				{{#each filters}}
+					<p class="aFilter">{{filter}}</p>
+				{{/each}}
+			</div>
+			<div id="adminFunctions">
+				<div class="sectionTop">
+					<i class="fa fa-sliders" aria-hidden="true"></i>
+					<p>Functions</p>
+				</div>
+				<div class="aFunction">
+					<p>Add Item</p>
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</div>
+				<div class="aFunction">
+					<p>Search</p>
+					<i class="fa fa-search" aria-hidden="true"></i>
+				</div>
+			</div>
 		</div>
 		<div id="adminContent" style="background-color:{{divColor 'header'}}">
+			{{#if adminTab 'aClasses'}}
+				{{#each collection 'classes'}}
+					
+				{{/each}}
+			{{/if}}
+			{{#if adminTab 'aUsers'}}
+				{{#each collection 'users'}}
+				{{/each}}
+			{{/if}}
+			{{#if adminTab 'aWork'}}
+				{{#each collection 'work'}}
+				{{/each}}
+			{{/if}}
+			{{#if adminTab 'aSchools'}}
+				{{#each collection 'schools'}}
+				{{/each}}
+			{{/if}}
+			{{#if adminTab 'aReports'}}
+				{{#each collection 'requests'}}
+				{{/each}}
+			{{/if}}
 		</div>
 	</div>
 </template>

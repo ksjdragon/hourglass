@@ -9,6 +9,27 @@ Template.admin.helpers({
 	},
 	filters() {
 		return [{filter:"Lol"}];
+	},
+	adminTab(val) {
+		return Session.equals("adminTab",val);
+	},
+	collection(val) {
+		switch(val) {
+			case "classes":
+				var classes = classes.find().fetch();
+				for(var i = 0; i < classes.length; i++) {
+					
+				}
+				break;
+			case "users":
+				break;
+			case "work":
+				break;
+			case "schools":
+				break;
+			case "requests":
+				break;
+		}
 	}
 });
 
