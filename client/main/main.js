@@ -36,7 +36,7 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("user",null);
+Session.set("user",null); // Stores user preferences.
 Session.set("calendarClasses", null);
 Session.set("sidebar", null); // Status of sidebar
 Session.set("newWork", null); // If user creating new work.
@@ -48,12 +48,11 @@ Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
 Session.set("classDispHover", null); // Stores current hovered filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
-Session.set("commentRestrict", null); // Stores text for comment character restriction.
+Session.set("commentRestrict", ""); // Stores text for comment character restriction.
 
 Template.registerHelper('user', () => {
-    var user = Meteor.user().profile;
-    if(user === undefined || user === null) return;
-    Session.set("user", user);
+    if(Meteor.user() === undefined || Meteor.user() === null) return;
+    Session.set("user", Meteor.user().profile);
     return;
 });
 
@@ -173,6 +172,10 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
 });
 
+Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
+    return Session.get("commentRestrict");
+})
+
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
         if(Session.get("user").school === undefined) return;
@@ -188,9 +191,7 @@ Template.main.helpers({
         }
     },
     defaultMode() { //Loads the default display mode for user.
-        if(load) {
-            Session.set("mode",Session.get("user").preferences.mode);
-        }
+        if(load) Session.set("mode",Session.get("user").preferences.mode);
         return;
     },
     bgSrc() { // Returns background.
@@ -219,12 +220,7 @@ Template.main.helpers({
         return themeColors[Session.get("user").preferences.theme].highlightText;
     },
     currMode(name) { // Status of display mode.
-        var mode = Session.get("mode");
-        if (name === mode) {
-            return true;
-        } else {
-            return false;
-        }
+        return Session.equals("mode",name);
     },
     calendarOptions() { // Settings for the calendar, including work displaying.
         return {
@@ -345,12 +341,6 @@ Template.main.helpers({
         var h = window.innerHeight * 0.7;
         return "width:" + w.toString() + "px;height:" + h.toString() + "px;margin-left:" + -0.5 * w.toString() + "px;margin-top:" + -0.5 * h.toString() + "px";
     },
-    commentDim() { // Dimensions of comment container.
-        var work = Session.get("currentWork");
-        if (Session.equals("newWork", null) || work === null) return;
-        if (Session.get("newWork") || work.comments.length <= 3) return;
-        return 0.23 * window.innerHeight.toString() + "px";
-    },
     work(value) { // Returns the specified work value.
         if (Session.equals("currentWork", null)) return;
         return Session.get("currentReadableWork")[value];
@@ -364,9 +354,6 @@ Template.main.helpers({
         } else {
             return workColors[type];
         }
-    },
-    commentLength() { // Returns characters left for comment length.
-        return Session.get("commentRestrict");
     },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
@@ -599,16 +586,14 @@ Template.main.events({
             input.className += " form-control";
         }
         input.focus();
-        if (ele.getAttribute("restrict") !== null) {
-            var span = document.createElement("span");
-            span.id = "restrict";
-            var num = parseInt(ele.getAttribute("restrict")) - input.value.length;
-            if (num <= 0) {
-                span.style.setProperty("color", "#FF1A1A", "important");
-                num = 0;
-            }
-            span.appendChild(document.createTextNode(num.toString() + " characters left"));
-            ele.parentNode.appendChild(span);
+        var restrict = ele.getAttribute("restrict");
+        if (restrict !== null) {
+            input.maxLength = restrict;
+            input.className += " restrict";
+            Session.set("commentRestrict",restrict-input.value.length.toString() + " characters left");
+            var text = document.getElementById(Session.get("modifying")+"restrict");
+            text.style.display = "initial";
+            text.style.color = "#7E7E7E";
         }
     },
     'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
@@ -664,13 +649,33 @@ Template.main.events({
         closeDivFade(p.parentNode);
         input.focus();
     },
-    'keydown' (event) { // Enter to close input.
+    'click #workComment' (event) {
+        var restrict = event.target.maxLength;
+        Session.set("commentRestrict",restrict-event.target.value.length.toString() + " characters left");
+        var text = document.getElementById("commentrestrict");
+        text.style.display = "initial";
+        text.style.color = "#7E7E7E";
+    },
+    'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
         if (event.keyCode == 13 && modifyingInput != "workDesc") {
             try {
                 closeInput(modifyingInput);
             } catch (err) {}
         }
+    },
+    'input .restrict' (event) {
+        var restrict = event.target.maxLength;
+        var chars = restrict - event.target.value.length;
+        var text = document.getElementById(Session.get("modifying")+"restrict");
+        text.style.color = "#7E7E7E";
+        if (chars === restrict) { // Don't display if nothing in comment.
+            Session.set("commentRestrict", "");
+            return;
+        } else if (chars === 0) {
+            text.style.color = "#FF1A1A"; // Make text red if 0 characters left.
+        }
+        Session.set("commentRestrict", chars.toString() + " characters left");
     },
     'focus #workDatea' () { // Open date picker.
         $('#workDatea').datepicker({
@@ -715,17 +720,6 @@ Template.main.events({
         serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
-    },
-    'input #workComment' (event) { // Restrict length on comment.
-        var chars = 200 - event.target.value.length;
-        document.getElementById("commentRestrict").style.color = "#7E7E7E";
-        if (chars === 200) { // Don't display if nothing in comment.
-            Session.set("commentRestrict", "");
-            return;
-        } else if (chars === 0) {
-            document.getElementById("commentRestrict").style.color = "#FF1A1A"; // Make text red if 0 characters left.
-        }
-        Session.set("commentRestrict", chars.toString() + " characters left");
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];
@@ -836,10 +830,10 @@ function closeInput(modifyingInput) { // Close a changeable input and change it 
         color = "#8C8C8C";
     }
     span.style.color = color;
-    input.parentNode.removeChild(input);
+    Session.set("commentRestrict","");
     try {
-        var restrict = document.getElementById("restrict");
-        restrict.parentNode.removeChild(restrict);
+        input.parentNode.removeChild(input);
+        document.getElementById(modifyingInput+"restrict").style.display = "none";
     } catch (err) {}
     if (input.value === "") { // If input has nothing.
         span.childNodes[0].nodeValue = "Click here to edit...";

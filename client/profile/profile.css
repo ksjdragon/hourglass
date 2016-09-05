@@ -96,6 +96,11 @@
 	margin-left: 20% !important;
 }
 
+#motdrestrict {
+	margin-right: 1% !important;
+	float: right;
+}
+
 .profOptions {
 	box-shadow: 2px 2px 5px 3px #666;
 

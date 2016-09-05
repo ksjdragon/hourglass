@@ -460,6 +460,10 @@ input, textarea {
 	margin-top: 5%;
 }
 
+#workNamerestrict, #workDescrestrict, #commentrestrict {
+	display: none;
+}
+
 .workOptions, .prefOptions {
 	box-shadow: 2px 2px 5px 3px #666;
 
