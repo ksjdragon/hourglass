@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 import {
     Template
 } from 'meteor/templating';
@@ -19,23 +20,23 @@ Template.login.helpers({
         return margin + " 0 0 " + margin;
     },
     contDim() { // Dimensions the dimensions of the information container
-        return content.toString() + 	"px";
+        return content.toString() + "px";
     },
     contMargin() { // Centers information container
         let margin = (-content / 2).toString() + "px";
         return margin + " 0 0 " + margin;
     },
     logo() { // Dimensions logo
-        return  window.innerHeight * .08;
+        return window.innerHeight * 0.08;
     },
     hea() { // Styles the login button
-        var w = .09 * window.innerWidth;
-        return "width:" + w.toString() + "px;left:" + (-10 + -.5 * w + content / 2).toString() + "px;";
+        var w = 0.09 * window.innerWidth;
+        return "width:" + w.toString() + "px;left:" + (-10 + -0.5 * w + content / 2).toString() + "px;";
     }
-})
+});
 
 Template.login.events({
     'click #loginButton' () {
         document.getElementById("login-buttons-google").click();
     }
-})
+});
