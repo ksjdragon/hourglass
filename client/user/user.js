@@ -6,10 +6,10 @@ import {
 
 Template.user.helpers({
     banner() { // Returns banner
-        return "/" + this.profile.banner;
+        return this.profile.banner;
     },
     avatar() { // Returns avatar
-        return "/" + this.profile.avatar;
+        return this.profile.avatar;
     },
     username() {  //Returns current user's username
         return this.profile.name;
