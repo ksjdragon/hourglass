@@ -270,8 +270,8 @@
 
 <template name="userDisplay">
 	<div class="userBox" userid="{{_id}}">
-		<span class="email">{{email}}</span>
-		<span class="realname">{{name}}</span>
+		<span class="email" onclick="window.location='/user/{{email}}'">{{email}}</span>
+		<span class="realname" onclick="window.location='/user/{{email}}'">{{name}}</span>
 		<i class="fa fa-times" aria-hidden="true"></i>
 	</div>
 </template>

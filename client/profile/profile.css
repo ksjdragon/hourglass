@@ -583,12 +583,12 @@
 	display: table;
 }
 
-.email {
+.email, .realname {
 	margin-right: 5%;
 }
 
-.realname {
-	margin-right: 5%;
+.email:hover, .realname:hover {
+	text-decoration: underline;
 }
 
 .classBox .fa-times {
