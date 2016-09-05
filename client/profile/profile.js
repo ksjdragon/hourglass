@@ -1,4 +1,6 @@
-﻿import {
+﻿/* jshint esversion: 6 */
+
+import {
     Template
 } from 'meteor/templating';
 
@@ -58,46 +60,14 @@ Template.profile.helpers({
             }]
         };
     },
-    mainCenter() { // Centers main div container.
-        var width = window.innerWidth * 1600 / 1920 + 10;
-        return "width:" + width.toString() + "px;margin-left:" + -0.5 * width.toString() + "px";
+    banner() { // Returns banner
+        return Session.get("user").banner;
     },
-    mainHeight() { // Returns height of screen for div.
-        return window.innerHeight.toString() + "px";
-    },
-    banner() { // Styles the banner
-        var width = window.innerWidth * 1600 / 1920;
-        var height = width * 615 / 1600;
-        if (Meteor.user().profile.banner !== undefined || Meteor.user().profile.banner !== null) {
-            var banner = Meteor.user().profile.banner;
-        } else {
-            var banner = "Banners/defaultcover.jpg";
-            currentprofile = Meteor.user().profile;
-            currentprofile.banner = banner
-            Meteor.call("editProfile", currentprofile);
-        }
-        return "width:" + width.toString() + "px;height:" + height.toString() + "px;background-image:url(" + banner + ");background-size:" + width.toString() + "px " + height.toString() + "px";
-    },
-    avatar() { // Styles the avatar
-        var dim = window.innerWidth * 1600 / 1920 * 0.16;
-        var pic = "";
-        var userprofile = Meteor.user().profile.avatar;
-        if (userprofile !== undefined && userprofile !== null) {
-            pic = Meteor.user().profile.avatar;
-        } else {
-            pic = "Avatars/" + (Math.floor(Math.random() * (11 - 1)) + 1).toString() + ".png";
-            currentprofile = Meteor.user().profile;
-            currentprofile.avatar = pic;
-            Meteor.call("editProfile", currentprofile);
-        }
-        return "background-image:url(" + pic + ");background-size:" + dim.toString() + "px " + dim.toString() + "px";
-    },
-    avatarDim() { // Dimensions of the avatar
-        var dim = window.innerWidth * 1600 / 1920 * 0.16;
-        return "height:" + dim.toString() + "px;width:" + dim.toString() + "px;top:" + 0.43 * window.innerHeight.toString() + "px;";
+    avatar() { // Returns avatar
+        return Session.get("user").avatar;
     },
     username() {  //Returns current user's username
-        return Meteor.user().profile.name;
+        return Session.get("user").name;
     },
     motd() { // Returns the current user's description
         if (Meteor.user().profile.description) {
@@ -140,12 +110,6 @@ Template.profile.helpers({
             Session.set("noclass",false);
         }
         return array;
-    },
-    profClassHeight() { // Dimensions the class height
-        return 0.6 * window.innerHeight.toString() + "px";
-    },
-    classHolderHeight() { // Dimensions the container for the classes
-        return 0.26 * window.innerHeight.toString() + "px";
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab",status)) {            
@@ -206,9 +170,6 @@ Template.profile.helpers({
     },
     code() { // Returns if selected class has code.
         return Session.get("code");
-    },
-    userHolder() { // Returns height of user holders for moderators/banned.
-        return 0.15 * window.innerHeight.toString() + "px";
     }
 });
 
@@ -249,29 +210,41 @@ Template.profile.events({
         }
     },
     // MAIN BUTTONS
-    'click .addClass' () {        
+    'click .addClass' () { 
+        if(Session.equals("profClassTab","addClass")) return;         
         var functionHolder = document.getElementById("profClassInfoHolder");
-        closeDivFade(functionHolder);        
+        closeDivFade(functionHolder);
+        var div = document.getElementById("profClasses");
+        div.style.height = "50%"
         setTimeout(function() {            
-            Session.set("profClassTab", "addClass");            
+            Session.set("profClassTab", "addClass");
+            div.style.height = "90%";          
             openDivFade(functionHolder);        
-        }, 300);    
+        }, 400);
     },
-    'click .manageClass' () {        
+    'click .manageClass' () { 
+        if(Session.equals("profClassTab","manClass")) return;      
         var functionHolder = document.getElementById("profClassInfoHolder");
-        closeDivFade(functionHolder);        
+        closeDivFade(functionHolder);
+        var div = document.getElementById("profClasses");
+        div.style.height = "50%"     
         setTimeout(function() {            
-            Session.set("profClassTab", "manClass");            
+            Session.set("profClassTab", "manClass"); 
+            div.style.height = "90%";           
             openDivFade(functionHolder);        
-        }, 300);    
+        }, 400);    
     },
-    'click .createClass' () {        
+    'click .createClass' () {
+        if(Session.equals("profClassTab","creClass")) return;       
         var functionHolder = document.getElementById("profClassInfoHolder");        
-        closeDivFade(functionHolder);        
+        closeDivFade(functionHolder);
+            var div = document.getElementById("profClasses");
+        div.style.height = "50%"
         setTimeout(function() {            
-            Session.set("profClassTab", "creClass");            
+            Session.set("profClassTab", "creClass");
+            div.style.height = "90%";
             openDivFade(functionHolder);        
-        }, 300);    
+        }, 400);    
     },
     'click .classBox' (event) {  // When you click on a box that holds class
         if (event.target.id === "label" || 
@@ -600,7 +573,8 @@ function closeInput(modifyingInput) { // Closes current modifying input.
     }
     span.style.display = "initial";
     Session.set("modifying", null);
-    serverData = getProfileData();
+    Session.set("user", getProfileData());
+    serverData = Session.get("user");
     sendData("editProfile");
 }
 
@@ -609,19 +583,19 @@ function sendData(funcName) {
 }
 
 function getProfileData() { // Gets all data related to profile.
-    var profile = Meteor.user().profile;
+    var profile = Session.get("user");
     profile.description = document.getElementById("motd").childNodes[0].nodeValue;
     profile.school = document.getElementById("school").childNodes[0].nodeValue;
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
-    profile.avatar = document.getElementById("profAvatar").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
-    profile.banner = document.getElementById("profBanner").style.backgroundImage.replace(")", "").replace("url(", "").replace("\"", "").replace("\"", "");
+    profile.avatar = document.getElementById("profAvatar").src;
+    profile.banner = document.getElementById("profBanner").src;
     profile.preferences = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide":document.getElementById("prefHide").childNodes[0].nodeValue
+        "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
+        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue]
     };
-
     return profile;
 }
 

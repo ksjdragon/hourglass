@@ -5,6 +5,7 @@ import {
 
 var circle = window.innerHeight * 1.1;
 var content = window.innerHeight * 0.6;
+
 Template.login.helpers({
     width() { // Returns width of screen
         return window.innerWidth.toString() + "px";

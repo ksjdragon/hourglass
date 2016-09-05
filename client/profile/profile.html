@@ -1,105 +1,162 @@
 <template name="profile">
-	{{> loginButtons}}
-	<div id="profPage" style="background-color:{{divColor 'header'}};height:{{mainHeight}};{{textColor}}{{loadNew}}">
-		<div id="mainpage" onclick="window.location='/'"><h2>Main Page</h2></div>
-		<div id="logout2" onclick='document.getElementById("login-buttons-logout").click();'><h2>Logout</h2></div>
-		<div id="profMainContainer" style="{{mainCenter}}">
-			<div id="profBanner" style="{{banner}};"></div>
-			<div id="profAvatar" style="{{avatar}};{{avatarDim}}"></div>
-			<div id="motdBox">
-				<span class="username">{{username}} - </span><span class="change mo" restrict="50" id="motd">{{motd}}</span>
+	<div id="mainpage{{user}}" onclick="window.location='/'"><h2>Main Page</h2></div>
+	<div id="logout2" onclick='document.getElementById("login-buttons-logout").click();'><h2>Logout</h2></div>
+	<div id="profPage" style="background-color:{{divColor 'header'}};{{textColor}}{{loadNew}}">
+		<div id="profMainContainer">
+			<div id="profTop">
+				<img id="profBanner" src='{{banner}}' alt="Banner">
+				<img id="profAvatar" src='{{avatar}}' alt="Avatar">
+				<div id="motdBox">
+					<span class="username">{{username}} - </span><span class="change mo" restrict="50" id="motd">{{motd}}</span>
+				</div>
 			</div>
 			<div id="profCards">
-				<div id="profInfo" class="card" style="background-color:{{divColor 'cards'}}">
-					<h3 class="profHea">About</h3>
-					<div id="about">
-						<div>
-							<p class="profTitle">School Name:</p>
-							<span class="change" id="school">{{school}}</span>
-						</div>
-						<br>
-						<div>
+				<div id="cardColLeft">
+					<!-- Card 1 -->
+					<div id="profInfo" class="card" style="background-color:{{divColor 'cards'}}">
+						<h3 class="profHea">About</h3>
+						<div id="about">
 							<div>
-							<p class="profTitle">Grade:</p>
-							<span class="change radio" re="readonly" id="grade">{{grade}}</span>
+								<p class="profTitle">School Name:</p>
+								<span class="change" id="school">{{school}}</span>
 							</div>
-				            <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                  	<p class="profOptionText">9th</p>
-				                <p class="profOptionText">10th</p>
-				                <p class="profOptionText">11th</p>
-				                <p class="profOptionText">12th</p>
+							<br>
+							<div class="radioContainer">
+								<div>
+								<p class="profTitle">Grade:</p>
+								<span class="change radio" re="readonly" id="grade">{{grade}}</span>
+								</div>
+					            <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                  	<p class="profOptionText">9th</p>
+					                <p class="profOptionText">10th</p>
+					                <p class="profOptionText">11th</p>
+					                <p class="profOptionText">12th</p>
+					            </div>
 				            </div>
-			            </div>
-			        </div>
+				        </div>
+					</div>
+					<!-- Card 2 -->
+					<div id="profPreferences" class="card" style="background-color:{{divColor 'cards'}}">
+						<h3 class="profHea">Preferences</h3>
+						<div id="preferences">
+				            <div class="radioContainer">
+				                <div class="inputRadio">
+				                <p class="profTitle">Theme:</p>
+				                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+				                </div>
+				                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                    <p class="profOptionText">Light</p>
+				                    <p class="profOptionText">Dark</p>
+				                </div>
+				            </div>
+				            <br>
+				            <div class="radioContainer">
+				                <div class="inputRadio">
+				                <p class="profTitle">Default Mode:</p>
+				                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+				                </div>
+				                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                    <p class="profOptionText">Classes</p>
+				                    <p class="profOptionText">Calendar</p>
+				                </div>
+				            </div>
+				            <br>
+				            <div class="radioContainer">
+				                <div class="inputRadio">
+				                <p class="profTitle">Hide Homework:</p>
+				                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
+				                </div>
+				                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                    <p class="profOptionText">1 Day</p>
+				                    <P class="profOptionText">2 Days</p>
+				                    <p class="profOptionText">1 Week</p>
+				                    <p class="profOptionText">1 Month</p>
+				                    <p class="profOptionText">Never</p>
+				                </div>
+				            </div>
+				            <br>
+				            <div class="radioContainer">
+				                <div class="inputRadio">
+				                <p class="profTitle">Hide Done:</p>
+				                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
+				                </div>
+				                <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                    <p class="profOptionText">Yes</p>
+				                    <p class="profOptionText">No</p>
+				                </div>
+				            </div>
+				        </div>
+					</div>
 				</div>
-				<div id="profClasses" class="card" style="background-color:{{divColor 'cards'}};height:{{profClassHeight}};">
-					<h3 class="profHea">Classes</h3>
-					<div id="classes">
-						<div id="profFunctions">
-							<div class="profFunction manageClass">
-					        	<i class="fa fa-tasks" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTabColor 'manClass'}}">Manage my Classes</h4>
-					      	</div>
-					      	<div class="profFunction addClass">
-					        	<i class="fa fa-plus" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTabColor 'addClass'}}">Join a Class</h4>
-					      	</div>
-					      	<div class="profFunction createClass">
-					        	<i class="fa fa-graduation-cap" aria-hidden="true"></i>
-					        	<h4 style="color:{{profClassTabColor 'creClass'}}">Create a Class</h4>
-					      	</div>
-					    </div>
-						<div id="profClassInfoHolder">
-						{{#if profClassTab "manClass"}}
-							<div id="label" class="classBox">
-								<span class="name classText">Class Name</span>
-								<span class="teacher classText">Teacher</span>
-								<span class="hour classText">Hour</span>
-								<span class="subscriptions classText">Members</span>
-							</div>
-							<div class="classHolder" style="max-height:{{classHolderHeight}}">
-								{{#each myClasses}}
-									{{> classDisplay}}
+				<div id="cardColRight">
+					<!-- Card 3 -->
+					<div id="profClasses" class="card" style="background-color:{{divColor 'cards'}};">
+						<h3 class="profHea">Classes</h3>
+						<div id="classes">
+							<div id="profFunctions">
+								<div class="profFunction manageClass">
+						        	<i class="fa fa-tasks" aria-hidden="true"></i>
+						        	<h4 style="color:{{profClassTabColor 'manClass'}}">Manage my Classes</h4>
+						      	</div>
+						      	<div class="profFunction addClass">
+						        	<i class="fa fa-plus" aria-hidden="true"></i>
+						        	<h4 style="color:{{profClassTabColor 'addClass'}}">Join a Class</h4>
+						      	</div>
+						      	<div class="profFunction createClass">
+						        	<i class="fa fa-graduation-cap" aria-hidden="true"></i>
+						        	<h4 style="color:{{profClassTabColor 'creClass'}}">Create a Class</h4>
+						      	</div>
+						    </div>
+							<div id="profClassInfoHolder">
+							{{#if profClassTab "manClass"}}
+								<div id="label" class="classBox">
+									<span class="name classText">Class Name</span>
+									<span class="teacher classText">Teacher</span>
+									<span class="hour classText">Hour</span>
+									<span class="subscriptions classText">Members</span>
+								</div>
+								<div class="classHolder">
+									{{#each myClasses}}
+										{{> classDisplay}}
 
-								{{/each}}
-								{{#if noclass}}
-									<h3>No results found...</h3>
-								{{/if}}
-							</div>
-						{{/if}}
-
-						{{#if profClassTab "addClass"}}
-							<i class="fa fa-search" aria-hidden="true"></i>
-							{{> inputAutocomplete id="profClassSearch" settings=classSettings placeholder="Search..."}}
-							<h4 id="private">Join Private Class</h4>
-							<div id="label" class="classBox">
-								<span class="name classText">Class Name</span>
-								<span class="teacher classText">Teacher</span>
-								<span class="hour classText">Hour</span>
-								<span class="subscriptions classText">Members</span>
-							</div>
-							<div class="classHolder" style="max-height:{{classHolderHeight}}">
-							{{#if notsearching}}
-								{{#each classes}}
-									{{> classDisplay}}
-								{{/each}}
-								{{#if noclass}}
-									<h3>No results found...</h3>
-								{{/if}}
-							{{else}} 
-								{{#each autocompleteClasses}}
-									{{> classDisplay}}
-								{{/each}}
-								{{#if notfound}}
-									<h3>No results found...</h3>
-								{{/if}}
+									{{/each}}
+									{{#if noclass}}
+										<h3>No results found...</h3>
+									{{/if}}
+								</div>
 							{{/if}}
-							</div>
-						{{/if}}
 
-						{{#if profClassTab "creClass"}}
-							<div id="creRules"><p>Submit a request for a class to be approved by an administrator.</p></div>
-							<form id="create">
+							{{#if profClassTab "addClass"}}
+								<i class="fa fa-search" aria-hidden="true"></i>
+								{{> inputAutocomplete id="profClassSearch" settings=classSettings placeholder="Search..."}}
+								<h4 id="private">Join Private Class</h4>
+								<div id="label" class="classBox">
+									<span class="name classText">Class Name</span>
+									<span class="teacher classText">Teacher</span>
+									<span class="hour classText">Hour</span>
+									<span class="subscriptions classText">Members</span>
+								</div>
+								<div class="classHolder">
+								{{#if notsearching}}
+									{{#each classes}}
+										{{> classDisplay}}
+									{{/each}}
+									{{#if noclass}}
+										<h3>No results found...</h3>
+									{{/if}}
+								{{else}} 
+									{{#each autocompleteClasses}}
+										{{> classDisplay}}
+									{{/each}}
+									{{#if notfound}}
+										<h3>No results found...</h3>
+									{{/if}}
+								{{/if}}
+								</div>
+							{{/if}}
+
+							{{#if profClassTab "creClass"}}
+								<div id="creRules"><p>Submit a request for a class to be approved by an administrator.</p></div>
 								<div id="formContainer">
 									<div class="formDiv">
 						            	<p class="profTitle">School:</p>
@@ -135,62 +192,11 @@
 						              	</div>
 							        </div>
 						        </div>
-					        	<h3 id="creSubmit">Submit Request</h3>
-				          	</form> 
-						{{/if}}
+						        <h3 id="creSubmit">Submit Request</h3>
+							{{/if}}
+							</div>
 						</div>
 					</div>
-				</div>
-				<div id="profPreferences" class="card" style="background-color:{{divColor 'cards'}}">
-					<h3 class="profHea">Preferences</h3>
-					<div id="preferences">
-			            <div>
-			                <div class="inputRadio">
-			                <p class="profTitle">Theme:</p>
-			                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
-			                </div>
-			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                    <p class="profOptionText">Light</p>
-			                    <p class="profOptionText">Dark</p>
-			                </div>
-			            </div>
-			            <br>
-			            <div>
-			                <div class="inputRadio">
-			                <p class="profTitle">Default Mode:</p>
-			                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
-			                </div>
-			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                    <p class="profOptionText">Classes</p>
-			                    <p class="profOptionText">Calendar</p>
-			                </div>
-			            </div>
-			            <br>
-			            <div>
-			                <div  class="inputRadio">
-			                <p class="profTitle">Hide Homework:</p>
-			                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
-			                </div>
-			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                    <p class="profOptionText">1 Day</p>
-			                    <P class="profOptionText">2 Days</p>
-			                    <p class="profOptionText">1 Week</p>
-			                    <p class="profOptionText">1 Month</p>
-			                    <p class="profOptionText">Never</p>
-			                </div>
-			            </div>
-			            <br>
-			            <div>
-			                <div class="inputRadio">
-			                <p class="profTitle">Hide Done:</p>
-			                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
-			                </div>
-			                <div class="profOptions" style="background-color:{{divColor 'header'}}">
-			                    <p class="profOptionText">Yes</p>
-			                    <p class="profOptionText">No</p>
-			                </div>
-			            </div>
-			        </div>
 				</div>
 			</div>
 		</div>
@@ -216,7 +222,7 @@
   			<input class="userAddInput" type="text" placeholder="1234@abc.xyz">
   			<i class="fa fa-plus" aria-hidden="true"></i>
 			</div>
-			<div class="userHolder" style="max-height:{{userHolder}}">
+			<div class="userHolder">
 	  			{{#each selectedClass 'moderators'}}
 	  				{{> userDisplay}}
 	  			{{/each}}
@@ -228,7 +234,7 @@
 	  			<input class="userAddInput" type="text" placeholder="1234@abc.xyz">
 	  			<i class="fa fa-plus" aria-hidden="true"></i>
 			</div>
-			<div class="userHolder" style="max-height:{{userHolder}}">	
+			<div class="userHolder">	
 	  			{{#each selectedClass 'banned'}}
 	  				{{> userDisplay}}
 	  			{{/each}}
@@ -245,6 +251,7 @@
   		<input id="privateCode" type="text" placeholder="Enter code here...">
   		<h4 id="privSubmit">Submit</h4>
   	</div>
+	{{> loginButtons}}
 </template>
 
 <template name="classDisplay">

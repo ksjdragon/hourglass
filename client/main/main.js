@@ -36,6 +36,7 @@ var ref = {
 };
 
 // Reactive variables.
+Session.set("user",null);
 Session.set("calendarClasses", null);
 Session.set("sidebar", null); // Status of sidebar
 Session.set("newWork", null); // If user creating new work.
@@ -49,36 +50,40 @@ Session.set("classDispHover", null); // Stores current hovered filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", null); // Stores text for comment character restriction.
 
+Template.registerHelper('user', () => {
+    var user = Meteor.user().profile;
+    if(user === undefined || user === null) return;
+    Session.set("user", user);
+    return;
+});
+
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    if (Meteor.user() === undefined) return;
-    return themeColors[Meteor.user().profile.preferences.theme][div];
+    return themeColors[Session.get("user").preferences.theme][div];
 });
 
 Template.registerHelper('textColor', () => { // Reactive color for text.
-    if (Meteor.user() === undefined) return;
-    document.getElementsByTagName("body")[0].style.color = themeColors[Meteor.user().profile.preferences.theme].text;
+    document.getElementsByTagName("body")[0].style.color = themeColors[Session.get("user").preferences.theme].text;
     return;
 });
 
 Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
-    if (Meteor.user() === undefined) return;
     var dim = [window.innerWidth * 0.25, window.innerHeight * 0.2];
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
-    var bg = "background-color:" + themeColors[Meteor.user().profile.preferences.theme].header + ";";
+    var bg = "background-color:" + themeColors[Session.get("user").preferences.theme].header + ";";
     return width + height + margin + bg;
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
-    if (Meteor.user() === undefined) { // Null checking.
-        Session.set("noclass", true); // Makes sure to display nothing.
+    if(Session.get("user")["classes"].length === 0) { // Null checking.
+        Session.set("noclass",true); // Makes sure to display nothing.
         return [];
     } else {
         var array = [];
-        var courses = Meteor.user().profile.classes;
+        var courses = Session.get("user").classes;
         var classDisp = Session.get("classDisp"); // Get sidebar class filter.
-        var hide = Meteor.user().profile.preferences.timeHide;
+        var hide = Session.get("user").preferences.timeHide;
 
         for (var i = 0; i < courses.length; i++) { // For each user class.
             found = classes.findOne({
@@ -111,8 +116,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                         j = 0;
                     }
                 }
-                if (thisWork[j] !== "no" && Meteor.user().profile.preferences.done) { // If done filter is true
-                    if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
+
+                if(thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
+                    if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
                         thisWork[j] = "no";
                         j = 0;
                     }
@@ -159,9 +165,8 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
-    if (Meteor.user() === undefined) return;
-    var preferences = Meteor.user().profile.preferences;
-    if (val === 'timeHide' || val === 'done') {
+    var preferences = Session.get("user").preferences;
+    if(val === 'timeHide' || val === 'done') {
         var invert = _.invert(ref);
         return invert[preferences[val]];
     }
@@ -170,29 +175,26 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
 
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
-        if (Meteor.user().profile.school === undefined) return;
-        return " - " + Meteor.user().profile.school;
+        if(Session.get("user").school === undefined) return;
+        return " - " + Session.get("user").school;
     },
     iconColor(icon) { // Sidebar status color
-        if (Session.equals("sidebar", icon + "Container")) {
-            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
-        } else if (Session.equals("sidebar", "both")) {
-            return themeColors[Meteor.user().profile.preferences.theme].statusIcons;
+        if (Session.equals("sidebar",icon + "Container")) {
+            return themeColors[Session.get("user").preferences.theme].statusIcons;
+        } else if (Session.equals("sidebar","both")) {
+            return themeColors[Session.get("user").preferences.theme].statusIcons;
         } else {
             return;
         }
     },
     defaultMode() { //Loads the default display mode for user.
-        if (load) {
-            Session.set("mode", Meteor.user().profile.preferences.mode);
-            load = false;
+        if(load) {
+            Session.set("mode",Session.get("user").preferences.mode);
         }
         return;
     },
-    bgSrc() { // Adjusts for different, larger screen sizes.
-        var dim = [window.innerWidth, window.innerHeight];
-        var pic = "Backgrounds/" + themeColors[Meteor.user().profile.preferences.theme].background;
-        return pic;
+    bgSrc() { // Returns background.
+        return "Backgrounds/"+ themeColors[Session.get("user").preferences.theme].background;
     },
     menuStatus() { // Status of of menu sidebar.
         if (Session.equals("sidebar", "menuContainer")) {
@@ -213,11 +215,8 @@ Template.main.helpers({
         }
     },
     modeStatus(status) { // Color status of display modes.
-        if (Session.equals("mode", status)) {
-            return themeColors[Meteor.user().profile.preferences.theme].highlightText;
-        } else {
-            return;
-        }
+        if (!Session.equals("mode",status)) return;
+        return themeColors[Session.get("user").preferences.theme].highlightText;
     },
     currMode(name) { // Status of display mode.
         var mode = Session.get("mode");
@@ -304,13 +303,8 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
     calColor() { // Sets the color of the calendar according to theme
-        return "color:" + themeColors[Meteor.user().profile.preferences.theme].calendar;
-    },
-    calbg() { //Sets size of the calendar
-        var width = window.innerWidth * 0.865;
-        var height = window.innerHeight * 0.76;
-        return "width:" + width.toString() + "px;height:" + height.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;margin-top:" + (0.47 * window.innerHeight - 0.5 * height).toString() + "px";
-    },
+        return "color:"+themeColors[Session.get("user").preferences.theme].calendar;
+    },  
     calCreWork() { // Display instructions for creating a work.
         if (Session.get("calCreWork")) return true;
         return false;
@@ -890,7 +884,7 @@ function getHomeworkFormData() { // Get all data relating to work creation.
 }
 
 function getPreferencesData() { // Get all data relating to preferences.
-    var profile = Meteor.user().profile;
+    var profile = Session.get("user");
     var options = {
         "theme": document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
