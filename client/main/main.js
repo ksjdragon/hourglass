@@ -667,7 +667,11 @@ Template.main.events({
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
-        var text = document.getElementById(Session.get("modifying")+"restrict");
+        if(event.target.id === "workComment") {
+            var text = document.getElementById("commentrestrict");
+        } else {
+           var text = document.getElementById(Session.get("modifying")+"restrict"); 
+        }
         text.style.color = "#7E7E7E";
         if (chars === restrict) { // Don't display if nothing in comment.
             Session.set("commentRestrict", "");
