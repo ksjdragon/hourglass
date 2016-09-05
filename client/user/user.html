@@ -1,0 +1,42 @@
+<template name="user">
+	  <div id="mainpage{{user}}" onclick="window.location='/'"><h2>Main Page</h2></div>
+	  <div id="profPage" style="background-color:{{divColor 'header'}};{{textColor}}{{loadNew}}">
+		    <div id="profMainContainer">
+			      <div id="profTop">
+				        <img id="profBanner" src='{{banner}}' alt="Banner">
+				        <img id="profAvatar" src='{{avatar}}' alt="Avatar">
+				        <div id="motdBox">
+					          <span class="username">{{username}} - </span><span class="change mo" restrict="50" id="motd">{{motd}}</span>
+				        </div>
+			      </div>
+			      <div id="profCards">
+				        <div id="cardColLeft">
+					          <!-- Card 1 -->
+					          <div id="profInfo" class="card" style="background-color:{{divColor 'cards'}}">
+						            <h3 class="profHea">About</h3>
+						            <div id="about">
+							              <div>
+								                <p class="profTitle">School Name:</p>
+								                <span class="change" id="school">{{school}}</span>
+							              </div>
+							              <br>
+							              <div class="radioContainer">
+								                <div>
+								                    <p class="profTitle">Grade:</p>
+								                    <span class="change radio" re="readonly" id="grade">{{grade}}</span>
+								                </div>
+					                      <div class="profOptions" style="background-color:{{divColor 'header'}}">
+				                  	        <p class="profOptionText">9th</p>
+					                          <p class="profOptionText">10th</p>
+					                          <p class="profOptionText">11th</p>
+					                          <p class="profOptionText">12th</p>
+					                      </div>
+				                    </div>
+				                </div>
+					          </div>
+				        </div>
+			      </div>
+		    </div>
+	  </div>
+</template>
+
