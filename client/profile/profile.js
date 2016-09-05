@@ -435,16 +435,14 @@ Template.profile.events({
             input.select();
         }
         input.focus();
-        if (ele.getAttribute("restrict") !== null) {
-            var span = document.createElement("span");
-            span.id = "restrict";
-            var num = parseInt(ele.getAttribute("restrict")) - input.value.length;
-            if (num <= 0) {
-                span.style.setProperty("color", "#FF1A1A", "important");
-                num = 0;
-            }
-            span.appendChild(document.createTextNode(num.toString() + " characters left"));
-            ele.parentNode.appendChild(span);
+        var restrict = ele.getAttribute("restrict");
+        if (restrict !== null) {
+            input.maxLength = restrict;
+            input.className += " restrict";
+            Session.set("commentRestrict",restrict-input.value.length.toString() + " characters left");
+            var text = document.getElementById(Session.get("modifying")+"restrict");
+            text.style.display = "inherit";
+            text.style.color = "#7E7E7E";
         }
     },
     'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
@@ -465,32 +463,27 @@ Template.profile.events({
             openDivFade(op.parentNode.parentNode.childNodes[3]);
         }
     },
-    'keydown' (event) { // Restricts characters for certain inputs.
+    'keydown input' (event) { // Restricts characters for certain inputs.
         var modifyingInput = Session.get("modifying");
         if (event.keyCode == 13) {
             try {
                 closeInput(modifyingInput);
             } catch (err) {}
         }
-        if (modifyingInput !== null && event.keyCode !== 13) {
-            var restrict = document.getElementById(modifyingInput).getAttribute("restrict");
-            if (restrict !== null) {
-                var num = parseInt(restrict) - event.target.value.length;
-                var restext = document.getElementById("restrict");
-                if (num === 1) {
-                    restext.childNodes[0].nodeValue = num.toString() + " character left";
-                    restext.style.setProperty("color", "#999", "important");
-                } else if (num <= 0) {
-                    var input = document.getElementById(modifyingInput + "a");
-                    input.value = input.value.substring(0, parseInt(restrict));
-                    restext.childNodes[0].nodeValue = "0 characters left";
-                    restext.style.setProperty("color", "#FF1A1A", "important");
-                } else {
-                    restext.childNodes[0].nodeValue = num.toString() + " characters left";
-                    restext.style.setProperty("color", "#999", "important");
-                }
-            }
+    },
+    'input .restrict' (event) {
+        var restrict = event.target.maxLength;
+        var chars = restrict - event.target.value.length;
+        var text = document.getElementById(Session.get("modifying")+"restrict");
+        text.style.color = "#7E7E7E";
+        if (chars === restrict) { // Don't display if nothing in comment.
+            Session.set("commentRestrict", "");
+            return;
+        } else if (chars === 0) {
+            text.style.color = "#FF1A1A"; // Make text red if 0 characters left.
+            text.style.opacity = "0";
         }
+        Session.set("commentRestrict", chars.toString() + " characters left");
     },
     'click .profOptionText' (event) { // Click each profile option setting.
         var modifyingInput = Session.get("modifying");
@@ -562,10 +555,11 @@ function closeInput(modifyingInput) { // Closes current modifying input.
     var input = document.getElementById(modifyingInput + "a");
     var span = document.getElementById(modifyingInput);
     input.parentNode.removeChild(input);
+    Session.set("commentRestrict", "");
     try {
-        var restrict = document.getElementById("restrict");
-        restrict.parentNode.removeChild(restrict);
-    } catch (err) {}
+       document.getElementById("modifyingInput"+"restrict").style.display = "none";
+   } catch(err) {}
+    
     if (input.value === "") {
         span.childNodes[0].nodeValue = "Click here to edit...";
     } else {
