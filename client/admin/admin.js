@@ -29,17 +29,19 @@ Template.admin.helpers({
 						userClasses[i].code = "None";
 					}
 					userClasses[i].category = userClasses[i].category.charAt(0).toUpperCase() + userClasses[i].category.slice(1);
-
 					userClasses[i].admin = getEmail(userClasses[i].admin);
 					var types = ["subscribers","moderators","banned"];
 					for(var j = 0; j < types.length; j++) {
+
 						if(userClasses[i][types[j]].length === 0) {
-							userClasses[i][types[j]][k] = {"email":"None"};
+							userClasses[i][types[j]][k] = {"email":"None","none":false};
 							continue;
 						}
+
 						for(var k = 0; k < userClasses[i][types[j]].length; k++) {
 							userClasses[i][types[j]][k] =  {
-								"email": getEmail(userClasses[i][types[j]][k])
+								"email": getEmail(userClasses[i][types[j]][k]),
+								"none":true
 							};
 						}
 					}
@@ -61,6 +63,14 @@ Template.admin.helpers({
 Template.admin.events({
 	'click #adminTabs li' (event) {
 		Session.set("adminTab",event.target.id);
+	},
+	'click .fa-files-o' (event) {
+		document.getElementById("copyArea").value = event.target.parentNode.childNodes[3].childNodes[0].nodeValue;
+		document.getElementById("copyArea").select();
+		document.execCommand("copy");
+	},
+	'click .fa-pencil-square-o' (event) {
+		var value = event.target.parentNode.childNodes[3].className.replace("modify ","");
 	}
 });
 

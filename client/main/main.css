@@ -40,10 +40,10 @@ html {
     -ms-user-select: none;
     user-select: none;
 
-	-webkit-transition: color 0.5s ease  
-	-moz-transition: color 0.5s ease 
-	-ms-transition: color 0.5s ease
-	transition: color 0.5s ease 
+	-webkit-transition: color 0.5s ease;  
+	-moz-transition: color 0.5s ease; 
+	-ms-transition: color 0.5s ease;
+	transition: color 0.5s ease;
 }
 
 ::-webkit-input-placeholder {

@@ -1,3 +1,8 @@
+#copyArea {
+	position: absolute;
+	top: -50px;
+}
+
 #adminBanner {
 	width: 100%;
 	height: 32%;
@@ -114,7 +119,7 @@
 }
 
 .classItem {
-	width: 20%;
+	width: 23%;
 	margin: 2% 0 2% 2%;
 	padding: 1.5%;
 
@@ -140,26 +145,71 @@
 	display: table-row;
 }
 
+.keyContainer .fa-plus, .keyContainer .fa-times {
+	-webkit-filter: none;
+	filter: none;
+
+	cursor: pointer;
+
+	-webkit-transition: color 0.5s ease;  
+	-moz-transition: color 0.5s ease; 
+	-ms-transition: color 0.5s ease;
+	transition: color 0.5s ease;
+}
+
+.keyContainer .fa-plus:hover {
+	color: #519C39;
+}
+
+.keyContainer .fa-times {
+	margin-left: 5%;
+}
+
+.keyContainer .fa-times:hover {
+	color: #CC4444;
+}
+
 .key {
 	font-weight: 400;
 	font-size: 120%;
-	width: 40%;
+	width: 30%;
 	padding-top: 2%;
 	display: table-cell;
 }
 
 .modify {
-	width: 60%;
+	width: 50%;
 	padding: 0;
 	display: table-cell;
+}
+
+.fa-files-o, .fa-pencil-square-o {
+	width: 10%;
+	display: table-cell;
+	cursor: pointer;
+
+	-webkit-transition: color 0.5s ease;  
+	-moz-transition: color 0.5s ease; 
+	-ms-transition: color 0.5s ease;
+	transition: color 0.5s ease;
+}
+
+.fa-files-o:hover {
+	color: #E6E619;
+}
+
+.fa-pencil-square-o:hover {
+	color: #E6B319;
 }
 
 .aUserContainer {
 	margin-left: -50%;
 }
 
-.aUserContainer p {
-	margin: 0;
-	padding: 1%;
+#editValue {
+	width: 10%;
+	margin: auto;
+	margin-top: 30%;
+	background-color: #FEFEFE;
 }
 
