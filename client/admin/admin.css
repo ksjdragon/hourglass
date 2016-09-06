@@ -13,7 +13,7 @@
 #adminTabs {
 	font-size: 120%;
 	width: 100%;
-	margin: 0 0 0 10%;
+	margin: 0 0 0 12%;
 	padding: 0.1% 0 0 0;
 
 	position: absolute;
@@ -54,7 +54,7 @@
 }
 
 #adminSide {
-	width: 10%;
+	width: 12%;
 	height: 100%;
 	display: inline-block;
 }
@@ -112,16 +112,16 @@
 }
 
 #adminContent {
-	width: 90%;
+	width: 88%;
 	height: 68%;
 	float: right;
 	overflow-y: scroll;
 }
 
 .classItem {
-	width: 23%;
+	width: 30%;
 	margin: 2% 0 2% 2%;
-	padding: 1.5%;
+	padding: 3%;
 
 	box-shadow: 2px 2px 5px 3px #666;
 

@@ -1,5 +1,5 @@
 .change {
-	font-size: 150%;
+	font-size: 2.5vh;
 	color: #8C8C8C;
 	cursor: pointer;
 }
@@ -24,7 +24,7 @@
 }
 
 .profHea {
-	font-size: 300%;
+	font-size: 300;
 	font-weight: 200;
 	padding: 6% 6% 0 8%;
 }
@@ -212,6 +212,7 @@
 }
 
 .profFunction {
+	font-size: 1.7vh;
 	margin-right: 1%;
 	padding: 2%;
 
@@ -303,7 +304,7 @@
 }
 
 .classBox {
-	font-size: 150%;
+	font-size: 2.7vh;
 	width: 100%;
 	margin-bottom: 3%;
 	padding: 2%;
