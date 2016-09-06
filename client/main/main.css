@@ -354,7 +354,7 @@ input, textarea {
 }
 
 .mainClass {
-	width: 20%;
+	width: 18vw;
 	margin: 2%;
 	margin-right: 0;
 
@@ -368,7 +368,7 @@ input, textarea {
 }
 
 .mainClassName {
-	font-size: 160%;
+	font-size: 3.1vh;
 
 	-webkit-filter: none;
 	filter: none;
