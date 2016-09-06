@@ -85,7 +85,7 @@ Meteor.publish('work', function() {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
-                    $in: userprofile.profile.classes.concat(Meteor.userId())
+                    $in: userprofile.profile.classes.concat(this.userId)
                 }
             });
         } else {
@@ -484,6 +484,8 @@ Meteor.methods({
         var current = Meteor.users.findOne({
             _id: userId
         }).profile;
+        current.banner = "/Banners/defaultcover.jpg";
+        current.avatar = "/Avatars/" + (Math.floor(Math.random() * 10) + 1).toString() + ".png";
         current.classes = [];
         current.preferences = {
             "theme": "light",
