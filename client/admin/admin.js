@@ -2,10 +2,7 @@ Session.set("adminTab","aClasses");
 
 Template.admin.helpers({
 	banner() {
-		if(Meteor.user() === null || Meteor.user() === undefined) return;
-		var w = window.innerWidth;
-		var h = window.innerHeight * 0.3;
-		return "width:" + w + "px;height:" + h + "px;background-image:url(\'" + Meteor.user().profile.banner + "\');background-size:" + w+"px";
+		return "background-image:url(" + Session.get("user").banner + ")";
 	},
 	filters() {
 		return [{filter:"Lol"}];
@@ -13,13 +10,41 @@ Template.admin.helpers({
 	adminTab(val) {
 		return Session.equals("adminTab",val);
 	},
+	adminTabColor(val) {
+		var value = {true:"header",false:"adminButtons"};
+		return themeColors[Session.get("user").preferences.theme][value[Session.equals("adminTab",val)]];
+	},
 	collection(val) {
 		switch(val) {
 			case "classes":
-				var classes = classes.find().fetch();
-				for(var i = 0; i < classes.length; i++) {
-					
+				var userClasses = classes.find().fetch();
+				for(var i = 0; i < userClasses.length; i++) {
+					if(userClasses[i].privacy) {
+						userClasses[i].privacy = "True";
+					} else {
+						userClasses[i].privacy = "False";
+					}
+
+					if(userClasses[i].code === "") {
+						userClasses[i].code = "None";
+					}
+					userClasses[i].category = userClasses[i].category.charAt(0).toUpperCase() + userClasses[i].category.slice(1);
+
+					userClasses[i].admin = getEmail(userClasses[i].admin);
+					var types = ["subscribers","moderators","banned"];
+					for(var j = 0; j < types.length; j++) {
+						if(userClasses[i][types[j]].length === 0) {
+							userClasses[i][types[j]][k] = {"email":"None"};
+							continue;
+						}
+						for(var k = 0; k < userClasses[i][types[j]].length; k++) {
+							userClasses[i][types[j]][k] =  {
+								"email": getEmail(userClasses[i][types[j]][k])
+							};
+						}
+					}
 				}
+				return userClasses;
 				break;
 			case "users":
 				break;
@@ -35,10 +60,10 @@ Template.admin.helpers({
 
 Template.admin.events({
 	'click #adminTabs li' (event) {
-		var id = event.target.id;
-		document.getElementById(Session.get("adminTab")).style.backgroundColor = themeColors[Meteor.user().profile.preferences.theme].adminButtons;
-		Session.set("adminTab",id);
-		document.getElementById(id).style.backgroundColor = themeColors[Meteor.user().profile.preferences.theme].header;
-		
+		Session.set("adminTab",event.target.id);
 	}
-})
+});
+
+function getEmail(id) {
+	return Meteor.users.findOne({_id:id}).services.google.email;
+}

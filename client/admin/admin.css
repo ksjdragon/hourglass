@@ -1,6 +1,8 @@
 #adminBanner {
 	width: 100%;
+	height: 32%;
 	position: relative;
+	background-size: 100vw;
 }
 
 #adminTabs {
@@ -106,6 +108,58 @@
 
 #adminContent {
 	width: 90%;
-	height: 100%;
+	height: 68%;
 	float: right;
+	overflow-y: scroll;
 }
+
+.classItem {
+	width: 20%;
+	margin: 2% 0 2% 2%;
+	padding: 1.5%;
+
+	box-shadow: 2px 2px 5px 3px #666;
+
+	display: inline-block;
+}
+
+.classItem h2 {
+	-webkit-filter: none;
+	filter: none;
+}
+
+.basicInfo, .userInfo {
+	width: 90%;
+	padding: 2% 0 5% 10%;
+	display: table;
+}
+
+.keyContainer {
+	width: 100%;
+	margin: 5% 0 0 0;
+	display: table-row;
+}
+
+.key {
+	font-weight: 400;
+	font-size: 120%;
+	width: 40%;
+	padding-top: 2%;
+	display: table-cell;
+}
+
+.modify {
+	width: 60%;
+	padding: 0;
+	display: table-cell;
+}
+
+.aUserContainer {
+	margin-left: -50%;
+}
+
+.aUserContainer p {
+	margin: 0;
+	padding: 1%;
+}
+

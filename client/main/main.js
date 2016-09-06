@@ -36,7 +36,7 @@ var ref = {
 };
 
 // Reactive variables.
-Session.set("user",null); // Stores user preferences.
+Session.set("user",{}); // Stores user preferences.
 Session.set("calendarClasses", null);
 Session.set("sidebar", null); // Status of sidebar
 Session.set("newWork", null); // If user creating new work.

@@ -1,11 +1,11 @@
 <template name="admin">
 	<div id="{{userProfile}}adminBanner" style="{{banner}}{{textColor}}">
 		<ul id="adminTabs">
-			<li id="aClasses" style="background-color:{{divColor 'adminButtons'}};margin-left:0">Classes</li>
-			<li id="aUsers" style="background-color:{{divColor 'adminButtons'}}">Users</li>
-			<li id="aWork" style="background-color:{{divColor 'adminButtons'}}">Work</li>
-			<li id="aSchools" style="background-color:{{divColor 'adminButtons'}}">Schools</li>
-			<li id="aReports" style="background-color:{{divColor 'adminButtons'}}">Reports</li>
+			<li id="aClasses" style="background-color:{{adminTabColor 'aClasses'}};margin-left:0">Classes</li>
+			<li id="aUsers" style="background-color:{{adminTabColor 'aUsers'}}">Users</li>
+			<li id="aWork" style="background-color:{{adminTabColor 'aWork'}}">Work</li>
+			<li id="aSchools" style="background-color:{{adminTabColor 'aSchools'}}">Schools</li>
+			<li id="aReports" style="background-color:{{adminTabColor 'aReports'}}">Reports</li>
 		</ul>
 	</div>
 	<div id="aContainer">
@@ -37,7 +37,70 @@
 		<div id="adminContent" style="background-color:{{divColor 'header'}}">
 			{{#if adminTab 'aClasses'}}
 				{{#each collection 'classes'}}
-					
+					<div class="classItem" style="background-color:{{divColor 'classes'}}">
+						<h2>Basic Info</h2>
+						<div class="basicInfo">
+							<div class="keyContainer">
+								<span class="key">Name: </span>
+								<span class="modify">{{name}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Hour: </span>
+								<span class="modify">{{hour}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Teacher: </span>
+								<span class="modify">{{teacher}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">School: </span>
+								<span class="modify">{{school}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Category: </span>
+								<span class="modify">{{category}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Privacy: </span>
+								<span class="modify">{{privacy}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Code: </span>
+								<span class="modify">{{code}}</span>
+							</div>
+						</div>
+						<h2>User Info</h2>
+						<div class="userInfo">
+							<div class="keyContainer">
+								<span class="key">Creator: </span>
+								<span class="modify">{{admin}}</span>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Subscribers: </span><br>
+								<div class="aUserContainer">
+									{{#each subscribers}}
+										<p>{{email}}</p>
+									{{/each}}
+								</div>	
+							</div>
+							<div class="keyContainer">
+								<span class="key">Moderators: </span><br>
+								<div class="aUserContainer">
+									{{#each moderators}}
+										<p>{{email}}</p>
+									{{/each}}
+								</div>
+							</div>
+							<div class="keyContainer">
+								<span class="key">Banned: </span><br>
+								<div class="aUserContainer">
+									{{#each banned}}
+										<p>{{email}}</p>
+									{{/each}}
+								</div>
+							</div>
+						</div>
+					</div>
 				{{/each}}
 			{{/if}}
 			{{#if adminTab 'aUsers'}}
@@ -59,4 +122,3 @@
 		</div>
 	</div>
 </template>
-
