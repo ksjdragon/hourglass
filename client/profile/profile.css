@@ -24,7 +24,7 @@
 }
 
 .profHea {
-	font-size: 300;
+	font-size: 5.5vh;
 	font-weight: 200;
 	padding: 6% 6% 0 8%;
 }
@@ -155,12 +155,10 @@
 
 #cardColLeft {
 	width: 39.6%;
-	float: left;
 }
 
 #cardColRight {
 	width: 60%;
-	float: right;
 }
 
 .card {
@@ -324,13 +322,17 @@
 	background-color: #138686;
 }
 
+#joinTop .fa-search {
+	font-size: 2.5vh;
+	margin-right: 3%;
+}
+
 #private {
-	margin: 3% 35% 0 4%;
+	margin-left: 5%;
 	padding: 1.5%;
 
 	background-color: rgba(0,0,0,0.2);
 
-	float: right;
 	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease;  
