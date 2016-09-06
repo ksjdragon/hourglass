@@ -71,8 +71,24 @@ Template.admin.events({
 	},
 	'click .fa-pencil-square-o' (event) {
 		var value = event.target.parentNode.childNodes[3].className.replace("modify ","");
+		openDivFade(document.getElementsByClassName("overlay")[0]);
 	}
 });
+
+function openDivFade(div) {
+    div.style.display = "block";
+    div.style.opacity = "0";
+    setTimeout(function() {
+        div.style.opacity = "1";
+    }, 100);
+}
+
+function closeDivFade(div) {
+    div.style.opacity = "0";
+    setTimeout(function() {
+        div.style.display = "none";
+    }, 100);
+}
 
 function getEmail(id) {
 	return Meteor.users.findOne({_id:id}).services.google.email;

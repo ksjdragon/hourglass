@@ -458,7 +458,7 @@ input, textarea {
 
 #workNameDiv {
 	padding: 4% 4% 0 3.5%;
-}
+}f
 
 #workName {
 	font-weight: 400;
@@ -473,6 +473,7 @@ input, textarea {
 }
 
 .prefTitle {
+	font-size: 2.5vh;
 	margin-top: 5%;
 }
 
@@ -625,11 +626,6 @@ input, textarea {
 }
 
 .fa-check-circle-o, .fa-times-circle-o {
-	font-size: 300%;
-	padding: 5% 13% 5% 13%;
-
-	color: #333;
-
 	-webkit-transition: color 0.4s ease;  
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;

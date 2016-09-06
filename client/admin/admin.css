@@ -209,7 +209,31 @@
 #editValue {
 	width: 10%;
 	margin: auto;
-	margin-top: 30%;
+	margin-top: 22%;
+	padding: 1.2%;
 	background-color: #FEFEFE;
 }
 
+#editValue p {
+	margin: 0;
+	padding: 3%;
+}
+
+#editValue div {
+	width: 100%;
+	margin: auto;
+	margin-top: 8%;
+	display: table;
+}
+
+#editValue i {
+	font-size: 5vh;
+	width: 40%;
+	margin: auto;
+	display: table-cell;
+	text-align: center;
+}
+
+#valueArea {
+	width: 92.5%;
+}
