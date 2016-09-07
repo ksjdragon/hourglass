@@ -613,7 +613,11 @@ input, textarea {
 }
 
 .overlayCont {
-	font-size: 165%;
+	font-size: 3.1vh;
+	width: 20vw;
+	height: 20vh;
+	margin: auto;
+	margin-top: 25vh;
 	padding: 1%;
 	box-shadow: 2px 2px 5px 3px #666;
 
@@ -621,11 +625,17 @@ input, textarea {
 	-webkit-border-radius: 30px;
 	border-radius: 30px;
 
-	position: absolute;
-	top: 30%;
-	left: 50%;
-
 	text-align: center;
+}
+
+.overlayCont i {
+	font-size: 8vh;
+	margin: 0 10% 0 10%;
+	text-align: center;
+}
+
+#faCont {
+	width: 100%;
 }
 
 .fa-check-circle-o, .fa-times-circle-o {

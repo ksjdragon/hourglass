@@ -392,7 +392,7 @@ Template.profile.events({
         sendData(confirm);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
         if(confirm === "createClass") {
-            var form = document.getElementById("create");
+            var form = document.getElementsByClassName("creInput");
             for(var i = 0; i < form.length; i++) form[i].value = "";
         }
         serverData = null;
