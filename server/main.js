@@ -214,7 +214,7 @@ Meteor.methods({
             _id: classId
         });
         if (foundclass !== undefined && foundclass.admin === Meteor.userId()) {
-            return (foundclass.code === '') ? "None" : foundclass.code
+            return (foundclass.code === '') ? "None" : foundclass.code;
         } else {
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
@@ -466,7 +466,8 @@ Meteor.methods({
             "description": change.description,
             "avatar": change.avatar,
             "banner": change.banner,
-            "preferences": change.preferences
+            "preferences": change.preferences,
+            "name": current.name
         };
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
