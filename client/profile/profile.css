@@ -145,6 +145,7 @@
 	border-right: 5px solid transparent;
 
 	display: table;
+	table-layout: fixed;
 }
 
 #cardColLeft, #cardColRight {
