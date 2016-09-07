@@ -1,7 +1,11 @@
 <template name="NotFound">
-	<div id="fourohfour" style="background-size:{{dim}}">
-		<h4 id="fourtext" style="{{text}}">Stop trying to hack.</h4>
-		<div id="back" style="width:{{circle}};height:{{circle}};margin-top:{{center}};"><h3 style="{{hea}}">Back</h3></div>
-		<div id="main" style="width:{{circle}};height:{{circle}};margin-top:{{center}};"><h3 style="{{hea}}">Main page</h3></div>
+	<div id="fourohfour">
+		<div id="fourtext"><h4>Stop trying to hack.</h4></div>
+		<div id="back" onclick="window.location=window.history.back();">
+			<h3>Back</h3>
+		</div>
+		<div id="main" onclick="window.location = '/';">
+			<h3>Main page</h3>
+		</div>
 	</div>
 </template>

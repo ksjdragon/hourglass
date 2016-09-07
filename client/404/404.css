@@ -4,10 +4,12 @@
 	position: absolute;
 
 	background-image: url("HG.jpg");
+	background-size: 100vw 100vh;
 }
 
 #fourohfour h3 {
-	font-size: 500%;
+	font-size: 6vh;
+	margin-top: -3vh;
 	position: relative;
 	top: 50%;
 }
@@ -28,6 +30,7 @@
 
 	position: absolute;
 	text-align: center;
+	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
@@ -48,19 +51,27 @@
 	transition: background-color 0.2s ease; 
 }
 
+#back, #main {
+	width: 20vw;
+	height: 20vw;
+	margin-top: -10vw;
+	top: 45%;
+}
+
 #back {
-	top: 50%;
 	left: 5%;
 }
 
 #main {
-	top: 50%;
 	right: 5%;
 }
 
 #fourtext {
-	font-size: 200%;
-	padding: 1%;
+	font-size: 3.2vh;
+	width: 25%;
+	padding: 0.3%;
+	margin: auto;
+	margin-top: 7%;
 
 	color: #FFF;
 	background-color: rgba(255,255,255,0.5);
@@ -70,7 +81,4 @@
 	border-radius: 10px;
 
 	text-align: center;
-	position: relative;
-	top: 15%;
-	left: 50%;
 }
