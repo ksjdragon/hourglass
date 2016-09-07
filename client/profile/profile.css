@@ -623,6 +623,10 @@
 	text-align: center;
 }
 
+#changeAdmin {
+	margin-bottom: 3%;
+}
+
 #changeAdmin span {
 	font-size: 90%;
 	padding: 3%;

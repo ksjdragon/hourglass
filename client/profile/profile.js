@@ -316,7 +316,7 @@ Template.profile.events({
             }
         });
     },
-    // OWNED CLASS BUTTONS=
+    // OWNED CLASS BUTTONS
     'click #copy' () { // Copies code for private classes.
         if(document.getElementById("code").value === "None") return;
         document.getElementById("code").select();
@@ -575,7 +575,28 @@ function closeInput(modifyingInput) { // Closes current modifying input.
 }
 
 function sendData(funcName) {
-    Meteor.call(funcName, serverData);
+    Meteor.call(funcName, serverData, function(err, result) {
+        if(funcName === "trackUserInClass") {
+            var selectedClass = Session.get("selectedClass");
+            var array = classes.findOne({_id:selectedClass._id});
+            var usertype = ["moderators","banned"];
+            for(var i = 0; i < usertype.length; i++) {
+                var users = array[usertype[i]];
+                array[usertype[i]] = [];
+                for(var j = 0; j < users.length; j++) {
+                    var detailusers = {};
+                    var user = Meteor.users.findOne({_id:users[j]});
+                    detailusers._id = user._id;
+                    detailusers.email = user.services.google.email;
+                    detailusers.name = user.profile.name;
+                    array[usertype[i]].push(detailusers);
+                }
+            }
+            selectedClass.moderators = array.moderators;
+            selectedClass.banned = array.banned;
+            Session.set("selectedClass",selectedClass);
+        }
+    });
 }
 
 function getProfileData() { // Gets all data related to profile.
