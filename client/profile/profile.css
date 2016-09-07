@@ -671,16 +671,16 @@
 }
 
 #joinPrivClass {
-	width: 18%;
+	width: 18vw;
 	margin-bottom: -20%;
 	padding: 1.5%;
-	padding-bottom: 2%;
+	padding-bottom: 1%;
 
 	border-top: 5px solid #852E6D;
 	box-shadow: -2px 0px 5px 1px #444;
 
 	position: absolute;
-	right: 5%;
+	right: 5vw;
 	bottom: 0;
 
 	-webkit-transition: margin 0.4s ease;  
@@ -692,19 +692,23 @@
 #joinPrivClass h3 {
 	font-weight: 400;
 	font-size: 150%;
-	margin-bottom: 3%;
+	margin-bottom: 1vh;
 }
 
 #privateCode {
-	font-size: 130%;
+	font-size: 3vh;
+	width: 93%;
+	margin-top: 1%;
+	margin-bottom: 1vh;
 	padding: 1%;
 }
 
 #privSubmit {
-	font-size: 120%;
+	font-size: 2vh;
 	margin-left: 5%;
 	padding: 3%;
 	background-color: rgba(0,0,0,0.2);
+	float: right;
 	cursor: pointer;
 
 	-webkit-transition: background-color 0.2s ease;  
