@@ -130,6 +130,9 @@ h4 {
 
 input, textarea {
 	font-family: 'Raleway';
+	background-color: #FEFEFE;
+	border: 3px solid #FEFEFE;
+	border-radius: 3px;
 	resize: none;
 }
 

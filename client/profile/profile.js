@@ -232,19 +232,19 @@ Template.profile.events({
             Session.set("profClassTab", "manClass"); 
             div.style.height = "90%";           
             openDivFade(functionHolder);        
-        }, 400);    
+        }, 400);
     },
     'click .createClass' () {
-        if(Session.equals("profClassTab","creClass")) return;       
+        if(Session.equals("profClassTab","creClass")) return;
         var functionHolder = document.getElementById("profClassInfoHolder");        
         closeDivFade(functionHolder);
             var div = document.getElementById("profClasses");
         div.style.height = "50%"
-        setTimeout(function() {            
+        setTimeout(function() {
             Session.set("profClassTab", "creClass");
             div.style.height = "90%";
-            openDivFade(functionHolder);        
-        }, 400);    
+            openDivFade(functionHolder);
+        }, 400);
     },
     'click .classBox' (event) {  // When you click on a box that holds class
         if (event.target.id === "label" || 

@@ -129,9 +129,11 @@
 							{{/if}}
 
 							{{#if profClassTab "addClass"}}
-								<i class="fa fa-search" aria-hidden="true"></i>
-								{{> inputAutocomplete id="profClassSearch" settings=classSettings placeholder="Search..."}}
-								<h4 id="private">Join Private Class</h4>
+								<div id="joinTop">
+									<i class="fa fa-search" aria-hidden="true"></i>
+									{{> inputAutocomplete id="profClassSearch" settings=classSettings placeholder="Search..."}}
+									<h4 id="private">Join Private Class</h4>
+								</div>
 								<div id="label" class="classBox">
 									<span class="name classText">Class Name</span>
 									<span class="teacher classText">Teacher</span>
