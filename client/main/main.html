@@ -5,17 +5,13 @@
 
 <template name="main">
     <header style="background-color:{{userProfile}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
-        <div id="aboveBar">
-            <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
-            <h1>Hourglass</h1><h2>{{schoolName}}</h2>
-            <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
-            <div id="dropdown">
-                <img src="{{avatar}}">
-            </div>
+        <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
+        <h1>Hourglass</h1><h2>{{schoolName}}</h2>
+        <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
+        <div id="dropdown">
+            <img src="{{avatar}}">
         </div>
-        <div id="loadBar">
-            <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
-        </div>
+        <div id="headerBar"></div>
     </header>
     <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
         <div id="modes">
@@ -205,11 +201,11 @@
         </div>
     </div>
 
-    <div id="userDropdown" style="background-color:{{divColor 'cards'}}">
+    <div id="userDropdown" style="background-color:{{divColor 'dropdown'}}">
         <div id="userTab" style="border-bottom: 3vh solid {{divColor 'header'}}"></div>
         <div id="userDropdownAvatar">
             <img src="{{avatar}}">
-            <p>ksjdragon</p>
+            <p>{{username}}</p>
         </div>
         <div id="userFunctions">
             <div id="myprofile" class="userFunction" onclick="window.location='/profile';">

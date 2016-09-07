@@ -88,6 +88,7 @@ body {
 header {
 	font-weight: 600;
 	width: 100%;
+	height: 6vh;
 	margin: 0;
 	box-shadow: 2px 2px 5px 3px #666;
 
@@ -136,11 +137,7 @@ input, textarea {
 	resize: none;
 }
 
-#aboveBar {
-	display: inline;
-}
-
-#aboveBar h2 {
+header h2 {
 	font-weight: 400;
 	padding: 0.6%;
 	padding-left: 0;
@@ -148,8 +145,7 @@ input, textarea {
 }
 
 .fa-bars, .fa-cog {
-	font-size: 200%;
-	height: 100%;
+	font-size: 3.5vh;
 	padding: 0.65%;
 	padding-right: 0.8%;
 
@@ -163,6 +159,15 @@ input, textarea {
 	cursor: pointer;
 }
 
+#headerBar {
+	width: 100%;
+	height: 4px;
+	background-color: #33ADFF;
+
+	position: absolute;
+	bottom: 0;
+}
+
 .fa-cog {
 	padding-left: 0.8%;
 	float: right;
@@ -172,20 +177,13 @@ input, textarea {
 	background-color: rgba(0,0,0,0.2);
 }
 
-#loadBar, #progress {
-	width: 100%;
-	height: 4px;
-	display: table;
-	background-color: #33ADFF;
-}
-
 #login-buttons {
 	display: none;
 }
 
 #dropdown {
-	width: 6.5vh;
-	height: 6.5vh;
+	width: 6vh;
+	height: 6vh;
 	float: right;
 	display: inline-block;
 	position: relative;
@@ -197,9 +195,9 @@ input, textarea {
 }
 
 #dropdown img{
-	width: 5vh;
-	height: 5vh;
-	margin: -2.6vh 0 0 -2.7vh;
+	width: 4vh;
+	height: 4vh;
+	margin: -2.2vh 0 0 -2.2vh;
 
 	cursor: pointer;
 	position: absolute;
@@ -1042,23 +1040,20 @@ input, textarea {
 	width: 0; 
 	height: 0; 
 
-	-webkit-filter: drop-shadow(2px 2px 5px #666);
-	filter: drop-shadow(2px 2px 5px #666);
-
 	border-left: 2.5vh solid transparent;
 	border-right: 2.5vh solid transparent;
 
 	position: absolute;
-	top: -3vh;
+	top: -2.9vh;
 	right: 2vw;
-	z-index: 19;
+	z-index: 18;
 }
 
 #userDropdown {
 	width: 15vw;
 	margin-top: 10vh;
 
-	box-shadow: 2px 2px 5px 3px #666;	
+	box-shadow: 2px 2px 5px 2px #666;	
 	display: none;
 
 	position: absolute;
@@ -1077,7 +1072,7 @@ input, textarea {
 #userDropdownAvatar {
 	width: 100%;
 	height: 16vh;
-	background-color: rgba(255,255,255,0.3);
+	background-color: rgba(0,0,0,0.1);
 	position: relative;
 }
 
@@ -1100,6 +1095,7 @@ input, textarea {
 	width: 9vh;
 	margin: 0 auto 0 auto;
 	padding-top: 12vh;
+	text-align: center;
 }
 
 #userFunctions {
@@ -1110,6 +1106,7 @@ input, textarea {
 .userFunction {
 	font-size: 2.5vh;
 	width: 100%;
+	background-color: rgba(255,255,255,0.3);
 	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease;  
@@ -1119,7 +1116,7 @@ input, textarea {
 }
 
 .userFunction:hover {
-	background-color: rgba(255,255,255,0.2);
+	background-color: rgba(255,255,255,0.1);
 }
 
 .userFunction i, .userFunction p {
