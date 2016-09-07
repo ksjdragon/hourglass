@@ -458,17 +458,16 @@ Meteor.methods({
     // User Functions
     'editProfile': function(change) {
         var current = Meteor.user().profile;
-        current.school = change.school;
-        current.grade = change.grade;
-        current.classes = change.classes;
-        if (!current.classes) {
-            current.classes = [];
-        }
-        current.description = change.description;
-        current.avatar = change.avatar;
-        current.banner = change.banner;
-        current.preferences = change.preferences;
-
+        current = {
+            "__proto__": current.__proto__,
+            "school": change.school,
+            "grade": change.grade,
+            "classes": change.classes,
+            "description": change.description,
+            "avatar": change.avatar,
+            "banner": change.banner,
+            "preferences": change.preferences
+        };
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
         }
