@@ -9,7 +9,9 @@
             <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
             <h1>Hourglass</h1><h2>{{schoolName}}</h2>
             <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
-            <div id="logout" onclick='document.getElementById("login-buttons-logout").click();'>Logout</div>
+            <div id="dropdown">
+                <img src="{{avatar}}">
+            </div>
         </div>
         <div id="loadBar">
             <div id="progress" style="background-color:{{loadType}};width:{{loadPercent}}"></div>
@@ -200,6 +202,30 @@
                     {{/if}}
                 {{/if}}
             </div>
+        </div>
+    </div>
+
+    <div id="userDropdown" style="background-color:{{divColor 'cards'}}">
+        <div id="userTab" style="border-bottom: 3vh solid {{divColor 'header'}}"></div>
+        <div id="userDropdownAvatar">
+            <img src="{{avatar}}">
+            <p>ksjdragon</p>
+        </div>
+        <div id="userFunctions">
+            <div id="myprofile" class="userFunction" onclick="window.location='/profile';">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                <p>My Profile</p>
+            </div>
+            {{#if admin}}
+                <div id="myprofile" class="userFunction" onclick="window.location='/admin';">
+                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                    <p>Admin Panel</p>
+                </div>
+            {{/if}}
+        </div>
+        <div id="myprofile" class="userFunction" onclick='document.getElementById("login-buttons-logout").click();'>
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            <p>Sign out</p>
         </div>
     </div>
     {{> loginButtons}}

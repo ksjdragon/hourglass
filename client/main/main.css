@@ -183,24 +183,36 @@ input, textarea {
 	display: none;
 }
 
-#logout {
-	padding: 1%;
+#dropdown {
+	width: 6.5vh;
+	height: 6.5vh;
+	float: right;
+	display: inline-block;
+	position: relative;
 
-    background-color: rgba(0,0,0,0.05);
-
-    float: right;
-    text-align: center;
-
-    cursor: pointer;
-
-
-    -webkit-transition: margin 0.5s ease, background-color 0.5s ease;  
-	-moz-transition: margin 0.5s ease, background-color 0.5s ease; 
-	-ms-transition: margin 0.5s ease, background-color 0.5s ease;
-	transition: margin 0.5s ease, background-color 0.5s ease; 
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
 }
 
-#logout:hover {
+#dropdown img{
+	width: 5vh;
+	height: 5vh;
+	margin: -2.6vh 0 0 -2.7vh;
+
+	cursor: pointer;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	border: 2px solid #222;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+#dropdown:hover {
 	background-color: rgba(0,0,0,0.1);
 }
 
@@ -1024,4 +1036,94 @@ input, textarea {
 
 #markDone:hover, #markConfirm:hover, #markReport:hover {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.15);
+}
+
+#userTab {
+	width: 0; 
+	height: 0; 
+
+	-webkit-filter: drop-shadow(2px 2px 5px #666);
+	filter: drop-shadow(2px 2px 5px #666);
+
+	border-left: 2.5vh solid transparent;
+	border-right: 2.5vh solid transparent;
+
+	position: absolute;
+	top: -3vh;
+	right: 2vw;
+	z-index: 19;
+}
+
+#userDropdown {
+	width: 15vw;
+	margin-top: 10vh;
+
+	box-shadow: 2px 2px 5px 3px #666;	
+	display: none;
+
+	position: absolute;
+	top: 1vh;
+	right: 4vw;
+	z-index: 20;
+
+	opacity: 0;
+
+	-webkit-transition: opacity 0.4s ease;  
+	-moz-transition: opacity 0.4s ease;
+	-ms-transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease; 
+}
+
+#userDropdownAvatar {
+	width: 100%;
+	height: 16vh;
+	background-color: rgba(255,255,255,0.3);
+	position: relative;
+}
+
+#userDropdownAvatar img {
+	width: 9vh;
+	height: 9vh;
+	margin: -6.5vh 0 0 -5vh;
+
+	border: 3px solid #0D0D0D;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+#userDropdownAvatar p {
+	width: 9vh;
+	margin: 0 auto 0 auto;
+	padding-top: 12vh;
+}
+
+#userFunctions {
+	margin-bottom: 1%;
+	border-bottom: 2px solid #666;
+}
+
+.userFunction {
+	font-size: 2.5vh;
+	width: 100%;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.userFunction:hover {
+	background-color: rgba(255,255,255,0.2);
+}
+
+.userFunction i, .userFunction p {
+	margin: 0;
+	padding: 7% 0 7% 10%;
+	display: inline-block;
 }

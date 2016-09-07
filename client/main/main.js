@@ -37,7 +37,7 @@ var ref = {
 
 // Reactive variables.
 Session.set("user",{}); // Stores user preferences.
-Session.set("calendarClasses", null);
+Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("sidebar", null); // Status of sidebar
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWork", null); // Stores current selected work info.
@@ -189,6 +189,12 @@ Template.main.helpers({
         } else {
             return;
         }
+    },
+    avatar() { // Returns avatar.
+        return Session.get("user").avatar;
+    },
+    username() { // Returns user name.
+        return Session.get("user").name;
     },
     defaultMode() { //Loads the default display mode for user.
         if(load) Session.set("mode",Session.get("user").preferences.mode);
@@ -373,6 +379,9 @@ Template.main.helpers({
             ) return true;
         }
     },
+    admin() {
+        return Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin']);
+    },
     refetchEvents() {
         if (Session.get("refetchEvents")) {
             $("#fullcalendar").fullCalendar('refetchEvents');
@@ -441,6 +450,8 @@ Template.main.events({
                 } catch (err) {}
             }
         }
+
+        if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -507,6 +518,12 @@ Template.main.events({
             class: attr
         });
         openDivFade(document.getElementsByClassName("overlay")[0]);
+    },
+    'click #dropdown' (event) {
+        if(document.getElementById("userDropdown").style.display === "block") return;
+        setTimeout(function() {
+            openDivFade(document.getElementById("userDropdown"));
+        }, 300);
     },
     'click .workCard' (event) { // Display work information on work card click.
         var dom = event.target;
