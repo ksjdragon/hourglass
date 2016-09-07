@@ -210,11 +210,11 @@ Meteor.methods({
     },
     // For class admins to get code
     'getCode': function(classId) {
-        var foundclass = classes.find({
+        var foundclass = classes.findOne({
             _id: classId
         });
-        if (foundclass && foundclass.admin == Meteor.userId()) {
-            return foundclass.code;
+        if (foundclass !== undefined && foundclass.admin === Meteor.userId()) {
+            return (foundclass.code === '') ? "None" : foundclass.code
         } else {
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }

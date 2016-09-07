@@ -13,7 +13,7 @@ Session.set("modifying", null); // Stores current open input.
 Session.set("notsearching", true); // If user is searching in search box.
 Session.set("autocompleteDivs", null); // Stores returned autocomplete results.
 Session.set("confirmText", null); // Stores text for different confirmation functions.
-Session.set("selectClassId",null); // Stores selected owned class ID.
+Session.set("selectedClass",null); // Stores selected owned class info.
 Session.set("code",null); // If owned class has a code.
 Session.set("noclass",null); // If user doesn't have classes.
 Session.set("notfound",null); // If no results for autocomplete.
@@ -141,32 +141,8 @@ Template.profile.helpers({
         return Session.get("confirmText");
     },
     selectedClass(val) { // Returns values for selectedClass
-        if(Session.equals("selectClassId",null)) return;
-        var usertype = ["moderators","banned"];
-        var attribute = Session.get("selectClassId");
-        var array = classes.findOne({_id:attribute});
-        var code = Meteor.call('getCode',attribute);
-        if(code === "") {
-            array.code = "None";
-            Session.set("code", false);
-        } else {
-            Session.set("code", true);
-            array.code = code;
-        }
-
-        for(var i = 0; i < usertype.length; i++) {
-            var users = array[usertype[i]];
-            array[usertype[i]] = [];
-            for(var j = 0; j < users.length; j++) {
-                var detailusers = {};
-                var user = Meteor.users.findOne({_id:users[j]});
-                detailusers._id = user._id;
-                detailusers.email = user.services.google.email;
-                detailusers.name = user.profile.name;
-                array[usertype[i]].push(detailusers);
-            }
-        }
-        return array[val];
+        if(Session.equals("selectedClass",null)) return;
+        return Session.get("selectedClass")[val];
     },
     code() { // Returns if selected class has code.
         return Session.get("code");
@@ -273,8 +249,34 @@ Template.profile.events({
         } else {
             var attribute = event.target.getAttribute("classid");
         }
-        Session.set("selectClassId",attribute);
-        document.getElementById("createdClasses").style.marginRight = "0";
+        Session.set("selectedClass",null);
+        var usertype = ["moderators","banned"];
+        var array = classes.findOne({_id:attribute});
+
+        for(var i = 0; i < usertype.length; i++) {
+            var users = array[usertype[i]];
+            array[usertype[i]] = [];
+            for(var j = 0; j < users.length; j++) {
+                var detailusers = {};
+                var user = Meteor.users.findOne({_id:users[j]});
+                detailusers._id = user._id;
+                detailusers.email = user.services.google.email;
+                detailusers.name = user.profile.name;
+                array[usertype[i]].push(detailusers);
+            }
+        }
+
+        Meteor.call('getCode',attribute, function(err,result) {
+            array.code = result;
+            if(result === "None") {
+                Session.set("code", false);
+            } else {
+                Session.set("code", true);
+            }
+
+            Session.set("selectedClass",array);
+            document.getElementById("createdClasses").style.marginRight = "0";
+        });  
     },
     'click .classBox .fa-times' (event) { // Leaves a class
         var box = event.target.parentNode;
