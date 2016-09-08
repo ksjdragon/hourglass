@@ -76,7 +76,7 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
-    if(Session.get("user")["classes"].length === 0) { // Null checking.
+    if(Session.get("user").classes.length === 0) { // Null checking.
         Session.set("noclass",true); // Makes sure to display nothing.
         return [];
     } else {
@@ -175,7 +175,7 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
 
 Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
     return Session.get("commentRestrict");
-})
+});
 
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
@@ -266,7 +266,7 @@ Template.main.helpers({
                             backgroundColor: workColors[work.type],
                             borderColor: "#444",
                             startEditable: inRole,
-                            className: "workevent " + work.class,
+                            className: "workevent " + work.class
                         });
                     }
                 }
@@ -307,7 +307,7 @@ Template.main.helpers({
     },
     calColor() { // Sets the color of the calendar according to theme
         return "color:"+themeColors[Session.get("user").preferences.theme].calendar;
-    },  
+    },
     calCreWork() { // Display instructions for creating a work.
         if (Session.get("calCreWork")) return true;
         return false;
@@ -683,10 +683,11 @@ Template.main.events({
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
+        var text;
         if(event.target.id === "workComment") {
-            var text = document.getElementById("commentrestrict");
+            text = document.getElementById("commentrestrict");
         } else {
-           var text = document.getElementById(Session.get("modifying")+"restrict"); 
+           text = document.getElementById(Session.get("modifying")+"restrict");
         }
         text.style.color = "#7E7E7E";
         if (chars === restrict) { // Don't display if nothing in comment.
@@ -822,7 +823,7 @@ function openDivFade(div) {
 function closeDivFade(div) {
     div.style.opacity = "0";
     setTimeout(function() {
-        div.style.display = "none";    
+        div.style.display = "none";
     }, 100);
 }
 
