@@ -57,6 +57,7 @@ Template.registerHelper('userProfile', () => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
+    console.log(div);console.log(themeColors[Session.get("user").preferences.theme][div]);
     return themeColors[Session.get("user").preferences.theme][div];
 });
 
@@ -647,11 +648,10 @@ Template.main.events({
         var p = event.target;
         var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
+        closeDivFade(p.parentNode);
         try {
             closeInput(modifyingInput);
         } catch (err) {}
-
-        closeDivFade(p.parentNode);
         input.focus();
     },
     'click .prefOptionText' (event) { // Click each preferences setting.
@@ -659,11 +659,10 @@ Template.main.events({
         var p = event.target;
         var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         input.value = p.childNodes[0].nodeValue;
+        closeDivFade(p.parentNode);
         try {
             closeInput(modifyingInput);
         } catch (err) {}
-
-        closeDivFade(p.parentNode);
         input.focus();
     },
     'click #workComment' (event) {
@@ -823,7 +822,7 @@ function openDivFade(div) {
 function closeDivFade(div) {
     div.style.opacity = "0";
     setTimeout(function() {
-        div.style.display = "none";
+        div.style.display = "none";    
     }, 100);
 }
 

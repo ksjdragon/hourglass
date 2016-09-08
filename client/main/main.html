@@ -54,9 +54,9 @@
                 <p class="prefTitle">Theme:</p>
                 <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
                 </div>
-                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
-                    <p class="prefOptionText">Light</p>
-                    <p class="prefOptionText">Dark</p>
+                <div class="prefOptions">
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Light</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Dark</p>
                 </div>
             </div>
             <div>
@@ -64,9 +64,9 @@
                 <p class="prefTitle">Default Mode:</p>
                 <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
                 </div>
-                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
-                    <p class="prefOptionText">Classes</p>
-                    <p class="prefOptionText">Calendar</p>
+                <div class="prefOptions">
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Classes</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Calendar</p>
                 </div>
             </div>
             <div>
@@ -74,12 +74,12 @@
                 <p class="prefTitle">Hide Homework:</p>
                 <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
                 </div>
-                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
-                    <p class="prefOptionText">1 Day</p>
-                    <P class="prefOptionText">2 Days</p>
-                    <p class="prefOptionText">1 Week</p>
-                    <p class="prefOptionText">1 Month</p>
-                    <p class="prefOptionText">Never</p>
+                <div class="prefOptions">
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Day</p>
+                    <P class="prefOptionText"  style="background-color:{{divColor 'header'}}">2 Days</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Week</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Month</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Never</p>
                 </div>
             </div>
             <div>
@@ -87,9 +87,9 @@
                 <p class="prefTitle">Hide Done:</p>
                 <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
                 </div>
-                <div class="prefOptions" style="background-color:{{divColor 'header'}}">
-                    <p class="prefOptionText">Yes</p>
-                    <p class="prefOptionText">No</p>
+                <div class="prefOptions">
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
+                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">No</p>
                 </div>
             </div>
         </div>
@@ -134,12 +134,12 @@
                             <span class="workTitle">Type:</span>
                             <span class="change radio req" re="readonly" id="workType">{{work 'type'}}</span>
                             </div>
-                            <div class="workOptions type" style="background-color:{{divColor 'header'}}">
-                                <p class="workOptionText">Normal</p>
-                                <p class="workOptionText">Quiz</p>
-                                <p class="workOptionText">Test</p>
-                                <p class="workOptionText">Project</p>
-                                <p class="workOptionText">Other</p>
+                            <div class="workOptions type">
+                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Normal</p>
+                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Quiz</p>
+                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Test</p>
+                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Project</p>
+                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Other</p>
                             </div>
                         </div>
                         <!-- <div id="workAttach">Attach other files</div>
@@ -202,12 +202,12 @@
     </div>
 
     <div id="userDropdown" style="background-color:{{divColor 'dropdown'}}">
-        <div id="userTab" style="border-bottom: 3vh solid {{divColor 'header'}}"></div>
-        <div id="userDropdownAvatar">
+        <div id="userTab" style="border-bottom: 3vh solid {{divColor 'dropdown'}}"></div>
+        <div id="userDropdownAvatar" style="background-color:{{divColor 'dropdown'}}">
             <img src="{{avatar}}">
             <p>{{username}}</p>
         </div>
-        <div id="userFunctions">
+        <div id="userFunctions" style="background-color:{{divColor 'dropdown'}}">
             <div id="myprofile" class="userFunction" onclick="window.location='/profile';">
                 <i class="fa fa-user" aria-hidden="true"></i>
                 <p>My Profile</p>
@@ -219,9 +219,11 @@
                 </div>
             {{/if}}
         </div>
-        <div id="myprofile" class="userFunction" onclick='document.getElementById("login-buttons-logout").click();'>
-            <i class="fa fa-sign-out" aria-hidden="true"></i>
-            <p>Sign out</p>
+        <div style="background-color:{{divColor 'dropdown'}}">
+            <div id="myprofile" class="userFunction" onclick='document.getElementById("login-buttons-logout").click();'>
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                <p>Sign out</p>
+            </div>
         </div>
     </div>
     {{> loginButtons}}
@@ -269,7 +271,7 @@
 				<i class="fa fa-thumbs-up" aria-hidden="true"></i>	
 				<span>{{confirmationLength}} </span>
 				<i class="fa fa-thumbs-down" aria-hidden="true"></i> 
-				<span>{{reportLength}} </span> 
+				<span>{{reportLength}}</span> 
 			</div>
 		</div>
     </div>
