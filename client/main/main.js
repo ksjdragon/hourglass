@@ -57,7 +57,6 @@ Template.registerHelper('userProfile', () => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    console.log(div);console.log(themeColors[Session.get("user").preferences.theme][div]);
     return themeColors[Session.get("user").preferences.theme][div];
 });
 
