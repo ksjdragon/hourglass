@@ -6,6 +6,9 @@ import {
     Mongo
 } from 'meteor/mongo';
 
+Houston.add_collection(Meteor.users);
+Houston.add_collection(Houston._admins);
+
 // Defines who the admins are - not added
 var superadmins = [
     "ybq987@gmail.com",
