@@ -291,7 +291,7 @@ Template.main.helpers({
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
-                if (jsEvent.target.className.includes("fc-past")) return;
+                if (jsEvent.target.className.includes("fc-past") || Session.get("noclass")) return;
                 Session.set("calCreWork", true);
                 calWorkDate = date.format();
                 calWorkOpen = true;
@@ -452,6 +452,7 @@ Template.main.events({
         }
 
         if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
+        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-15.8%";
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -550,6 +551,27 @@ Template.main.events({
             }
         }
         openDivFade(document.getElementsByClassName("overlay")[0]);
+    },
+    'click #requests .fa-question' () {
+        document.getElementById("requests").style.marginBottom = "0";
+    },
+    'click #requestSubmit' () {
+        var area = document.getElementById("requestArea");
+        if(area.value === "") return;
+        var array = {};
+        array.content = area.value;
+        array.info = {
+            "users": Meteor.users,
+            "userInfo": Meteor.user(),
+            "userClasses": Session.get("calendarClasses")
+        };
+        Meteor.call("createRequest", array, function(err,result) {
+            area.value = "Request sent!";
+            setTimeout(function(){
+                document.getElementById("requests").style.marginBottom = "-15.8%";
+                area.value = "";
+            },1000);
+        })
     },
     // HANDLING INPUT CHANGING
     'click .change' (event) { // Click changable inputs. Creates an input where the span is.
@@ -685,8 +707,10 @@ Template.main.events({
         var text;
         if(event.target.id === "workComment") {
             text = document.getElementById("commentrestrict");
+        } else if(event.target.id === "requestArea") {
+            text = document.getElementById("requestrestrict");
         } else {
-           text = document.getElementById(Session.get("modifying")+"restrict");
+            text = document.getElementById(Session.get("modifying")+"restrict");
         }
         text.style.color = "#7E7E7E";
         if (chars === restrict) { // Don't display if nothing in comment.

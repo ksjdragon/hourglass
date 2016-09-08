@@ -226,6 +226,18 @@
             </div>
         </div>
     </div>
+
+    <div id="requests" style="background-color:{{divColor 'cards'}}">
+        <div id="requestTab" style="background-color:{{divColor 'cards'}}">
+            <i class="fa fa-question" aria-hidden="true"></i>
+        </div>
+        <p>Send an help request, feature, or bug report.</p>
+        <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
+        <div id="requestCont">
+            <span id="requestrestrict">{{commentLength}}</span>
+            <div id="requestSubmit">Send</div>
+        </div>
+    </div>
     {{> loginButtons}}
 </template>
 

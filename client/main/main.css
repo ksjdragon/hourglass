@@ -102,6 +102,11 @@ header {
 	transition: background-color 0.5s ease; 
 }
 
+header h1, header h2 {
+	-webkit-filter: none;
+	filter: none;
+}
+
 h1,h2,h3,h4,h5 {
 	margin: 0;
 
@@ -131,8 +136,8 @@ h4 {
 
 input, textarea {
 	font-family: 'Raleway';
-	background-color: #FEFEFE;
-	border: 3px solid #FEFEFE;
+	background-color: #EBEBEB;
+	border: 3px solid #EBEBEB;
 	border-radius: 3px;
 	resize: none;
 }
@@ -838,6 +843,7 @@ header h2 {
 }
 
 .fc-day:not(.fc-past) {
+	cursor: pointer;
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
 
 	-webkit-transition: box-shadow 0.4s ease;  
@@ -1126,4 +1132,91 @@ header h2 {
 	margin: 0;
 	padding: 7% 0 7% 10%;
 	display: inline-block;
+}
+
+#requests {
+	width: 25vw;
+	margin-bottom: -15.8%;
+	padding: 1.5%;
+
+	border-top: 5px solid #852E6D;
+	box-shadow: -2px 0px 5px 1px #444;
+
+	position: absolute;
+	right: 5vw;
+	bottom: 0;
+
+	z-index: 30;
+
+	-webkit-transition: margin 0.4s ease;  
+	-moz-transition: margin 0.4s ease; 
+	-ms-transition: margin 0.4s ease;
+	transition: margin 0.4s ease;
+}
+
+#requestTab {
+	width: 5vw;
+	height: 4vw;
+
+	border-top: 5px solid #852E6D;
+	box-shadow: -2px -4px 5px 0px #444;
+
+	position: absolute;
+	right: 0;
+	top: -4.3vw;
+
+	cursor: pointer;
+	z-index: 15;
+}
+
+.fa-question {
+	font-size: 5vh;
+	width: 4vw;
+	padding: 10%;
+	text-align: center;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.fa-question:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+
+#requests p {
+	margin: 0;
+	margin-bottom: 3%;
+}
+
+#requests textarea {
+	width: 96%;
+	margin-bottom: 4%;
+}
+
+#requestCont{
+	width: 100%;
+}
+
+#requestSubmit {
+	font-weight: 200;
+	font-size: 2.5vh;
+	margin-right: 2%;
+	padding: 2%;
+
+	background-color: rgba(0,0,0,0.25);
+	float: right;
+
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#requestSubmit:hover {
+	background-color: rgba(0,0,0,0.15);
 }
