@@ -620,12 +620,10 @@ Meteor.methods({
         }
     },
     'createRequest': function(request) {
-        if (request.length <= 500 && Meteor.userId() !== null &&
-            _.contains(['bug', 'feature'], request.type)) {
+        if (request.content.length <= 500 && Meteor.userId() !== null) {
             requests.insert({
                 requestor: Meteor.userId(),
                 request: request.content,
-                type: request.type,
                 info: request.info,
                 timeRequested: new Date()
             });

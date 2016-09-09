@@ -464,7 +464,7 @@ Template.main.events({
         }
 
         if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
-        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-13.3vw";
+        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-15.3vw";
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -575,16 +575,17 @@ Template.main.events({
         var array = {};
         array.content = area.value;
         array.info = {
-            "users": Meteor.users,
+            "users": Meteor.users.find().fetch(),
             "userInfo": Meteor.user(),
             "userClasses": Session.get("calendarClasses")
         };
         Meteor.call("createRequest", array, function(err,result) {
             area.value = "Request sent!";
             setTimeout(function(){
-                document.getElementById("requests").style.marginBottom = "-13.3vw";
+                document.getElementById("requests").style.marginBottom = "-15.3vw";
                 area.value = "";
-            },1000);
+                Session.set("commentRestrict",null);
+            },750);
         })
     },
     // HANDLING INPUT CHANGING

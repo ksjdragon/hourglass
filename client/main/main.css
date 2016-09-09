@@ -1135,8 +1135,8 @@ input, textarea {
 
 #requests {
 	width: 25vw;
-	height: 9vw;
-	margin-bottom: -13.3vw;
+	height: 11vw;
+	margin-bottom: -15.3vw;
 	padding: 2vw;
 
 	border-top: 5px solid #852E6D;
@@ -1187,12 +1187,12 @@ input, textarea {
 
 #requests p {
 	margin: 0;
-	margin-bottom: 3%;
+	margin-bottom: 1vh;
 }
 
 #requests textarea {
 	width: 96%;
-	margin-bottom: 4%;
+	margin-bottom: 1.5vh;
 }
 
 #requestCont{
