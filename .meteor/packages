@@ -21,7 +21,7 @@ fortawesome:fontawesome
 session@1.1.6
 proyk:meteor-cookies
 aldeed:simple-schema
-accounts-google@1.0.10
+accounts-google
 accounts-ui@1.1.9
 iron:router
 ongoworks:security

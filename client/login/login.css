@@ -2,6 +2,8 @@
 	width: 100%;
 	height: 100%;
 	display: table;
+
+	table-layout: fixed;
 	border-collapse: collapse;
 }
 
@@ -10,57 +12,52 @@
 	height: 4px;
 	background-color: #33ADFF;
 	position: absolute;
-	bottom: 0;
+	top: 13vh;
 	z-index: 51;
 }
-flogin
+
 #loginHeader {
 	font-weight: 600;
 	width: 100%;
 	height: 13vh;
 
+	background-color: #EBEBEB;
 	box-shadow: 2px 2px 5px 3px #666;
 
-	background-color: #EBEBEB;
-
 	display: table-row;
-	position: relative;
+	position: absolute;
+	top: 0;
 	z-index: 50;
 }
 
 #logo {
 	height: 10vh;
 	width: 10vh;
-	padding: 0.5%;
-	padding-left: 1%;
+	padding: 1.1vh;
+	padding-left: 1.5vh;
 	float: left;
 
 	-webkit-filter: drop-shadow(2px 2px 5px #333);
 	filter: drop-shadow(2px 2px 5px #333);
 }
 
-#banner {
-	height: 100%;
-	position: relative;
-}
-
 #loginTitle {
-	font-size: 255%;
+	font-size: 5vh;
 	color: #000 !important;
-	padding: 1.4%;
-	padding-left: 1%;
+	padding: 3vh;
 }
 
 #loginMain {
 	width: 100%;
 	height: 80vh;
 
-	border-top: solid 1vh #33ADFF;
-	display: table-row;
-
 	background-color: #E5E5E5;
 	background-image: url("banner100.jpg");
 	background-size: 100vw 80vh;
+
+	display: table-row;
+	position: absolute;
+	top: 13vh;
 }
 
 #circle {
@@ -74,6 +71,8 @@ flogin
 	border-radius: 50%;
 
 	background-color: rgba(0,0,0,0.2);
+	position: relative;
+	z-index: 0;
 
 	-webkit-filter: drop-shadow(2px 2px 5px #333);
 	filter: drop-shadow(2px 2px 5px #333);
@@ -153,7 +152,7 @@ p.text {
 }
 
 #github {
-	font-size: 150%;
+	font-size: 3vh;
 	color: #000 !important;
 	margin: 0;
 	padding: 1%;
