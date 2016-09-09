@@ -105,6 +105,13 @@ body {
 #mainHeader h1, #mainHeader h2 {
 	-webkit-filter: none;
 	filter: none;
+	padding: 0;
+	height: 6vh;
+	line-height: 6vh;
+}
+
+#mainHeader h2 {
+	margin-left: 0.5%;
 }
 
 h1,h2,h3,h4,h5 {
@@ -206,7 +213,7 @@ header h2 {
 #dropdown img{
 	width: 4vh;
 	height: 4vh;
-	margin: -2.5vh 0 0 -2.2vh;
+	margin: -2.35vh 0 0 -2.2vh;
 
 	cursor: pointer;
 	position: absolute;
