@@ -26,7 +26,7 @@ for (var i = 0; i < superadmins.length; i++) {
     superadmin = Meteor.users.findOne({
         "services.google.email": superadmins[i]
     });
-    if (superadmin && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
+    if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
         Roles.addUsersToRoles(superadmin._id, 'superadmin');
     }
 }
