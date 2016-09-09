@@ -103,15 +103,18 @@ body {
 }
 
 #mainHeader h1, #mainHeader h2 {
+	margin-left: 0.5%;
+	padding: 0;
+	height: 5.5vh;
+	line-height: 5.5vh;
+
 	-webkit-filter: none;
 	filter: none;
-	padding: 0;
-	height: 6vh;
-	line-height: 6vh;
 }
 
 #mainHeader h2 {
-	margin-left: 0.5%;
+	font-weight: 200;
+	float: left;
 }
 
 h1,h2,h3,h4,h5 {
@@ -149,21 +152,12 @@ input, textarea {
 	resize: none;
 }
 
-header h1 {
-	font-size: 3.5vh;
-}
-
-header h2 {
-	font-weight: 400;
-	padding: 1vh;
-	padding-left: 0;
-	float: left;
-}
-
 .fa-bars, .fa-cog {
 	font-size: 3.5vh;
-	padding: 0.65%;
-	padding-right: 0.8%;
+	width: 5.5vh;
+	height: 5.5vh;
+	line-height: 5.5vh;
+	text-align: center;
 
 	float: left;
 
@@ -177,7 +171,7 @@ header h2 {
 
 #headerBar {
 	width: 100%;
-	height: 4px;
+	height: 0.5vh;
 	background-color: #33ADFF;
 
 	position: absolute;
@@ -185,7 +179,6 @@ header h2 {
 }
 
 .fa-cog {
-	padding-left: 0.8%;
 	float: right;
 }
 
@@ -198,11 +191,10 @@ header h2 {
 }
 
 #dropdown {
-	width: 6vh;
-	height: 6vh;
+	width: 5.5vh;
+	height: 5.5vh;
 	float: right;
 	display: inline-block;
-	position: relative;
 
 	-webkit-transition: background-color 0.5s ease;  
 	-moz-transition: background-color 0.5s ease; 
@@ -213,14 +205,9 @@ header h2 {
 #dropdown img{
 	width: 4vh;
 	height: 4vh;
-	margin: -2.35vh 0 0 -2.2vh;
+	padding: .7vh;
+	line-height: 5.5vh;
 
-	cursor: pointer;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-
-	border: 2px solid #222;
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
