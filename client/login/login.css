@@ -33,8 +33,9 @@
 #logo {
 	height: 10vh;
 	width: 10vh;
-	padding: 1.1vh;
-	padding-left: 1.5vh;
+	padding: 1.5vh;
+	line-height: 13vh;
+
 	float: left;
 
 	-webkit-filter: drop-shadow(2px 2px 5px #333);

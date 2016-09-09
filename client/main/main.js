@@ -488,6 +488,7 @@ Template.main.events({
             openDivFade(modeHolder);
         }, 300);
         Session.set("sidebar", null); // Closes all sidebars.
+        Session.set("calCreWork", null);
     },
     'click .calendar' () { // Click calendar mode button.
         if (Session.equals("mode", "calendar")) return;
@@ -498,6 +499,7 @@ Template.main.events({
             openDivFade(modeHolder);
         }, 300);
         Session.set("sidebar", null); // Closes all sidebars.
+        Session.set("calCreWork", null);
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
