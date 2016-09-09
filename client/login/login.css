@@ -44,7 +44,12 @@
 #loginTitle {
 	font-size: 5vh;
 	color: #000 !important;
-	padding: 3vh;
+	height: 13vh;
+	line-height: 13vh;
+	padding: 0 0 0 1vw;
+
+	-webkit-filter: none;
+	filter: none;
 }
 
 #loginMain {
@@ -93,13 +98,13 @@
 }
 
 h2.text {
-	font-size: 400%;
+	font-size: 8vh;
 	padding-bottom: 2%;
 	border-bottom: 1px solid #FEFEFE;
 }
 
 p.text {
-	font-size: 150%;
+	font-size: 2.5vh;
 	margin-bottom: 5%;
 }
 
@@ -155,7 +160,9 @@ p.text {
 	font-size: 3vh;
 	color: #000 !important;
 	margin: 0;
-	padding: 1%;
+	height: 8vh;
+	line-height: 8vh;
+	padding: 0 0 0 1vw;
 
 	-webkit-filter: drop-shadow(2px 2px 5px #444);
 	filter: drop-shadow(2px 2px 5px #444);
