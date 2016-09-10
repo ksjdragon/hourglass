@@ -1141,7 +1141,7 @@ input, textarea {
 #requests {
 	width: 25vw;
 	height: 11vw;
-	margin-bottom: -15.3vw;
+	margin-bottom: -15.5vw;
 	padding: 2vw;
 
 	border-top: 5px solid #852E6D;
@@ -1177,7 +1177,7 @@ input, textarea {
 .fa-question {
 	font-size: 5vh;
 	width: 4vw;
-	padding: 10%;
+	padding: 5% 10% 10% 10%;
 	text-align: center;
 
 	-webkit-transition: background-color 0.4s ease;  

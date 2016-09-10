@@ -466,7 +466,7 @@ Template.main.events({
         }
 
         if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
-        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-15.3vw";
+        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-15.5vw";
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -584,7 +584,7 @@ Template.main.events({
         Meteor.call("createRequest", array, function(err,result) {
             area.value = "Request sent!";
             setTimeout(function(){
-                document.getElementById("requests").style.marginBottom = "-15.3vw";
+                document.getElementById("requests").style.marginBottom = "-15.5vw";
                 area.value = "";
                 Session.set("commentRestrict",null);
             },750);
