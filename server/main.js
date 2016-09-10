@@ -465,7 +465,7 @@ Meteor.methods({
             "__proto__": current.__proto__,
             "school": change.school,
             "grade": change.grade,
-            "classes": change.classes,
+            "classes": current.classes,
             "description": change.description,
             "avatar": change.avatar,
             "banner": change.banner,
@@ -482,6 +482,21 @@ Meteor.methods({
                 profile: current
             }
         });
+    },
+    'reorderClasses': function(newOrder) {
+        var current = Meteor.user().profile;
+        if(newOrder.every(elem => _.contains(current.classes, elem))) {
+            current.classes = newOrder;
+            Meteor.users.update({
+                _id: Meteor.userId()
+            }, {
+                $set: {
+                    profile: current
+                }
+            });
+        } else {
+            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+        }
     },
     'createProfile': function(userId) {
         var current = Meteor.users.findOne({
