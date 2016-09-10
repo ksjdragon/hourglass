@@ -274,14 +274,14 @@
 </template>
 
 <template name="classModeWork">
-    <div class="workCard" workid="{{_id}}" style="{{scale}}">
+    <div class="workCard{{scale}}" workid="{{_id}}">
         <div class="cWorkType" style="background-color:{{typeColor}}"></div>
         <div class="cWorkCont">
             <p class="cWorkName">{{name}}</p>
             <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dueDate}}</span>
 			<div style="float:right">
 				<i class="fa fa-thumbs-up" aria-hidden="true"></i>	
-				<span>{{confirmationLength}} </span>
+				<span>{{confirmationLength}}</span>
 				<i class="fa fa-thumbs-down" aria-hidden="true"></i> 
 				<span>{{reportLength}}</span> 
 			</div>

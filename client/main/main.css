@@ -822,6 +822,31 @@ input, textarea {
   }
 }
 
+@keyframes neonglow {
+	from {
+    text-shadow: 
+    0 0 10px #fff, 
+    0 0 20px #fff, 
+    0 0 30px #fff, 
+    0 0 40px #228DFF, 
+    0 0 70px #228DFF, 
+    0 0 80px #228DFF, 
+    0 0 100px #228DFF, 
+    0 0 150px #228DFF;
+  }
+  to {
+    text-shadow: 
+    0 0 5px #fff, 
+    0 0 10px #fff, 
+    0 0 15px #fff, 
+    0 0 20px #228DFF, 
+    0 0 35px #228DFF, 
+    0 0 40px #228DFF, 
+    0 0 50px #228DFF, 
+    0 0 75px #228DFF;
+  }
+}
+
 #disableFilter {
 	font-size: 90%;
 	margin: 0 0 0 23% !important;
@@ -1224,4 +1249,15 @@ input, textarea {
 
 #requestSubmit:hover {
 	background-color: rgba(0,0,0,0.15);
+}
+
+.scaled {
+	-webkit-transform: scale(1.12);
+	-ms-transform: scale(1.12);
+	transform: scale(1.12);
+
+	-webkit-transition: transform 0.4s ease;  
+	-moz-transition: transform 0.4s ease; 
+	-ms-transition: transform 0.4s ease;
+	transition: transform 0.4s ease; 
 }

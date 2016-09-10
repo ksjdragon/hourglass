@@ -92,6 +92,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         return [];
     } else {
         var array = [];
+        var refetch = true;
         var courses = Session.get("user").classes;
         var classDisp = Session.get("classDisp"); // Get sidebar class filter.
         var hide = Session.get("user").preferences.timeHide;
@@ -160,8 +161,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 thisWork[j].reportLength = thisWork[j].reports.length;
 
                 var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
-                if (hoverHighlight !== null && hoverHighlight === found._id && Session.equals("mode","classes")) {
-                    thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
+                if (hoverHighlight !== null && hoverHighlight === found._id) {
+                    thisWork[j].scale = " scaled";
+                    refetch = false;
                 } else {
                     thisWork[j].scale = "";
                 }
@@ -170,7 +172,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         }
         Session.set("noclass", false);
         Session.set("calendarClasses", array);
-        Session.set("refetchEvents", true);
+        Session.set("refetchEvents", refetch);
         return array;
     }
 });
@@ -270,7 +272,6 @@ Template.main.helpers({
                             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                             currClass.banned.indexOf(Meteor.userId()) !== -1
                         ) inRole = true;
-
                         events.push({
                             id: work._id,
                             start: work.realDate.toISOString().slice(0, 10),
@@ -303,6 +304,12 @@ Template.main.helpers({
                 Session.set("currentReadableWork", thisReadWork);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
+            eventMouseover: function (event, jsEvent, view) {
+                this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)"
+            },
+            eventMouseout: function (event, jsEvent, view) {  
+                this.style.boxShadow = "";
+            },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if (jsEvent.target.className.includes("fc-past") || Session.get("noclass")) return;
                 Session.set("calCreWork", true);
@@ -331,11 +338,8 @@ Template.main.helpers({
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
         var works = document.getElementsByClassName("workevent");
-        var work = $('.workevent');
         if (hoverHighlight === null) {
-            work.css('-webkit-transform', '');
-            work.css('-ms-transform', '');
-            work.css('transform', '');
+            $(".workevent").toggleClass("scaled",false);
             return;
         }
 
@@ -343,16 +347,7 @@ Template.main.helpers({
             var id = works[i].className;
             var index = id.indexOf("workevent");
             id = id.substring(index + 10, index + 27);
-            console.log(id);
-            if (id === hoverHighlight) {
-                works[i].style.webkitTransform = 'scale(1.12)';
-                works[i].style.msTransform = 'scale(1.12)';
-                works[i].style.transform = 'scale(1.12)';
-            } else {
-                works[i].style.webkitTransform = '';
-                works[i].style.msTransform = '';
-                works[i].style.transform = '';
-            }
+            $("."+id).toggleClass("scaled",true);
         }
         return;
     },
