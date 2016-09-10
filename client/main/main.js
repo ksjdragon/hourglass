@@ -333,7 +333,7 @@ Template.main.helpers({
         if(Session.equals("mode","classes")) {
             $(".workCard").toggleClass("scaled",false);
             try { 
-                console.log($(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true));
+                $(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true);
             } catch(err) {}
         } else {   
             $(".workevent").toggleClass("scaled",false);
