@@ -187,6 +187,10 @@
                                 <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                 <p>{{work 'reports'}}</p>
                             </div>
+                            <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
+                                <img src="{{work 'avatar'}}">
+                                <span>Created by<br>{{work 'creator'}}</span>
+                            </div>
                         </div>
                     </div>
                 {{/unless}}
