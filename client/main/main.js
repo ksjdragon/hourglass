@@ -160,6 +160,8 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
                 thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
                 thisWork[j].reportLength = thisWork[j].reports.length;
+
+                thisWork[j].creator = Meteor.users.findOne({_id: thisWork[j].creator}).profile.name;
             }
             array[i].thisClassWork = thisWork;
         }

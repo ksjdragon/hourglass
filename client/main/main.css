@@ -445,6 +445,14 @@ input, textarea {
 	box-shadow: 2px 2px 5px 3px #666, inset 0 0 0 99999px rgba(0,0,0,0.09);
 }
 
+.cWorkTop {
+	margin: 0 0 5% 0;
+}
+
+.cWorkCreator {
+	float: right;
+}
+
 .cWorkCont {
 	padding: 5%;
 }

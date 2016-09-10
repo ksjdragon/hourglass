@@ -281,7 +281,10 @@
     <div class="workCard" workid="{{_id}}" classid="{{classid}}">
         <div class="cWorkType" style="background-color:{{typeColor}}"></div>
         <div class="cWorkCont">
-            <p class="cWorkName">{{name}}</p>
+            <div class="cWorkTop">
+                <span class="cWorkName">{{name}}</span>
+                <span class="cWorkCreator">{{creator}}</span>
+            </div>
             <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dueDate}}</span>
 			<div style="float:right">
 				<i class="fa fa-thumbs-up" aria-hidden="true"></i>	
