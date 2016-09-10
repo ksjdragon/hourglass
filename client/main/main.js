@@ -160,6 +160,8 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
                 thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
                 thisWork[j].reportLength = thisWork[j].reports.length;
+
+                thisWork[j].creator = Meteor.users.findOne({_id: thisWork[j].creator}).profile.name;
             }
             array[i].thisClassWork = thisWork;
         }
@@ -614,7 +616,6 @@ Template.main.events({
         if (event.target.id !== "workDate") input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
 
-        
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
         ele.parentNode.appendChild(input);
@@ -645,10 +646,10 @@ Template.main.events({
                 _id: Session.get("currentWork")["class"]
             });
             if (!(Meteor.userId() === Session.get("currentWork").creator ||
-                    Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                    currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                    currClass.banned.indexOf(Meteor.userId()) !== -1
-                )) return;
+                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+                currClass.banned.indexOf(Meteor.userId()) !== -1
+            )) return;
         }
 
         var op = event.target;
@@ -989,8 +990,15 @@ function formReadable(input) { // Makes work information readable by users.
             input.userReport = "";
         }
 
+        var thisUser = Meteor.users.findOne({
+            _id: input.creator
+        });
+
         input.confirmations = input.confirmations.length;
         input.reports = input.reports.length;
+        input.creator = thisUser.profile.name;
+        input.avatar = thisUser.profile.avatar;
+        input.email = thisUser.services.google.email;
 
         var comments = input.comments;
         var resort = [];
