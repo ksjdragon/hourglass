@@ -325,7 +325,7 @@ input, textarea {
 .sideClass {
 	width: 100%;
 	height: 5vh;
-	padding: 5%;
+	padding: 1.5vh;
 
 	background-color: rgba(255,255,255,0.1);
 	cursor: pointer;
@@ -334,6 +334,12 @@ input, textarea {
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease; 
+}
+
+.sideClass div {
+	width: 100%;
+	height: 100%;
+	display: table;
 }
 
 .sideClass:hover {
@@ -356,7 +362,7 @@ input, textarea {
 .fa-dot-circle-o {
 	font-size: 3vh;
 	color: #53BD42;
-	margin-top: -4vh;
+	margin-top: -3.5vh;
 	margin-right: 4vh;
 
 	float: right;
@@ -459,6 +465,15 @@ input, textarea {
 	margin-top: 5%;
 
 	box-shadow: 2px 2px 5px 3px #333;
+}
+
+#editWork input, #editWork textarea {
+	font-size: 2vh;
+	background-color: #FFF;
+}
+
+#workDesca {
+	width: 17vw;
 }
 
 #editWorkCont {
@@ -1226,6 +1241,7 @@ input, textarea {
 
 #requests textarea {
 	width: 96%;
+	height: 11vh;
 	margin-bottom: 1.5vh;
 }
 
