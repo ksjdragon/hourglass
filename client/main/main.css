@@ -1079,8 +1079,8 @@ input, textarea {
 #markDone p, #markConfirm p, #markReport p {
 	margin: 0;
 	display: inline;
-}
 
+}
 #markDone, #markConfirm, #markReport {
 	padding: 5%;
 	background-color: rgba(0,0,0,0.1);
@@ -1160,7 +1160,7 @@ input, textarea {
 }
 
 #userDropdownAvatar p {
-	width: 9vh;
+	width: 15vw;
 	margin: 0 auto 0 auto;
 	padding-top: 12vh;
 	text-align: center;

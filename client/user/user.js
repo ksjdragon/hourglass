@@ -11,12 +11,8 @@ Template.user.helpers({
     avatar() { // Returns avatar
         return this.profile.avatar;
     },
-    username() {  //Returns current user's username
-        if (this.services.google.email == Meteor.users.findOne({_id: Meteor.userId()}).services.google.email) {
-            window.location = "/profile";
-        } else {
-            return this.profile.name;
-        }
+    username() {  // Returns current user's username
+        return this.profile.name;
     },
     motd() { // Returns the current user's description
         if (this.profile.description) {
