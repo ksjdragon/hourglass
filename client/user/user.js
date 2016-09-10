@@ -12,7 +12,11 @@ Template.user.helpers({
         return this.profile.avatar;
     },
     username() {  //Returns current user's username
-        return this.profile.name;
+        if (this.services.google.email == Meteor.users.findOne({_id: Meteor.userId()}).services.google.email) {
+            window.location = "/profile";
+        } else {
+            return this.profile.name;
+        }
     },
     motd() { // Returns the current user's description
         if (this.profile.description) {

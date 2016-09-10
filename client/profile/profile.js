@@ -491,7 +491,7 @@ Template.profile.events({
         var modifyingInput = Session.get("modifying");
         var p = event.target;
         if(p.className.includes("cre")) {
-            var input = p.parentNode.parentNode.childNodes[3]
+            var input = p.parentNode.parentNode.childNodes[3];
         } else {
             var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
         }
@@ -561,7 +561,7 @@ function closeInput(modifyingInput) { // Closes current modifying input.
     try {
        document.getElementById("modifyingInput"+"restrict").style.display = "none";
    } catch(err) {}
-    
+
     if (input.value === "") {
         span.childNodes[0].nodeValue = "Click here to edit...";
     } else {
