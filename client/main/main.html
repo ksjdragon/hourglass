@@ -4,245 +4,251 @@
 </head>
 
 <template name="main">
-    <header id="mainHeader" style="background-color:{{userProfile}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
-        <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
-        <h1>Hourglass</h1><h2>{{schoolName}}</h2>
-        <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
-        <div id="dropdown">
-            <img src="{{avatar}}">
-        </div>
-        <div id="headerBar"></div>
-    </header>
-    <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
-        <div id="modes">
-            <div class="mode classes" style="background-color:{{divColor 'funcButton'}}">
-                <i class="fa fa-university" aria-hidden="true"></i>
-                <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
+    <div class="noScroll">
+        <header id="mainHeader" style="background-color:{{userProfile}}{{divColor 'header'}}{{textColor}}{{defaultMode}}{{refetchEvents}}">
+            <i class="fa fa-bars" aria-hidden="true" style="color:{{iconColor 'menu'}}"></i>
+            <h1>Hourglass</h1><h2>{{schoolName}}</h2>
+            <i class="fa fa-cog" aria-hidden="true" style="color:{{iconColor 'options'}}"></i>
+            <div id="dropdown">
+                <img src="{{avatar}}">
             </div>
-            <div class="mode calendar" style="background-color:{{divColor 'funcButton'}}">
-                <i class="fa fa-calendar" aria-hidden="true"></i>
-                <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
-            </div>
-        </div>
-        <div id="functions">
-            <div class="function manageClass" onclick="window.location='/profile'" style="background-color:{{divColor 'funcButton'}}">
-                <i class="fa fa-tasks" aria-hidden="true"></i>
-                <h4>Manage Classes</h4>
-            </div>
-        </div>
-        <div id="classListHolder">
-        {{#if myClasses}}
-            <h3>Enrolled</h3>
-            {{#if calCreWork}}
-                <h3 id="calCreWork">-- Pick a class</h3>
-            {{else}}
-                {{#if filterOn}}
-                    <h3 id="disableFilter">Disable All</h3>
-                {{/if}}
-            {{/if}}
-                {{#each myClasses}}
-                    {{> sidebarClasses}}  
-                {{/each}}
-        {{/if}}
-        </div>
-    </div>
-    <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
-        <h3>Preferences</h3>
-        <div id="prefCont">
-            <div>
-                <div class="inputRadioPref">
-                <p class="prefTitle">Theme:</p>
-                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+            <div id="headerBar"></div>
+        </header>
+        <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
+            <div id="modes">
+                <div class="mode classes" style="background-color:{{divColor 'funcButton'}}">
+                    <i class="fa fa-university" aria-hidden="true"></i>
+                    <h4 style="color:{{modeStatus 'classes'}}">Classes</h4>
                 </div>
-                <div class="prefOptions">
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Light</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Dark</p>
+                <div class="mode calendar" style="background-color:{{divColor 'funcButton'}}">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <h4 style="color:{{modeStatus 'calendar'}}">Calendar</h4>
                 </div>
             </div>
-            <div>
-                <div class="inputRadioPref">
-                <p class="prefTitle">Default Mode:</p>
-                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
-                </div>
-                <div class="prefOptions">
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Classes</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Calendar</p>
+            <div id="functions">
+                <div class="function manageClass" onclick="window.location='/profile'" style="background-color:{{divColor 'funcButton'}}">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                    <h4>Manage Classes</h4>
                 </div>
             </div>
-            <div>
-                <div  class="inputRadioPref">
-                <p class="prefTitle">Hide Homework:</p>
-                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
-                </div>
-                <div class="prefOptions">
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Day</p>
-                    <P class="prefOptionText"  style="background-color:{{divColor 'header'}}">2 Days</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Week</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Month</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Never</p>
-                </div>
-            </div>
-            <div>
-                <div class="inputRadioPref">
-                <p class="prefTitle">Hide Done:</p>
-                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
-                </div>
-                <div class="prefOptions">
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
-                    <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">No</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <img id="bg" src={{bgSrc}}>
-    <div id="mainBody{{highlight}}">
-        {{#if currMode 'classes'}}
-            <div id="classesMode">
-                {{#each myClasses}}
-                    {{> classesMode}}
-                {{/each}}
-            </div>
-        {{/if}}
-
-        {{#if currMode 'calendar'}}
-            <div id="calendar" style="{{calColor}}">
-                {{> fullcalendar calendarOptions}}
-            </div>
-        {{/if}}
-    </div>
-
-    <div class="overlay">
-        <div id="editWork">
-            <div id="editWorkCont" style="background-color:{{divColor 'header'}};border-top:10px solid {{workType}}">
-                <div id="workInfoContainer">
-                    <div id="workNameDiv">
-                        <span id="workNamerestrict">{{commentLength}}</span>
-                        <span class="change req" id="workName" restrict="50">{{work 'name'}}</span>
-                    </div>
-                    <div id="workInfoNmCont">
-                        <div>
-                            <span class="workTitle">Due Date:</span><br>
-                            <span class="change req" re="readonly" id="workDate">{{work 'dueDate'}}</span>
-                        </div>
-                        <div>
-                            <span class="workTitle">Description:</span><br>
-                            <span id="workDescrestrict">{{commentLength}}</span>
-                            <span class="change" type="textarea" id="workDesc" restrict="150">{{work 'description'}}</span>
-                        </div>
-                        <div>
-                            <div  class="inputRadio">
-                            <span class="workTitle">Type:</span>
-                            <span class="change radio req" re="readonly" id="workType">{{work 'type'}}</span>
-                            </div>
-                            <div class="workOptions type">
-                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Normal</p>
-                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Quiz</p>
-                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Test</p>
-                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Project</p>
-                                <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Other</p>
-                            </div>
-                        </div>
-                        <!-- <div id="workAttach">Attach other files</div>
-                        <div id="workAttachmentHolder">
-                            {{#each work 'attachments'}}
-                                <a href={{link}}>{{filename}}</a>
-                            {{/each}}
-                        </div> -->
-                        {{#unless newWork}}
-                            <div id="workComments">
-                                <h3>Comments</h3>
-                                <div>
-                                    <textarea id="workComment" class="restrict" rows="4" cols="50" maxlength="200"></textarea><br>
-                                    <div>
-                                        <span id="commentrestrict">{{commentLength}}</span>
-                                        <div id="commentSubmit">Submit</div>
-                                    </div>
-                                </div>
-                                <div id="comment">
-                                    {{#each work 'comments'}}
-                                        {{> comment}}
-                                    {{/each}}
-                                </div>
-                            </div>
-                        {{/unless}}
-                    </div>
-                </div>
-                {{#unless newWork}}
-                    <div id="workToggle">
-                        <div id="done">
-                            {{#each work 'done'}}
-                                {{> doneUsers}}
-                            {{/each}}
-                        </div>
-                        <div id="toggleButtons">
-                            <div id="markDone" style="background-color:{{work 'doneCol'}}">
-                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                                <p>{{work 'doneText'}}</p>
-                            </div>
-                            <div id="markConfirm" style="color:{{work 'userConfirm'}}">
-                                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                <p>{{work 'confirmations'}}</p>
-                            </div>
-                            <div id="markReport" style="color:{{work 'userReport'}}">
-                                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                <p>{{work 'reports'}}</p>
-                            </div>
-                            <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
-                                <img src="{{work 'avatar'}}">
-                                <span>Created by<br>{{work 'creator'}}</span>
-                            </div>
-                        </div>
-                    </div>
-                {{/unless}}
-                {{#if inRole}}
-                    {{#if newWork}}
-                        <div id="workSubmit">Save</div>
-                    {{else}}
-                        <div id="workDelete">Delete</div>
+            <div id="classListHolder">
+            {{#if myClasses}}
+                <h3>Enrolled</h3>
+                {{#if calCreWork}}
+                    <h3 id="calCreWork">-- Pick a class</h3>
+                {{else}}
+                    {{#if filterOn}}
+                        <h3 id="disableFilter">Disable All</h3>
                     {{/if}}
                 {{/if}}
+                    {{#each myClasses}}
+                        {{> sidebarClasses}}  
+                    {{/each}}
+            {{/if}}
             </div>
         </div>
-    </div>
+        <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
+            <h3>Preferences</h3>
+            <div id="prefCont">
+                <div>
+                    <div class="inputRadioPref">
+                    <p class="prefTitle">Theme:</p>
+                    <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
+                    </div>
+                    <div class="prefOptions">
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Light</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Dark</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="inputRadioPref">
+                    <p class="prefTitle">Default Mode:</p>
+                    <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+                    </div>
+                    <div class="prefOptions">
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Classes</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Calendar</p>
+                    </div>
+                </div>
+                <div>
+                    <div  class="inputRadioPref">
+                    <p class="prefTitle">Hide Homework:</p>
+                    <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
+                    </div>
+                    <div class="prefOptions">
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Day</p>
+                        <P class="prefOptionText"  style="background-color:{{divColor 'header'}}">2 Days</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Week</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">1 Month</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Never</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="inputRadioPref">
+                    <p class="prefTitle">Hide Done:</p>
+                    <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
+                    </div>
+                    <div class="prefOptions">
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">No</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img id="bg" src={{bgSrc}}>
+        <div id="mainBody{{highlight}}">
+            {{#if currMode 'classes'}}
+                <div id="classesMode">
+                    {{#each myClasses}}
+                        {{> classesMode}}
+                    {{/each}}
+                </div>
+            {{/if}}
 
-    <div id="userDropdown" style="background-color:{{divColor 'dropdown'}}">
-        <div id="userTab" style="border-bottom: 3vh solid {{divColor 'dropdown'}}"></div>
-        <div id="userDropdownAvatar" style="background-color:{{divColor 'dropdown'}}">
-            <img src="{{avatar}}">
-            <p>{{username}}</p>
-        </div>
-        <div id="userFunctions" style="background-color:{{divColor 'dropdown'}}">
-            <div id="myprofile" class="userFunction" onclick="window.location='/profile';">
-                <i class="fa fa-user" aria-hidden="true"></i>
-                <p>My Profile</p>
-            </div>
-            {{#if admin}}
-                <div id="myprofile" class="userFunction" onclick="window.location='/admin';">
-                    <i class="fa fa-cogs" aria-hidden="true"></i>
-                    <p>Admin Panel</p>
+            {{#if currMode 'calendar'}}
+                <div id="calendar" style="{{calColor}}">
+                    {{> fullcalendar calendarOptions}}
                 </div>
             {{/if}}
         </div>
-        <div style="background-color:{{divColor 'dropdown'}}">
-            <div id="myprofile" class="userFunction" onclick="document.getElementById('login-buttons-logout').click();">
-                <i class="fa fa-sign-out" aria-hidden="true"></i>
-                <p>Sign out</p>
+
+        <div class="overlay">
+            <div id="editWork">
+                <div id="editWorkCont" style="background-color:{{divColor 'header'}};border-top:10px solid {{workType}}">
+                    <div id="workInfoContainer">
+                        <div id="workNameDiv">
+                            <span id="workNamerestrict">{{commentLength}}</span>
+                            <span class="change req" id="workName" restrict="50">{{work 'name'}}</span>
+                        </div>
+                        <div id="workInfoNmCont">
+                            <div>
+                                <span class="workTitle">Due Date:</span><br>
+                                <span class="change req" re="readonly" id="workDate">{{work 'dueDate'}}</span>
+                            </div>
+                            <div>
+                                <span class="workTitle">Description:</span><br>
+                                <span id="workDescrestrict">{{commentLength}}</span>
+                                <span class="change" type="textarea" id="workDesc" restrict="150">{{work 'description'}}</span>
+                            </div>
+                            <div>
+                                <div  class="inputRadio">
+                                <span class="workTitle">Type:</span>
+                                <span class="change radio req" re="readonly" id="workType">{{work 'type'}}</span>
+                                </div>
+                                <div class="workOptions type">
+                                    <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Normal</p>
+                                    <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Quiz</p>
+                                    <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Test</p>
+                                    <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Project</p>
+                                    <p class="workOptionText"  style="background-color:{{divColor 'header'}}">Other</p>
+                                </div>
+                            </div>
+                            <!-- <div id="workAttach">Attach other files</div>
+                            <div id="workAttachmentHolder">
+                                {{#each work 'attachments'}}
+                                    <a href={{link}}>{{filename}}</a>
+                                {{/each}}
+                            </div> -->
+                            {{#unless newWork}}
+                                <div id="workComments">
+                                    <h3>Comments</h3>
+                                    <div>
+                                        <textarea id="workComment" class="restrict" rows="4" cols="50" maxlength="200"></textarea><br>
+                                        <div>
+                                            <span id="commentrestrict">{{commentLength}}</span>
+                                            <div id="commentSubmit">Submit</div>
+                                        </div>
+                                    </div>
+                                    <div id="comment">
+                                        {{#each work 'comments'}}
+                                            {{> comment}}
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            {{/unless}}
+                        </div>
+                    </div>
+                    {{#unless newWork}}
+                        <div id="workToggle">
+                            <div id="done">
+                                {{#each work 'done'}}
+                                    {{> doneUsers}}
+                                {{/each}}
+                            </div>
+                            <div id="toggleButtons">
+                                <div id="markDone" style="background-color:{{work 'doneCol'}}">
+                                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                    <p>{{work 'doneText'}}</p>
+                                </div>
+                                <div id="markConfirm" style="color:{{work 'userConfirm'}}">
+                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                    <p>{{work 'confirmations'}}</p>
+                                </div>
+                                <div id="markReport" style="color:{{work 'userReport'}}">
+                                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                    <p>{{work 'reports'}}</p>
+                                </div>
+                                <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
+                                    <div style="display:inline-block">
+                                        <img src="{{work 'avatar'}}">
+                                    </div>
+                                    <div style="display:inline-block;margin-left:0.3vw">
+                                        <span>{{work 'creator'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{/unless}}
+                    {{#if inRole}}
+                        {{#if newWork}}
+                            <div id="workSubmit">Save</div>
+                        {{else}}
+                            <div id="workDelete">Delete</div>
+                        {{/if}}
+                    {{/if}}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="requests" style="background-color:{{divColor 'cards'}}">
-        <div id="requestTab" style="background-color:{{divColor 'cards'}}">
-            <i class="fa fa-question" aria-hidden="true"></i>
+        <div id="userDropdown" style="background-color:{{divColor 'dropdown'}}">
+            <div id="userTab" style="border-bottom: 3vh solid {{divColor 'dropdown'}}"></div>
+            <div id="userDropdownAvatar" style="background-color:{{divColor 'dropdown'}}">
+                <img src="{{avatar}}">
+                <p>{{username}}</p>
+            </div>
+            <div id="userFunctions" style="background-color:{{divColor 'dropdown'}}">
+                <div id="myprofile" class="userFunction" onclick="window.location='/profile';">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <p>My Profile</p>
+                </div>
+                {{#if admin}}
+                    <div id="myprofile" class="userFunction" onclick="window.location='/admin';">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        <p>Admin Panel</p>
+                    </div>
+                {{/if}}
+            </div>
+            <div style="background-color:{{divColor 'dropdown'}}">
+                <div id="myprofile" class="userFunction" onclick="document.getElementById('login-buttons-logout').click();">
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                    <p>Sign out</p>
+                </div>
+            </div>
         </div>
-        <p>Send an help request, feature, or bug report.</p>
-        <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
-        <div id="requestCont" style="background-color:{{divColor 'cards'}}">
-            <span id="requestrestrict">{{commentLength}}</span>
-            <div id="requestSubmit">Send</div>
+
+        <div id="requests" style="background-color:{{divColor 'cards'}}">
+            <div id="requestTab" style="background-color:{{divColor 'cards'}}">
+                <i class="fa fa-question" aria-hidden="true"></i>
+            </div>
+            <p>Send an help request, feature, or bug report.</p>
+            <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
+            <div id="requestCont" style="background-color:{{divColor 'cards'}}">
+                <span id="requestrestrict">{{commentLength}}</span>
+                <div id="requestSubmit">Send</div>
+            </div>
         </div>
+        {{> loginButtons}}
     </div>
-    {{> loginButtons}}
 </template>
 
 <template name="sidebarClasses">
@@ -311,7 +317,11 @@
 
 <template name="doneUsers">
     <div class="doneUser" onclick="window.location='/user/{{email}}'">
-        <img src='{{avatar}}'>
-        <span>{{user}}</span>
+        <div style="display:inline-block">
+            <img src='{{avatar}}'>
+        </div>
+        <div style="display:inline-block;margin-left:0.3vw">
+            <span>{{user}}</span>
+        </div>
     </div>
 </template>
