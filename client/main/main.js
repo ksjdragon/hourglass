@@ -160,7 +160,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 thisWork[j].reportLength = thisWork[j].reports.length;
 
                 var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
-                if (hoverHighlight !== null && hoverHighlight === found._id) {
+                if (hoverHighlight !== null && hoverHighlight === found._id && Session.equals("mode","classes")) {
                     thisWork[j].scale = "-ms-transform: scale(1.12)-webkit-transform: scale(1.12);transform: scale(1.12)";
                 } else {
                     thisWork[j].scale = "";
@@ -210,6 +210,7 @@ Template.main.helpers({
     },
     defaultMode() { //Loads the default display mode for user.
         if(load) Session.set("mode",Session.get("user").preferences.mode);
+        load = false;
         return;
     },
     bgSrc() { // Returns background.
@@ -342,6 +343,7 @@ Template.main.helpers({
             var id = works[i].className;
             var index = id.indexOf("workevent");
             id = id.substring(index + 10, index + 27);
+            console.log(id);
             if (id === hoverHighlight) {
                 works[i].style.webkitTransform = 'scale(1.12)';
                 works[i].style.msTransform = 'scale(1.12)';
@@ -625,7 +627,7 @@ Template.main.events({
         if (event.target.id !== "workDate") input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
 
-        input.style.width = "70%";
+        
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
         ele.parentNode.appendChild(input);

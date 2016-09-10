@@ -246,10 +246,10 @@
         <div>
             <p class="sideClassName">{{name}}</p>
             <p class="sideClassHour">{{hour}}</p>
+            {{#if selected}}
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
+            {{/if}}
         </div>
-        {{#if selected}}
-            <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
-        {{/if}}
     </div>
 
 </template>

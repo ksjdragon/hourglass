@@ -324,10 +324,11 @@ input, textarea {
 
 .sideClass {
 	width: 100%;
-	height: 10%;
+	height: 5vh;
 	padding: 5%;
 
 	background-color: rgba(255,255,255,0.1);
+	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
@@ -353,10 +354,10 @@ input, textarea {
 }
 
 .fa-dot-circle-o {
-	font-size: 150%;
+	font-size: 3vh;
 	color: #53BD42;
-	margin-top: -10%;
-	margin-right: 10%;
+	margin-top: -4vh;
+	margin-right: 4vh;
 
 	float: right;
 
@@ -864,6 +865,10 @@ input, textarea {
 	padding: 5%;
 }
 
+#prefCont .changeInput {
+	width: 70%;
+}
+
 .inputRadioPref {
 	margin-top: 6%;
 }
@@ -960,7 +965,7 @@ input, textarea {
 }
 
 #done {
-	height: 60%;
+	height: 37vh;
 	top: 0;
 	overflow-y: auto;
 }

@@ -424,7 +424,7 @@ Template.profile.events({
         input.value = ele.childNodes[0].nodeValue;
         input.className = "changeInput";
         input.style.height = 0.9 * dim.height.toString() + "px";
-        input.style.width = "70%";
+        input.style.width = "55%";
         input.style.padding = "0.1%";
         input.id = ele.id + "a";
         input.setAttribute("opc", ele.getAttribute("opc"));
