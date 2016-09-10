@@ -95,7 +95,7 @@
         </div>
     </div>
     <img id="bg" src={{bgSrc}}>
-    <div id="mainBody">
+    <div id="mainBody{{highlight}}">
         {{#if currMode 'classes'}}
             <div id="classesMode">
                 {{#each myClasses}}
@@ -105,7 +105,7 @@
         {{/if}}
 
         {{#if currMode 'calendar'}}
-            <div id="calendar" style="{{calColor}}{{highlight}}">
+            <div id="calendar" style="{{calColor}}">
                 {{> fullcalendar calendarOptions}}
             </div>
         {{/if}}
@@ -274,7 +274,7 @@
 </template>
 
 <template name="classModeWork">
-    <div class="workCard{{scale}}" workid="{{_id}}">
+    <div class="workCard" workid="{{_id}}" classid="{{classid}}">
         <div class="cWorkType" style="background-color:{{typeColor}}"></div>
         <div class="cWorkCont">
             <p class="cWorkName">{{name}}</p>

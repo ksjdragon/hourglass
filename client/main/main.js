@@ -140,6 +140,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
             while (thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"), 1); // Splice all filtered works.
 
             for (j = 0; j < thisWork.length; j++) {
+                thisWork[j].classid = courses[i];
                 thisWork[j].realDate = thisWork[j].dueDate;
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
@@ -159,14 +160,6 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
                 thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
                 thisWork[j].reportLength = thisWork[j].reports.length;
-
-                var hoverHighlight = Session.get("classDispHover"); // Highlight/scale related class works on hover.
-                if (hoverHighlight !== null && hoverHighlight === found._id) {
-                    thisWork[j].scale = " scaled";
-                    refetch = false;
-                } else {
-                    thisWork[j].scale = "";
-                }
             }
             array[i].thisClassWork = thisWork;
         }
@@ -337,17 +330,16 @@ Template.main.helpers({
     },
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
-        var works = document.getElementsByClassName("workevent");
-        if (hoverHighlight === null) {
+        if(Session.equals("mode","classes")) {
+            $(".workCard").toggleClass("scaled",false);
+            try { 
+                console.log($(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true));
+            } catch(err) {}
+        } else {   
             $(".workevent").toggleClass("scaled",false);
-            return;
-        }
-
-        for (var i = 0; i < works.length; i++) {
-            var id = works[i].className;
-            var index = id.indexOf("workevent");
-            id = id.substring(index + 10, index + 27);
-            $("."+id).toggleClass("scaled",true);
+            try {
+                $("."+hoverHighlight).toggleClass("scaled",true);
+            } catch(err) {}
         }
         return;
     },
