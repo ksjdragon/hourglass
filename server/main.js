@@ -88,7 +88,7 @@ Meteor.publish('work', function() {
             return work.find({
                 // Only return work of enrolled classes
                 class: {
-                    $in: userprofile.profile.classes.concat(this.userId)
+                    $in: userprofile.profile.classes
                 }
             });
         } else {
@@ -352,15 +352,14 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
             work.update({
                 _id: currentwork._id
             }, {
                 $set: change
             });
-        } else if ((_.contains(authorized, Meteor.userId()) ||
-                currentwork.class === Meteor.userId() ||
+        } else if ((currentwork.class === Meteor.userId() ||
+            _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
                 Meteor.userId() === currentwork.creator) &&
             change.name.length <= 50 && change.description.length <= 150 &&
             change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
@@ -390,8 +389,9 @@ Meteor.methods({
         });
         var user = Meteor.userId();
         if (typeof comment === "string" && comment.length <= 200 &&
-            _.contains(currentclass.subscribers, Meteor.userId()) &&
-            !_.contains(currentclass.banned, Meteor.userId())) {
+            (workobject.class === Meteor.userId() ||
+             (_.contains(currentclass.subscribers, Meteor.userId()) &&
+              !_.contains(currentclass.banned, Meteor.userId())))) {
             var commentInfo = {
                 "comment": input[0],
                 "user": user,
@@ -417,7 +417,7 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: workobject.class
         });
-        if (_.contains(currentclass.subscribers, Meteor.userId()) && _.contains(["confirmations", "reports", "done"], input[1])) {
+        if ((Meteor.userId() === workobject.class || _.contains(currentclass.subscribers, Meteor.userId())) && _.contains(["confirmations", "reports", "done"], input[1])) {
             var userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
@@ -447,9 +447,9 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        var authorized = currentclass.moderators.concat(currentclass.admin);
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-            _.contains(authorized, Meteor.userId()) || Meteor.userId() === currentwork.class) {
+            currentwork.class === Meteor.userId() ||
+            _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) || Meteor.userId() === currentwork.class) {
             work.remove({
                 _id: workId
             });
@@ -504,7 +504,7 @@ Meteor.methods({
         }).profile;
         current.banner = "/Banners/defaultcover.jpg";
         current.avatar = "/Avatars/" + (Math.floor(Math.random() * 10) + 1).toString() + ".png";
-        current.classes = [];
+        current.classes = [userId];
         current.preferences = {
             "theme": "light",
             "mode": "classes",

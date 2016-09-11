@@ -98,17 +98,28 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         var hide = Session.get("user").preferences.timeHide;
 
         for (var i = 0; i < courses.length; i++) { // For each user class.
-            found = classes.findOne({
-                _id: courses[i]
-            });
-            found.subscribers = found.subscribers.length;
-            found.mine = true;
-            if (found.admin === Meteor.userId()) { // If user owns this class.
-                found.box = " owned";
-                found.mine = false;
+            if (courses[i] === Meteor.userId()) {
+                found = {
+                    _id: courses[i],
+                    name: "Personal",
+                    subscribers: 1,
+                    mine: false,
+                    box: " owned"
+                };
+                array.push(found);
+            } else {
+                found = classes.findOne({
+                    _id: courses[i]
+                });
+                found.subscribers = found.subscribers.length;
+                found.mine = true;
+                if (found.admin === Meteor.userId()) { // If user owns this class.
+                    found.box = " owned";
+                    found.mine = false;
+                }
+                if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
+                array.push(found);
             }
-            if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
-            array.push(found);
 
             var thisWork = work.find({
                 class: courses[i]
@@ -300,9 +311,9 @@ Template.main.helpers({
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             eventMouseover: function (event, jsEvent, view) {
-                this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)"
+                this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
             },
-            eventMouseout: function (event, jsEvent, view) {  
+            eventMouseout: function (event, jsEvent, view) {
                 this.style.boxShadow = "";
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
@@ -334,10 +345,10 @@ Template.main.helpers({
         var hoverHighlight = Session.get("classDispHover");
         if(Session.equals("mode","classes")) {
             $(".workCard").toggleClass("scaled",false);
-            try { 
+            try {
                 $(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true);
             } catch(err) {}
-        } else {   
+        } else {
             $(".workevent").toggleClass("scaled",false);
             try {
                 $("."+hoverHighlight).toggleClass("scaled",true);
@@ -577,7 +588,7 @@ Template.main.events({
                 area.value = "";
                 Session.set("commentRestrict",null);
             },750);
-        })
+        });
     },
     // HANDLING INPUT CHANGING
     'click .change' (event) { // Click changable inputs. Creates an input where the span is.
@@ -772,6 +783,7 @@ Template.main.events({
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];
+        console.log(serverData);
         sendData("toggleWork");
     },
     'click #markConfirm' () { // Click confirm button.
