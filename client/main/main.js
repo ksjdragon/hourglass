@@ -106,7 +106,6 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     mine: false,
                     box: " owned"
                 };
-                array.push(found);
             } else {
                 found = classes.findOne({
                     _id: courses[i]
@@ -117,9 +116,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     found.box = " owned";
                     found.mine = false;
                 }
+            }
                 if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
                 array.push(found);
-            }
 
             var thisWork = work.find({
                 class: courses[i]
