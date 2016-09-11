@@ -273,7 +273,8 @@ Template.main.helpers({
                         });
                         var inRole = false;
 
-                        if (Meteor.userId() === work.creator ||
+                        if (work.class === Meteor.userId() ||
+                            Meteor.userId() === work.creator ||
                             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                             currClass.banned.indexOf(Meteor.userId()) !== -1
