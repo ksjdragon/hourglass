@@ -70,22 +70,22 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-        if (Meteor.user().profile.description) {
-            return Meteor.user().profile.description;
+        if (Session.get("user").description === "") {
+            return Session.get("user").description;
         } else {
             return "Say something about yourself!";
         }
     },
     school() { // Returns the current user's school's name
-        if (Meteor.user().profile.school) {
-            return Meteor.user().profile.school;
+        if (Session.get("user").school === "") {
+            return Session.get("user").school;
         } else {
             return "Click here to edit...";
         }
     },
     grade() { // Returns the current user's grade
-        if (Meteor.user().profile.grade) {
-            return Meteor.user().profile.grade + "th";
+        if (Session.get("user").grade === "") {
+            return Session.get("user").grade + "th";
         } else {
             return "Click here to edit...";
         }
@@ -601,12 +601,20 @@ function sendData(funcName) {
 
 function getProfileData() { // Gets all data related to profile.
     var profile = Session.get("user");
+
     profile.description = document.getElementById("motd").childNodes[0].nodeValue;
+    if(profile.description.includes("Say something about yourself!")) profile.description = "";
+
     profile.school = document.getElementById("school").childNodes[0].nodeValue;
+    if(profile.school.includes("Click here to edit...")) school = "";
+
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
+    if(profile.grade.includes("Click here to edit...")) profile.grade = "";
+
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
+    
     profile.preferences = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),

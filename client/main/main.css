@@ -1071,10 +1071,9 @@ input, textarea {
 	border-radius: 50%;
 }
 
-
 .doneUser span {
 	margin-bottom: 0.3vw;
-	
+
 	display: inline-block;
 	vertical-align: middle;
 	line-height: normal;
