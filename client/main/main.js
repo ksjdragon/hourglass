@@ -10,8 +10,8 @@ var calWorkOpen = null;
 var calWorkDate = null;
 
 var openValues = {
-    "menu": "-250px",
-    "options": "-280px",
+    "menu": "-270px",
+    "options": "-300px",
     "requests": "-235px"
 };
 
