@@ -28,6 +28,7 @@ for (var i = 0; i < superadmins.length; i++) {
     });
     if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
         Roles.addUsersToRoles(superadmin._id, 'superadmin');
+        Houston._admins.insert({user_id: superadmin._id});
     }
 }
 
