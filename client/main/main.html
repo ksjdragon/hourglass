@@ -14,7 +14,7 @@
             </div>
             <div id="headerBar"></div>
         </header>
-        <div id="menuContainer" style="margin-left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
+        <div id="menuContainer" style="left:{{menuStatus}};background-color:{{divColor 'sidebar'}}">
             <div id="modes">
                 <div class="mode classes" style="background-color:{{divColor 'funcButton'}}">
                     <i class="fa fa-university" aria-hidden="true"></i>
@@ -47,7 +47,7 @@
             {{/if}}
             </div>
         </div>
-        <div id="optionsContainer" style="margin-right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
+        <div id="optionsContainer" style="right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
             <h3>Preferences</h3>
             <div id="prefCont">
                 <div>
@@ -236,7 +236,7 @@
             </div>
         </div>
 
-        <div id="requests" style="background-color:{{divColor 'cards'}}">
+        <div id="requests" style="bottom:{{requestStatus}};background-color:{{divColor 'cards'}}">
             <div id="requestTab" style="background-color:{{divColor 'cards'}}">
                 <i class="fa fa-question" aria-hidden="true"></i>
             </div>
@@ -265,20 +265,22 @@
 </template>
 
 <template name="classesMode">
-    <div class="mainClass" style="background-color:{{divColor 'classes'}}">
-        <div class="classInfo"> <!-- class color -->
-            <h3 class="mainClassName">{{name}}</h3>
-            <p class="mainClassHour">{{hour}}</p>
-            <p class="mainClassTeacher">{{teacher}}</p>
-        </div>
-        <div class="creWork" classid="{{_id}}">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-            <h4>Add Work</h4>
-        </div>
-        <div class="workHolder">
-            {{#each thisClassWork}}
-                {{> classModeWork}}
-            {{/each}}
+    <div class="classWrapper">
+        <div class="mainClass" style="background-color:{{divColor 'classes'}}">
+            <div class="classInfo"> <!-- class color -->
+                <h3 class="mainClassName">{{name}}</h3>
+                <p class="mainClassHour">{{hour}}</p>
+                <p class="mainClassTeacher">{{teacher}}</p>
+            </div>
+            <div class="creWork" classid="{{_id}}">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <h4>Add Work</h4>
+            </div>
+            <div class="workHolder">
+                {{#each thisClassWork}}
+                    {{> classModeWork}}
+                {{/each}}
+            </div>
         </div>
     </div>
 </template>

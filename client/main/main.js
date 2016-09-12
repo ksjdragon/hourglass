@@ -10,8 +10,9 @@ var calWorkOpen = null;
 var calWorkDate = null;
 
 var openValues = {
-    "menu": "-25%",
-    "options": "-20%"
+    "menu": "-250px",
+    "options": "-280px",
+    "requests": "-235px"
 };
 
 // Sets colors for different assignment statuses
@@ -38,7 +39,8 @@ var ref = {
 // Reactive variables.
 Session.set("user",{}); // Stores user preferences.
 Session.set("calendarClasses", []); // Stores calendar classes.
-Session.set("sidebar", null); // Status of sidebar
+Session.set("sidebar", null); // Status of sidebar.
+Session.set("requests",false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWork", null); // Stores current selected work info.
 Session.set("currentReadableWork", null); // Stores readable selected work info.
@@ -226,21 +228,25 @@ Template.main.helpers({
     },
     menuStatus() { // Status of of menu sidebar.
         if (Session.equals("sidebar", "menuContainer")) {
-            return "0%";
+            return "0px";
         } else if (Session.equals("sidebar", "both")) {
-            return "0%";
+            return "0px";
         } else {
             return openValues.menu;
         }
     },
     optionsStatus() { // Status of options sidebar.
         if (Session.equals("sidebar", "optionsContainer")) {
-            return "0%";
+            return "0px";
         } else if (Session.equals("sidebar", "both")) {
-            return "0%";
+            return "0px";
         } else {
             return openValues.options;
         }
+    },
+    requestStatus() {
+        if (Session.get("requests")) return "0px";
+        return openValues.requests;
     },
     modeStatus(status) { // Color status of display modes.
         if (!Session.equals("mode",status)) return;
@@ -467,7 +473,7 @@ Template.main.events({
         }
 
         if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
-        if(!document.getElementById("requests").contains(event.target)) document.getElementById("requests").style.marginBottom = "-15.5vw";
+        if(!document.getElementById("requests").contains(event.target)) Session.set("requests",false);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -493,6 +499,10 @@ Template.main.events({
         } else {
             Session.set("sidebar", "optionsContainer");
         }
+    },
+    'click #requests .fa-question' () {
+        console.log("hi");
+        Session.set("requests",!Session.get("requests"));
     },
     'click .classes' () { // Click classes mode button.
         if (Session.equals("mode", "classes")) return;
@@ -568,9 +578,6 @@ Template.main.events({
             }
         }
         openDivFade(document.getElementsByClassName("overlay")[0]);
-    },
-    'click #requests .fa-question' () {
-        document.getElementById("requests").style.marginBottom = "0";
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");
