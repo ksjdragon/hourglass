@@ -504,7 +504,15 @@ input, textarea {
 
 .cWorkName {
 	font-weight: 400;
+	font-size: 100%;
+	width: 65%;
 	margin-top: 0;
+	
+	-webkit-filter: none;
+	filter: none;
+
+	display: inline-block;
+	white-space: normal;
 }
 
 #editWork {
