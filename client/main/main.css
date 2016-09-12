@@ -491,7 +491,13 @@ input, textarea {
 }
 
 .cWorkCreator {
-	float: right;
+	width: 30%;
+	display: inline-block;
+}
+
+.cWorkDate {
+	width: 75%;
+	display: inline-block;
 }
 
 .cWorkCont {
@@ -505,7 +511,7 @@ input, textarea {
 .cWorkName {
 	font-weight: 400;
 	font-size: 100%;
-	width: 65%;
+	width: 60%;
 	margin-top: 0;
 	
 	-webkit-filter: none;
@@ -513,6 +519,11 @@ input, textarea {
 
 	display: inline-block;
 	white-space: normal;
+}
+
+.cWorkBottom {
+	width: 30%;
+	display: inline-block;
 }
 
 #editWork {
