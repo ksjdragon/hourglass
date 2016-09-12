@@ -4,6 +4,10 @@
 	cursor: pointer;
 }
 
+#profPage .change {
+	font-size: 2.5vh;
+}
+
 .radio {
 	cursor: pointer;
 }
@@ -445,7 +449,7 @@
 }
 
 #mainpage, #logout2 {
-	font-size: 90%;
+	font-size: 1.5vh;
 	margin: 0;
 	padding: 0.7%;
 	background-color: #617C9E;
