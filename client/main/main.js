@@ -70,6 +70,12 @@ Template.registerHelper('userProfile', () => {
     return;
 });
 
+Template.registerHelper('screen', (multiplier, fraction) => {
+    if(multiplier === undefined) return screen.width.toString() + "px";
+    if(fraction === undefined) return (screen.width * parseInt(multiplier)).toString() + "px"
+    return ((screen.width) * parseInt(multiplier) / parseInt(fraction)).toString() + "px";
+});
+
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
     return themeColors[Session.get("user").preferences.theme][div];
 });

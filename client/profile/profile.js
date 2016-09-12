@@ -1,14 +1,20 @@
 ﻿/* jshint esversion: 6 */
-
 import {
     Template
 } from 'meteor/templating';
+
+var openValues = {
+    "owned": "-540px",
+    "priv": "-160px"
+};
 
 confirm = null; // Sets function to execute after confirmation click.
 
 // Sets up global variables
 
 Session.set("profClassTab", "manClass"); // Set default classes card mode to 'Manage Classes.'
+Session.set("owned",false); // Status of createdClasses.
+Session.set("privClass",false); //Status of joinPrivClass.
 Session.set("modifying", null); // Stores current open input.
 Session.set("notsearching", true); // If user is searching in search box.
 Session.set("autocompleteDivs", null); // Stores returned autocomplete results.
@@ -70,25 +76,16 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-        if (Session.get("user").description === "") {
-            return Session.get("user").description;
-        } else {
-            return "Say something about yourself!";
-        }
+        if (Session.get("user").description !== "") return Session.get("user").description;
+        return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
-        if (Session.get("user").school === "") {
-            return Session.get("user").school;
-        } else {
-            return "Click here to edit...";
-        }
+        if (Session.get("user").school !== "") return Session.get("user").school;
+        return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade === "") {
-            return Session.get("user").grade + "th";
-        } else {
-            return "Click here to edit...";
-        }
+        if (Session.get("user").grade !== "") return Session.get("user").grade + "th";
+        return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
         var array = classes.find(
@@ -110,6 +107,14 @@ Template.profile.helpers({
             Session.set("noclass",false);
         }
         return array;
+    },
+    ownedStatus() { // Status of createdClasses
+        if(!Session.get("owned")) return openValues.owned;
+        return "0px";
+    },
+    privStatus() {
+        if(!Session.get("privClass")) return openValues.priv;
+        return "0px";
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab",status)) {            
@@ -170,7 +175,7 @@ Template.profile.events({
         if(!document.getElementById("createdClasses").contains(event.target) &&
         !Session.equals("code",null) &&
         !event.target.className.includes("fa-times-circle-o")) {
-            document.getElementById("createdClasses").style.marginRight = "-40%";
+            Session.set("owned",false);
         }
         if(Session.get("changeAdmin") &&
         !document.getElementById("changeAdmin").contains(event.target)) {
@@ -179,10 +184,10 @@ Template.profile.events({
             div.removeChild(div.childNodes[3]);
             div.removeChild(div.childNodes[3]);
         }
-        if(Session.get("privateClass") &&
+        if(Session.get("privClass") &&
+        !(event.target.id === "private") &&
         !document.getElementById("joinPrivClass").contains(event.target)) {
-            Session.set("privateClass",false);
-            document.getElementById("joinPrivClass").style.marginBottom = "-20%";
+            Session.set("privClass",false);
         }
     },
     // MAIN BUTTONS
@@ -275,7 +280,7 @@ Template.profile.events({
             }
 
             Session.set("selectedClass",array);
-            document.getElementById("createdClasses").style.marginRight = "0";
+            Session.set("owned",true);
         });  
     },
     'click .classBox .fa-times' (event) { // Leaves a class
@@ -296,11 +301,11 @@ Template.profile.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #private' (event) { // Joins private class
-        Session.set("privateClass",true);
+        if(Session.get("privClass")) return;
         var input = document.getElementById("privateCode");
         input.className = "";
         input.placeholder = "Enter code here...";
-        document.getElementById("joinPrivClass").style.marginBottom = "0";
+        Session.set("privClass",true);
     },
     'click #privSubmit' () { // Submits private class code
         var input = document.getElementById("privateCode");
@@ -309,7 +314,7 @@ Template.profile.events({
         serverData = code;
         Meteor.call("joinPrivateClass", code, function(error, result) {
             if(result) {
-                document.getElementById("joinPrivClass").style.marginBottom = "-10%";
+                Session.set("privClass",false);
             } else {
                 input.className = "formInvalid";
                 input.placeholder = "Invalid code.";

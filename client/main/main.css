@@ -777,7 +777,6 @@ input, textarea {
 }
 
 #bg {
-	min-width: 1920px;
 	min-height: 100%;
 	width: 100%;
 	height: auto;
