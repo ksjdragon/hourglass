@@ -113,8 +113,8 @@
         </div>
 
         <div class="overlay">
-            <div id="editWork">
-                <div id="editWorkCont" style="background-color:{{divColor 'header'}};border-top:10px solid {{workType}}">
+            <div id="editWork" style="width:{{screen '.4'}}">
+                <div id="editWorkCont" style="background-color:{{divColor 'header'}};border-top:10px solid {{work 'typeColor'}}">
                     <div id="workInfoContainer">
                         <div id="workNameDiv">
                             <span id="workNamerestrict">{{commentLength}}</span>
@@ -189,8 +189,8 @@
                                     <p>{{work 'reports'}}</p>
                                 </div>
                                 <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
-                                    <div style="display:inline-block">
-                                        <img src="{{work 'avatar'}}">
+                                    <div style="display:inline-block;width:{{screen '3' '140'}}">
+                                        <img src="{{work 'avatar'}}" style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
                                     </div>
                                     <div style="display:inline-block;margin-left:0.3vw">
                                         <span>{{work 'creator'}}</span>
@@ -320,7 +320,7 @@
 <template name="doneUsers">
     <div class="doneUser" onclick="window.location='/user/{{email}}'">
         <div style="display:inline-block">
-            <img src='{{avatar}}'>
+            <img src='{{avatar}}' style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
         </div>
         <div style="display:inline-block;margin-left:0.3vw">
             <span>{{user}}</span>

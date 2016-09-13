@@ -24,6 +24,13 @@ var workColors = {
     "other": "#852E6D"
 };
 
+var defaultWork = {
+    name: "Name | Click here to edit...",
+    dueDate: "Click here to edit...",
+    description: "Click here to edit...",
+    type: "Click here to edit..."
+}
+
 // Creates variables for due dates
 
 var ref = {
@@ -43,6 +50,7 @@ Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests",false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWork", null); // Stores current selected work info.
+Session.set("currentWorkId",null);
 Session.set("currentReadableWork", null); // Stores readable selected work info.
 Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
@@ -71,9 +79,10 @@ Template.registerHelper('userProfile', () => {
 });
 
 Template.registerHelper('screen', (multiplier, fraction) => {
-    if(multiplier === undefined) return screen.width.toString() + "px";
-    if(fraction === undefined) return (screen.width * parseInt(multiplier)).toString() + "px"
-    return ((screen.width) * parseInt(multiplier) / parseInt(fraction)).toString() + "px";
+    console.log(multiplier,fraction);
+    if(typeof multiplier !== "string") return screen.width.toString() + "px";
+    if(typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px"
+    return ((screen.width) * parseFloat(multiplier) / parseFloat(fraction)).toString() + "px";
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
@@ -314,12 +323,7 @@ Template.main.helpers({
             },
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
-                var thisWork = work.findOne({
-                    _id: event.id
-                });
-                Session.set("currentWork", thisWork);
-                var thisReadWork = formReadable(thisWork);
-                Session.set("currentReadableWork", thisReadWork);
+                Session.set("currentWorkId", event.id);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             eventMouseover: function (event, jsEvent, view) {
@@ -368,37 +372,30 @@ Template.main.helpers({
         }
         return;
     },
-    workCenter() { // Centers work overlay.
-        var w = window.innerWidth * 0.3;
-        var h = window.innerHeight * 0.7;
-        return "width:" + w.toString() + "px;height:" + h.toString() + "px;margin-left:" + -0.5 * w.toString() + "px;margin-top:" + -0.5 * h.toString() + "px";
-    },
     work(value) { // Returns the specified work value.
-        if (Session.equals("currentWork", null)) return;
-        return Session.get("currentReadableWork")[value];
-    },
-    workType() { // Returns color for respective work type.
-        if (Session.equals("currentWork", null)) return;
-        if (Session.get("currentWork").type === undefined) return;
-        type = Session.get("currentWork").type;
-        if (type.includes("edit")) {
-            return;
+        if (Session.equals("currentWorkId", null)) return;
+        if (Session.get("newWork")) {
+            return defaultWork[value]; 
         } else {
-            return workColors[type];
+            var thisWork = work.findOne({_id: Session.get("currentWorkId")});
+            return formReadable(thisWork,value);
         }
     },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
     },
     inRole() { // Checks correct permissions.
-        if (Session.equals("currentWork", null)) return;
+        var thisWork = work.findOne({
+            _id: Session.get("currentWorkId")
+        });
         if (Session.get("newWork")) {
             return true;
         } else {
+            if (thisWork === undefined) return;
             var currClass = classes.findOne({
-                _id: Session.get("currentWork")["class"]
+                _id: thisWork["class"]
             });
-            if (Meteor.userId() === Session.get("currentWork").creator ||
+            if (Meteor.userId() === thisWork.creator ||
                 Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                 currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                 currClass.banned.indexOf(Meteor.userId()) !== -1
@@ -448,14 +445,9 @@ Template.main.events({
         if (e === "overlay") { // Overlay closing.
             closeDivFade(document.getElementsByClassName("overlay")[0]);
             if (!Session.get("newWork")) {
-                if (getHomeworkFormData() === null) return;
-                serverData = Session.get("currentWork");
-                sendData("editWork");
                 document.getElementById("workComment").value = "";
             }
             Session.set("newWork", null);
-            Session.set("currentWork", null);
-            Session.set("currentReadableWork", null);
             $('.req').css("color", "");
             Session.set("commentRestrict", null);
         }
@@ -506,7 +498,6 @@ Template.main.events({
         }
     },
     'click #requests .fa-question' () {
-        console.log("hi");
         Session.set("requests",!Session.get("requests"));
     },
     'click .classes' () { // Click classes mode button.
@@ -539,17 +530,7 @@ Template.main.events({
             attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentReadableWork", // Default readable work.
-            {
-                name: "Name | Click here to edit...",
-                class: attr,
-                dueDate: "Click here to edit...",
-                description: "Click here to edit...",
-                type: "Click here to edit..."
-            });
-        Session.set("currentWork", {
-            class: attr
-        });
+        Session.set("currentWorkId",attr);
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
@@ -564,18 +545,16 @@ Template.main.events({
         workid = event.target.getAttribute("workid");
 
         Session.set("newWork", false);
+        Session.set("currentWorkId",workid);
         var thisWork = work.findOne({
             _id: workid
         });
-        Session.set("currentWork", thisWork);
-        var thisReadWork = formReadable(thisWork);
-        Session.set("currentReadableWork", thisReadWork);
 
         if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({
-                _id: Session.get("currentWork")["class"]
+                _id: thisWork["class"]
             });
-            if (!(Meteor.userId() === Session.get("currentWork").creator || // If user has permission.
+            if (!(Meteor.userId() === thisWork.creator || // If user has permission.
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                     currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                     currClass.banned.indexOf(Meteor.userId()) !== -1)) {
@@ -605,11 +584,14 @@ Template.main.events({
     },
     // HANDLING INPUT CHANGING
     'click .change' (event) { // Click changable inputs. Creates an input where the span is.
+        var thisWork = work.findOne({
+            _id: Session.get("currentWorkId")
+        });
         if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({
-                _id: Session.get("currentWork")["class"]
+                _id: thisWork["class"]
             });
-            if (!(Meteor.userId() === Session.get("currentWork").creator || // If user has permission.
+            if (!(Meteor.userId() === thisWork.creator || // If user has permission.
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                     currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                     currClass.banned.indexOf(Meteor.userId()) !== -1
@@ -665,11 +647,14 @@ Template.main.events({
         }
     },
     'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
+        var thisWork = work.findOne({
+            _id: Session.get("currentWorkId")
+        });
         if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({
-                _id: Session.get("currentWork")["class"]
+                _id: thisWork["class"]
             });
-            if (!(Meteor.userId() === Session.get("currentWork").creator ||
+            if (!(Meteor.userId() === thisWork.creator ||
                 Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                 currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                 currClass.banned.indexOf(Meteor.userId()) !== -1
@@ -761,50 +746,39 @@ Template.main.events({
     },
     // WORK OVERLAY BUTTONS
     'click #commentSubmit' (event) { // Click to submit a comment.
-        workId = Session.get("currentWork")._id;
+        workId = Session.get("currentWorkId")
         var input = document.getElementById('workComment');
         comment = input.value;
         input.value = "";
         Session.set("commentRestrict", null);
         if (comment !== "") {
             document.getElementById('workComment').value = "";
-            Meteor.call('addComment', [comment, workId], function(err, result) {
-                var thisWork = work.findOne({
-                    _id: workId
-                });
-                Session.set("currentWork", thisWork);
-                var thisReadWork = formReadable(thisWork);
-                Session.set("currentReadableWork", thisReadWork);
-            });
+            Meteor.call('addComment', [comment, workId])
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
         if (getHomeworkFormData() === null) return; // Makes sure to check valid homework.
-        serverData = Session.get("currentWork");
-        if (Session.get("newWork")) {
-            sendData("createWork");
-        } else {
-            sendData("editWork");
-        }
+        serverData = getHomeworkFormData();
+        serverData.class = Session.get("currentWorkId");
+        sendData("createWork");
         Session.set("newWork", null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #workDelete' () {
-        serverData = Session.get("currentWork")._id;
+        serverData = Session.get("currentWorkId");
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #markDone' () { // Click done button.
-        serverData = [Session.get("currentWork")._id, "done"];
-        console.log(serverData);
+        serverData = [Session.get("currentWorkId"), "done"];
         sendData("toggleWork");
     },
     'click #markConfirm' () { // Click confirm button.
-        serverData = [Session.get("currentWork")._id, "confirmations"];
+        serverData = [Session.get("currentWorkId"), "confirmations"];
         sendData("toggleWork");
     },
     'click #markReport' () { // Click report button.
-        serverData = [Session.get("currentWork")._id, "reports"];
+        serverData = [Session.get("currentWorkId"), "reports"];
         sendData("toggleWork");
     },
     // CLASS FILTERS
@@ -820,17 +794,7 @@ Template.main.events({
             var date = calWorkDate.split("-");
             date = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
             Session.set("newWork", true);
-            Session.set("currentReadableWork", {
-                name: "Name | Click here to edit...",
-                class: classid,
-                dueDate: getReadableDate(date),
-                description: "Click here to edit...",
-                type: "Click here to edit..."
-            });
-            Session.set("currentWork", {
-                class: classid,
-                dueDate: date
-            });
+            Session.get("currentWorkId",classid);
             openDivFade(document.getElementsByClassName("overlay")[0]);
         } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
@@ -881,17 +845,7 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
-    Meteor.call(funcName, serverData, function(err, result) {
-        if (funcName === "toggleWork") {
-            var workId = Session.get("currentWork")._id;
-            var thisWork = work.findOne({
-                _id: workId
-            });
-            Session.set("currentWork", thisWork);
-            var thisReadWork = formReadable(thisWork);
-            Session.set("currentReadableWork", thisReadWork);
-        }
-    });
+    Meteor.call(funcName, serverData);
 }
 
 function closeInput(modifyingInput) { // Close a changeable input and change it back to span.
@@ -922,7 +876,7 @@ function closeInput(modifyingInput) { // Close a changeable input and change it 
         sendData("editProfile");
     } else if (!Session.get("newWork")) {
         if (getHomeworkFormData() === null) return;
-        serverData = Session.get("currentWork");
+        serverData = getHomeworkFormData();
         sendData("editWork");
     }
 }
@@ -940,15 +894,21 @@ function getHomeworkFormData() { // Get all data relating to work creation.
     }
     if (stop) return null;
 
-    var data = Session.get("currentWork");
+    if (Session.get("newWork")) {
+        var data = {
+            "class": Session.get("currentWorkId")
+        };
+    } else {
+        var data = work.findOne({
+            _id: Session.get("currentWorkId")
+        });
+    }
     data.name = document.getElementById("workName").childNodes[0].nodeValue;
     data.dueDate = toDate(document.getElementById("workDate").childNodes[0].nodeValue);
     data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
     data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
 
-    Session.set("currentWork", data);
-    var readableData = formReadable(data);
-    Session.set("currentReadableWork", readableData);
+    return data;
 }
 
 function getPreferencesData() { // Get all data relating to preferences.
@@ -978,56 +938,27 @@ function toDate(date) { // Turns formatted date back to Date constructor.
     return new Date(year, month, day, 11, 59, 59);
 }
 
-function formReadable(input) { // Makes work information readable by users.
-    input.dueDate = getReadableDate(input.dueDate);
-    input.type = input.type[0].toUpperCase() + input.type.slice(1);
-
-    if (!Session.get("newWork")) {
-        if (input.done.indexOf(Meteor.userId()) !== -1) { // If user marked as done.
-            input.doneCol = "#27A127";
-            input.doneText = "Done!";
-        } else {
-            input.doneCol = "";
-            input.doneText = "Mark done";
-        }
-
-        for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
-            var user = Meteor.users.findOne({
-                _id: input.done[i]
-            });
-
-            input.done[i] = {
-                "user": user.profile.name,
-                "avatar": user.profile.avatar,
-                "email": user.services.google.email
-            };
-        }
-
-        if (input.confirmations.indexOf(Meteor.userId()) !== -1) { // If user confirmed.
-            input.userConfirm = "#27A127";
-        } else {
-            input.userConfirm = "";
-        }
-
-        if (input.reports.indexOf(Meteor.userId()) !== -1) { // If user reported.
-            input.userReport = "#FF1A1A";
-        } else {
-            input.userReport = "";
-        }
-
-        var thisUser = Meteor.users.findOne({
-            _id: input.creator
-        });
-
-        input.confirmations = input.confirmations.length;
-        input.reports = input.reports.length;
-        input.creator = thisUser.profile.name;
-        input.avatar = thisUser.profile.avatar;
-        input.email = thisUser.services.google.email;
-
-        var comments = input.comments;
-        var resort = [];
-        if (!Session.get("newWork")) { // Don't display comments if user is creating work.
+function formReadable(input, val) { // Makes work information readable by users.
+    switch(val) {
+        case "typeColor":
+            return input.typeColor = workColors[input.type];
+            break;
+        case "name":
+            return input.name;
+            break;
+        case "dueDate":
+            return getReadableDate(input.dueDate);
+            break;
+        case "description":
+            return input.description;
+            break;
+        case "type":
+            return input.type[0].toUpperCase() + input.type.slice(1);
+            break;
+        case "comments":
+            var comments = input.comments;
+            var resort = [];
+            if (Session.get("newWork")) return []; // Don't display comments if user is creating work.
             for (var k = 0; k < comments.length; k++) {
                 var re = comments.length - k - 1;
                 resort[re] = {
@@ -1045,8 +976,61 @@ function formReadable(input) { // Makes work information readable by users.
                 resort[re].avatar = user.profile.avatar;
                 resort[re].email = user.services.google.email;
             }
-            input.comments = resort;
-        }
+            return resort;
+            break;
+        case "done":
+            if (Session.get("newWork")) return [];
+            for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
+                var user = Meteor.users.findOne({
+                    _id: input.done[i]
+                });
+
+                input.done[i] = {
+                    "user": user.profile.name,
+                    "avatar": user.profile.avatar,
+                    "email": user.services.google.email
+                };
+            }
+            return input.done;
+            break;
+        case "doneCol":
+            if (Session.get("newWork")) return "";
+            if (!_.contains(input.done,Meteor.userId())) return "";
+            return "#27A127";
+            break;
+        case "doneText":
+            if (Session.get("newWork")) return "";
+            if (!_.contains(input.done,Meteor.userId())) return "Mark done";
+            return "Done!";
+            break;
+        case "userConfirm":
+            if(!_.contains(input.confirmations, Meteor.userId())) return "";
+            return "#27A127";
+            break;
+        case "confirmations":
+            return input.confirmations.length;
+            break;
+        case "userReport":
+            if(!_.contains(input.reports, Meteor.userId())) return "";
+            return "#FF1A1A";
+            break;
+        case "reports":
+            return input.reports.length;
+            break;
+        case "email":
+            return Meteor.users.findOne({
+                _id: input.creator
+            }).services.google.email;
+            break;
+        case "avatar":
+            return Meteor.users.findOne({
+                _id: input.creator
+            }).profile.avatar;
+            break;
+        case "creator":
+            return Meteor.users.findOne({
+                _id: input.creator
+            }).profile.name;
+            break;
     }
-    return input;
 }
