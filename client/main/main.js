@@ -30,7 +30,7 @@ var defaultWork = {
     dueDate: "Click here to edit...",
     description: "Click here to edit...",
     type: "Click here to edit..."
-}
+};
 
 // Creates variables for due dates
 
@@ -68,6 +68,7 @@ Template.login.rendered = function() {
 
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')]);
 };
 
 Template.profile.rendered = function() {
@@ -82,7 +83,7 @@ Template.registerHelper('userProfile', () => {
 
 Template.registerHelper('screen', (multiplier, fraction) => {
     if(typeof multiplier !== "string") return screen.width.toString() + "px";
-    if(typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px"
+    if(typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px";
     return ((screen.width) * parseFloat(multiplier) / parseFloat(fraction)).toString() + "px";
 });
 
@@ -759,14 +760,14 @@ Template.main.events({
     },
     // WORK OVERLAY BUTTONS
     'click #commentSubmit' (event) { // Click to submit a comment.
-        workId = Session.get("currentWorkId")
+        workId = Session.get("currentWorkId");
         var input = document.getElementById('workComment');
         comment = input.value;
         input.value = "";
         Session.set("commentRestrict", null);
         if (comment !== "") {
             document.getElementById('workComment').value = "";
-            Meteor.call('addComment', [comment, workId])
+            Meteor.call('addComment', [comment, workId]);
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
@@ -921,13 +922,14 @@ function getHomeworkFormData() { // Get all data relating to work creation.
         }
     }
     if (stop) return null;
+    var data;
 
     if (Session.get("newWork")) {
-        var data = {
+        data = {
             "class": Session.get("currentWorkId")
         };
     } else {
-        var data = work.findOne({
+        data = work.findOne({
             _id: Session.get("currentWorkId")
         });
     }
@@ -968,21 +970,11 @@ function toDate(date) { // Turns formatted date back to Date constructor.
 
 function formReadable(input, val) { // Makes work information readable by users.
     switch(val) {
-        case "typeColor":
-            return input.typeColor = workColors[input.type];
-            break;
-        case "name":
-            return input.name;
-            break;
-        case "dueDate":
-            return getReadableDate(input.dueDate);
-            break;
-        case "description":
-            return input.description;
-            break;
-        case "type":
-            return input.type[0].toUpperCase() + input.type.slice(1);
-            break;
+        case "typeColor": return input.typeColor = workColors[input.type];
+        case "name": return input.name;
+        case "dueDate": return getReadableDate(input.dueDate);
+        case "description": return input.description;
+        case "type": return input.type[0].toUpperCase() + input.type.slice(1);
         case "comments":
             var comments = input.comments;
             var resort = [];
@@ -1005,7 +997,6 @@ function formReadable(input, val) { // Makes work information readable by users.
                 resort[re].email = user.services.google.email;
             }
             return resort;
-            break;
         case "done":
             if (Session.get("newWork")) return [];
             for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
@@ -1020,45 +1011,35 @@ function formReadable(input, val) { // Makes work information readable by users.
                 };
             }
             return input.done;
-            break;
         case "doneCol":
             if (Session.get("newWork")) return "";
             if (!_.contains(input.done,Meteor.userId())) return "";
             return "#27A127";
-            break;
         case "doneText":
             if (Session.get("newWork")) return "";
             if (!_.contains(input.done,Meteor.userId())) return "Mark done";
             return "Done!";
-            break;
         case "userConfirm":
             if(!_.contains(input.confirmations, Meteor.userId())) return "";
             return "#27A127";
-            break;
         case "confirmations":
             return input.confirmations.length;
-            break;
         case "userReport":
             if(!_.contains(input.reports, Meteor.userId())) return "";
             return "#FF1A1A";
-            break;
         case "reports":
             return input.reports.length;
-            break;
         case "email":
             return Meteor.users.findOne({
                 _id: input.creator
             }).services.google.email;
-            break;
         case "avatar":
             return Meteor.users.findOne({
                 _id: input.creator
             }).profile.avatar;
-            break;
         case "creator":
             return Meteor.users.findOne({
                 _id: input.creator
             }).profile.name;
-            break;
     }
 }
