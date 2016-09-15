@@ -1407,3 +1407,10 @@ input, textarea {
 	-ms-transform: scale(1.12);
 	transform: scale(1.12);
 }
+
+.gu-mirror {
+	transform-origin: top left;
+	-webkit-transform: rotate(6deg);
+	-ms-transform: rotate(6deg);
+	transform: rotate(6deg);
+}
