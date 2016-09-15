@@ -114,6 +114,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         var refetch = true;
         var courses = Session.get("user").classes;
         var classDisp = Session.get("classDisp"); // Get sidebar class filter.
+        var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
         var hide = Session.get("user").preferences.timeHide;
 
         for (var i = 0; i < courses.length; i++) { // For each user class.
@@ -158,11 +159,16 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     }
                 }
 
-                if(thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
-                    if(thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
+                if (thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
+                    if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
                         thisWork[j] = "no";
                         j = 0;
                     }
+                }
+
+                if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
+                    thisWork[j] = "no";
+                    j = 0;
                 }
 
             }
@@ -191,6 +197,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 thisWork[j].reportLength = thisWork[j].reports.length;
 
                 thisWork[j].creator = Meteor.users.findOne({_id: thisWork[j].creator}).profile.name;
+
             }
             array[i].thisClassWork = thisWork;
         }
@@ -821,18 +828,16 @@ Template.main.events({
         }
     },
     'click .sideFilter' (event) {
-        console.log("hi");
         var div = event.target;
         while (div.getAttribute("type") === null) div = div.parentNode;
         var type = div.getAttribute("type");
 
         var array = Session.get("typeFilter");
-        if (array.indexOf(classid) !== -1) {
-            array.splice(array.indexOf(classid), 1);
+        if (array.indexOf(type) !== -1) {
+            array.splice(array.indexOf(type), 1);
         } else {
-            array.push(classid);
+            array.push(type);
         }
-        console.log(array);
         Session.set("typeFilter", array);
     },
     'click #disableFilter' () {
