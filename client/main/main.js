@@ -8,7 +8,6 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
-//["class1","class2"] {"2":"class2","1":"class1"}
 
 var openValues = {
     "menu": "-270px",
@@ -197,7 +196,21 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 thisWork[j].reportLength = thisWork[j].reports.length;
 
                 thisWork[j].creator = Meteor.users.findOne({_id: thisWork[j].creator}).profile.name;
-
+                var conf = thisWork[j].confirmations.length;
+                var repo = thisWork[j].reports.length;
+                var ratio = conf / repo;
+                var normalColor = themeColors[Session.get("user").preferences.theme]["text"];
+                if (Math.abs(conf - repo)) {
+                    if ((conf+repo) <= 1) {
+                        thisWork[j].doneRatio = normalColor;
+                    } else {
+                        thisWork[j].doneRatio = "#F9F906";
+                    } 
+                } else if (ratio >= 2) {
+                    thisWork[j].doneRatio = "#33DD33";
+                } else if (ratio <= .9) {
+                    thisWork[j].doneRatio = "#FF1A1A";
+                }
             }
             array[i].thisClassWork = thisWork;
         }
