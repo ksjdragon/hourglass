@@ -50,15 +50,15 @@ Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests",false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
-Session.set("currentWork", null); // Stores current selected work info.
-Session.set("currentWorkId",null);
+Session.set("currentWorkId",null); // Stores current work Id.
 Session.set("currentReadableWork", null); // Stores readable selected work info.
 Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
 Session.set("typeFilter", []); // Stores type filters for classes.
-Session.set("classDispHover", null); // Stores current hovered filter.
+Session.set("typeFilterHover",null); // Stores current hovered type filter.
+Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
 
@@ -315,7 +315,7 @@ Template.main.helpers({
                             backgroundColor: workColors[work.type],
                             borderColor: "#444",
                             startEditable: inRole,
-                            className: "workevent " + work.class
+                            className: work.type + " workevent " + work.class
                         });
                     }
                 }
@@ -368,15 +368,18 @@ Template.main.helpers({
     },
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
+        var typeHighlight = Session.get("typeFilterHover");
         if(Session.equals("mode","classes")) {
             $(".workCard").toggleClass("scaled",false);
             try {
                 $(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true);
+                $(".workCard[type=\'"+typeHighlight+"\']").toggleClass("scaled",true);
             } catch(err) {}
         } else {
             $(".workevent").toggleClass("scaled",false);
             try {
                 $("."+hoverHighlight).toggleClass("scaled",true);
+                $("."+typeHighlight).toggleClass("scaled",true);
             } catch(err) {}
         }
         return;
@@ -860,6 +863,24 @@ Template.main.events({
             if (div.contains(event.target)) return;
         }
         Session.set("classDispHover", null);
+    },
+    'mouseover .sideFilter' (event) {
+        var div;
+        if (event.target.className !== "sideFilter") {
+            div = event.target.parentNode;
+        } else {
+            div = event.target;
+        }
+        while (div.getAttribute("type") === null) div = div.parentNode;
+        var type = div.getAttribute("type");
+        Session.set("typeFilterHover", type); 
+    },
+    'mouseleave .sideFilter' (event) {
+        if (event.target.className !== "sideFilter") {
+            var div = event.target.parentNode;
+            if (div.contains(event.target)) return;
+        }
+        Session.set("typeFilterHover", null); 
     }
 });
 
