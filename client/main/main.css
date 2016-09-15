@@ -514,18 +514,20 @@ input, textarea {
 }
 
 .cWorkTop {
+	width: 100%;
 	margin: 0 0 5% 0;
+	display: table;
 }
 
 .cWorkCreator {
-	width: 39%;
-	display: inline-block;
+	width: 50%;
+	display: table-cell;
 	text-align: right;
 }
 
 .cWorkDate {
-	width: 75%;
-	display: inline-block;
+	width: 70%;
+	display: table-cell;
 }
 
 .cWorkCont {
@@ -539,19 +541,25 @@ input, textarea {
 .cWorkName {
 	font-weight: 400;
 	font-size: 100%;
-	width: 60%;
+	width: 50%;
 	margin-top: 0;
 	
 	-webkit-filter: none;
 	filter: none;
 
-	display: inline-block;
+	display: table-cell;
 	white-space: normal;
 }
 
 .cWorkBottom {
+	width: 100%;
+	display: table;
+}
+
+.cWorkBottom div {
 	width: 30%;
-	display: inline-block;
+	display: table-cell;
+	text-align: right;
 }
 
 #editWork {
