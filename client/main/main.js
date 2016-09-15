@@ -66,6 +66,7 @@ Template.login.rendered = function() {
 
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')]);
 };
 
 Template.profile.rendered = function() {
