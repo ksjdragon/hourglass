@@ -31,21 +31,30 @@
                     <h4>Manage Classes</h4>
                 </div>
             </div>
-            <div id="classListHolder">
             {{#if myClasses}}
-                <h3>Enrolled</h3>
-                {{#if calCreWork}}
-                    <h3 id="calCreWork">-- Pick a class</h3>
-                {{else}}
-                    {{#if filterOn}}
-                        <h3 id="disableFilter">Disable All</h3>
+                <div id="classListHolder">
+                    <h3>Enrolled</h3>
+                    {{#if calCreWork}}
+                        <h3 id="calCreWork">-- Pick a class</h3>
+                    {{else}}
+                        {{#if filterOn}}
+                            <h3 id="disableFilter">Disable All</h3>
+                        {{/if}}
                     {{/if}}
-                {{/if}}
-                    {{#each myClasses}}
-                        {{> sidebarClasses}}  
-                    {{/each}}
+                    <div id="sideClassWrapper">
+                        {{#each myClasses}}
+                            {{> sidebarClasses}}  
+                        {{/each}}
+                    </div>
+                
+                </div>
+                <div id="classFilterHolder">
+                    <h3>Filters</h3>
+                    {{#each types}}
+                        {{> sideTypeFilter}}
+                    {{/each}}   
+                </div>
             {{/if}}
-            </div>
         </div>
         <div id="optionsContainer" style="right:{{optionsStatus}};background-color:{{divColor 'sidebar'}}">
             <h3>Preferences</h3>
@@ -256,12 +265,13 @@
         <div>
             <p class="sideClassName">{{name}}</p>
             <p class="sideClassHour">{{hour}}</p>
+        </div>
+        <div>
             {{#if selected}}
                 <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
             {{/if}}
         </div>
     </div>
-
 </template>
 
 <template name="classesMode">
@@ -324,6 +334,17 @@
         </div>
         <div style="display:inline-block;margin-left:0.3vw">
             <span>{{user}}</span>
+        </div>
+    </div>
+</template>
+
+<template name="sideTypeFilter">
+    <div class="sideFilter" type="{{type}}">
+        <div>
+            <p class="sideTypeName">{{typeName}}</p>
+            {{#if selected}}
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
+            {{/if}}
         </div>
     </div>
 </template>

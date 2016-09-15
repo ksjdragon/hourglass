@@ -8,6 +8,7 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
+//["class1","class2"] {"2":"class2","1":"class1"}
 
 var openValues = {
     "menu": "-270px",
@@ -56,6 +57,7 @@ Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
+Session.set("typeFilter", []); // Stores type filters for classes.
 Session.set("classDispHover", null); // Stores current hovered filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
@@ -79,7 +81,6 @@ Template.registerHelper('userProfile', () => {
 });
 
 Template.registerHelper('screen', (multiplier, fraction) => {
-    console.log(multiplier,fraction);
     if(typeof multiplier !== "string") return screen.width.toString() + "px";
     if(typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px"
     return ((screen.width) * parseFloat(multiplier) / parseFloat(fraction)).toString() + "px";
@@ -383,6 +384,18 @@ Template.main.helpers({
     },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
+    },
+    types() {
+        var types = Object.keys(workColors);
+        var array = [];
+        for(var i = 0; i < types.length; i++) {
+            array.push({ 
+                "type": types[i],
+                "typeName": types[i][0].toUpperCase() + types[i].slice(1),
+                "selected": _.contains(Session.get("typeFilter"), types[i])
+            });
+        }
+        return array;
     },
     inRole() { // Checks correct permissions.
         var thisWork = work.findOne({
@@ -805,6 +818,21 @@ Template.main.events({
             }
             Session.set("classDisp", array);
         }
+    },
+    'click .sideFilter' (event) {
+        console.log("hi");
+        var div = event.target;
+        while (div.getAttribute("type") === null) div = div.parentNode;
+        var type = div.getAttribute("type");
+
+        var array = Session.get("typeFilter");
+        if (array.indexOf(classid) !== -1) {
+            array.splice(array.indexOf(classid), 1);
+        } else {
+            array.push(classid);
+        }
+        console.log(array);
+        Session.set("typeFilter", array);
     },
     'click #disableFilter' () {
         Session.set("classDisp", []);
