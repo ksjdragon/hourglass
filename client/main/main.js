@@ -68,16 +68,7 @@ Template.login.rendered = function() {
 
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {copy: false})
-        .on('out', function(el) {
-            var els = document.getElementsByClassName("classWrapper");
-            var final = [];
-            for(var i = 0; i < els.length; i++) {
-                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
-                final.push(classid);
-           }
-            Meteor.call("reorderClasses", final);
-        });
+    setTimeout(startDragula, 300);
 };
 
 Template.profile.rendered = function() {
@@ -246,6 +237,19 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
 Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
     return Session.get("commentRestrict");
 });
+
+function startDragula() {
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')])
+        .on('out', function(el) {
+            var els = document.getElementsByClassName("classWrapper");
+            var final = [];
+            for(var i = 0; i < els.length; i++) {
+                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+                final.push(classid);
+            }
+            Meteor.call("reorderClasses", final);
+        });
+}
 
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
@@ -558,6 +562,7 @@ Template.main.events({
             Session.set("mode", "classes");
             openDivFade(modeHolder);
         }, 300);
+        setTimeout(startDragula, 500);
         Session.set("sidebar", null); // Closes all sidebars.
         Session.set("calCreWork", null);
     },
