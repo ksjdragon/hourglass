@@ -32,8 +32,14 @@
                 </div>
             </div>
             {{#if myClasses}}
+                <div id="classFilterHolder">
+                    <h3>Filters</h3>
+                    {{#each types}}
+                        {{> sideTypeFilter}}
+                    {{/each}}   
+                </div>
                 <div id="classListHolder">
-                    <h3>Enrolled</h3>
+                    <h3>By Class </h3>
                     {{#if calCreWork}}
                         <h3 id="calCreWork">-- Pick a class</h3>
                     {{else}}
@@ -46,13 +52,6 @@
                             {{> sidebarClasses}}  
                         {{/each}}
                     </div>
-                
-                </div>
-                <div id="classFilterHolder">
-                    <h3>Filters</h3>
-                    {{#each types}}
-                        {{> sideTypeFilter}}
-                    {{/each}}   
                 </div>
             {{/if}}
         </div>
@@ -96,6 +95,16 @@
                     <div class="inputRadioPref">
                     <p class="prefTitle">Hide Done:</p>
                     <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
+                    </div>
+                    <div class="prefOptions">
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
+                        <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">No</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="inputRadioPref">
+                    <p class="prefTitle">Hide Reported:</p>
+                    <span class="change radio" re="readonly" id="prefReport">{{pref 'hideReport'}}</span>
                     </div>
                     <div class="prefOptions">
                         <p class="prefOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>

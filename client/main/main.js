@@ -137,8 +137,8 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     found.mine = false;
                 }
             }
-                if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
-                array.push(found);
+            if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
+            array.push(found);
 
             var thisWork = work.find({
                 class: courses[i]
@@ -155,20 +155,21 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     var offset = (moment().subtract(hide, 'days'))._d;
                     if (offset > due) { // If due is before hide days before today
                         thisWork[j] = "no";
-                        j = 0;
                     }
                 }
 
                 if (thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
                     if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
                         thisWork[j] = "no";
-                        j = 0;
                     }
                 }
 
                 if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
+                    thisWork[j] = "no"
+                }
+
+                if(thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length/thisWork[j].reports.length) <= 0.9) {
                     thisWork[j] = "no";
-                    j = 0;
                 }
 
             }
@@ -213,7 +214,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     thisWork[j].doneRatio = "#FF1A1A";
                 }
             }
-            array[i].thisClassWork = thisWork;
+            array[i].thisClassWork = thisWork.sort(function(a, b) {
+                return Date.parse(a.realDate) - Date.parse(b.realDate);
+            });
         }
         Session.set("noclass", false);
         Session.set("calendarClasses", array);
@@ -224,7 +227,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     var preferences = Session.get("user").preferences;
-    if(val === 'timeHide' || val === 'done') {
+    if(val === 'timeHide' || val === 'done' || val == 'hideReport') {
         var invert = _.invert(ref);
         return invert[preferences[val]];
     }
@@ -987,7 +990,8 @@ function getPreferencesData() { // Get all data relating to preferences.
         "theme": document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
         "timeHide": ref[document.getElementById("prefHide").childNodes[0].nodeValue],
-        "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue]
+        "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue],
+        "hideReport": ref[document.getElementById("prefReport").childNodes[0].nodeValue]
     };
     profile.preferences = options;
     return profile;
