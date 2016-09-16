@@ -176,7 +176,6 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
             for (j = 0; j < thisWork.length; j++) {
                 thisWork[j].classid = courses[i];
                 thisWork[j].realDate = thisWork[j].dueDate;
-                thisWork[j].numberDate = Date.parse(thisWork[j].realDate);
                 thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
                     sameDay: '[Today]',
                     nextDay: '[Tomorrow]',
@@ -214,7 +213,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 }
             }
             array[i].thisClassWork = thisWork.sort(function(a, b) {
-                return parseFloat(a.numberDate) - parseFloat(b.numberDate);
+                return Date.parse(a.realDate) - Date.parse(b.realDate);
             });
         }
         Session.set("noclass", false);
