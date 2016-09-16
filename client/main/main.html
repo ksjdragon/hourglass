@@ -32,8 +32,14 @@
                 </div>
             </div>
             {{#if myClasses}}
+                <div id="classFilterHolder">
+                    <h3>Filters</h3>
+                    {{#each types}}
+                        {{> sideTypeFilter}}
+                    {{/each}}   
+                </div>
                 <div id="classListHolder">
-                    <h3>Enrolled</h3>
+                    <h3>By Class </h3>
                     {{#if calCreWork}}
                         <h3 id="calCreWork">-- Pick a class</h3>
                     {{else}}
@@ -46,13 +52,6 @@
                             {{> sidebarClasses}}  
                         {{/each}}
                     </div>
-                
-                </div>
-                <div id="classFilterHolder">
-                    <h3>Filters</h3>
-                    {{#each types}}
-                        {{> sideTypeFilter}}
-                    {{/each}}   
                 </div>
             {{/if}}
         </div>
