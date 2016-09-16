@@ -61,7 +61,6 @@ Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
 
-dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')]);
 
 Template.login.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
@@ -69,6 +68,16 @@ Template.login.rendered = function() {
 
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {copy: false})
+        .on('out', function(el) {
+            var els = document.getElementsByClassName("classWrapper");
+            var final = [];
+            for(var i = 0; i < els.length; i++) {
+                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+                final.push(classid);
+           }
+            Meteor.call("reorderClasses", final);
+        });
 };
 
 Template.profile.rendered = function() {
@@ -165,7 +174,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 }
 
                 if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
-                    thisWork[j] = "no"
+                    thisWork[j] = "no";
                 }
 
                 if(thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length/thisWork[j].reports.length) <= 0.9) {
@@ -207,10 +216,10 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                         thisWork[j].doneRatio = normalColor;
                     } else {
                         thisWork[j].doneRatio = "#F9F906";
-                    } 
+                    }
                 } else if (ratio >= 2) {
                     thisWork[j].doneRatio = "#33DD33";
-                } else if (ratio <= .9) {
+                } else if (ratio <= 0.9) {
                     thisWork[j].doneRatio = "#FF1A1A";
                 }
             }

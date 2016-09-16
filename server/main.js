@@ -486,7 +486,8 @@ Meteor.methods({
     },
     'reorderClasses': function(newOrder) {
         var current = Meteor.user().profile;
-        if(newOrder.every(elem => _.contains(current.classes, elem))) {
+        if(newOrder.every(elem => _.contains(current.classes, elem)) &&
+           newOrder.length === current.classes.length) {
             current.classes = newOrder;
             Meteor.users.update({
                 _id: Meteor.userId()
