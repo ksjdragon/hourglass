@@ -624,7 +624,8 @@ function getProfileData() { // Gets all data related to profile.
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
         "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
-        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue]
+        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue],
+        "hideReport":ref[document.getElementById("prefReport").childNodes[0].nodeValue]
     };
     return profile;
 }

@@ -510,7 +510,8 @@ Meteor.methods({
             "theme": "light",
             "mode": "classes",
             "timeHide": 1,
-            "done": true
+            "done": true,
+            "hideReport": true
         };
         Meteor.users.update({
             _id: userId
