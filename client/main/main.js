@@ -1064,7 +1064,7 @@ function formReadable(input, val) { // Makes work information readable by users.
 
                 input.done[i] = {
                     "user": user.profile.name,
-                    "avatar": user.service.google.picture,
+                    "avatar": user.services.google.picture,
                     "email": user.services.google.email
                 };
             }
