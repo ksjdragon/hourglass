@@ -9,7 +9,7 @@ Template.user.helpers({
         return this.profile.banner;
     },
     avatar() { // Returns avatar
-        return this.profile.avatar;
+        return this.services.google.picture;
     },
     username() {  // Returns current user's username
         return this.profile.name;
