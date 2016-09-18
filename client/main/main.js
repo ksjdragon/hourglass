@@ -266,7 +266,7 @@ Template.main.helpers({
         }
     },
     avatar() { // Returns avatar.
-        return Session.get("user").avatar;
+        return Meteor.user().services.google.picture;
     },
     username() { // Returns user name.
         return Session.get("user").name;
@@ -1051,7 +1051,7 @@ function formReadable(input, val) { // Makes work information readable by users.
                 });
                 resort[re].user = user.profile.name;
                 resort[re].date = moment(comments[k].date).fromNow();
-                resort[re].avatar = user.profile.avatar;
+                resort[re].avatar = user.services.google.picture;
                 resort[re].email = user.services.google.email;
             }
             return resort;
@@ -1064,7 +1064,7 @@ function formReadable(input, val) { // Makes work information readable by users.
 
                 input.done[i] = {
                     "user": user.profile.name,
-                    "avatar": user.profile.avatar,
+                    "avatar": user.service.google.picture,
                     "email": user.services.google.email
                 };
             }
@@ -1094,7 +1094,7 @@ function formReadable(input, val) { // Makes work information readable by users.
         case "avatar":
             return Meteor.users.findOne({
                 _id: input.creator
-            }).profile.avatar;
+            }).services.google.picture;
         case "creator":
             return Meteor.users.findOne({
                 _id: input.creator
