@@ -125,7 +125,6 @@ Meteor.publish('users', function() {
             // Only return necessary fields
             fields: {
                 'services.google.email': 1,
-                'profile.avatar': 1,
                 'profile.banner': 1,
                 'profile.grade': 1,
                 'profile.description': 1,
@@ -468,7 +467,6 @@ Meteor.methods({
             "grade": change.grade,
             "classes": current.classes,
             "description": change.description,
-            "avatar": change.avatar,
             "banner": change.banner,
             "preferences": change.preferences,
             "name": current.name
@@ -505,7 +503,6 @@ Meteor.methods({
             _id: userId
         }).profile;
         current.banner = "/Banners/defaultcover.jpg";
-        current.avatar = "/Avatars/" + (Math.floor(Math.random() * 10) + 1).toString() + ".png";
         current.classes = [userId];
         current.preferences = {
             "theme": "light",
