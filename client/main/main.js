@@ -239,7 +239,13 @@ Template.registerHelper('commentLength', () => { // Returns characters left for 
 });
 
 function startDragula() {
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')])
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')],
+            {
+                moves: function(el, container, handle) {
+                    // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+                    return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+                }
+            })
         .on('out', function(el) {
             var els = document.getElementsByClassName("classWrapper");
             var final = [];
@@ -249,6 +255,7 @@ function startDragula() {
             }
             Meteor.call("reorderClasses", final);
         });
+    console.log("Started!");
 }
 
 Template.main.helpers({
