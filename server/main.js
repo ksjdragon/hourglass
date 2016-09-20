@@ -28,7 +28,9 @@ for (var i = 0; i < superadmins.length; i++) {
     });
     if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
         Roles.addUsersToRoles(superadmin._id, 'superadmin');
-        Houston._admins.insert({user_id: superadmin._id});
+        Houston._admins.insert({
+            user_id: superadmin._id
+        });
     }
 }
 
@@ -125,7 +127,6 @@ Meteor.publish('users', function() {
             // Only return necessary fields
             fields: {
                 'services.google.email': 1,
-                'profile.avatar': 1,
                 'profile.banner': 1,
                 'profile.grade': 1,
                 'profile.description': 1,
@@ -360,7 +361,7 @@ Meteor.methods({
                 $set: change
             });
         } else if ((currentwork.class === Meteor.userId() ||
-            _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
+                _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
                 Meteor.userId() === currentwork.creator) &&
             change.name.length <= 50 && change.description.length <= 150 &&
             change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
@@ -391,8 +392,8 @@ Meteor.methods({
         var user = Meteor.userId();
         if (typeof comment === "string" && comment.length <= 200 &&
             (workobject.class === Meteor.userId() ||
-             (_.contains(currentclass.subscribers, Meteor.userId()) &&
-              !_.contains(currentclass.banned, Meteor.userId())))) {
+                (_.contains(currentclass.subscribers, Meteor.userId()) &&
+                    !_.contains(currentclass.banned, Meteor.userId())))) {
             var commentInfo = {
                 "comment": input[0],
                 "user": user,
@@ -468,7 +469,6 @@ Meteor.methods({
             "grade": change.grade,
             "classes": current.classes,
             "description": change.description,
-            "avatar": change.avatar,
             "banner": change.banner,
             "preferences": change.preferences,
             "name": current.name
@@ -486,7 +486,8 @@ Meteor.methods({
     },
     'reorderClasses': function(newOrder) {
         var current = Meteor.user().profile;
-        if(newOrder.every(elem => _.contains(current.classes, elem))) {
+        if (newOrder.every(elem => _.contains(current.classes, elem)) &&
+            newOrder.length === current.classes.length) {
             current.classes = newOrder;
             Meteor.users.update({
                 _id: Meteor.userId()
@@ -504,7 +505,6 @@ Meteor.methods({
             _id: userId
         }).profile;
         current.banner = "/Banners/defaultcover.jpg";
-        current.avatar = "/Avatars/" + (Math.floor(Math.random() * 10) + 1).toString() + ".png";
         current.classes = [userId];
         current.preferences = {
             "theme": "light",

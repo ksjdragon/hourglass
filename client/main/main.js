@@ -61,13 +61,14 @@ Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
 
+
 Template.login.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
 };
 
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')]);
+    setTimeout(startDragula, 300);
 };
 
 Template.profile.rendered = function() {
@@ -164,7 +165,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 }
 
                 if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
-                    thisWork[j] = "no"
+                    thisWork[j] = "no";
                 }
 
                 if(thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length/thisWork[j].reports.length) <= 0.9) {
@@ -206,10 +207,10 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                         thisWork[j].doneRatio = normalColor;
                     } else {
                         thisWork[j].doneRatio = "#F9F906";
-                    } 
+                    }
                 } else if (ratio >= 2) {
                     thisWork[j].doneRatio = "#33DD33";
-                } else if (ratio <= .9) {
+                } else if (ratio <= 0.9) {
                     thisWork[j].doneRatio = "#FF1A1A";
                 }
             }
@@ -237,6 +238,26 @@ Template.registerHelper('commentLength', () => { // Returns characters left for 
     return Session.get("commentRestrict");
 });
 
+function startDragula() {
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')],
+            {
+                moves: function(el, container, handle) {
+                    // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+                    return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+                }
+            })
+        .on('out', function(el) {
+            var els = document.getElementsByClassName("classWrapper");
+            var final = [];
+            for(var i = 0; i < els.length; i++) {
+                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+                final.push(classid);
+            }
+            Meteor.call("reorderClasses", final);
+        });
+    console.log("Started!");
+}
+
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
         if(Session.get("user").school === undefined) return;
@@ -252,7 +273,7 @@ Template.main.helpers({
         }
     },
     avatar() { // Returns avatar.
-        return Session.get("user").avatar;
+        return Meteor.user().services.google.picture;
     },
     username() { // Returns user name.
         return Session.get("user").name;
@@ -548,6 +569,7 @@ Template.main.events({
             Session.set("mode", "classes");
             openDivFade(modeHolder);
         }, 300);
+        setTimeout(startDragula, 500);
         Session.set("sidebar", null); // Closes all sidebars.
         Session.set("calCreWork", null);
     },
@@ -1036,7 +1058,7 @@ function formReadable(input, val) { // Makes work information readable by users.
                 });
                 resort[re].user = user.profile.name;
                 resort[re].date = moment(comments[k].date).fromNow();
-                resort[re].avatar = user.profile.avatar;
+                resort[re].avatar = user.services.google.picture;
                 resort[re].email = user.services.google.email;
             }
             return resort;
@@ -1049,7 +1071,7 @@ function formReadable(input, val) { // Makes work information readable by users.
 
                 input.done[i] = {
                     "user": user.profile.name,
-                    "avatar": user.profile.avatar,
+                    "avatar": user.services.google.picture,
                     "email": user.services.google.email
                 };
             }
@@ -1079,7 +1101,7 @@ function formReadable(input, val) { // Makes work information readable by users.
         case "avatar":
             return Meteor.users.findOne({
                 _id: input.creator
-            }).profile.avatar;
+            }).services.google.picture;
         case "creator":
             return Meteor.users.findOne({
                 _id: input.creator

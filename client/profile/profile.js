@@ -70,7 +70,7 @@ Template.profile.helpers({
         return Session.get("user").banner;
     },
     avatar() { // Returns avatar
-        return Session.get("user").avatar;
+        return Meteor.user().services.google.picture;
     },
     username() {  //Returns current user's username
         return Session.get("user").name;
