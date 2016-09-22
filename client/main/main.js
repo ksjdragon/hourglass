@@ -769,6 +769,24 @@ Template.main.events({
         text.style.display = "initial";
         text.style.color = "#7E7E7E";
     },
+    'click #export' (event) {
+        events = [];
+
+        var userClasses = Session.get("calendarClasses");
+
+        for (var i = 0; i < userClasses.length; i++) {
+            var works = userClasses[i].thisClassWork;
+            for (var j = 0; j < works.length; j++) {
+                var work = works[j];
+                events.push({
+                    "Subject": work.name,
+                    "Start Date": work.dueDate.toLocaleDateString(),
+                    "Description": work.description,
+                    "All Day Event": True
+                });
+            }
+        }
+    },
     'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
         if (event.keyCode == 13 && modifyingInput != "workDesc") {
