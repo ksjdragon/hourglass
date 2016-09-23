@@ -780,12 +780,13 @@ Template.main.events({
                 var work = works[j];
                 events.push({
                     "Subject": work.name,
-                    "Start Date": work.dueDate.toLocaleDateString(),
+                    "Start Date": work.realDate.toLocaleDateString(),
                     "Description": work.description,
-                    "All Day Event": True
+                    "All Day Event": true
                 });
             }
         }
+        console.log(JSON.stringify(events));
     },
     'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
