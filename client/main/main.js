@@ -770,13 +770,7 @@ Template.main.events({
         text.style.color = "#7E7E7E";
     },
     'click #export' (event) {
-        events = [{
-            "Column 1": "Subject",
-            "Column 2": "Start Date",
-            "Column 3": "Description",
-            "Column 4": "All Day Event"
-        }];
-
+        var events = [];
         var userClasses = Session.get("calendarClasses");
 
         for (var i = 0; i < userClasses.length; i++) {
@@ -788,17 +782,19 @@ Template.main.events({
                 if (work.dueDate == defaultWork.dueDate) continue;
                 if (work.name == defaultWork.name) work.name = "";
                 if (workclass === undefined) workclass = {name: "Personal"};
-                events.push({
-                    "Column 1": workclass.name + ": " + work.name,
-                    "Column 2": work.realDate.toLocaleDateString(),
-                    "Column 3": work.description,
-                    "Column 4": "True"
-                });
+                events.push([
+                    workclass.name + ": " + work.name,
+                    work.realDate.toLocaleDateString(),
+                    work.description,
+                    "True"
+                ]);
             }
         }
 
         var JSONevents = JSON.stringify(events);
-        console.log(Papa.unparse(JSONevents));
+        var CSVevents = Papa.unparse({fields: ["Subject", "Start Date", "Description", "All Day Event"], data: JSONevents});
+        var eventBlob = new Blob([CSVevents], {type: "data:text/csv;charset=utf-8"});
+        saveAs(eventBlob, "hourglass.csv");
     },
     'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
