@@ -770,7 +770,12 @@ Template.main.events({
         text.style.color = "#7E7E7E";
     },
     'click #export' (event) {
-        events = [];
+        events = [{
+            "Column 1": "Subject",
+            "Column 2": "Start Date",
+            "Column 3": "Description",
+            "Column 4": "All Day Event"
+        }];
 
         var userClasses = Session.get("calendarClasses");
 
@@ -778,16 +783,22 @@ Template.main.events({
             var works = userClasses[i].thisClassWork;
             for (var j = 0; j < works.length; j++) {
                 var work = works[j];
-                console.log(work);
+                var workclass = classes.findOne({_id: work.class});
+                if (work.description == defaultWork.description) work.description = "";
+                if (work.dueDate == defaultWork.dueDate) continue;
+                if (work.name == defaultWork.name) work.name = "";
+                if (workclass === undefined) workclass = {name: "Personal"};
                 events.push({
-                    "Subject": classes.findOne({_id: work.class}).name + ": " + work.name,
-                    "Start Date": work.realDate.toLocaleDateString(),
-                    "Description": work.description,
-                    "All Day Event": true
+                    "Column 1": workclass.name + ": " + work.name,
+                    "Column 2": work.realDate.toLocaleDateString(),
+                    "Column 3": work.description,
+                    "Column 4": "True"
                 });
             }
         }
-        console.log(JSON.stringify(events));
+
+        var JSONevents = JSON.stringify(events);
+        console.log(Papa.unparse(JSONevents));
     },
     'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
