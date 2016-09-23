@@ -778,8 +778,9 @@ Template.main.events({
             var works = userClasses[i].thisClassWork;
             for (var j = 0; j < works.length; j++) {
                 var work = works[j];
+                console.log(work);
                 events.push({
-                    "Subject": work.name,
+                    "Subject": classes.findOne({_id: work.class}).name + ": " + work.name,
                     "Start Date": work.realDate.toLocaleDateString(),
                     "Description": work.description,
                     "All Day Event": true
