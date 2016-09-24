@@ -285,7 +285,7 @@ input, textarea {
 	transition: box-shadow 0.2s ease; 
 }
 
-.fa-university, .fa-calendar {
+.fa-university, .fa-calendar, .fa-download {
 	font-size: 175%;
 	width: 12%;
 	padding: 10%;
@@ -300,6 +300,19 @@ input, textarea {
 
 	-webkit-filter: drop-shadow(2px 2px 5px #666);
 	filter: drop-shadow(2px 2px 5px #666);
+}
+
+#exportText {
+    display: inline;
+}
+
+.fa-download {
+    padding: 0%;
+}
+
+#exportDiv {
+    position: absolute;
+    bottom: 9%;
 }
 
 #functions {

@@ -769,6 +769,33 @@ Template.main.events({
         text.style.display = "initial";
         text.style.color = "#7E7E7E";
     },
+    'click #exportDiv' (event) {
+        var events = [];
+        var userClasses = Session.get("calendarClasses");
+
+        for (var i = 0; i < userClasses.length; i++) {
+            var works = userClasses[i].thisClassWork;
+            for (var j = 0; j < works.length; j++) {
+                var work = works[j];
+                var workclass = classes.findOne({_id: work.class});
+                if (work.description == defaultWork.description) work.description = "";
+                if (work.dueDate == defaultWork.dueDate) continue;
+                if (work.name == defaultWork.name) work.name = "";
+                if (workclass === undefined) workclass = {name: "Personal"};
+                events.push([
+                    workclass.name + ": " + work.name,
+                    work.realDate.toLocaleDateString(),
+                    work.description,
+                    "True"
+                ]);
+            }
+        }
+
+        var JSONevents = JSON.stringify(events);
+        var CSVevents = Papa.unparse({fields: ["Subject", "Start Date", "Description", "All Day Event"], data: JSONevents});
+        var eventBlob = new Blob([CSVevents], {type: "data:text/csv;charset=utf-8"});
+        saveAs(eventBlob, "hourglass.csv");
+    },
     'keydown input' (event) { // Enter to close input.
         var modifyingInput = Session.get("modifying");
         if (event.keyCode == 13 && modifyingInput != "workDesc") {

@@ -28,7 +28,9 @@ for (var i = 0; i < superadmins.length; i++) {
     });
     if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
         Roles.addUsersToRoles(superadmin._id, 'superadmin');
-        Houston._admins.insert({user_id: superadmin._id});
+        Houston._admins.insert({
+            user_id: superadmin._id
+        });
     }
 }
 
@@ -359,7 +361,7 @@ Meteor.methods({
                 $set: change
             });
         } else if ((currentwork.class === Meteor.userId() ||
-            _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
+                _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
                 Meteor.userId() === currentwork.creator) &&
             change.name.length <= 50 && change.description.length <= 150 &&
             change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
@@ -390,8 +392,8 @@ Meteor.methods({
         var user = Meteor.userId();
         if (typeof comment === "string" && comment.length <= 200 &&
             (workobject.class === Meteor.userId() ||
-             (_.contains(currentclass.subscribers, Meteor.userId()) &&
-              !_.contains(currentclass.banned, Meteor.userId())))) {
+                (_.contains(currentclass.subscribers, Meteor.userId()) &&
+                    !_.contains(currentclass.banned, Meteor.userId())))) {
             var commentInfo = {
                 "comment": input[0],
                 "user": user,
@@ -441,7 +443,7 @@ Meteor.methods({
         }
     },
     'deleteWork': function(workId) {
-        var currentwork = wokr.findOne({
+        var currentwork = work.findOne({
             _id: workId
         });
         var currentclass = classes.findOne({
@@ -484,8 +486,8 @@ Meteor.methods({
     },
     'reorderClasses': function(newOrder) {
         var current = Meteor.user().profile;
-        if(newOrder.every(elem => _.contains(current.classes, elem)) &&
-           newOrder.length === current.classes.length) {
+        if (newOrder.every(elem => _.contains(current.classes, elem)) &&
+            newOrder.length === current.classes.length) {
             current.classes = newOrder;
             Meteor.users.update({
                 _id: Meteor.userId()
