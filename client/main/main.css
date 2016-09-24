@@ -306,8 +306,13 @@ input, textarea {
     display: inline;
 }
 
+.fa-download {
+    padding: 0%;
+}
+
 #exportDiv {
-    
+    position: absolute;
+    bottom: 9%;
 }
 
 #functions {
