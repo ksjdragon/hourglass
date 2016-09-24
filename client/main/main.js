@@ -769,7 +769,7 @@ Template.main.events({
         text.style.display = "initial";
         text.style.color = "#7E7E7E";
     },
-    'click #export' (event) {
+    'click #exportDiv' (event) {
         var events = [];
         var userClasses = Session.get("calendarClasses");
 
