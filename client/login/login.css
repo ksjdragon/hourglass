@@ -12,14 +12,14 @@
 	height: 4px;
 	background-color: #33ADFF;
 	position: absolute;
-	top: 13vh;
+	top: 11vh;
 	z-index: 51;
 }
 
 #loginHeader {
 	font-weight: 600;
 	width: 100%;
-	height: 13vh;
+	height: 11vh;
 
 	background-color: #EBEBEB;
 	box-shadow: 2px 2px 5px 3px #666;
@@ -31,10 +31,10 @@
 }
 
 #logo {
-	height: 10vh;
-	width: 10vh;
+	height: 8vh;
+	width: 8vh;
 	padding: 1.5vh;
-	line-height: 13vh;
+	line-height: 11vh;
 
 	float: left;
 
@@ -45,8 +45,8 @@
 #loginTitle {
 	font-size: 5vh;
 	color: #000 !important;
-	height: 13vh;
-	line-height: 13vh;
+	height: 11vh;
+	line-height: 11vh;
 	padding: 0 0 0 1vw;
 
 	-webkit-filter: none;
@@ -55,15 +55,15 @@
 
 #loginMain {
 	width: 100%;
-	height: 80vh;
+	height: 84vh;
 
 	background-color: #E5E5E5;
 	background-image: url("banner100.jpg");
-	background-size: 100vw 80vh;
+	background-size: 100vw 84vh;
 
 	display: table-row;
 	position: absolute;
-	top: 13vh;
+	top: 11vh;
 }
 
 #circle {
@@ -88,6 +88,8 @@
 	width: 80%;
 	margin: auto;
 	padding-top: 16vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding-bottom: 4vh;
 }
 
 .text {
@@ -146,23 +148,31 @@ p.text {
 
 #loginFooter {
 	width: 100%;
-	height: 8vh;
+	height: 6vh;
 	box-shadow: 2px 2px 5px 3px #666;
 	background-color: #EBEBEB;
 	position: absolute;
 	bottom: 0;
 }
 
-#github {
-	font-size: 3vh;
+#github, #version {
+	font-size: 2.3vh;
 	color: #000 !important;
+
+	height: 6vh;
 	margin: 0;
-	height: 8vh;
-	line-height: 8vh;
 	padding: 0 0 0 1vw;
+
+	line-height: 6vh;
+	display: inline-block;
 
 	-webkit-filter: drop-shadow(2px 2px 5px #444);
 	filter: drop-shadow(2px 2px 5px #444);
+}
+
+#version {
+	float: right;
+	margin-right: 1%;
 }
 
 a {

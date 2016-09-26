@@ -443,7 +443,7 @@ Meteor.methods({
         }
     },
     'deleteWork': function(workId) {
-        var currentwork = wokr.findOne({
+        var currentwork = work.findOne({
             _id: workId
         });
         var currentclass = classes.findOne({
