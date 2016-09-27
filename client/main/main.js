@@ -260,7 +260,7 @@ function startDragula() {
 
 Template.main.helpers({
     schoolName() { // Finds the name of the user's school.
-        if(Session.get("user").school === undefined) return;
+        if(Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
     },
     iconColor(icon) { // Sidebar status color
@@ -975,7 +975,7 @@ function closeInput(modifyingInput) { // Close a changeable input and change it 
     if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
         color = "#000";
     } else {
-        color = "#8C8C8C";
+        color = "#BEBEBE";
     }
     span.style.color = color;
     Session.set("commentRestrict","");

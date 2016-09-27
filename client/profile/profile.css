@@ -1,6 +1,6 @@
 .change {
 	font-size: 150%;
-	color: #8C8C8C;
+	color: #BEBEBE;
 	cursor: pointer;
 }
 
@@ -22,7 +22,7 @@
 .changeInput {
 	font-size: 100%;
 	padding: 0;
-	color: #8C8C8C;
+	color: #BEBEBE;
 	position: relative;
 }
 
