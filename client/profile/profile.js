@@ -118,7 +118,7 @@ Template.profile.helpers({
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab",status)) {            
-            return themeColors[Meteor.user().profile.preferences.theme].highlightText;        
+            return themeColors[Meteor.user().profile.preferences.theme].modeHighlight;        
         } else {            
             return;        
         }    

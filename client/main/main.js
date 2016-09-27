@@ -92,7 +92,7 @@ Template.registerHelper('divColor', (div) => { // Reactive color changing based 
 });
 
 Template.registerHelper('textColor', () => { // Reactive color for text.
-    document.getElementsByTagName("body")[0].style.color = themeColors[Session.get("user").preferences.theme].text;
+    document.getElementsByTagName("body")[0].style.color = themeColors[Session.get("user").preferences.theme].textColor;
     return;
 });
 
@@ -310,7 +310,7 @@ Template.main.helpers({
     },
     modeStatus(status) { // Color status of display modes.
         if (!Session.equals("mode",status)) return;
-        return themeColors[Session.get("user").preferences.theme].highlightText;
+        return themeColors[Session.get("user").preferences.theme].modeHighlight;
     },
     currMode(name) { // Status of display mode.
         return Session.equals("mode",name);

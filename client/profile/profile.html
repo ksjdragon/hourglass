@@ -3,7 +3,7 @@
 		<div id="mainpage{{userProfile}}" onclick="window.location='/'"><h2>Main Page</h2></div>
 		<div id="logout2" onclick='document.getElementById("login-buttons-logout").click();'><h2>Logout</h2></div>
 		<div id="profWrapper">
-			<div id="profPage" style="background-color:{{divColor 'header'}};min-width:{{screen}}{{textColor}}{{loadNew}}">
+			<div id="profPage" style="background-color:{{divColor 'mainColor'}};min-width:{{screen}}{{textColor}}{{loadNew}}">
 				<div id="profMainContainer">
 					<div id="profTop">
 						<img id="profBanner" src='{{banner}}' alt="Banner">
@@ -17,7 +17,7 @@
 					<div id="profCards">
 						<div id="cardColLeft">
 							<!-- Card 1 -->
-							<div id="profInfo" class="card" style="background-color:{{divColor 'cards'}}">
+							<div id="profInfo" class="card" style="background-color:{{divColor 'secondaryColor'}}">
 								<h3 class="profHea">About</h3>
 								<div id="about">
 									<div>
@@ -31,16 +31,16 @@
 										<span class="change radio" re="readonly" id="grade">{{grade}}</span>
 										</div>
 							            <div class="profOptions">
-						                  	<p class="profOptionText"  style="background-color:{{divColor 'header'}}">9th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'header'}}">10th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'header'}}">11th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'header'}}">12th</p>
+						                  	<p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">9th</p>
+							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">10th</p>
+							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">11th</p>
+							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">12th</p>
 							            </div>
 						            </div>
 						        </div>
 							</div>
 							<!-- Card 2 -->
-							<div id="profPreferences" class="card" style="background-color:{{divColor 'cards'}}">
+							<div id="profPreferences" class="card" style="background-color:{{divColor 'secondaryColor'}}">
 								<h3 class="profHea">Preferences</h3>
 								<div id="preferences">
 						            <div class="radioContainer">
@@ -49,8 +49,8 @@
 						                <span class="change radio" re="readonly" id="prefTheme">{{pref 'theme'}}</span>
 						                </div>
 						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Light</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Dark</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Light</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Dark</p>
 						                </div>
 						            </div>
 						            <br>
@@ -60,8 +60,8 @@
 						                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
 						                </div>
 						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Classes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Calendar</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Classes</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Calendar</p>
 						                </div>
 						            </div>
 						            <br>
@@ -71,11 +71,11 @@
 						                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
 						                </div>
 						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">1 Day</p>
-						                    <P class="profOptionText"  style="background-color:{{divColor 'header'}}">2 Days</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">1 Week</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">1 Month</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Never</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Day</p>
+						                    <P class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">2 Days</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Week</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Month</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Never</p>
 						                </div>
 						            </div>
 						            <br>
@@ -85,8 +85,8 @@
 						                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
 						                </div>
 						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">No</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
 						                </div>
 						            </div>
 						            <br>
@@ -96,8 +96,8 @@
 						                <span class="change radio" re="readonly" id="prefReport">{{pref 'hideReport'}}</span>
 						                </div>
 						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">Yes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'header'}}">No</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
+						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
 						                </div>
 						            </div>
 						        </div>
@@ -105,7 +105,7 @@
 						</div>
 						<div id="cardColRight">
 							<!-- Card 3 -->
-							<div id="profClasses" class="card" style="background-color:{{divColor 'cards'}};">
+							<div id="profClasses" class="card" style="background-color:{{divColor 'secondaryColor'}};">
 								<h3 class="profHea">Classes</h3>
 								<div id="classes">
 									<div id="profFunctions">
@@ -195,17 +195,17 @@
 									            <p class="profTitle">Privacy:</p>
 								              	<input class="creInput radio op" type="text" name="privacy" readonly>
 								              	<div class="profOptions creOp">
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'header'}}">Public</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'header'}}">Private</p>
+								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Public</p>
+								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Private</p>
 								              	</div>
 							              	</div>
 							              	<div class="formDiv">
 									            <p class="profTitle">Category:</p>
 								              	<input class="creInput radio op" type="text" name="category" readonly>
 								              	<div class="profOptions creOp">
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'header'}}">Class</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'header'}}">Club</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'header'}}">Other</p>
+								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Class</p>
+								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Club</p>
+								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Other</p>
 								              	</div>
 									        </div>
 								        </div>
@@ -220,7 +220,7 @@
 			</div>
 		</div>
 		<div class="overlay">
-		    <div class="overlayCont" style="background-color:{{divColor 'header'}}">
+		    <div class="overlayCont" style="background-color:{{divColor 'mainColor'}}">
 		     	<p>{{confirmText}}</p>
 		     	<div id="faCont">
 		     		<i class="fa fa-check-circle-o" aria-hidden="true"></i>
@@ -229,7 +229,7 @@
 		    </div>
 	  	</div>
 
-	  	<div id="createdClasses" style="background-color:{{divColor 'cards'}};right:{{ownedStatus}}" classid="{{selectedClass '_id'}}">
+	  	<div id="createdClasses" style="background-color:{{divColor 'secondaryColor'}};right:{{ownedStatus}}" classid="{{selectedClass '_id'}}">
 	  		<h3>{{selectedClass 'name'}}</h3>
 	  		<h4 id="codetext">Code:</h4>
 	  		<input id="code" value="{{selectedClass 'code'}}" type="text" readonly>
@@ -266,7 +266,7 @@
 	  		<div id="deleteClass">Delete Class</div>
 	  	</div>
 
-	  	<div id="joinPrivClass" style="background-color:{{divColor 'cards'}};bottom:{{privStatus}}">
+	  	<div id="joinPrivClass" style="background-color:{{divColor 'secondaryColor'}};bottom:{{privStatus}}">
 	  		<h3>Enter Code:</h3>
 	  		<input id="privateCode" type="text" placeholder="Enter code here...">
 	  		<h4 id="privSubmit">Submit</h4>
