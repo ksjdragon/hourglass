@@ -76,16 +76,15 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-        console.log(Session.get("user").description);
-        if (Session.get("user").description !== "") return Session.get("user").description;
+        if (Session.get("user").description !== undefined && Session.get("user").description !== null) return Session.get("user").description;
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
-        if (Session.get("user").school !== undefined) return Session.get("user").school;
+        if (Session.get("user").school !== undefined && Session.get("user").school !== null) return Session.get("user").school;
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade !== undefined) return Session.get("user").grade + "th";
+        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null) return Session.get("user").grade + "th";
         return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
@@ -119,7 +118,7 @@ Template.profile.helpers({
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab",status)) {            
-            return themeColors[Meteor.user().profile.preferences.theme].highlightText;        
+            return themeColors[Meteor.user().profile.preferences.theme].modeHighlight;        
         } else {            
             return;        
         }    
