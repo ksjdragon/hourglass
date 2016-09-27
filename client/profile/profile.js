@@ -76,12 +76,7 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-<<<<<<< HEAD
         if (Session.get("user").description !== undefined && Session.get("user").description !== null) return Session.get("user").description;
-=======
-        console.log(Session.get("user").description);
-        if (Session.get("user").description !== "") return Session.get("user").description;
->>>>>>> cc52ddc64bbeef3b2cf95c446e19577866096196
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
