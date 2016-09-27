@@ -76,7 +76,12 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
+<<<<<<< HEAD
         if (Session.get("user").description !== undefined && Session.get("user").description !== null) return Session.get("user").description;
+=======
+        console.log(Session.get("user").description);
+        if (Session.get("user").description !== "") return Session.get("user").description;
+>>>>>>> cc52ddc64bbeef3b2cf95c446e19577866096196
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
@@ -281,7 +286,7 @@ Template.profile.events({
 
             Session.set("selectedClass",array);
             Session.set("owned",true);
-        });  
+        });
     },
     'click .classBox .fa-times' (event) { // Leaves a class
         var box = event.target.parentNode;
@@ -457,15 +462,15 @@ Template.profile.events({
         try {
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
                 var curr = document.getElementsByClassName("profOptions")[i];
-                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] 
-                    && curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
+                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] &&
+                    curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
                     closeDivFade(document.getElementsByClassName("profOptions")[i]);
                 }
             }
         } catch (err) {}
 
         if(event.target.className.includes("op")) {
-            openDivFade(op.nextSibling.nextSibling);  
+            openDivFade(op.nextSibling.nextSibling);
         } else {
             openDivFade(op.parentNode.parentNode.childNodes[3]);
         }
@@ -615,11 +620,11 @@ function getProfileData() { // Gets all data related to profile.
 
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
-    if(profile.grade.includes("Click here to edit...")) profile.grade = "";
+    if(!profile.grade) profile.grade = "";
 
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
-    
+
     profile.preferences = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
