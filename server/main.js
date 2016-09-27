@@ -127,6 +127,7 @@ Meteor.publish('users', function() {
             // Only return necessary fields
             fields: {
                 'services.google.email': 1,
+                'services.google.picture': 1,
                 'profile.banner': 1,
                 'profile.grade': 1,
                 'profile.description': 1,

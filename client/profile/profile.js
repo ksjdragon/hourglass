@@ -76,15 +76,15 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-        if (Session.get("user").description !== undefined) return Session.get("user").description;
+        if (Session.get("user").description !== undefined && Session.get("user").description !== null) return Session.get("user").description;
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
-        if (Session.get("user").school !== undefined) return Session.get("user").school;
+        if (Session.get("user").school !== undefined && Session.get("user").school !== null) return Session.get("user").school;
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade !== undefined) return Session.get("user").grade + "th";
+        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null) return Session.get("user").grade + "th";
         return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
@@ -281,7 +281,7 @@ Template.profile.events({
 
             Session.set("selectedClass",array);
             Session.set("owned",true);
-        });  
+        });
     },
     'click .classBox .fa-times' (event) { // Leaves a class
         var box = event.target.parentNode;
@@ -457,15 +457,15 @@ Template.profile.events({
         try {
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
                 var curr = document.getElementsByClassName("profOptions")[i];
-                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] 
-                    && curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
+                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] &&
+                    curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
                     closeDivFade(document.getElementsByClassName("profOptions")[i]);
                 }
             }
         } catch (err) {}
 
         if(event.target.className.includes("op")) {
-            openDivFade(op.nextSibling.nextSibling);  
+            openDivFade(op.nextSibling.nextSibling);
         } else {
             openDivFade(op.parentNode.parentNode.childNodes[3]);
         }
@@ -615,11 +615,11 @@ function getProfileData() { // Gets all data related to profile.
 
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
-    if(profile.grade.includes("Click here to edit...")) profile.grade = "";
+    if(!profile.grade) profile.grade = "";
 
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
-    
+
     profile.preferences = {
         "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
