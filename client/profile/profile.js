@@ -25,6 +25,17 @@ Session.set("noclass",null); // If user doesn't have classes.
 Session.set("notfound",null); // If no results for autocomplete.
 
 Template.profile.helpers({
+    themeName() {
+        var vals = _.values(themeColors);
+        var curtheme = Session.get("user").preferences.theme;
+        for(var i = 0; i < vals.length; i++) {
+            if (_.isEqual(vals[i], curtheme)) {
+                var name = _.keys(themeColors)[i];
+                return name.charAt(0).toUpperCase() + name.slice(1);
+            }
+        }
+        return "Custom";
+    },
     classSettings() { // Returns autocomplete array for classes.
         return {
             position: "bottom",
@@ -76,7 +87,7 @@ Template.profile.helpers({
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
-        if (Session.get("user").description !== undefined && Session.get("user").description !== null) return Session.get("user").description;
+        if (Session.get("user").description !== undefined && Session.get("user").description !== null && Session.get("user").description !== "") return Session.get("user").description;
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
@@ -84,7 +95,7 @@ Template.profile.helpers({
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null) return Session.get("user").grade + "th";
+        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null && Session.get("user").grade !== "") return Session.get("user").grade + "th";
         return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
@@ -117,11 +128,11 @@ Template.profile.helpers({
         return "0px";
     },
     profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
-        if (Session.equals("profClassTab",status)) {            
-            return themeColors[Meteor.user().profile.preferences.theme].modeHighlight;        
-        } else {            
-            return;        
-        }    
+        if (Session.equals("profClassTab",status)) {
+            return Meteor.user().profile.preferences.theme.modeHighlight;
+        } else {
+            return;
+        }
     },
     profClassTab(tab) { // Tells current class
         if (Session.equals("profClassTab",tab)) {
@@ -611,7 +622,7 @@ function getProfileData() { // Gets all data related to profile.
     if(profile.description.includes("Say something about yourself!")) profile.description = "";
 
     profile.school = document.getElementById("school").childNodes[0].nodeValue;
-    if(profile.school.includes("Click here to edit...")) school = "";
+    if(profile.school === "Click here to edit...") school = "";
 
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
@@ -620,8 +631,10 @@ function getProfileData() { // Gets all data related to profile.
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
 
+    var themename = document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase();
+    var themeobj = themeColors[themename];
     profile.preferences = {
-        "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
+        "theme": themeobj,
         "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
         "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
         "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue],

@@ -88,11 +88,11 @@ Template.registerHelper('screen', (multiplier, fraction) => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    return themeColors[Session.get("user").preferences.theme][div];
+    return Session.get("user").preferences.theme[div];
 });
 
 Template.registerHelper('textColor', () => { // Reactive color for text.
-    document.getElementsByTagName("body")[0].style.color = themeColors[Session.get("user").preferences.theme].textColor;
+    document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
     return;
 });
 
@@ -101,7 +101,7 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
     var width = "width:" + dim[0].toString() + "px;";
     var height = "height:" + dim[1].toString() + "px;";
     var margin = "margin-left:" + (-dim[0] / 2).toString() + "px;";
-    var bg = "background-color:" + themeColors[Session.get("user").preferences.theme].header + ";";
+    var bg = "background-color:" + Session.get("user").preferences.theme.header + ";";
     return width + height + margin + bg;
 });
 
@@ -201,7 +201,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 var conf = thisWork[j].confirmations.length;
                 var repo = thisWork[j].reports.length;
                 var ratio = conf / repo;
-                var normalColor = themeColors[Session.get("user").preferences.theme]["text"];
+                var normalColor = Session.get("user").preferences.theme["text"];
                 if (Math.abs(conf - repo)) {
                     if ((conf+repo) <= 1) {
                         thisWork[j].doneRatio = normalColor;
@@ -259,15 +259,26 @@ function startDragula() {
 }
 
 Template.main.helpers({
+    themeName() {
+        var vals = _.values(themeColors);
+        var curtheme = Session.get("user").preferences.theme;
+        for(var i = 0; i < vals.length; i++) {
+            if (_.isEqual(vals[i], curtheme)) {
+                var name = _.keys(themeColors)[i];
+                return name.charAt(0).toUpperCase() + name.slice(1);
+            }
+        }
+        return "Custom";
+    },
     schoolName() { // Finds the name of the user's school.
         if(Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
     },
     iconColor(icon) { // Sidebar status color
         if (Session.equals("sidebar",icon + "Container")) {
-            return themeColors[Session.get("user").preferences.theme].statusIcons;
+            return Session.get("user").preferences.theme.statusIcons;
         } else if (Session.equals("sidebar","both")) {
-            return themeColors[Session.get("user").preferences.theme].statusIcons;
+            return Session.get("user").preferences.theme.statusIcons;
         } else {
             return;
         }
@@ -284,7 +295,7 @@ Template.main.helpers({
         return;
     },
     bgSrc() { // Returns background.
-        return "Backgrounds/"+ themeColors[Session.get("user").preferences.theme].background;
+        return "Backgrounds/"+ Session.get("user").preferences.theme.background;
     },
     menuStatus() { // Status of of menu sidebar.
         if (Session.equals("sidebar", "menuContainer")) {
@@ -310,7 +321,7 @@ Template.main.helpers({
     },
     modeStatus(status) { // Color status of display modes.
         if (!Session.equals("mode",status)) return;
-        return themeColors[Session.get("user").preferences.theme].modeHighlight;
+        return Session.get("user").preferences.theme.modeHighlight;
     },
     currMode(name) { // Status of display mode.
         return Session.equals("mode",name);
@@ -393,7 +404,7 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
     calColor() { // Sets the color of the calendar according to theme
-        return "color:"+themeColors[Session.get("user").preferences.theme].calendar;
+        return "color:" + Session.get("user").preferences.theme.calendar;
     },
     calCreWork() { // Display instructions for creating a work.
         if (Session.get("calCreWork")) return true;
@@ -1035,7 +1046,7 @@ function getHomeworkFormData() { // Get all data relating to work creation.
 function getPreferencesData() { // Get all data relating to preferences.
     var profile = Session.get("user");
     var options = {
-        "theme": document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
+        "theme": themeColors[document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase()],
         "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
         "timeHide": ref[document.getElementById("prefHide").childNodes[0].nodeValue],
         "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue],
