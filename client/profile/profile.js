@@ -91,7 +91,7 @@ Template.profile.helpers({
         return "Say something about yourself!";
     },
     school() { // Returns the current user's school's name
-        if (Session.get("user").school !== undefined && Session.get("user").school !== null) return Session.get("user").school;
+        if (!_.contains([null, undefined, ""], Session.get("user").school)) return Session.get("user").school;
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
