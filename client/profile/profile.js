@@ -622,7 +622,7 @@ function getProfileData() { // Gets all data related to profile.
     if(profile.description.includes("Say something about yourself!")) profile.description = "";
 
     profile.school = document.getElementById("school").childNodes[0].nodeValue;
-    if(profile.school === "Click here to edit...") school = "";
+    if(profile.school === "Click here to edit...") profile.school = "";
 
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
