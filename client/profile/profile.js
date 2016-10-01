@@ -202,6 +202,13 @@ Template.profile.events({
         }
     },
     // MAIN BUTTONS
+    'click #mainpage' () {
+        if (!Meteor.userId() || _.contains([null, undefined, ""], Meteor.user().profile.school)) {
+            alert("Please fill in your profile!");
+        } else {
+            window.location = '/';
+        }
+    },
     'click .addClass' () { 
         if(Session.equals("profClassTab","addClass")) return;         
         var functionHolder = document.getElementById("profClassInfoHolder");
