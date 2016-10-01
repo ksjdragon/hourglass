@@ -13,22 +13,22 @@ confirm = null; // Sets function to execute after confirmation click.
 // Sets up global variables
 
 Session.set("profClassTab", "manClass"); // Set default classes card mode to 'Manage Classes.'
-Session.set("owned",false); // Status of createdClasses.
-Session.set("privClass",false); //Status of joinPrivClass.
+Session.set("owned", false); // Status of createdClasses.
+Session.set("privClass", false); //Status of joinPrivClass.
 Session.set("modifying", null); // Stores current open input.
 Session.set("notsearching", true); // If user is searching in search box.
 Session.set("autocompleteDivs", null); // Stores returned autocomplete results.
 Session.set("confirmText", null); // Stores text for different confirmation functions.
-Session.set("selectedClass",null); // Stores selected owned class info.
-Session.set("code",null); // If owned class has a code.
-Session.set("noclass",null); // If user doesn't have classes.
-Session.set("notfound",null); // If no results for autocomplete.
+Session.set("selectedClass", null); // Stores selected owned class info.
+Session.set("code", null); // If owned class has a code.
+Session.set("noclass", null); // If user doesn't have classes.
+Session.set("notfound", null); // If no results for autocomplete.
 
 Template.profile.helpers({
     themeName() {
         var vals = _.values(themeColors);
         var curtheme = Session.get("user").preferences.theme;
-        for(var i = 0; i < vals.length; i++) {
+        for (var i = 0; i < vals.length; i++) {
             if (_.isEqual(vals[i], curtheme)) {
                 var name = _.keys(themeColors)[i];
                 return name.charAt(0).toUpperCase() + name.slice(1);
@@ -83,7 +83,7 @@ Template.profile.helpers({
     avatar() { // Returns avatar
         return Meteor.user().services.google.picture;
     },
-    username() {  //Returns current user's username
+    username() { //Returns current user's username
         return Session.get("user").name;
     },
     motd() { // Returns the current user's description
@@ -99,43 +99,51 @@ Template.profile.helpers({
         return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
-        var array = classes.find(
-        {
-            status: {$eq: true},
-            privacy: {$eq: false},
-            _id: {$nin: Meteor.user().profile.classes}
-        },
-        {sort: {subscribers: -1 }}, 
-        {limit: 20}
-        ).fetch();
+        var array = classes.find({
+            status: {
+                $eq: true
+            },
+            privacy: {
+                $eq: false
+            },
+            _id: {
+                $nin: Meteor.user().profile.classes
+            }
+        }, {
+            sort: {
+                subscribers: -1
+            }
+        }, {
+            limit: 20
+        }).fetch();
 
-        for(var i = 0; i < array.length; i++) {
+        for (var i = 0; i < array.length; i++) {
             array[i].subscribers = array[i].subscribers.length;
         }
-        if(array.length === 0) {
-            Session.set("noclass",true);
+        if (array.length === 0) {
+            Session.set("noclass", true);
         } else {
-            Session.set("noclass",false);
+            Session.set("noclass", false);
         }
         return array;
     },
     ownedStatus() { // Status of createdClasses
-        if(!Session.get("owned")) return openValues.owned;
+        if (!Session.get("owned")) return openValues.owned;
         return "0px";
     },
     privStatus() {
-        if(!Session.get("privClass")) return openValues.priv;
+        if (!Session.get("privClass")) return openValues.priv;
         return "0px";
     },
-    profClassTabColor(status) { // Change this [Supposed to show the current mode that's selected via color]    
-        if (Session.equals("profClassTab",status)) {
-            return Meteor.user().profile.preferences.theme.modeHighlight;
-        } else {
-            return;
-        }
-    },
+    profClassTabColor(status) {  // Change this [Supposed to show the current mode that's selected via color]    
+                               if (Session.equals("profClassTab", status)) {
+                                   return Meteor.user().profile.preferences.theme.modeHighlight;
+                               } else {
+                                   return;
+                               }
+                              },
     profClassTab(tab) { // Tells current class
-        if (Session.equals("profClassTab",tab)) {
+        if (Session.equals("profClassTab", tab)) {
             return true;
         } else {
             return false;
@@ -150,14 +158,14 @@ Template.profile.helpers({
     notfound() { // Returns if autocomplete has no results.
         return Session.get("notfound");
     },
-    noclass()  { // Returns if user has classes.
+    noclass() { // Returns if user has classes.
         return Session.get("noclass");
     },
     confirmText() { // Returns respective text for different confirm functions.
         return Session.get("confirmText");
     },
     selectedClass(val) { // Returns values for selectedClass
-        if(Session.equals("selectedClass",null)) return;
+        if (Session.equals("selectedClass", null)) return;
         return Session.get("selectedClass")[val];
     },
     code() { // Returns if selected class has code.
@@ -169,36 +177,36 @@ Template.profile.events({
     'click' (event) { // Whenever a click happens
         var modifyingInput = Session.get("modifying");
         if (event.target.id !== modifyingInput &&
-        event.target.id !== modifyingInput + "a" &&
-        !Session.equals("modifying", null) &&
-        !event.target.parentNode.className.includes("profOptions")) {
+            event.target.id !== modifyingInput + "a" &&
+            !Session.equals("modifying", null) &&
+            !event.target.parentNode.className.includes("profOptions")) {
             closeInput(modifyingInput);
         }
         if (!event.target.className.includes("radio") &&
-        !event.target.parentNode.className.includes("profOptions") &&
-        event.target.readOnly !== true) {
+            !event.target.parentNode.className.includes("profOptions") &&
+            event.target.readOnly !== true) {
             for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
                 try {
                     closeDivFade(document.getElementsByClassName("profOptions")[i]);
                 } catch (err) {}
             }
         }
-        if(!document.getElementById("createdClasses").contains(event.target) &&
-        !Session.equals("code",null) &&
-        !event.target.className.includes("fa-times-circle-o")) {
-            Session.set("owned",false);
+        if (!document.getElementById("createdClasses").contains(event.target) &&
+            !Session.equals("code", null) &&
+            !event.target.className.includes("fa-times-circle-o")) {
+            Session.set("owned", false);
         }
-        if(Session.get("changeAdmin") &&
-        !document.getElementById("changeAdmin").contains(event.target)) {
-            Session.set("changeAdmin",false);
+        if (Session.get("changeAdmin") &&
+            !document.getElementById("changeAdmin").contains(event.target)) {
+            Session.set("changeAdmin", false);
             var div = document.getElementById("changeAdmin");
             div.removeChild(div.childNodes[3]);
             div.removeChild(div.childNodes[3]);
         }
-        if(Session.get("privClass") &&
-        !(event.target.id === "private") &&
-        !document.getElementById("joinPrivClass").contains(event.target)) {
-            Session.set("privClass",false);
+        if (Session.get("privClass") &&
+            !(event.target.id === "private") &&
+            !document.getElementById("joinPrivClass").contains(event.target)) {
+            Session.set("privClass", false);
         }
     },
     // MAIN BUTTONS
@@ -210,44 +218,44 @@ Template.profile.events({
         }
     },
     'click .addClass' () { 
-        if(Session.equals("profClassTab","addClass")) return;         
-        var functionHolder = document.getElementById("profClassInfoHolder");
-        closeDivFade(functionHolder);
-        var div = document.getElementById("profClasses");
-        div.style.height = "50%"
-        setTimeout(function() {            
-            Session.set("profClassTab", "addClass");
-            div.style.height = "90%";          
-            openDivFade(functionHolder);        
-        }, 400);
-    },
-    'click .manageClass' () { 
-        if(Session.equals("profClassTab","manClass")) return;      
-        var functionHolder = document.getElementById("profClassInfoHolder");
-        closeDivFade(functionHolder);
-        var div = document.getElementById("profClasses");
-        div.style.height = "50%"     
-        setTimeout(function() {            
-            Session.set("profClassTab", "manClass"); 
-            div.style.height = "90%";           
-            openDivFade(functionHolder);        
-        }, 400);
-    },
-    'click .createClass' () {
-        if(Session.equals("profClassTab","creClass")) return;
+                          if (Session.equals("profClassTab", "addClass")) return;         
+                          var functionHolder = document.getElementById("profClassInfoHolder");
+                          closeDivFade(functionHolder);
+                          var div = document.getElementById("profClasses");
+                          div.style.height = "50%";
+                          setTimeout(function() {            
+                                                 Session.set("profClassTab", "addClass");
+                                                 div.style.height = "90%";          
+                                                 openDivFade(functionHolder);        
+                                                }, 400);
+                         },
+        'click .manageClass' () { 
+                                 if (Session.equals("profClassTab", "manClass")) return;      
+                                 var functionHolder = document.getElementById("profClassInfoHolder");
+                                 closeDivFade(functionHolder);
+                                 var div = document.getElementById("profClasses");
+                                 div.style.height = "50%";     
+                                 setTimeout(function() {            
+                                                        Session.set("profClassTab", "manClass"); 
+                                                        div.style.height = "90%";           
+                                                        openDivFade(functionHolder);        
+                                                       }, 400);
+                                },
+        'click .createClass' () {
+        if (Session.equals("profClassTab", "creClass")) return;
         var functionHolder = document.getElementById("profClassInfoHolder");        
         closeDivFade(functionHolder);
-            var div = document.getElementById("profClasses");
-        div.style.height = "50%"
+        var div = document.getElementById("profClasses");
+        div.style.height = "50%";
         setTimeout(function() {
             Session.set("profClassTab", "creClass");
             div.style.height = "90%";
             openDivFade(functionHolder);
         }, 400);
     },
-    'click .classBox' (event) {  // When you click on a box that holds class
-        if (event.target.id === "label" || 
-            Session.equals("profClassTab","manClass") || 
+    'click .classBox' (event) { // When you click on a box that holds class
+        if (event.target.id === "label" ||
+            Session.equals("profClassTab", "manClass") ||
             event.target.className.includes("fa-times")) return;
 
         if (event.target.className !== "classBox") {
@@ -272,16 +280,20 @@ Template.profile.events({
         } else {
             var attribute = event.target.getAttribute("classid");
         }
-        Session.set("selectedClass",null);
-        var usertype = ["moderators","banned"];
-        var array = classes.findOne({_id:attribute});
+        Session.set("selectedClass", null);
+        var usertype = ["moderators", "banned"];
+        var array = classes.findOne({
+            _id: attribute
+        });
 
-        for(var i = 0; i < usertype.length; i++) {
+        for (var i = 0; i < usertype.length; i++) {
             var users = array[usertype[i]];
             array[usertype[i]] = [];
-            for(var j = 0; j < users.length; j++) {
+            for (var j = 0; j < users.length; j++) {
                 var detailusers = {};
-                var user = Meteor.users.findOne({_id:users[j]});
+                var user = Meteor.users.findOne({
+                    _id: users[j]
+                });
                 detailusers._id = user._id;
                 detailusers.email = user.services.google.email;
                 detailusers.name = user.profile.name;
@@ -289,16 +301,16 @@ Template.profile.events({
             }
         }
 
-        Meteor.call('getCode',attribute, function(err,result) {
+        Meteor.call('getCode', attribute, function(err, result) {
             array.code = result;
-            if(result === "None") {
+            if (result === "None") {
                 Session.set("code", false);
             } else {
                 Session.set("code", true);
             }
 
-            Session.set("selectedClass",array);
-            Session.set("owned",true);
+            Session.set("selectedClass", array);
+            Session.set("owned", true);
         });
     },
     'click .classBox .fa-times' (event) { // Leaves a class
@@ -319,11 +331,11 @@ Template.profile.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #private' (event) { // Joins private class
-        if(Session.get("privClass")) return;
+        if (Session.get("privClass")) return;
         var input = document.getElementById("privateCode");
         input.className = "";
         input.placeholder = "Enter code here...";
-        Session.set("privClass",true);
+        Session.set("privClass", true);
     },
     'click #privSubmit' () { // Submits private class code
         var input = document.getElementById("privateCode");
@@ -331,8 +343,8 @@ Template.profile.events({
         input.value = "";
         serverData = code;
         Meteor.call("joinPrivateClass", code, function(error, result) {
-            if(result) {
-                Session.set("privClass",false);
+            if (result) {
+                Session.set("privClass", false);
             } else {
                 input.className = "formInvalid";
                 input.placeholder = "Invalid code.";
@@ -341,27 +353,29 @@ Template.profile.events({
     },
     // OWNED CLASS BUTTONS
     'click #copy' () { // Copies code for private classes.
-        if(document.getElementById("code").value === "None") return;
+        if (document.getElementById("code").value === "None") return;
         document.getElementById("code").select();
         document.execCommand("copy");
     },
     'click .userAdder .fa-plus' (event) { // Gives/Removes user privileges
         var input = event.target.parentNode.childNodes[3];
         input.placeholder = "1234@abc.xyz";
-        input.className.replace(" formInvalid","");
+        input.className.replace(" formInvalid", "");
         var value = input.value;
         var classid = document.getElementById("createdClasses").getAttribute("classid");
         input.value = "";
-        if(checkUser(value,classid)) {
+        if (checkUser(value, classid)) {
             input.className += " formInvalid";
             input.placeholder = "Not a valid user";
             return;
         }
-        var user = Meteor.users.findOne({"services.google.email":value});
+        var user = Meteor.users.findOne({
+            "services.google.email": value
+        });
         serverData = [
             user._id,
             classid,
-            event.target.parentNode.childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase(),
+            event.target.parentNode.childNodes[1].childNodes[0].nodeValue.replace(":", "").toLowerCase(),
             true
         ];
         sendData("trackUserInClass");
@@ -371,42 +385,44 @@ Template.profile.events({
         serverData = [
             box.getAttribute("userid"),
             document.getElementById("createdClasses").getAttribute("classid"),
-            box.parentNode.parentNode.childNodes[1].childNodes[1].childNodes[0].nodeValue.replace(":","").toLowerCase(),
+            box.parentNode.parentNode.childNodes[1].childNodes[1].childNodes[0].nodeValue.replace(":", "").toLowerCase(),
             false
         ];
         sendData("trackUserInClass");
     },
-    'click #deleteClass' () { 
+    'click #deleteClass' () {
         serverData = document.getElementById("createdClasses").getAttribute("classid");
         confirm = "deleteClass";
         Session.set("confirmText", "Delete this class?");
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #changeAdmin span' (event) { // Click to give ownership of class.
-        if(Session.get("changeAdmin")) return;
-        Session.set("changeAdmin",true);
+        if (Session.get("changeAdmin")) return;
+        Session.set("changeAdmin", true);
         var input = document.createElement("input");
         input.placeholder = "1234@abc.xyz";
         var i = document.createElement("i");
         i.className = "fa fa-exchange";
-        i.setAttribute("aria-hidden","true");
+        i.setAttribute("aria-hidden", "true");
         event.target.parentNode.appendChild(input);
         event.target.parentNode.appendChild(i);
     },
     'click .fa-exchange' (event) { //Changes class admin upon confirmation
         var input = event.target.parentNode.childNodes[3];
         input.placeholder = "1234@abc.xyz";
-        input.className.replace(" formInvalid","");
+        input.className.replace(" formInvalid", "");
         var value = input.value;
         var classid = document.getElementById("createdClasses").getAttribute("classid");
         input.value = "";
-        if(checkUser(value,classid)) {
+        if (checkUser(value, classid)) {
             input.className += " formInvalid";
             input.placeholder = "Not a valid user";
             return;
         }
-        var user = Meteor.users.findOne({"services.google.email":value});
-        serverData = [user._id,classid];
+        var user = Meteor.users.findOne({
+            "services.google.email": value
+        });
+        serverData = [user._id, classid];
         confirm = "changeAdmin";
         Session.set("confirmText", "Are you really sure?");
         openDivFade(document.getElementsByClassName("overlay")[0])
@@ -416,9 +432,9 @@ Template.profile.events({
     'click .fa-check-circle-o' () { // Confirmation Button
         sendData(confirm);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
-        if(confirm === "createClass") {
+        if (confirm === "createClass") {
             var form = document.getElementsByClassName("creInput");
-            for(var i = 0; i < form.length; i++) form[i].value = "";
+            for (var i = 0; i < form.length; i++) form[i].value = "";
         }
         serverData = null;
         confirm = null;
@@ -464,8 +480,8 @@ Template.profile.events({
         if (restrict !== null) {
             input.maxLength = restrict;
             input.className += " restrict";
-            Session.set("commentRestrict",restrict-input.value.length.toString() + " characters left");
-            var text = document.getElementById(Session.get("modifying")+"restrict");
+            Session.set("commentRestrict", restrict - input.value.length.toString() + " characters left");
+            var text = document.getElementById(Session.get("modifying") + "restrict");
             text.style.display = "inherit";
             text.style.color = "#7E7E7E";
         }
@@ -482,7 +498,7 @@ Template.profile.events({
             }
         } catch (err) {}
 
-        if(event.target.className.includes("op")) {
+        if (event.target.className.includes("op")) {
             openDivFade(op.nextSibling.nextSibling);
         } else {
             openDivFade(op.parentNode.parentNode.childNodes[3]);
@@ -499,7 +515,7 @@ Template.profile.events({
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
-        var text = document.getElementById(Session.get("modifying")+"restrict");
+        var text = document.getElementById(Session.get("modifying") + "restrict");
         text.style.color = "#7E7E7E";
         if (chars === restrict) { // Don't display if nothing in comment.
             Session.set("commentRestrict", "");
@@ -513,7 +529,7 @@ Template.profile.events({
     'click .profOptionText' (event) { // Click each profile option setting.
         var modifyingInput = Session.get("modifying");
         var p = event.target;
-        if(p.className.includes("cre")) {
+        if (p.className.includes("cre")) {
             var input = p.parentNode.parentNode.childNodes[3];
         } else {
             var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
@@ -544,12 +560,12 @@ Template.profile.events({
             }
             for (var i = 2; i < items.length; i += 3) { // Iterate through autocomplete div.
                 var item = items[i].childNodes[3];
-                if(Meteor.user().profile.classes.indexOf(item.getAttribute("classid")) !== -1) continue;
+                if (Meteor.user().profile.classes.indexOf(item.getAttribute("classid")) !== -1) continue;
                 divs.push({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
                     hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: item.childNodes[7].childNodes[0].nodeValue.length/17,
+                    subscribers: item.childNodes[7].childNodes[0].nodeValue.length / 17,
                     _id: item.getAttribute("classid")
                 });
                 Session.set("autocompleteDivs", divs);
@@ -582,8 +598,8 @@ function closeInput(modifyingInput) { // Closes current modifying input.
     input.parentNode.removeChild(input);
     Session.set("commentRestrict", "");
     try {
-       document.getElementById("modifyingInput"+"restrict").style.display = "none";
-   } catch(err) {}
+        document.getElementById("modifyingInput" + "restrict").style.display = "none";
+    } catch (err) {}
 
     if (input.value === "") {
         span.childNodes[0].nodeValue = "Click here to edit...";
@@ -599,16 +615,20 @@ function closeInput(modifyingInput) { // Closes current modifying input.
 
 function sendData(funcName) {
     Meteor.call(funcName, serverData, function(err, result) {
-        if(funcName === "trackUserInClass") {
+        if (funcName === "trackUserInClass") {
             var selectedClass = Session.get("selectedClass");
-            var array = classes.findOne({_id:selectedClass._id});
-            var usertype = ["moderators","banned"];
-            for(var i = 0; i < usertype.length; i++) {
+            var array = classes.findOne({
+                _id: selectedClass._id
+            });
+            var usertype = ["moderators", "banned"];
+            for (var i = 0; i < usertype.length; i++) {
                 var users = array[usertype[i]];
                 array[usertype[i]] = [];
-                for(var j = 0; j < users.length; j++) {
+                for (var j = 0; j < users.length; j++) {
                     var detailusers = {};
-                    var user = Meteor.users.findOne({_id:users[j]});
+                    var user = Meteor.users.findOne({
+                        _id: users[j]
+                    });
                     detailusers._id = user._id;
                     detailusers.email = user.services.google.email;
                     detailusers.name = user.profile.name;
@@ -617,7 +637,7 @@ function sendData(funcName) {
             }
             selectedClass.moderators = array.moderators;
             selectedClass.banned = array.banned;
-            Session.set("selectedClass",selectedClass);
+            Session.set("selectedClass", selectedClass);
         }
     });
 }
@@ -626,14 +646,14 @@ function getProfileData() { // Gets all data related to profile.
     var profile = Session.get("user");
 
     profile.description = document.getElementById("motd").childNodes[0].nodeValue;
-    if(profile.description.includes("Say something about yourself!")) profile.description = "";
+    if (profile.description.includes("Say something about yourself!")) profile.description = "";
 
     profile.school = document.getElementById("school").childNodes[0].nodeValue;
-    if(profile.school === "Click here to edit...") profile.school = "";
+    if (profile.school === "Click here to edit...") profile.school = "";
 
     var gradein = document.getElementById("grade").childNodes[0].nodeValue;
     profile.grade = parseInt(gradein.substring(gradein.length - 2, gradein));
-    if(!profile.grade) profile.grade = "";
+    if (!profile.grade) profile.grade = "";
 
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
@@ -642,10 +662,10 @@ function getProfileData() { // Gets all data related to profile.
     var themeobj = themeColors[themename];
     profile.preferences = {
         "theme": themeobj,
-        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
-        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue],
-        "hideReport":ref[document.getElementById("prefReport").childNodes[0].nodeValue]
+        "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
+        "timeHide": ref[document.getElementById("prefHide").childNodes[0].nodeValue],
+        "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue],
+        "hideReport": ref[document.getElementById("prefReport").childNodes[0].nodeValue]
     };
     return profile;
 }
@@ -654,7 +674,7 @@ function getCreateFormData() { // Gets create class form data, and returns null.
     var stop;
     var form = document.getElementsByClassName("creInput");
     for (var i = 0; i < form.length; i++) { // Checks for missing/invalid fields.
-        if(i === 1 || i === 2) continue;
+        if (i === 1 || i === 2) continue;
         if (form[i].value === "") {
             form[i].focus();
             form[i].placeholder = "Missing field";
@@ -688,12 +708,16 @@ function getCreateFormData() { // Gets create class form data, and returns null.
     };
 }
 
-function checkUser(email,classid) { // Checks if user email exists.
-     var user = Meteor.users.findOne({"services.google.email":email});
-     if(user === undefined) {
+function checkUser(email, classid) { // Checks if user email exists.
+    var user = Meteor.users.findOne({
+        "services.google.email": email
+    });
+    if (user === undefined) {
         return true;
-     } else {
-        if(classes.findOne({_id:classid}).subscribers)
-        return false;
-     }
+    } else {
+        if (classes.findOne({
+            _id: classid
+        }).subscribers)
+            return false;
+    }
 }
