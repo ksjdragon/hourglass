@@ -212,7 +212,8 @@ Template.profile.events({
     // MAIN BUTTONS
     'click #mainpage' () {
         if (!Meteor.userId() || _.contains([null, undefined, ""], Meteor.user().profile.school)) {
-            alert("Please fill in your profile!");
+            sAlert.closeAll();
+            sAlert.error('Please fill in your profile!', {effect: 'stackslide', position: 'top'});
         } else {
             window.location = '/';
         }
