@@ -403,9 +403,6 @@ Template.main.helpers({
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
-    calColor() { // Sets the color of the calendar according to theme
-        return "color:" + Session.get("user").preferences.theme.calendar;
-    },
     calCreWork() { // Display instructions for creating a work.
         if (Session.get("calCreWork")) return true;
         return false;

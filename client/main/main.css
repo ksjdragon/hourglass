@@ -849,6 +849,7 @@ input, textarea {
 }
 
 #calendar {
+	color: #000;
 	width: 90%;
 	height: 94vh;
 	margin: auto;
