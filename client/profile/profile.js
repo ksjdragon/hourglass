@@ -426,7 +426,7 @@ Template.profile.events({
         serverData = [user._id, classid];
         confirm = "changeAdmin";
         Session.set("confirmText", "Are you really sure?");
-        openDivFade(document.getElementsByClassName("overlay")[0])
+        openDivFade(document.getElementsByClassName("overlay")[0]);
         document.getElementById("createdClasses").style.marginRight = "-40%";
     },
     // OVERLAY BUTTONS
