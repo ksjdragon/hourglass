@@ -528,11 +528,11 @@ Meteor.methods({
         var prof = Meteor.user().profile;
         var found = classes.findOne({
             _id: change,
-            status: true
         });
         if (Meteor.user() !== null &&
             found !== null &&
             pass === found.code &&
+            (found.status || found.admin === Meteor.userId()) &&
             !_.contains(prof.classes, change)) {
             var foundsubs = found.subscribers;
             classes.update({
