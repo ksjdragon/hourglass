@@ -13,6 +13,8 @@ Calendar mode organizes work by due date rather than by class. Pressing on a dat
 Class mode allows you to organize work by the class it belongs to.
 ##### Work
 Every piece of work has a confirmed:reported ratio. This is the ratio of the number of people who confirm the presence of the work to the number of people who believe that this is a false report. The creator of a work can edit fields after creation by clicking on details needed to be changed. Lastly, by marking a work as done, it is hidden from view. To disable this, go to preferences.
+##### Filters
+In the left sidebar, you find options for filtering. These include filtering by class or type of assignment.
 ### Profile Page
 On this page, it is possible to edit profile details as well as create, join, and leave classes.
 #### Creating a class
