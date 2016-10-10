@@ -4,6 +4,7 @@ import {
 } from 'meteor/templating';
 
 import './main.html';
+import './main.css';
 
 var load = true;
 var calWorkOpen = null;
