@@ -246,8 +246,7 @@ input, textarea {
 }
 
 #optionsContainer {
-	width: 200px;
-	padding: 40px;
+	padding: 40px 0 40px 40px;
 	right: 0;
 }
 
@@ -576,25 +575,35 @@ input, textarea {
 	text-align: right;
 }
 
+input.clickModify, textarea.clickModify {
+	font-size: 2.2vh;
+	font-weight: 200;
+	background-color: rgba(0,0,0,0);
+	border-color: rgba(0,0,0,0);
+
+	-webkit-transition: background-color 0.4s ease, border-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease, border-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease, border-color 0.4s ease;
+	transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+input.clickModify:hover, textarea.clickModify:hover {
+	cursor: pointer;
+	background-color: rgba(255,255,255,0.1);
+	border-color: rgba(255,255,255,0.1);;
+}
+
+textarea.clickModify {
+	font-size: 1.8vh;
+	width: 100%;
+}
+
 #editWork {
 	min-height: 68vh;
 	margin: auto;
 	margin-top: 5%;
 
 	box-shadow: 2px 2px 5px 3px #333;
-}
-
-#editWork input, #editWork textarea {
-	font-size: 2vh;
-	background-color: #FFF;
-}
-
-#workDesca {
-	width: 15vw;
-}
-
-#workDatea {
-	width: 17vw;
 }
 
 #editWorkCont {
@@ -613,11 +622,12 @@ input, textarea {
 
 #workNameDiv {
 	padding: 4% 4% 0 3.5%;
-}f
+}
 
-#workName {
+#wName {
 	font-weight: 400;
-	font-size: 3vh;
+	font-size: 2.5vh;
+	width: 100%;
 }
 
 .workTitle, .prefTitle {
@@ -632,6 +642,11 @@ input, textarea {
 	margin-top: 5%;
 }
 
+.prefWrapper {
+	width: 85%;
+	position: relative;
+}
+
 #workNamerestrict, #workDescrestrict, #commentrestrict {
 	display: none;
 }
@@ -641,7 +656,42 @@ input, textarea {
 	float: right;
 }
 
-.workOptions, .prefOptions {
+.dropdown {
+	font-size: 2.5vh;
+	width: 100%;
+	height: 3vh;
+	padding: 3%;
+
+	background-color: rgba(0,0,0,0.15);
+	cursor: pointer;
+	outline: 0;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+.dropdown:hover {
+	background-color: rgba(0,0,0,0.07);
+}
+
+.dropdown span {
+	pointer-events: none;
+}
+
+.fa-caret-down {
+	font-size: 1.8vh;
+	margin-right: 5%;
+
+	line-height: 3vh;
+	float: right;
+	pointer-events: none;
+}
+
+.optionHolder {
+	width: 100%;
+
 	box-shadow: 2px 2px 5px 3px #666;
 
 	position: absolute;
@@ -656,19 +706,26 @@ input, textarea {
 	transition: opacity 0.4s ease; 
 }
 
-.workOptionText, .prefOptionText {
+.optionHolder:hover {
+	background-color: rgba(255,255,255,0.05);
+}
+
+.optionText {
 	font-size: 150%;
 	min-width: 10%;
-	padding: 20px;
+	padding: 5% 7% 5% 7%;
 	margin: 0;
 
-	text-align: center;
 	cursor: pointer;
 	
 	-webkit-transition: box-shadow 0.4s ease;  
 	-moz-transition: box-shadow 0.4s ease; 
 	-ms-transition: box-shadow 0.4s ease;
 	transition: box-shadow 0.4s ease;
+}
+
+.optionText:hover {
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
 }
 
 .workOptions p:hover, .prefOptions p:hover {
@@ -695,10 +752,16 @@ input, textarea {
 
 #workInfoNmCont {
 	padding: 3% 0 3% 7%;
+	position: relative;
 }
 
 #workInfoNmCont div {
 	margin-bottom: 5%;
+}
+
+#wType {
+	margin: 0 !important;
+	padding: 2%;
 }
 
 .datepicker {
@@ -708,12 +771,12 @@ input, textarea {
 	position: absolute;
 }
 
-.inputRadio {
-	margin-bottom: 0 !important;
-}
-
 .type {
-	margin-left: 11%;
+	width: 95%;
+	margin-left: 1%;
+}
+.type p {
+	padding: 3% 5% 3% 5%;
 }
 
 #workComments h3 {
@@ -1042,7 +1105,7 @@ input, textarea {
 }
 
 #prefCont {
-	padding: 5%;
+	margin-left: 5%;
 }
 
 #prefCont .changeInput {
@@ -1144,7 +1207,7 @@ input, textarea {
 	background-color: rgba(0,0,0,0.2);
 }
 
-#done {
+#doneUsers {
 	height: 34vh;
 	top: 0;
 	overflow-y: auto;

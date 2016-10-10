@@ -61,63 +61,70 @@
         </div>
         <div id="optionsContainer" style="right:{{optionsStatus}};background-color:{{divColor 'sidebarColor'}}">
             <h3>Preferences</h3>
-
             <div id="prefCont">
-                <div>
-                    <div class="inputRadioPref">
+                <div class="prefWrapper">
                     <p class="prefTitle">Theme:</p>
-                    <span class="change radio" re="readonly" id="prefTheme">{{themeName}}</span>
+                    <div id="theme" class="clickModify dropdown" tabindex="1">
+                        <span>{{pref 'theme'}}</span>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </div>
-                    <div class="prefOptions">
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Light</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Dark</p>
+                    <div class="optionHolder">
+                        {{#each selectOptions 'theme'}}
+                            {{> option}}
+                        {{/each}}
                     </div>
                 </div>
-                <div>
-                    <div class="inputRadioPref">
+                <div class="prefWrapper">
                     <p class="prefTitle">Default Mode:</p>
-                    <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
+                    <div id="mode" class="clickModify dropdown" tabindex="2">
+                        <span>{{pref 'mode'}}</span>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </div>
-                    <div class="prefOptions">
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Classes</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Calendar</p>
+                    <div class="optionHolder">
+                        {{#each selectOptions 'mode'}}
+                            {{> option}}
+                        {{/each}}
                     </div>
                 </div>
-                <div>
-                    <div  class="inputRadioPref">
+                <div class="prefWrapper">
                     <p class="prefTitle">Hide Homework:</p>
-                    <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
+                    <div id="timeHide" class="clickModify dropdown" tabindex="3">
+                        <span>{{pref 'timeHide'}}</span>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </div>
-                    <div class="prefOptions">
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Day</p>
-                        <P class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">2 Days</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Week</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Month</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Never</p>
+                    <div class="optionHolder">
+                        {{#each selectOptions 'timeHide'}}
+                            {{> option}}
+                        {{/each}}
                     </div>
                 </div>
-                <div>
-                    <div class="inputRadioPref">
+                <div class="prefWrapper">
                     <p class="prefTitle">Hide Done:</p>
-                    <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
+                    <div id="done" class="clickModify dropdown" tabindex="4">
+                        <span>{{pref 'done'}}</span>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </div>
-                    <div class="prefOptions">
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
+                    <div class="optionHolder">
+                        {{#each selectOptions 'done'}}
+                            {{> option}}
+                        {{/each}}
                     </div>
                 </div>
-                <div>
-                    <div class="inputRadioPref">
+                <div class="prefWrapper">
                     <p class="prefTitle">Hide Reported:</p>
-                    <span class="change radio" re="readonly" id="prefReport">{{pref 'hideReport'}}</span>
+                    <div id="hideReport" class="clickModify dropdown" tabindex="5">
+                        <span>{{pref 'hideReport'}}</span>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </div>
-                    <div class="prefOptions">
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
-                        <p class="prefOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
+                    <div class="optionHolder">
+                        {{#each selectOptions 'hideReport'}}
+                            {{> option}}
+                        {{/each}}
                     </div>
                 </div>
             </div>
         </div>
+
         <img id="bg" src={{bgSrc}} style="min-width:{{screen}}">
         <div id="mainBody{{highlight}}">
             {{#if currMode 'classes'}}
@@ -141,29 +148,31 @@
                     <div id="workInfoContainer">
                         <div id="workNameDiv">
                             <span id="workNamerestrict">{{commentLength}}</span>
-                            <span class="change req" id="workName" restrict="50">{{work 'name'}}</span>
+                            <!-- <span class="change req" id="workName" restrict="50">{{work 'name'}}</span> -->
+                            <input id="wName" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'name'}}">
                         </div>
                         <div id="workInfoNmCont">
                             <div>
                                 <span class="workTitle">Due Date:</span><br>
-                                <span class="change req" re="readonly" id="workDate">{{work 'dueDate'}}</span>
+                                <!-- <span class="change req" re="readonly" id="workDate">{{work 'dueDate'}}</span> -->
+                                <input id="wDueDate" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}">
                             </div>
                             <div>
                                 <span class="workTitle">Description:</span><br>
                                 <span id="workDescrestrict">{{commentLength}}</span>
-                                <span class="change" type="textarea" id="workDesc" restrict="150">{{work 'description'}}</span>
+                                <!-- <span class="change" type="textarea" id="workDesc" restrict="150">{{work 'description'}}</span> -->
+                                <textarea id="wDescription" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'description'}}" rows="5"></textarea>
                             </div>
                             <div>
-                                <div  class="inputRadio">
                                 <span class="workTitle">Type:</span>
-                                <span class="change radio req" re="readonly" id="workType">{{work 'type'}}</span>
+                                <div id="wType" class="clickModify dropdown">
+                                    <span>{{work 'type'}}</span>
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </div>
-                                <div class="workOptions type">
-                                    <p class="workOptionText"  style="background-color:{{divColor 'mainColor'}}">Normal</p>
-                                    <p class="workOptionText"  style="background-color:{{divColor 'mainColor'}}">Quiz</p>
-                                    <p class="workOptionText"  style="background-color:{{divColor 'mainColor'}}">Test</p>
-                                    <p class="workOptionText"  style="background-color:{{divColor 'mainColor'}}">Project</p>
-                                    <p class="workOptionText"  style="background-color:{{divColor 'mainColor'}}">Other</p>
+                                <div class="optionHolder type">
+                                    {{#each selectOptions 'type'}}
+                                        {{> option}}
+                                    {{/each}}
                                 </div>
                             </div>
                             <!-- <div id="workAttach">Attach other files</div>
@@ -193,7 +202,7 @@
                     </div>
                     {{#unless newWork}}
                         <div id="workToggle">
-                            <div id="done">
+                            <div id="doneUsers">
                                 {{#each work 'done'}}
                                     {{> doneUsers}}
                                 {{/each}}
@@ -363,4 +372,8 @@
             {{/if}}
         </div>
     </div>
+</template>
+
+<template name="option">
+    <p class="optionText" style="background-color:{{divColor 'mainColor'}}">{{alias}}</p>
 </template>

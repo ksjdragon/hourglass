@@ -8,6 +8,8 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
+modifyingInput = null;
+dropOpen = null;
 
 var openValues = {
     "menu": "-270px",
@@ -31,18 +33,6 @@ var defaultWork = {
     type: "Click here to edit..."
 };
 
-// Creates variables for due dates
-
-var ref = {
-    "1 Day": 1,
-    "2 Days": 2,
-    "1 Week": 7,
-    "1 Month": 30,
-    "Never": 0,
-    "Yes": true,
-    "No": false
-};
-
 // Reactive variables.
 Session.set("user",{}); // Stores user preferences.
 Session.set("calendarClasses", []); // Stores calendar classes.
@@ -50,6 +40,7 @@ Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests",false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWorkId",null); // Stores current work Id.
+Session.set("currentWork",null);
 Session.set("currentReadableWork", null); // Stores readable selected work info.
 Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
@@ -227,11 +218,9 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     var preferences = Session.get("user").preferences;
-    if(val === 'timeHide' || val === 'done' || val == 'hideReport') {
-        var invert = _.invert(ref);
-        return invert[preferences[val]];
-    }
-    return preferences[val].charAt(0).toUpperCase() + preferences[val].slice(1);
+    return options[val].filter(function(entry) {
+        return (val === 'theme') ? _.isEqual(preferences[val], themeColors[entry.val]) : preferences[val] === entry.val;
+    })[0].alias;
 });
 
 Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
@@ -240,22 +229,21 @@ Template.registerHelper('commentLength', () => { // Returns characters left for 
 
 function startDragula() {
     dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')],
-            {
-                moves: function(el, container, handle) {
-                    // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
-                    return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
-                }
-            })
-        .on('out', function(el) {
-            var els = document.getElementsByClassName("classWrapper");
-            var final = [];
-            for(var i = 0; i < els.length; i++) {
-                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
-                final.push(classid);
+        {
+            moves: function(el, container, handle) {
+                // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+                return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
             }
-            Meteor.call("reorderClasses", final);
-        });
-    console.log("Started!");
+        })
+    .on('out', function(el) {
+        var els = document.getElementsByClassName("classWrapper");
+        var final = [];
+        for(var i = 0; i < els.length; i++) {
+            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+            final.push(classid);
+        }
+        Meteor.call("reorderClasses", final);
+    });
 }
 
 Template.main.helpers({
@@ -266,7 +254,7 @@ Template.main.helpers({
             if (_.isEqual(vals[i], curtheme)) {
                 var name = _.keys(themeColors)[i];
                 return name.charAt(0).toUpperCase() + name.slice(1);
-            }
+            }       
         }
         return "Custom";
     },
@@ -430,13 +418,15 @@ Template.main.helpers({
         return;
     },
     work(value) { // Returns the specified work value.
-        if (Session.equals("currentWorkId", null)) return;
+        if (Session.equals("currentWork", null)) return;
         if (Session.get("newWork")) {
             return defaultWork[value]; 
         } else {
-            var thisWork = work.findOne({_id: Session.get("currentWorkId")});
-            return formReadable(thisWork,value);
+            return formReadable(Session.get("currentWork"),value);
         }
+    },
+    selectOptions(val) {
+        return options[val];
     },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
@@ -485,7 +475,6 @@ Template.main.helpers({
 Template.main.events({
     'click' (event) { // Closes respective divs when clicking outside of them. Order matters.
         var e = event.target.className;
-        var modifyingInput = Session.get("modifying");
 
         if (event.target.id !== modifyingInput && // Input for dropdown closing.
             event.target.id !== modifyingInput + "a" &&
@@ -523,7 +512,7 @@ Template.main.events({
 
         if (!event.target.className.includes("radio") && // Dropdown closing.
             !event.target.parentNode.className.includes("workOptions") &&
-            !event.target.parentNode.className.includes("prefOptions") &&
+            !event.target.parentNode.className.includes("optionHolder") &&
             event.target.readOnly !== true) {
             var radio;
             if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
@@ -531,11 +520,17 @@ Template.main.events({
             } else {
                 radio = "workOptions";
             }
-            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
+            /*for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
                 try {
                     closeDivFade(document.getElementsByClassName(radio)[i]);
                 } catch (err) {}
-            }
+            }*/
+            $(".optionHolder")
+            .fadeOut('fast')
+            .hide('fast');
+
+            dropOpen = false;
+            modifyingInput = null;
         }
 
         if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
@@ -600,7 +595,7 @@ Template.main.events({
             attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentWorkId",attr);
+        Session.set("currentWork",{"class": attr});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
@@ -612,13 +607,13 @@ Template.main.events({
     'click .workCard' (event) { // Display work information on work card click.
         var dom = event.target;
         while (event.target.className !== "workCard") event.target = event.target.parentNode;
-        workid = event.target.getAttribute("workid");
-
-        Session.set("newWork", false);
-        Session.set("currentWorkId",workid);
+        var workid = event.target.getAttribute("workid");
         var thisWork = work.findOne({
             _id: workid
         });
+
+        Session.set("newWork", false);
+        Session.set("currentWork", thisWork);
 
         if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
             var currClass = classes.findOne({
@@ -628,7 +623,7 @@ Template.main.events({
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                     currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
                     currClass.banned.indexOf(Meteor.userId()) !== -1)) {
-                var inputs = $('#editWork .change').css("cursor", "default");
+                var inputs = $('#editWork .clickModify').css("cursor", "default");
             }
         }
         openDivFade(document.getElementsByClassName("overlay")[0]);
@@ -653,122 +648,62 @@ Template.main.events({
         });
     },
     // HANDLING INPUT CHANGING
-    'click .change' (event) { // Click changable inputs. Creates an input where the span is.
-        var thisWork = work.findOne({
-            _id: Session.get("currentWorkId")
-        });
-        if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
-            var currClass = classes.findOne({
-                _id: thisWork["class"]
-            });
-            if (!(Meteor.userId() === thisWork.creator || // If user has permission.
-                    Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                    currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                    currClass.banned.indexOf(Meteor.userId()) !== -1
-                )) return;
-        }
-        // CSS and DOM manipulation.
-        var ele = event.target;
-        var modifyingInput = Session.get("modifying");
-        if (ele.id !== modifyingInput && modifyingInput !== null) closeInput(modifyingInput);
-
-        Session.set("modifying", ele.id);
-        var dim = ele.getBoundingClientRect();
-        ele.style.display = "none";
-        var input = document.createElement("input");
-
-        var typ = ele.getAttribute("type");
-        if (typ === "textarea") {
-            input = document.createElement("textarea");
-            input.style.height = 3 * dim.height.toString() + "px";
-            input.rows = "4";
-        } else if (typ !== null) {
-            input.type = typ;
-            input.style.height = 0.9 * dim.height.toString() + "px";
-        } else {
-            input.typ = "text";
-            input.style.height = 0.9 * dim.height.toString() + "px";
-        }
-        if (event.target.id !== "workDate") input.value = ele.childNodes[0].nodeValue;
-        input.className = "changeInput";
-
-        input.style.padding = "0.1%";
-        input.id = ele.id + "a";
-        ele.parentNode.appendChild(input);
-        if (ele.getAttribute("re") == "readonly") {
-            input.readOnly = true;
-            input.className += " op";
-            input.style.cursor = "pointer";
-        } else {
-            input.select();
-        }
-        if (ele.id === "workDate") {
-            input.className += " form-control";
-        }
-        input.focus();
-        var restrict = ele.getAttribute("restrict");
-        if (restrict !== null) {
-            input.maxLength = restrict;
-            input.className += " restrict";
-            Session.set("commentRestrict",restrict-input.value.length.toString() + " characters left");
-            var text = document.getElementById(Session.get("modifying")+"restrict");
-            text.style.display = "initial";
-            text.style.color = "#7E7E7E";
-        }
+    'click .clickModify' (event) {
+        modifyingInput = event.target.id;
     },
-    'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
-        var thisWork = work.findOne({
-            _id: Session.get("currentWorkId")
-        });
-        if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
-            var currClass = classes.findOne({
-                _id: thisWork["class"]
-            });
-            if (!(Meteor.userId() === thisWork.creator ||
-                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                currClass.banned.indexOf(Meteor.userId()) !== -1
-            )) return;
+    'keydown .dropdown' (event) {
+        console.log("hi");
+    },
+    /*'focus .dropdown' (event) {
+        if(dropOpen) return;
+        event.target.click();
+        dropOpen = true;
+    },*/
+    'click .dropdown' (event) {        
+        if(event.target.id === modifyingInput && dropOpen) {
+            $("#" + modifyingInput).next()
+            .fadeOut(200)
+            .hide(200);
+            dropOpen = false;
+            return;
+        }
+        dropOpen = true;
+
+        $(".optionHolder")
+        .fadeOut('fast')
+        .hide('fast');
+
+        $("#" + modifyingInput).next()
+        .css('opacity', 0)
+        .slideDown(300)
+        .animate(
+            { opacity: 1 },
+            { queue: false, duration: 100 }
+        );
+        
+    },
+    'click .optionText' (event) { // Click each preferences setting.
+        var option = event.target.childNodes[0].nodeValue;
+        if(modifyingInput[0] === 'w') {
+            var newSetting = Session.get("currentWork");
+            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option;
+            Session.set("currentWork", newSetting);
+        } else {
+            var newSetting = Session.get("user");
+            newSetting.preferences[modifyingInput] = (function() {
+                var value = options[modifyingInput].filter(function(entry) {
+                    return option === entry.alias;
+                })[0].val;
+                return (modifyingInput === 'theme') ? themeColors[value] : value;
+            })();
+            Session.set("user", newSetting);
+            serverData = Session.get("user");
+            sendData("editProfile"); 
         }
 
-        var op = event.target;
-        var radio;
-        if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
-            radio = "prefOptions";
-        } else {
-            radio = "workOptions";
-        }
-        try {
-            for (var i = 0; i < document.getElementsByClassName(radio).length; i++) { // Close any previously open menus.
-                var curr = document.getElementsByClassName(radio)[i];
-                if (curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
-                    closeDivFade(document.getElementsByClassName(radio)[i]);
-                }
-            }
-        } catch (err) {}
-        openDivFade(op.parentNode.parentNode.childNodes[3]);
-    },
-    'click .workOptionText' (event) { // Click each work setting
-        var modifyingInput = Session.get("modifying");
-        var p = event.target;
-        var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
-        input.value = p.childNodes[0].nodeValue;
-        closeDivFade(p.parentNode);
-        try {
-            closeInput(modifyingInput);
-        } catch (err) {}
-        input.focus();
-    },
-    'click .prefOptionText' (event) { // Click each preferences setting.
-        var modifyingInput = Session.get("modifying");
-        var p = event.target;
-        var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
-        input.value = p.childNodes[0].nodeValue;
-        closeDivFade(p.parentNode);
-        try {
-            closeInput(modifyingInput);
-        } catch (err) {}
-        input.focus();
+        $("#" + modifyingInput).next()
+        .fadeOut('fast')
+        .hide('fast');
     },
     'click #workComment' (event) {
         var restrict = event.target.maxLength;
@@ -976,8 +911,8 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
     Meteor.call(funcName, serverData);
 }
 
-function closeInput(modifyingInput) { // Close a changeable input and change it back to span.
-    var input = document.getElementById(modifyingInput + "a");
+function closeInput() { // Close a changeable input and change it back to span.
+    /*var input = document.getElementById(modifyingInput + "a");
     var span = document.getElementById(modifyingInput);
     var color;
     if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
@@ -1006,11 +941,17 @@ function closeInput(modifyingInput) { // Close a changeable input and change it 
         if (getHomeworkFormData() === null) return;
         serverData = getHomeworkFormData();
         sendData("editWork");
-    }
+    }*/
+    if(Session.get("newWork")) return;
+    var data = getHomeworkFormData();
+    if(data === null) return;
+    Session.set("currentWork", data);
+    serverData = Session.get("currentWork");
+    //sendData("editWork");
 }
 
 function getHomeworkFormData() { // Get all data relating to work creation.
-    var inputs = document.getElementsByClassName("req");
+    /*var inputs = document.getElementsByClassName("req");
     var stop;
     for (var i = 0; i < inputs.length; i++) {
         var value = inputs[i].childNodes[0].nodeValue;
@@ -1037,20 +978,15 @@ function getHomeworkFormData() { // Get all data relating to work creation.
     data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
     data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
 
-    return data;
-}
-
-function getPreferencesData() { // Get all data relating to preferences.
-    var profile = Session.get("user");
-    var options = {
-        "theme": themeColors[document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase()],
-        "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide": ref[document.getElementById("prefHide").childNodes[0].nodeValue],
-        "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue],
-        "hideReport": ref[document.getElementById("prefReport").childNodes[0].nodeValue]
-    };
-    profile.preferences = options;
-    return profile;
+    return data;*/
+    var inputs = ["wName", "wDueDate", "wDescription", "wType"];
+    var optional = ["wDescription"];
+    var data = Session.get("currentWork");
+    for(var i = 0; i < inputs.length; i++) {
+        var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
+        var thisData = (title === 'type') ? $("#"+title+" span")[0].childNodes[0].nodeValue : $("#"+title)[0].value;
+        data[title] = (thisData.search("Click here to edit") === 0 && !_.contains(optional, title)) ? "Missing field" : thisData;
+    }
 }
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -1069,6 +1005,7 @@ function toDate(date) { // Turns formatted date back to Date constructor.
 }
 
 function formReadable(input, val) { // Makes work information readable by users.
+    if(input)
     switch(val) {
         case "typeColor": return input.typeColor = workColors[input.type];
         case "name": return input.name;
