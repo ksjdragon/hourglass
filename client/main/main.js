@@ -4,6 +4,7 @@ import {
 } from 'meteor/templating';
 
 import './main.html';
+import './main.css';
 
 var load = true;
 var calWorkOpen = null;
@@ -34,10 +35,10 @@ var defaultWork = {
 };
 
 // Reactive variables.
-Session.set("user",{}); // Stores user preferences.
+Session.set("user", {}); // Stores user preferences.
 Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("sidebar", null); // Status of sidebar.
-Session.set("requests",false); // Status of requests.
+Session.set("requests", false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWorkId",null); // Stores current work Id.
 Session.set("currentWork",null);
@@ -47,7 +48,7 @@ Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
 Session.set("typeFilter", []); // Stores type filters for classes.
-Session.set("typeFilterHover",null); // Stores current hovered type filter.
+Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("commentRestrict", ""); // Stores text for comment character restriction.
@@ -67,14 +68,14 @@ Template.profile.rendered = function() {
 };
 
 Template.registerHelper('userProfile', () => {
-    if(Meteor.user() === undefined || Meteor.user() === null) return;
+    if (Meteor.user() === undefined || Meteor.user() === null) return;
     Session.set("user", Meteor.user().profile);
     return;
 });
 
 Template.registerHelper('screen', (multiplier, fraction) => {
-    if(typeof multiplier !== "string") return screen.width.toString() + "px";
-    if(typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px";
+    if (typeof multiplier !== "string") return screen.width.toString() + "px";
+    if (typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px";
     return ((screen.width) * parseFloat(multiplier) / parseFloat(fraction)).toString() + "px";
 });
 
@@ -97,8 +98,8 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
-    if(Session.get("user").classes.length === 0) { // Null checking.
-        Session.set("noclass",true); // Makes sure to display nothing.
+    if (Session.get("user").classes.length === 0) { // Null checking.
+        Session.set("noclass", true); // Makes sure to display nothing.
         return [];
     } else {
         var array = [];
@@ -159,7 +160,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     thisWork[j] = "no";
                 }
 
-                if(thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length/thisWork[j].reports.length) <= 0.9) {
+                if (thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length / thisWork[j].reports.length) <= 0.9) {
                     thisWork[j] = "no";
                 }
 
@@ -188,13 +189,15 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
                 thisWork[j].reportLength = thisWork[j].reports.length;
 
-                thisWork[j].creator = Meteor.users.findOne({_id: thisWork[j].creator}).profile.name;
+                thisWork[j].creator = Meteor.users.findOne({
+                    _id: thisWork[j].creator
+                }).profile.name;
                 var conf = thisWork[j].confirmations.length;
                 var repo = thisWork[j].reports.length;
                 var ratio = conf / repo;
                 var normalColor = Session.get("user").preferences.theme["text"];
                 if (Math.abs(conf - repo)) {
-                    if ((conf+repo) <= 1) {
+                    if ((conf + repo) <= 1) {
                         thisWork[j].doneRatio = normalColor;
                     } else {
                         thisWork[j].doneRatio = "#F9F906";
@@ -228,21 +231,19 @@ Template.registerHelper('commentLength', () => { // Returns characters left for 
 });
 
 function startDragula() {
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')],
-        {
-            moves: function(el, container, handle) {
-                // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
-                return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
-            }
-        })
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
+        moves: function(el, container, handle) {
+            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+        }
+    })
     .on('out', function(el) {
         var els = document.getElementsByClassName("classWrapper");
         var final = [];
-        for(var i = 0; i < els.length; i++) {
+        for (var i = 0; i < els.length; i++) {
             var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
             final.push(classid);
         }
-        Meteor.call("reorderClasses", final);
     });
 }
 
@@ -250,7 +251,7 @@ Template.main.helpers({
     themeName() {
         var vals = _.values(themeColors);
         var curtheme = Session.get("user").preferences.theme;
-        for(var i = 0; i < vals.length; i++) {
+        for (var i = 0; i < vals.length; i++) {
             if (_.isEqual(vals[i], curtheme)) {
                 var name = _.keys(themeColors)[i];
                 return name.charAt(0).toUpperCase() + name.slice(1);
@@ -259,13 +260,13 @@ Template.main.helpers({
         return "Custom";
     },
     schoolName() { // Finds the name of the user's school.
-        if(Session.get("user").school === undefined || Session.get("user").school === null) return;
+        if (Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
     },
     iconColor(icon) { // Sidebar status color
-        if (Session.equals("sidebar",icon + "Container")) {
+        if (Session.equals("sidebar", icon + "Container")) {
             return Session.get("user").preferences.theme.statusIcons;
-        } else if (Session.equals("sidebar","both")) {
+        } else if (Session.equals("sidebar", "both")) {
             return Session.get("user").preferences.theme.statusIcons;
         } else {
             return;
@@ -278,12 +279,12 @@ Template.main.helpers({
         return Session.get("user").name;
     },
     defaultMode() { //Loads the default display mode for user.
-        if(load) Session.set("mode",Session.get("user").preferences.mode);
+        if (load) Session.set("mode", Session.get("user").preferences.mode);
         load = false;
         return;
     },
     bgSrc() { // Returns background.
-        return "Backgrounds/"+ Session.get("user").preferences.theme.background;
+        return "Backgrounds/" + Session.get("user").preferences.theme.background;
     },
     menuStatus() { // Status of of menu sidebar.
         if (Session.equals("sidebar", "menuContainer")) {
@@ -308,11 +309,11 @@ Template.main.helpers({
         return openValues.requests;
     },
     modeStatus(status) { // Color status of display modes.
-        if (!Session.equals("mode",status)) return;
+        if (!Session.equals("mode", status)) return;
         return Session.get("user").preferences.theme.modeHighlight;
     },
     currMode(name) { // Status of display mode.
-        return Session.equals("mode",name);
+        return Session.equals("mode", name);
     },
     calendarOptions() { // Settings for the calendar, including work displaying.
         return {
@@ -371,10 +372,10 @@ Template.main.helpers({
                 Session.set("currentWorkId", event.id);
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
-            eventMouseover: function (event, jsEvent, view) {
+            eventMouseover: function(event, jsEvent, view) {
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
             },
-            eventMouseout: function (event, jsEvent, view) {
+            eventMouseout: function(event, jsEvent, view) {
                 this.style.boxShadow = "";
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
@@ -402,25 +403,25 @@ Template.main.helpers({
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
         var typeHighlight = Session.get("typeFilterHover");
-        if(Session.equals("mode","classes")) {
-            $(".workCard").toggleClass("scaled",false);
+        if (Session.equals("mode", "classes")) {
+            $(".workCard").toggleClass("scaled", false);
             try {
-                $(".workCard[classid=\'"+hoverHighlight+"\']").toggleClass("scaled",true);
-                $(".workCard[type=\'"+typeHighlight+"\']").toggleClass("scaled",true);
-            } catch(err) {}
+                $(".workCard[classid=\'" + hoverHighlight + "\']").toggleClass("scaled", true);
+                $(".workCard[type=\'" + typeHighlight + "\']").toggleClass("scaled", true);
+            } catch (err) {}
         } else {
-            $(".workevent").toggleClass("scaled",false);
+            $(".workevent").toggleClass("scaled", false);
             try {
-                $("."+hoverHighlight).toggleClass("scaled",true);
-                $("."+typeHighlight).toggleClass("scaled",true);
-            } catch(err) {}
+                $("." + hoverHighlight).toggleClass("scaled", true);
+                $("." + typeHighlight).toggleClass("scaled", true);
+            } catch (err) {}
         }
         return;
     },
     work(value) { // Returns the specified work value.
         if (Session.equals("currentWork", null)) return;
         if (Session.get("newWork")) {
-            return defaultWork[value]; 
+            return defaultWork[value];
         } else {
             return formReadable(Session.get("currentWork"),value);
         }
@@ -434,8 +435,8 @@ Template.main.helpers({
     types() {
         var types = Object.keys(workColors);
         var array = [];
-        for(var i = 0; i < types.length; i++) {
-            array.push({ 
+        for (var i = 0; i < types.length; i++) {
+            array.push({
                 "type": types[i],
                 "typeName": types[i][0].toUpperCase() + types[i].slice(1),
                 "selected": _.contains(Session.get("typeFilter"), types[i])
@@ -533,8 +534,8 @@ Template.main.events({
             modifyingInput = null;
         }
 
-        if(!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
-        if(!document.getElementById("requests").contains(event.target)) Session.set("requests",false);
+        if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
+        if (!document.getElementById("requests").contains(event.target)) Session.set("requests", false);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' () { // Click menu button.
@@ -562,7 +563,7 @@ Template.main.events({
         }
     },
     'click #requests .fa-question' () {
-        Session.set("requests",!Session.get("requests"));
+        Session.set("requests", !Session.get("requests"));
     },
     'click .classes' () { // Click classes mode button.
         if (Session.equals("mode", "classes")) return;
@@ -599,7 +600,7 @@ Template.main.events({
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
-        if(document.getElementById("userDropdown").style.display === "block") return;
+        if (document.getElementById("userDropdown").style.display === "block") return;
         setTimeout(function() {
             openDivFade(document.getElementById("userDropdown"));
         }, 300);
@@ -608,6 +609,7 @@ Template.main.events({
         var dom = event.target;
         while (event.target.className !== "workCard") event.target = event.target.parentNode;
         var workid = event.target.getAttribute("workid");
+
         var thisWork = work.findOne({
             _id: workid
         });
@@ -630,7 +632,7 @@ Template.main.events({
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");
-        if(area.value === "") return;
+        if (area.value === "") return;
         var array = {};
         array.content = area.value;
         array.info = {
@@ -638,13 +640,13 @@ Template.main.events({
             "userInfo": Meteor.user(),
             "userClasses": Session.get("calendarClasses")
         };
-        Meteor.call("createRequest", array, function(err,result) {
+        Meteor.call("createRequest", array, function(err, result) {
             area.value = "Request sent!";
-            setTimeout(function(){
+            setTimeout(function() {
                 document.getElementById("requests").style.marginBottom = "-15.5vw";
                 area.value = "";
-                Session.set("commentRestrict",null);
-            },750);
+                Session.set("commentRestrict", null);
+            }, 750);
         });
     },
     // HANDLING INPUT CHANGING
@@ -707,7 +709,7 @@ Template.main.events({
     },
     'click #workComment' (event) {
         var restrict = event.target.maxLength;
-        Session.set("commentRestrict",restrict-event.target.value.length.toString() + " characters left");
+        Session.set("commentRestrict", restrict - event.target.value.length.toString() + " characters left");
         var text = document.getElementById("commentrestrict");
         text.style.display = "initial";
         text.style.color = "#7E7E7E";
@@ -720,11 +722,15 @@ Template.main.events({
             var works = userClasses[i].thisClassWork;
             for (var j = 0; j < works.length; j++) {
                 var work = works[j];
-                var workclass = classes.findOne({_id: work.class});
+                var workclass = classes.findOne({
+                    _id: work.class
+                });
                 if (work.description == defaultWork.description) work.description = "";
                 if (work.dueDate == defaultWork.dueDate) continue;
                 if (work.name == defaultWork.name) work.name = "";
-                if (workclass === undefined) workclass = {name: "Personal"};
+                if (workclass === undefined) workclass = {
+                    name: "Personal"
+                };
                 events.push([
                     workclass.name + ": " + work.name,
                     work.realDate.toLocaleDateString(),
@@ -735,8 +741,13 @@ Template.main.events({
         }
 
         var JSONevents = JSON.stringify(events);
-        var CSVevents = Papa.unparse({fields: ["Subject", "Start Date", "Description", "All Day Event"], data: JSONevents});
-        var eventBlob = new Blob([CSVevents], {type: "data:text/csv;charset=utf-8"});
+        var CSVevents = Papa.unparse({
+            fields: ["Subject", "Start Date", "Description", "All Day Event"],
+            data: JSONevents
+        });
+        var eventBlob = new Blob([CSVevents], {
+            type: "data:text/csv;charset=utf-8"
+        });
         saveAs(eventBlob, "hourglass.csv");
     },
     'keydown input' (event) { // Enter to close input.
@@ -751,12 +762,12 @@ Template.main.events({
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
         var text;
-        if(event.target.id === "workComment") {
+        if (event.target.id === "workComment") {
             text = document.getElementById("commentrestrict");
-        } else if(event.target.id === "requestArea") {
+        } else if (event.target.id === "requestArea") {
             text = document.getElementById("requestrestrict");
         } else {
-            text = document.getElementById(Session.get("modifying")+"restrict");
+            text = document.getElementById(Session.get("modifying") + "restrict");
         }
         text.style.color = "#7E7E7E";
         if (chars === restrict) { // Don't display if nothing in comment.
@@ -826,7 +837,7 @@ Template.main.events({
             var date = calWorkDate.split("-");
             date = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
             Session.set("newWork", true);
-            Session.get("currentWorkId",classid);
+            Session.get("currentWorkId", classid);
             openDivFade(document.getElementsByClassName("overlay")[0]);
         } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
@@ -881,14 +892,14 @@ Template.main.events({
         }
         while (div.getAttribute("type") === null) div = div.parentNode;
         var type = div.getAttribute("type");
-        Session.set("typeFilterHover", type); 
+        Session.set("typeFilterHover", type);
     },
     'mouseleave .sideFilter' (event) {
         if (event.target.className !== "sideFilter") {
             var div = event.target.parentNode;
             if (div.contains(event.target)) return;
         }
-        Session.set("typeFilterHover", null); 
+        Session.set("typeFilterHover", null);
     }
 });
 
@@ -921,10 +932,10 @@ function closeInput() { // Close a changeable input and change it back to span.
         color = "#BEBEBE";
     }
     span.style.color = color;
-    Session.set("commentRestrict","");
+    Session.set("commentRestrict", "");
     try {
         input.parentNode.removeChild(input);
-        document.getElementById(modifyingInput+"restrict").style.display = "none";
+        document.getElementById(modifyingInput + "restrict").style.display = "none";
     } catch (err) {}
     if (input.value === "") { // If input has nothing.
         span.childNodes[0].nodeValue = "Click here to edit...";
@@ -1005,13 +1016,17 @@ function toDate(date) { // Turns formatted date back to Date constructor.
 }
 
 function formReadable(input, val) { // Makes work information readable by users.
-    if(input)
-    switch(val) {
-        case "typeColor": return input.typeColor = workColors[input.type];
-        case "name": return input.name;
-        case "dueDate": return getReadableDate(input.dueDate);
-        case "description": return input.description;
-        case "type": return input.type[0].toUpperCase() + input.type.slice(1);
+    switch (val) {
+        case "typeColor":
+            return input.typeColor = workColors[input.type];
+        case "name":
+            return input.name;
+        case "dueDate":
+            return getReadableDate(input.dueDate);
+        case "description":
+            return input.description;
+        case "type":
+            return input.type[0].toUpperCase() + input.type.slice(1);
         case "comments":
             var comments = input.comments;
             var resort = [];
@@ -1023,7 +1038,7 @@ function formReadable(input, val) { // Makes work information readable by users.
                     "date": null,
                     "user": null,
                     "avatar": null,
-                    "email":null
+                    "email": null
                 };
                 var user = Meteor.users.findOne({
                     _id: comments[k].user
@@ -1050,19 +1065,19 @@ function formReadable(input, val) { // Makes work information readable by users.
             return input.done;
         case "doneCol":
             if (Session.get("newWork")) return "";
-            if (!_.contains(input.done,Meteor.userId())) return "";
+            if (!_.contains(input.done, Meteor.userId())) return "";
             return "#27A127";
         case "doneText":
             if (Session.get("newWork")) return "";
-            if (!_.contains(input.done,Meteor.userId())) return "Mark done";
+            if (!_.contains(input.done, Meteor.userId())) return "Mark done";
             return "Done!";
         case "userConfirm":
-            if(!_.contains(input.confirmations, Meteor.userId())) return "";
+            if (!_.contains(input.confirmations, Meteor.userId())) return "";
             return "#27A127";
         case "confirmations":
             return input.confirmations.length;
         case "userReport":
-            if(!_.contains(input.reports, Meteor.userId())) return "";
+            if (!_.contains(input.reports, Meteor.userId())) return "";
             return "#FF1A1A";
         case "reports":
             return input.reports.length;

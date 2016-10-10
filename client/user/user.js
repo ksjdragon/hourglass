@@ -11,7 +11,7 @@ Template.user.helpers({
     avatar() { // Returns avatar
         return this.services.google.picture;
     },
-    username() {  // Returns current user's username
+    username() { // Returns current user's username
         return this.profile.name;
     },
     motd() { // Returns the current user's description
@@ -85,10 +85,10 @@ function getProfileData() { // Gets all data related to profile.
     profile.avatar = document.getElementById("profAvatar").src;
     profile.banner = document.getElementById("profBanner").src;
     profile.preferences = {
-        "theme":document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
-        "mode":document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
-        "timeHide":ref[document.getElementById("prefHide").childNodes[0].nodeValue],
-        "done":ref[document.getElementById("prefDone").childNodes[0].nodeValue]
+        "theme": document.getElementById("prefTheme").childNodes[0].nodeValue.toLowerCase(),
+        "mode": document.getElementById("prefMode").childNodes[0].nodeValue.toLowerCase(),
+        "timeHide": ref[document.getElementById("prefHide").childNodes[0].nodeValue],
+        "done": ref[document.getElementById("prefDone").childNodes[0].nodeValue]
     };
     return profile;
 }
@@ -97,7 +97,7 @@ function getCreateFormData() { // Gets create class form data, and returns null.
     var stop;
     var form = document.getElementsByClassName("creInput");
     for (var i = 0; i < form.length; i++) { // Checks for missing/invalid fields.
-        if(i === 1 || i === 2) continue;
+        if (i === 1 || i === 2) continue;
         if (form[i].value === "") {
             form[i].focus();
             form[i].placeholder = "Missing field";
@@ -131,12 +131,16 @@ function getCreateFormData() { // Gets create class form data, and returns null.
     };
 }
 
-function checkUser(email,classid) { // Checks if user email exists.
-     var user = Meteor.users.findOne({"services.google.email":email});
-     if(user === undefined) {
+function checkUser(email, classid) { // Checks if user email exists.
+    var user = Meteor.users.findOne({
+        "services.google.email": email
+    });
+    if (user === undefined) {
         return true;
-     } else {
-        if(classes.findOne({_id:classid}).subscribers)
-        return false;
-     }
+    } else {
+        if (classes.findOne({
+                _id: classid
+            }).subscribers)
+            return false;
+    }
 }
