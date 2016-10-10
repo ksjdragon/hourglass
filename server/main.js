@@ -6,6 +6,9 @@ import {
     Mongo
 } from 'meteor/mongo';
 
+Houston.add_collection(Meteor.users);
+Houston.add_collection(Houston._admins);
+
 // Defines who the admins are - not added
 var superadmins = [
     "ybq987@gmail.com",
@@ -25,7 +28,9 @@ for (var i = 0; i < superadmins.length; i++) {
     });
     if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
         Roles.addUsersToRoles(superadmin._id, 'superadmin');
-        Roles.addUsersToRoles(superadmin._id, 'admin');
+        Houston._admins.insert({
+            user_id: superadmin._id
+        });
     }
 }
 
