@@ -33,7 +33,6 @@ eternicode:bootstrap-datepicker
 shell-server@0.2.1
 http@1.2.9
 underscore
-houston:admin
 ahref:dragula
 harrison:papa-parse
 pfafman:filesaver
@@ -41,3 +40,5 @@ flemay:less-autoprefixer
 natestrauser:select2
 juliancwirko:s-alert
 juliancwirko:s-alert-stackslide
+yogiben:admin-edit
+mfactory:admin-lte-edit
