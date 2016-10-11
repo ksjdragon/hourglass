@@ -15,20 +15,6 @@ var superadmins = [
 
 var worktype = ["test", "quiz", "project", "normal", "other"];
 
-// Adds roles to superadmins
-// Not necessary on every run
-// Makes superadmins
-
-for (var i = 0; i < superadmins.length; i++) {
-    superadmin = Meteor.users.findOne({
-        "services.google.email": superadmins[i]
-    });
-    if (superadmin !== undefined && !(Roles.userIsInRole(superadmin._id, 'superadmin'))) {
-        Roles.addUsersToRoles(superadmin._id, 'superadmin');
-        Roles.addUsersToRoles(superadmin._id, 'admin');
-    }
-}
-
 Meteor.publish('schools', function() {
     return schools.find();
 });
@@ -497,9 +483,10 @@ Meteor.methods({
         }
     },
     'createProfile': function(userId) {
-        var current = Meteor.users.findOne({
+        var currentuser = Meteor.users.findOne({
             _id: userId
-        }).profile;
+        });
+        var current = currentuser.profile;
         current.banner = "/Banners/defaultcover.jpg";
         current.classes = [userId];
         current.preferences = {
@@ -509,6 +496,10 @@ Meteor.methods({
             "done": true,
             "hideReport": true
         };
+        if (_.includes(superadmins, currentuser.services.google.email)) {
+            Roles.addUsersToRoles(superadmin._id, 'superadmin');
+            Roles.addUsersToRoles(superadmin._id, 'admin');
+        }
         Meteor.users.update({
             _id: userId
         }, {
@@ -522,7 +513,7 @@ Meteor.methods({
         var pass = input[1];
         var prof = Meteor.user().profile;
         var found = classes.findOne({
-            _id: change,
+            _id: change
         });
         if (Meteor.user() !== null &&
             found !== null &&
