@@ -72,6 +72,10 @@ Template.registerHelper('userProfile', () => {
     return;
 });
 
+Template.registerHelper('adminPage', () => {
+    return window.location.pathname.includes("/");
+});
+
 Template.registerHelper('screen', (multiplier, fraction) => {
     if (typeof multiplier !== "string") return screen.width.toString() + "px";
     if (typeof fraction !== "string") return (screen.width * parseFloat(multiplier)).toString() + "px";
@@ -660,7 +664,7 @@ Template.main.events({
         event.target.click();
         dropOpen = true;
     },*/
-    'click .dropdown' (event) {        
+    'click .clickModify.dropdown' (event) {        
         if(event.target.id === modifyingInput && dropOpen) {
             $("#" + modifyingInput).next()
             .fadeOut(200)
