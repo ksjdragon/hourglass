@@ -422,11 +422,12 @@ Template.main.helpers({
         return;
     },
     work(value) { // Returns the specified work value.
+        var thisWork = Session.get("currentWork");
         if (Session.equals("currentWork", null)) return;
-        if (Session.get("newWork")) {
+        if (Session.get("newWork") && (thisWork[value] === "Missing field" || thisWork[value] === undefined)) {
             return defaultWork[value];
         } else {
-            return formReadable(Session.get("currentWork"),value);
+            return formReadable(thisWork,value);
         }
     },
     selectOptions(val) {
@@ -480,12 +481,19 @@ Template.main.events({
     'click' (event) { // Closes respective divs when clicking outside of them. Order matters.
         var e = event.target.className;
 
-        if (event.target.id !== modifyingInput && // Input for dropdown closing.
-            event.target.id !== modifyingInput + "a" &&
-            !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("workOptions") &&
-            !event.target.parentNode.className.includes("prefOptions")) {
-            closeInput(modifyingInput);
+        if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
+            if (!_.contains(e, ["optionHolder", "optionText"])) {
+                if(document.getElementById(modifyingInput).className.includes("dropdown")) {
+                    $(".optionHolder")
+                    .fadeOut('fast')
+                    .hide('fast');
+
+                    dropOpen = false;
+                } else {
+                    closeInput(modifyingInput);
+                }
+                modifyingInput = null;
+            }
         }
 
         if (!Session.equals("sidebar", e) && // Sidebar closing.
@@ -512,29 +520,6 @@ Template.main.events({
             Session.set("newWork", null);
             $('.req').css("color", "");
             Session.set("commentRestrict", null);
-        }
-
-        if (!event.target.className.includes("radio") && // Dropdown closing.
-            !event.target.parentNode.className.includes("workOptions") &&
-            !event.target.parentNode.className.includes("optionHolder") &&
-            event.target.readOnly !== true) {
-            var radio;
-            if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
-                radio = "prefOptions";
-            } else {
-                radio = "workOptions";
-            }
-            /*for (var i = 0; i < document.getElementsByClassName(radio).length; i++) {
-                try {
-                    closeDivFade(document.getElementsByClassName(radio)[i]);
-                } catch (err) {}
-            }*/
-            $(".optionHolder")
-            .fadeOut('fast')
-            .hide('fast');
-
-            dropOpen = false;
-            modifyingInput = null;
         }
 
         if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
@@ -654,37 +639,40 @@ Template.main.events({
     },
     // HANDLING INPUT CHANGING
     'click .clickModify' (event) {
-        modifyingInput = event.target.id;
+        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
+    },
+    'focus .clickModify' (event) {
+        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
     },
     'keydown .dropdown' (event) {
         console.log("hi");
     },
-    /*'focus .dropdown' (event) {
-        if(dropOpen) return;
+    'focus .dropdown' (event) {
+         if(event.target.id === modifyingInput) return;
         event.target.click();
-        dropOpen = true;
-    },*/
-    'click .clickModify.dropdown' (event) {        
+    },
+    'click .dropdown' (event) {
+        console.log(dropOpen);
+        console.log(event.target.id === modifyingInput);
         if(event.target.id === modifyingInput && dropOpen) {
+            dropOpen = false;
+            modifyingInput = null;
             $("#" + modifyingInput).next()
             .fadeOut(200)
             .hide(200);
-            dropOpen = false;
+            console.log("hiasdf");
             return;
         }
         dropOpen = true;
 
-        $(".optionHolder")
-        .fadeOut('fast')
-        .hide('fast');
-
         $("#" + modifyingInput).next()
-        .css('opacity', 0)
+        .css('opacity',0)
         .slideDown(300)
         .animate(
             { opacity: 1 },
             { queue: false, duration: 100 }
-        );
+        ) 
+        //event.target.focus();
         
     },
     'click .optionText' (event) { // Click each preferences setting.
@@ -781,13 +769,18 @@ Template.main.events({
         }
         Session.set("commentRestrict", chars.toString() + " characters left");
     },
-    'focus #workDatea' () { // Open date picker.
-        $('#workDatea').datepicker({
+    'focus #wDueDate' () { // Open date picker.
+        $('#wDueDate').datepicker({
             format: 'DD, MM d, yyyy',
+            clickInput: true,
             startDate: 'd',
             todayHighlight: true,
             todayBtn: true,
-            autoclose: true
+            
+            onSelect: function(dateText, inst) {
+                alert("asdf");
+                closeInput(modifyingInput);
+            }
         });
     },
     // WORK OVERLAY BUTTONS
@@ -803,9 +796,7 @@ Template.main.events({
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
-        if (getHomeworkFormData() === null) return; // Makes sure to check valid homework.
-        serverData = getHomeworkFormData();
-        serverData.class = Session.get("currentWorkId");
+        serverData = Session.get("currentWork");
         sendData("createWork");
         Session.set("newWork", null);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
@@ -926,81 +917,27 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
-    /*var input = document.getElementById(modifyingInput + "a");
-    var span = document.getElementById(modifyingInput);
-    var color;
-    if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) {
-        color = "#000";
-    } else {
-        color = "#BEBEBE";
-    }
-    span.style.color = color;
-    Session.set("commentRestrict", "");
-    try {
-        input.parentNode.removeChild(input);
-        document.getElementById(modifyingInput + "restrict").style.display = "none";
-    } catch (err) {}
-    if (input.value === "") { // If input has nothing.
-        span.childNodes[0].nodeValue = "Click here to edit...";
-    } else {
-        span.childNodes[0].nodeValue = input.value;
-    }
-    span.style.display = "initial";
-    Session.set("modifying", null);
-
-    if (Session.equals("sidebar", "optionsContainer") || Session.equals("sidebar", "both")) { // Close depending on work or preferences.
-        serverData = getPreferencesData();
-        sendData("editProfile");
-    } else if (!Session.get("newWork")) {
-        if (getHomeworkFormData() === null) return;
-        serverData = getHomeworkFormData();
-        sendData("editWork");
-    }*/
-    if(Session.get("newWork")) return;
-    var data = getHomeworkFormData();
-    if(data === null) return;
+    var data = getHomeworkFormData();   
     Session.set("currentWork", data);
-    serverData = Session.get("currentWork");
-    //sendData("editWork");
+    
+    if(!Session.get("newWork")) {
+        serverData = Session.get("currentWork");
+         //sendData("editWork");
+    }
+    console.log(serverData);
+   
 }
 
 function getHomeworkFormData() { // Get all data relating to work creation.
-    /*var inputs = document.getElementsByClassName("req");
-    var stop;
-    for (var i = 0; i < inputs.length; i++) {
-        var value = inputs[i].childNodes[0].nodeValue;
-        if (value.includes("Click here to edit")) {
-            inputs[i].childNodes[0].nodeValue = "Missing field";
-            inputs[i].style.color = "#FF1A1A";
-            stop = true;
-        }
-    }
-    if (stop) return null;
-    var data;
-
-    if (Session.get("newWork")) {
-        data = {
-            "class": Session.get("currentWorkId")
-        };
-    } else {
-        data = work.findOne({
-            _id: Session.get("currentWorkId")
-        });
-    }
-    data.name = document.getElementById("workName").childNodes[0].nodeValue;
-    data.dueDate = toDate(document.getElementById("workDate").childNodes[0].nodeValue);
-    data.description = document.getElementById("workDesc").childNodes[0].nodeValue;
-    data.type = document.getElementById("workType").childNodes[0].nodeValue.toLowerCase();
-
-    return data;*/
-    var inputs = ["wName", "wDueDate", "wDescription", "wType"];
-    var optional = ["wDescription"];
+    var inputs = ["wName", "wDueDate", "wDescription", "wType"]; // All work fields.
+    var optional = ["wDescription"]; // Optional work fields.
     var data = Session.get("currentWork");
     for(var i = 0; i < inputs.length; i++) {
         var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
-        var thisData = (title === 'type') ? $("#"+title+" span")[0].childNodes[0].nodeValue : $("#"+title)[0].value;
-        data[title] = (thisData.search("Click here to edit") === 0 && !_.contains(optional, title)) ? "Missing field" : thisData;
+        var thisData = (title === 'type') ? $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue : $("#"+inputs[i])[0].value;
+        data[title] = (thisData.includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? "Missing field" : thisData;
     }
+    return data;
 }
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
