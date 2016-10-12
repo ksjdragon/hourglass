@@ -444,6 +444,7 @@ Meteor.methods({
 
     // User Functions
     'editProfile': function(change) {
+        var refyear = new Date().getUTCFullYear();
         var current = Meteor.user().profile;
         current = {
             "__proto__": current.__proto__,
@@ -457,6 +458,9 @@ Meteor.methods({
         };
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
+        }
+        if (current.grade <= refyear || current.grade >= refyear + 4) {
+            current.grade = refyear;
         }
         Meteor.users.update({
             _id: Meteor.userId()
