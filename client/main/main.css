@@ -31,9 +31,6 @@ html {
 
 	pointer-events: all;
 
-	/*background-image: url("Hourglass.png");
-	background-size: 1920px 1080px;*/
-
 	-webkit-touch-callout: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -896,7 +893,6 @@ textarea.clickModify {
 	top: 0;
 	left: 0;
 	z-index: -1;
-
 }
 
 #mainBody {
