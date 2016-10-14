@@ -41,7 +41,6 @@ Session.set("requests", false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWorkId",null); // Stores current work Id.
 Session.set("currentWork",null);
-Session.set("currentReadableWork", null); // Stores readable selected work info.
 Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
@@ -60,6 +59,14 @@ Template.login.rendered = function() {
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     setTimeout(startDragula, 300);
+    $(".optionText").hover(
+        function() {
+            $(this).addClass("selectedOption");
+        },
+        function() {
+            $(this).removeClass("selectedOption");
+        }
+    );
 };
 
 Template.profile.rendered = function() {
@@ -250,6 +257,8 @@ function startDragula() {
     });
 }
 
+
+
 Template.main.helpers({
     themeName() {
         var vals = _.values(themeColors);
@@ -424,7 +433,7 @@ Template.main.helpers({
     work(value) { // Returns the specified work value.
         var thisWork = Session.get("currentWork");
         if (Session.equals("currentWork", null)) return;
-        if (Session.get("newWork") && (thisWork[value] === "Missing field" || thisWork[value] === undefined)) {
+        if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
             return defaultWork[value];
         } else {
             return formReadable(thisWork,value);
@@ -482,14 +491,13 @@ Template.main.events({
         var e = event.target.className;
 
         if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
-            if (!_.contains(e, ["optionHolder", "optionText"])) {
+            if (!(e.includes("optionHolder") || e.includes("optionText"))) {
                 if(document.getElementById(modifyingInput).className.includes("dropdown")) {
                     $(".optionHolder")
-                    .fadeOut('fast')
-                    .hide('fast');
+                    .fadeOut(250, "linear");
 
-                    dropOpen = false;
-                } else {
+                    $(".selectedOption").removeClass("selectedOption");
+                } else {     
                     closeInput(modifyingInput);
                 }
                 modifyingInput = null;
@@ -517,7 +525,6 @@ Template.main.events({
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
-            Session.set("newWork", null);
             $('.req').css("color", "");
             Session.set("commentRestrict", null);
         }
@@ -637,74 +644,6 @@ Template.main.events({
             }, 750);
         });
     },
-    // HANDLING INPUT CHANGING
-    'click .clickModify' (event) {
-        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
-    },
-    'focus .clickModify' (event) {
-        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
-    },
-    'keydown .dropdown' (event) {
-        console.log("hi");
-    },
-    'focus .dropdown' (event) {
-         if(event.target.id === modifyingInput) return;
-        event.target.click();
-    },
-    'click .dropdown' (event) {
-        console.log(dropOpen);
-        console.log(event.target.id === modifyingInput);
-        if(event.target.id === modifyingInput && dropOpen) {
-            dropOpen = false;
-            modifyingInput = null;
-            $("#" + modifyingInput).next()
-            .fadeOut(200)
-            .hide(200);
-            console.log("hiasdf");
-            return;
-        }
-        dropOpen = true;
-
-        $("#" + modifyingInput).next()
-        .css('opacity',0)
-        .slideDown(300)
-        .animate(
-            { opacity: 1 },
-            { queue: false, duration: 100 }
-        ) 
-        //event.target.focus();
-        
-    },
-    'click .optionText' (event) { // Click each preferences setting.
-        var option = event.target.childNodes[0].nodeValue;
-        if(modifyingInput[0] === 'w') {
-            var newSetting = Session.get("currentWork");
-            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option;
-            Session.set("currentWork", newSetting);
-        } else {
-            var newSetting = Session.get("user");
-            newSetting.preferences[modifyingInput] = (function() {
-                var value = options[modifyingInput].filter(function(entry) {
-                    return option === entry.alias;
-                })[0].val;
-                return (modifyingInput === 'theme') ? themeColors[value] : value;
-            })();
-            Session.set("user", newSetting);
-            serverData = Session.get("user");
-            sendData("editProfile"); 
-        }
-
-        $("#" + modifyingInput).next()
-        .fadeOut('fast')
-        .hide('fast');
-    },
-    'click #workComment' (event) {
-        var restrict = event.target.maxLength;
-        Session.set("commentRestrict", restrict - event.target.value.length.toString() + " characters left");
-        var text = document.getElementById("commentrestrict");
-        text.style.display = "initial";
-        text.style.color = "#7E7E7E";
-    },
     'click #exportDiv' (event) {
         var events = [];
         var userClasses = Session.get("calendarClasses");
@@ -741,13 +680,97 @@ Template.main.events({
         });
         saveAs(eventBlob, "hourglass.csv");
     },
-    'keydown input' (event) { // Enter to close input.
-        var modifyingInput = Session.get("modifying");
-        if (event.keyCode == 13 && modifyingInput != "workDesc") {
-            try {
-                closeInput(modifyingInput);
-            } catch (err) {}
+    // HANDLING INPUT CHANGING
+    'focus .clickModify' (event) {
+        $(".optionHolder")
+        .fadeOut(250, "linear");
+
+        if(modifyingInput !== null) {
+            if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
+        } 
+        modifyingInput = event.target.id;
+        if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
+            event.target.select();
+            event.target.style.cursor = "text";   
         }
+    },
+    'keydown .dropdown' (event) {
+        var first = $("#"+modifyingInput).next().children("p:first-child");
+        var last = $("#"+modifyingInput).next().children("p:last-child"); 
+        var next = $(".selectedOption").next();
+        var prev = $(".selectedOption").prev();
+        var lastSel = $(".selectedOption");
+
+        if (event.keyCode === 38) {
+            if (lastSel === undefined) {
+                last.addClass("selectedOption");
+            } else {
+                if (prev.length === 0) {
+                    last.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");  
+                } else {
+                    prev.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                }
+            }
+        } else if (event.keyCode === 40) {
+            if (lastSel === undefined) {
+                first.addClass("selectedOption");
+                last.removeClass("selectedOption");
+            } else {
+                if (next.length === 0) {
+                    first.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                } else {
+                    next.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                }
+            }    
+        } else if (event.keyCode === 13) {
+            lastSel[0].click();
+        }
+    },
+    'focus .dropdown' (event) {
+        $(".selectedOption").removeClass("selectedOption");
+
+        $("#" + modifyingInput).next()
+        .css('opacity',0)
+        .slideDown(300)
+        .animate(
+            { opacity: 1 },
+            { queue: false, duration: 100 }
+        );
+    },
+    'click .optionText' (event) { // Click each preferences setting.
+        var option = event.target.childNodes[0].nodeValue;
+        if(modifyingInput[0] === 'w') {
+            var newSetting = Session.get("currentWork");
+            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
+            Session.set("currentWork", newSetting);
+        } else {
+            var newSetting = Session.get("user");
+            newSetting.preferences[modifyingInput] = (function() {
+                var value = options[modifyingInput].filter(function(entry) {
+                    return option === entry.alias;
+                })[0].val;
+                return (modifyingInput === 'theme') ? themeColors[value] : value;
+            })();
+            Session.set("user", newSetting);
+            serverData = Session.get("user");
+            sendData("editProfile"); 
+        }
+
+        $("#" + modifyingInput).next()
+        .fadeOut(250, "linear");;
+
+        $(".selectedOption").removeClass("selectedOption");
+    },
+    'click #workComment' (event) {
+        var restrict = event.target.maxLength;
+        Session.set("commentRestrict", restrict - event.target.value.length.toString() + " characters left");
+        var text = document.getElementById("commentrestrict");
+        text.style.display = "initial";
+        text.style.color = "#7E7E7E";
     },
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
@@ -776,11 +799,7 @@ Template.main.events({
             startDate: 'd',
             todayHighlight: true,
             todayBtn: true,
-            
-            onSelect: function(dateText, inst) {
-                alert("asdf");
-                closeInput(modifyingInput);
-            }
+            autoclose: true
         });
     },
     // WORK OVERLAY BUTTONS
@@ -797,8 +816,9 @@ Template.main.events({
     },
     'click #workSubmit' () { // Click submit work to create a work.
         serverData = Session.get("currentWork");
+        if(checkMissing()) return;
         sendData("createWork");
-        Session.set("newWork", null);
+        Session.set("newWork",false);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #workDelete' () {
@@ -807,15 +827,15 @@ Template.main.events({
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #markDone' () { // Click done button.
-        serverData = [Session.get("currentWorkId"), "done"];
+        serverData = [Session.get("currentWork")._id, "done"];
         sendData("toggleWork");
     },
     'click #markConfirm' () { // Click confirm button.
-        serverData = [Session.get("currentWorkId"), "confirmations"];
+        serverData = [Session.get("currentWork")._id, "confirmations"];
         sendData("toggleWork");
     },
     'click #markReport' () { // Click report button.
-        serverData = [Session.get("currentWorkId"), "reports"];
+        serverData = [Session.get("currentWork")._id, "reports"];
         sendData("toggleWork");
     },
     // CLASS FILTERS
@@ -913,19 +933,28 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
-    Meteor.call(funcName, serverData);
+    Meteor.call(funcName, serverData, function(error, result) {
+        serverData = null;
+        currWork = Session.get("currentWork");
+        if(currWork !== null && currWork._id !== undefined) {
+            Session.set("currentWork", work.findOne({
+                _id: currWork._id
+            }));
+        }
+    });
+    
+
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
     var data = getHomeworkFormData();   
     Session.set("currentWork", data);
-    
+    $("#"+modifyingInput).css('cursor','pointer');
     if(!Session.get("newWork")) {
         serverData = Session.get("currentWork");
-         //sendData("editWork");
-    }
-    console.log(serverData);
-   
+        if(checkMissing()) return;
+        sendData("editWork");
+    } 
 }
 
 function getHomeworkFormData() { // Get all data relating to work creation.
@@ -934,10 +963,41 @@ function getHomeworkFormData() { // Get all data relating to work creation.
     var data = Session.get("currentWork");
     for(var i = 0; i < inputs.length; i++) {
         var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
-        var thisData = (title === 'type') ? $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue : $("#"+inputs[i])[0].value;
-        data[title] = (thisData.includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? "Missing field" : thisData;
+        var thisData = (function() {
+            if(title === "type") {
+                console.log($("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase())
+                return $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase();
+            } else if (title === "dueDate") {
+                var val = $("#"+inputs[i])[0].value;
+                return (val.includes(defaultWork[title].slice(0,-3))) ? val : toDate(val);
+            } else {
+                return $("#"+inputs[i])[0].value;
+            }
+        })();
+        // True signifies missing field to prevent missing if value is'Missing field.'
+        data[title] = (thisData.toString().includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? true : thisData;
     }
     return data;
+}
+
+function checkMissing() {
+    var no = false;
+    console.log("hi");
+    for(var key in serverData) {
+        if(!_.contains(["name","dueDate","description","type"],key)) continue;
+        var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
+        console.log(id);
+        if(serverData[key] === true) {
+            no = true;
+            $("#"+id).addClass("formInvalid");
+            $("#"+id)[0].value = "";
+            $("#"+id)[0].placeholder = "Missing field";
+        } else {
+            $("#"+id)[0].placeholder = "";
+            $("#"+id).removeClass("formInvalid");
+        }
+    }
+    return no;
 }
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
