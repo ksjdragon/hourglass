@@ -154,7 +154,7 @@ body {
 .noScroll input, .noScroll textarea {
 	font-family: 'Raleway';
 	background-color: #EBEBEB;
-	border: 3px solid #EBEBEB;
+	border: 3px solid #CECECE;
 	border-radius: 3px;
 	resize: none;
 }
@@ -662,7 +662,7 @@ textarea.clickModify {
 .clickModify.dropdown {
 	font-size: 2.5vh;
 	width: 100%;
-	border: 1px solid #666;
+	border: 1px solid #999797;
 
 	background-color: rgba(0,0,0,0.07);
 	cursor: pointer;

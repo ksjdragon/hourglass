@@ -1,29 +1,8 @@
-.change {
-	font-size: 150%;
-	color: #BEBEBE;
-	cursor: pointer;
-}
-
 #profWrapper {
 	width: 100%;
 	height: 100%;
 	overflow-x: auto;
 	overflow-y: hidden;
-}
-
-#profPage .change {
-	font-size: 2.5vh;
-}
-
-.radio {
-	cursor: pointer;
-}
-
-.changeInput {
-	font-size: 100%;
-	padding: 0;
-	color: #BEBEBE;
-	position: relative;
 }
 
 .profTitle {
@@ -38,11 +17,6 @@
 	font-size: 5.5vh;
 	font-weight: 200;
 	padding: 6% 6% 0 8%;
-}
-
-#motda {
-	font-size: 100%;
-	width: 30% !important;
 }
 
 #profPage {
@@ -102,6 +76,10 @@
 	color: #FFF;
 }
 
+#motdBox input {
+	width: 50% !important;
+}
+
 .username {
 	margin-left: 20% !important;
 }
@@ -124,25 +102,6 @@
 	-moz-transition: opacity 0.4s ease; 
 	-ms-transition: opacity 0.4s ease;
 	transition: opacity 0.4s ease; 
-}
-
-.profOptionText {
-	font-size: 150%;
-	min-width: 10%;
-	padding: 20px;
-	margin: 0;
-
-	text-align: center;
-	cursor: pointer;
-	
-	-webkit-transition: box-shadow 0.4s ease;  
-	-moz-transition: box-shadow 0.4s ease; 
-	-ms-transition: box-shadow 0.4s ease;
-	transition: box-shadow 0.4s ease;
-}
-
-.profOptions p:hover {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
 }
 
 #profCards {
@@ -179,6 +138,15 @@
 	text-align: left;
 }
 
+#profWrapper .clickModify span {
+	width: 80%;
+	padding: 3.5% 5% 3.5% 5%;
+}
+
+#profWrapper .clickModify, #profWrapper .optionHolder {
+	width: 90%;
+}
+
 #profInfo {
 	margin-left: 0;
 	border-top: 5px solid #CC4444;
@@ -186,10 +154,6 @@
 
 #about, #preferences {
 	padding: 3% 5% 7% 14%;
-}
-
-.radioContainer {
-	position: relative;
 }
 
 #classes {
@@ -242,11 +206,11 @@
 }
 
 .profFunction i, .profFunction h4 {
-	padding: 1%;
+	padding: 1% !important;
 }
 
 .profFunction h4 {
-	font-size: 120%;
+	font-size: 120% !important;
 }
 
 #searchBar {
@@ -404,10 +368,28 @@
 	position: relative;	
 }
 
+#formContainer .clickModify {
+	background-color: #EBEBEB;
+	border: 1px solid #CECECE;
+}
+
+#formContainer .optionText:hover {
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.2);
+}
+
 .formDiv {
 	margin: 3% 6% 5% 6%;
 	width: 35%;
+	position: relative;
 	display: inline-block;
+}
+
+.formDiv input {
+	width: 90%;
+}
+
+#formContainer .optionHolder {
+	width: 96%;
 }
 
 .creInput {
@@ -415,8 +397,8 @@
 	padding: 3%;
 }
 
-.creOp {
-	margin: 0 !important;
+.classDropdown {
+	cursor: pointer;
 }
 
 .formDiv .-autocomplete-container {
@@ -499,7 +481,7 @@
 }
 
 #createdClasses {
-	width: 500px;
+	width: 600px;
 	height: 73vh;
 	padding: 30px 0 30px 30px;
 

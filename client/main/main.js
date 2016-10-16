@@ -69,6 +69,15 @@ Template.main.rendered = function() {
 
 Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    $(".optionText").hover(
+        function() {
+            console.log("hi");
+            $(this).addClass("selectedOption");
+        },
+        function() {
+            $(this).removeClass("selectedOption");
+        }
+    );
 };
 
 Template.registerHelper('userProfile', () => {
@@ -243,7 +252,23 @@ Template.registerHelper('restrict', (input) => { // Returns characters left for 
 });
 
 Template.registerHelper('selectOptions', (val) => {
-    return options[val]
+    if(val === "grade") {
+        var grade = [];
+        for(var i = 0; i < 5; i++) {
+            var year = (new Date).getFullYear() + i;
+            grade.push( { "val": year, "alias": year.toString() } );
+        }
+        return grade;
+    } else if(val === "school") {
+        var school = [];
+        var schoolList = schools.find().fetch();
+        for(var i = 0; i < schoolList.length; i++) {
+            school.push( { "val": schoolList[i].name, "alias": schoolList[i].name } );
+        }
+        return school;
+    } else {
+        return options[val];
+    }
 });
 
 Template.registerHelper('work', (value) => {// Returns the specified work value.
@@ -254,7 +279,7 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
     } else {
         return formReadable(thisWork,value);
     }
-})
+});
 
 Template.main.helpers({
     /*themeName() {

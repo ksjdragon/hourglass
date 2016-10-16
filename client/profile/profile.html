@@ -11,8 +11,10 @@
 						<img id="profAvatar" src='{{avatar}}' alt="Avatar">
 						<div id="motdBox">
 							<span class="username">{{username}} - </span>
-							<span class="change mo" restrict="50" id="motd">{{motd}}</span>
-							<span id="motdrestrict">{{commentLength}}</span>
+							<input id="description" class="clickModify restrict" style="color:#fff" value="{{description}}" maxLength="50">
+        					<span class="resText">{{restrict 'description'}}</span>
+							<!-- <span class="change mo" restrict="50" id="description">{{description}}</span>
+							<span id="motdrestrict">{{commentLength}}</span> -->
 						</div>
 					</div>
 					<div id="profCards">
@@ -21,87 +23,98 @@
 							<div id="profInfo" class="card" style="background-color:{{divColor 'secondaryColor'}}">
 								<h3 class="profHea">About</h3>
 								<div id="about">
-									<div>
+									<div class="prefWrapper">
 										<p class="profTitle">School Name:</p>
-										<span class="change" id="school">{{school}}</span>
-									</div>
+										<div id="school" class="clickModify dropdown" tabindex="1">
+						                    <span>{{school}}</span>
+						                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+						                </div>
+						                <div class="optionHolder">
+						                    {{#each selectOptions 'school'}}
+						                        {{> option}}
+						                    {{/each}}
+						                </div>
+					                </div>
 									<br>
-									<div class="radioContainer">
-										<div>
+									<div class="prefWrapper">
 										<p class="profTitle">Grade:</p>
-										<span class="change radio" re="readonly" id="grade">{{grade}}</span>
-										</div>
-							            <div class="profOptions">
-						                  	<p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">9th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">10th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">11th</p>
-							                <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">12th</p>
-							            </div>
-						            </div>
+										<div id="grade" class="clickModify dropdown" tabindex="2">
+						                    <span>{{grade}}</span>
+						                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+						                </div>
+						                <div class="optionHolder">
+						                    {{#each selectOptions 'grade'}}
+						                        {{> option}}
+						                    {{/each}}
+						                </div>
+					                </div>
 						        </div>
 							</div>
 							<!-- Card 2 -->
 							<div id="profPreferences" class="card" style="background-color:{{divColor 'secondaryColor'}}">
 								<h3 class="profHea">Preferences</h3>
 								<div id="preferences">
-						            <div class="radioContainer">
-						                <div class="inputRadio">
-						                <p class="profTitle">Theme:</p>
-						                <span class="change radio" re="readonly" id="prefTheme">{{themeName}}</span>
-						                </div>
-						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Light</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Dark</p>
-						                </div>
-						            </div>
-						            <br>
-						            <div class="radioContainer">
-						                <div class="inputRadio">
-						                <p class="profTitle">Default Mode:</p>
-						                <span class="change radio" re="readonly" id="prefMode">{{pref 'mode'}}</span>
-						                </div>
-						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Classes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Calendar</p>
-						                </div>
-						            </div>
-						            <br>
-						            <div class="radioContainer">
-						                <div class="inputRadio">
-						                <p class="profTitle">Hide Homework:</p>
-						                <span class="change radio" re="readonly" id="prefHide">{{pref 'timeHide'}}</span>
-						                </div>
-						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Day</p>
-						                    <P class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">2 Days</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Week</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">1 Month</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Never</p>
-						                </div>
-						            </div>
-						            <br>
-						            <div class="radioContainer">
-						                <div class="inputRadio">
-						                <p class="profTitle">Hide Done:</p>
-						                <span class="change radio" re="readonly" id="prefDone">{{pref 'done'}}</span>
-						                </div>
-						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
-						                </div>
-						            </div>
-						            <br>
-						            <div class="radioContainer">
-						                <div class="inputRadio">
-						                <p class="profTitle">Hide Reported:</p>
-						                <span class="change radio" re="readonly" id="prefReport">{{pref 'hideReport'}}</span>
-						                </div>
-						                <div class="profOptions">
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">Yes</p>
-						                    <p class="profOptionText"  style="background-color:{{divColor 'mainColor'}}">No</p>
-						                </div>
-						            </div>
-						        </div>
+						            <div class="prefWrapper">
+					                    <p class="prefTitle">Theme:</p>
+					                    <div id="theme" class="clickModify dropdown" tabindex="3">
+					                        <span>{{pref 'theme'}}</span>
+					                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+					                    </div>
+					                    <div class="optionHolder">
+					                        {{#each selectOptions 'theme'}}
+					                            {{> option}}
+					                        {{/each}}
+					                    </div>
+					                </div>
+					                <div class="prefWrapper">
+					                    <p class="prefTitle">Default Mode:</p>
+					                    <div id="mode" class="clickModify dropdown" tabindex="4">
+					                        <span>{{pref 'mode'}}</span>
+					                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+					                    </div>
+					                    <div class="optionHolder">
+					                        {{#each selectOptions 'mode'}}
+					                            {{> option}}
+					                        {{/each}}
+					                    </div>
+					                </div>
+					                <div class="prefWrapper">
+					                    <p class="prefTitle">Hide Homework:</p>
+					                    <div id="timeHide" class="clickModify dropdown" tabindex="5">
+					                        <span>{{pref 'timeHide'}}</span>
+					                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+					                    </div>
+					                    <div class="optionHolder">
+					                        {{#each selectOptions 'timeHide'}}
+					                            {{> option}}
+					                        {{/each}}
+					                    </div>
+					                </div>
+					                <div class="prefWrapper">
+					                    <p class="prefTitle">Hide Done:</p>
+					                    <div id="done" class="clickModify dropdown" tabindex="6">
+					                        <span>{{pref 'done'}}</span>
+					                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+					                    </div>
+					                    <div class="optionHolder">
+					                        {{#each selectOptions 'done'}}
+					                            {{> option}}
+					                        {{/each}}
+					                    </div>
+					                </div>
+					                <div class="prefWrapper">
+					                    <p class="prefTitle">Hide Reported:</p>
+					                    <div id="hideReport" class="clickModify dropdown" tabindex="7">
+					                        <span>{{pref 'hideReport'}}</span>
+					                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+					                    </div>
+					                    <div class="optionHolder">
+					                        {{#each selectOptions 'hideReport'}}
+					                            {{> option}}
+					                        {{/each}}
+					                    </div>
+					                </div>
+					            </div>
 							</div>
 						</div>
 						<div id="cardColRight">
@@ -182,7 +195,7 @@
 							              	</div>
 							              	<div class="formDiv">
 								            	<p class="profTitle">Hour:</p>
-								              	<input class="creInput" type="text" name="hour">
+								              	<input class="creInput" type="text">
 								            </div>
 								            <div class="formDiv">
 								            	<p class="profTitle">Teacher:</p>
@@ -190,40 +203,25 @@
 								            </div>
 								            <div class="formDiv">
 								            	<p class="profTitle">Class Name:</p>
-								              	<input class="creInput" type="text" name="classname">
+								              	<input class="creInput" type="text">
 								            </div>
 								            <div class="formDiv">
-									              <p class="profTitle">Privacy:</p>
-
-                                <!-- <script type="text/javascript"> -->
-                                <!-- $(document).ready(function() { -->
-                                <!-- $(".js-example-basic-single").select2(); -->
-                                <!-- $('select').on('select2:open', function (e) { -->
-                                <!-- console.log("hello"); -->
-                                <!-- $('.select2-dropdown').hide(); -->
-                                <!-- setTimeout(function(){ $('.select2-dropdown').slideDown("slow", "easeInOutQuint"); }, 200); -->
-                                <!-- }); -->
-                                <!-- }); -->
-                                <!-- </script>-->
-
-                                <!-- <select class="js-example-basic-single"> -->
-                                <!-- <option value="AL">Alabama</option> -->
-                                <!-- <option value="WY">Wyoming</option> -->
-                                <!-- </select> -->
-								              	<input class="creInput radio op" type="text" name="privacy" readonly>
-								              	<div class="profOptions creOp">
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Public</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Private</p>
-								              	</div>
+									            <p class="profTitle">Privacy:</p>
+								              	<input id="privacy" class="creInput clickModify dropdown" type="text" readonly>
+								                <div class="optionHolder">
+								                    {{#each selectOptions 'privacy'}}
+								                        {{> option}}
+								                    {{/each}}
+								                </div>
 							              	</div>
 							              	<div class="formDiv">
 									            <p class="profTitle">Category:</p>
-								              	<input class="creInput radio op" type="text" name="category" readonly>
-								              	<div class="profOptions creOp">
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Class</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Club</p>
-								                  	<p class="profOptionText cre"  style="background-color:{{divColor 'mainColor'}}">Other</p>
-								              	</div>
+								              	<input id="category" class="creInput clickModify dropdown" type="text" readonly>
+								                <div class="optionHolder">
+								                    {{#each selectOptions 'category'}}
+								                        {{> option}}
+								                    {{/each}}
+								                </div>
 									        </div>
 								        </div>
 								        <h3 id="creSubmit">Submit Request</h3>
@@ -321,3 +319,4 @@
 <template name="teacherList">
     {{teacher}}
 </template>
+
