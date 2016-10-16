@@ -489,7 +489,7 @@ body {
 	cursor: pointer;
 	box-shadow: 0px 5px 5px 1px #666;
 
-	-webkit-transition: background-color 0.4s ease;  
+	-webkit-transition: background-color 0.4 ease;  
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease;
@@ -626,7 +626,16 @@ textarea.clickModify {
 #wName {
 	font-weight: 400;
 	font-size: 2.5vh;
-	width: 100%;
+	width: 70%;
+	margin-right: 2%;
+}
+
+#wDescription {
+	margin-bottom: 1%;
+}
+
+.info {
+	font-size: 130%;
 }
 
 .workTitle, .prefTitle {
@@ -646,13 +655,8 @@ textarea.clickModify {
 	position: relative;
 }
 
-#workNamerestrict, #workDescrestrict, #commentrestrict {
-	display: none;
-}
-
-#workNamerestrict, #workDescrestrict {
-	margin-top: 1.5%;
-	float: right;
+.noneLeft {
+	color: red;
 }
 
 .clickModify.dropdown {
@@ -725,10 +729,6 @@ textarea.clickModify {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.2);
 }
 
-.workOptions p:hover, .prefOptions p:hover {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
-}
-
 #workInfoContainer, #workToggle {
 	height: 100%;
 	display: table-cell;
@@ -753,7 +753,21 @@ textarea.clickModify {
 }
 
 #workInfoNmCont div {
-	margin-bottom: 5%;
+	margin-bottom: 3%;
+}
+
+#workInfo1 div, #workInfo2 div {
+	margin-bottom: 3%;
+}
+
+#workInfo1 {
+	margin: 0;
+	padding: 3% 0 0 7%
+}
+
+#workInfo2 {
+	margin: 0;
+	padding: 0 0 3% 7%;
 }
 
 #wType {

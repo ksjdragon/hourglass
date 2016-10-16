@@ -39,9 +39,7 @@ Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests", false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
-Session.set("currentWorkId",null); // Stores current work Id.
 Session.set("currentWork",null);
-Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
@@ -49,7 +47,7 @@ Session.set("typeFilter", []); // Stores type filters for classes.
 Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
-Session.set("commentRestrict", ""); // Stores text for comment character restriction.
+Session.set("restrictText", {}); // Stores text for comment character restriction.
 
 
 Template.login.rendered = function() {
@@ -236,31 +234,30 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     })[0].alias;
 });
 
-Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
-    return Session.get("commentRestrict");
+Template.registerHelper('restrict', (input) => { // Returns characters left for comment length.
+    var restrict = Session.get("restrictText");
+    $(".resText").removeClass("noneLeft");
+    if(Object.keys(restrict).length === 0) return "";
+    if(restrict[restrict.selected][0] === "0") $(".resText").addClass("noneLeft");
+    return (restrict.selected === input) ? Session.get("restrictText")[input] : "";
 });
 
-function startDragula() {
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
-        moves: function(el, container, handle) {
-            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
-            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
-        }
-    })
-    .on('out', function(el) {
-        var els = document.getElementsByClassName("classWrapper");
-        var final = [];
-        for (var i = 0; i < els.length; i++) {
-            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
-            final.push(classid);
-        }
-    });
-}
+Template.registerHelper('selectOptions', (val) => {
+    return options[val]
+});
 
-
+Template.registerHelper('work', (value) => {// Returns the specified work value.
+    var thisWork = Session.get("currentWork");
+    if (Session.equals("currentWork", null)) return;
+    if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
+        return defaultWork[value];
+    } else {
+        return formReadable(thisWork,value);
+    }
+})
 
 Template.main.helpers({
-    themeName() {
+    /*themeName() {
         var vals = _.values(themeColors);
         var curtheme = Session.get("user").preferences.theme;
         for (var i = 0; i < vals.length; i++) {
@@ -270,7 +267,7 @@ Template.main.helpers({
             }       
         }
         return "Custom";
-    },
+    },*/
     schoolName() { // Finds the name of the user's school.
         if (Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
@@ -381,7 +378,7 @@ Template.main.helpers({
             },
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
-                Session.set("currentWorkId", event.id);
+                Session.set("currentWork", work.findOne({_id: event.id}));
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             eventMouseover: function(event, jsEvent, view) {
@@ -430,18 +427,6 @@ Template.main.helpers({
         }
         return;
     },
-    work(value) { // Returns the specified work value.
-        var thisWork = Session.get("currentWork");
-        if (Session.equals("currentWork", null)) return;
-        if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
-            return defaultWork[value];
-        } else {
-            return formReadable(thisWork,value);
-        }
-    },
-    selectOptions(val) {
-        return options[val];
-    },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
     },
@@ -458,8 +443,9 @@ Template.main.helpers({
         return array;
     },
     inRole() { // Checks correct permissions.
+        if(Session.equals("currentWork",null)) return;
         var thisWork = work.findOne({
-            _id: Session.get("currentWorkId")
+            _id: Session.get("currentWork")._id
         });
         if (Session.get("newWork")) {
             return true;
@@ -591,14 +577,14 @@ Template.main.events({
             attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentWork",{"class": attr});
+        Session.set("currentWork",{class: attr});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
         if (document.getElementById("userDropdown").style.display === "block") return;
         setTimeout(function() {
             openDivFade(document.getElementById("userDropdown"));
-        }, 300);
+        }, 100);
     },
     'click .workCard' (event) { // Display work information on work card click.
         var dom = event.target;
@@ -747,6 +733,9 @@ Template.main.events({
             var newSetting = Session.get("currentWork");
             newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
             Session.set("currentWork", newSetting);
+            serverData = Session.get("currentWork");
+            if(checkMissing()) return;
+            sendData("editWork")
         } else {
             var newSetting = Session.get("user");
             newSetting.preferences[modifyingInput] = (function() {
@@ -765,32 +754,13 @@ Template.main.events({
 
         $(".selectedOption").removeClass("selectedOption");
     },
-    'click #workComment' (event) {
-        var restrict = event.target.maxLength;
-        Session.set("commentRestrict", restrict - event.target.value.length.toString() + " characters left");
-        var text = document.getElementById("commentrestrict");
-        text.style.display = "initial";
-        text.style.color = "#7E7E7E";
-    },
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
-        var text;
-        if (event.target.id === "workComment") {
-            text = document.getElementById("commentrestrict");
-        } else if (event.target.id === "requestArea") {
-            text = document.getElementById("requestrestrict");
-        } else {
-            text = document.getElementById(Session.get("modifying") + "restrict");
-        }
-        text.style.color = "#7E7E7E";
-        if (chars === restrict) { // Don't display if nothing in comment.
-            Session.set("commentRestrict", "");
-            return;
-        } else if (chars === 0) {
-            text.style.color = "#FF1A1A"; // Make text red if 0 characters left.
-        }
-        Session.set("commentRestrict", chars.toString() + " characters left");
+        var newSetting = Session.get("restrictText");
+        newSetting[event.target.id] = (chars === restrict) ? "" : (chars.toString() + ((chars === 1) ? " character " : " characters ") + "left");
+        newSetting.selected = event.target.id;
+        Session.set("restrictText", newSetting);
     },
     'focus #wDueDate' () { // Open date picker.
         $('#wDueDate').datepicker({
@@ -804,14 +774,14 @@ Template.main.events({
     },
     // WORK OVERLAY BUTTONS
     'click #commentSubmit' (event) { // Click to submit a comment.
-        workId = Session.get("currentWorkId");
+        workId = Session.get("currentWork")._id;
         var input = document.getElementById('workComment');
         comment = input.value;
         input.value = "";
-        Session.set("commentRestrict", null);
         if (comment !== "") {
             document.getElementById('workComment').value = "";
-            Meteor.call('addComment', [comment, workId]);
+            serverData = [comment, workId];
+            sendData("addComment");
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
@@ -822,7 +792,7 @@ Template.main.events({
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #workDelete' () {
-        serverData = Session.get("currentWorkId");
+        serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
@@ -851,7 +821,7 @@ Template.main.events({
             var date = calWorkDate.split("-");
             date = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
             Session.set("newWork", true);
-            Session.get("currentWorkId", classid);
+            Session.set("currentWork", {class: classid, dueDate: date});
             openDivFade(document.getElementsByClassName("overlay")[0]);
         } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
@@ -917,6 +887,8 @@ Template.main.events({
     }
 });
 
+// Other Functions
+
 function openDivFade(div) {
     div.style.display = "block";
     div.style.opacity = "0";
@@ -942,13 +914,12 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
             }));
         }
     });
-    
-
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
     var data = getHomeworkFormData();   
     Session.set("currentWork", data);
+    Session.set("restrictText", {});
     $("#"+modifyingInput).css('cursor','pointer');
     if(!Session.get("newWork")) {
         serverData = Session.get("currentWork");
@@ -965,7 +936,6 @@ function getHomeworkFormData() { // Get all data relating to work creation.
         var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
         var thisData = (function() {
             if(title === "type") {
-                console.log($("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase())
                 return $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase();
             } else if (title === "dueDate") {
                 var val = $("#"+inputs[i])[0].value;
@@ -982,12 +952,10 @@ function getHomeworkFormData() { // Get all data relating to work creation.
 
 function checkMissing() {
     var no = false;
-    console.log("hi");
     for(var key in serverData) {
         if(!_.contains(["name","dueDate","description","type"],key)) continue;
         var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
-        console.log(id);
-        if(serverData[key] === true) {
+        if(serverData[key] === true || serverData[key] === "") {
             no = true;
             $("#"+id).addClass("formInvalid");
             $("#"+id)[0].value = "";
@@ -1094,4 +1062,21 @@ function formReadable(input, val) { // Makes work information readable by users.
                 _id: input.creator
             }).profile.name;
     }
+}
+
+function startDragula() {
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
+        moves: function(el, container, handle) {
+            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+        }
+    })
+    .on('out', function(el) {
+        var els = document.getElementsByClassName("classWrapper");
+        var final = [];
+        for (var i = 0; i < els.length; i++) {
+            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+            final.push(classid);
+        }
+    });
 }

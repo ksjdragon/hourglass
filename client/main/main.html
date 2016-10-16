@@ -146,46 +146,19 @@
             <div id="editWork" style="width:{{screen '.4'}}">
                 <div id="editWorkCont" style="background-color:{{divColor 'mainColor'}};border-top:10px solid {{work 'typeColor'}}">
                     <div id="workInfoContainer">
-                        <div id="workNameDiv">
-                            <span id="workNamerestrict">{{commentLength}}</span>
-                            <input id="wName" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'name'}}" tabindex="10">
-                        </div>
-                        <div id="workInfoNmCont">
-                            <div>
-                                <span class="workTitle">Due Date:</span><br>
-                                <input id="wDueDate" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}" tabindex="11" readonly>
-                            </div>
-                            <div>
-                                <span class="workTitle">Description:</span><br>
-                                <textarea id="wDescription" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'description'}}" rows="5" tabindex="12"></textarea>
-                            </div>
-                            <div>
-                                <span class="workTitle">Type:</span>
-                                <div id="typeWrapper">
-                                    <div id="wType" class="clickModify dropdown" tabindex="13">
-                                        <span>{{work 'type'}}</span>
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="optionHolder type">
-                                        {{#each selectOptions 'type'}}
-                                            {{> option}}
-                                        {{/each}}
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- <div id="workAttach">Attach other files</div>
-                            <div id="workAttachmentHolder">
-                                {{#each work 'attachments'}}
-                                    <a href={{link}}>{{filename}}</a>
-                                {{/each}}
-                            </div> -->
+                        {{#if inRole}}
+                            {{> workDisplayEdit}}
+                        {{else}}
+                            {{> workDisplay}}
+                        {{/if}}
+                        <div id="workInfo2">
                             {{#unless newWork}}
                                 <div id="workComments">
                                     <h3>Comments</h3>
                                     <div>
                                         <textarea id="workComment" class="restrict" rows="4" cols="50" maxlength="200"></textarea><br>
                                         <div>
-                                            <span id="commentrestrict">{{commentLength}}</span>
+                                            <span class="resText">{{restrict 'workComment'}}</span>
                                             <div id="commentSubmit">Submit</div>
                                         </div>
                                     </div>
@@ -273,7 +246,7 @@
             <p>Send an help request, feature, or bug report.</p>
             <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
             <div id="requestCont" style="background-color:{{divColor 'secondaryColor'}}">
-                <span id="requestrestrict">{{commentLength}}</span>
+                <span class="resText">{{restrict 'requestArea'}}</span>
                 <div id="requestSubmit">Send</div>
             </div>
         </div>
@@ -374,4 +347,69 @@
 
 <template name="option">
     <p class="optionText" style="background-color:{{divColor 'mainColor'}}">{{alias}}</p>
+</template>
+
+<template name="workDisplay">
+    <div id="workNameDiv">
+        <span id="wName" class="info">{{work 'name'}}</span>
+    </div>
+    <div id="workInfo1">
+        <div>
+            <span class="workTitle">Due Date:</span><br>
+            <span id="wDescription" class="info">{{work 'dueDate'}}</span>
+        </div>
+        <div>
+            <span class="workTitle">Description:</span><br>
+            <span id="wDueDate" class="info">{{work 'description'}}</span>
+        </div>
+        <div>
+            <span class="workTitle">Type:</span>
+            <span id="wType" class="info">{{work 'type'}}</span>
+        </div>
+        <!-- <div id="workAttach">Attach other files</div>
+        <div id="workAttachmentHolder">
+            {{#each work 'attachments'}}
+                <a href={{link}}>{{filename}}</a>
+            {{/each}}
+        </div> -->
+    </div>
+</template>
+
+<template name="workDisplayEdit">
+    <div id="workNameDiv">
+        <input id="wName" class="clickModify restrict" style="color:{{divColor 'textColor'}}" value="{{work 'name'}}" tabindex="10" maxLength="50">
+        <span class="resText">{{restrict 'wName'}}</span>
+    </div>
+    <div id="workInfo1">
+        <div>
+            <span class="workTitle">Due Date:</span><br>
+            <input id="wDueDate" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}" tabindex="11" readonly>
+        </div>
+        <div>
+            <span class="workTitle">Description:</span><br>
+            <textarea id="wDescription" class="clickModify restrict" style="color:{{divColor 'textColor'}}" value="{{work 'description'}}" rows="5" tabindex="12" maxLength="150"></textarea>
+            <span style="opacity:0">.</span>
+            <span class="resText">{{restrict 'wDescription'}}</span>
+        </div>
+        <div>
+            <span class="workTitle">Type:</span>
+            <div id="typeWrapper">
+                <div id="wType" class="clickModify dropdown" tabindex="13">
+                    <span>{{work 'type'}}</span>
+                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                </div>
+                <div class="optionHolder type">
+                    {{#each selectOptions 'type'}}
+                        {{> option}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        <!-- <div id="workAttach">Attach other files</div>
+        <div id="workAttachmentHolder">
+            {{#each work 'attachments'}}
+                <a href={{link}}>{{filename}}</a>
+            {{/each}}
+        </div> -->
+    </div>
 </template>
