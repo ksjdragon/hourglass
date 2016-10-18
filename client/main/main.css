@@ -99,11 +99,6 @@ body {
 	position: absolute;
 	top: 0;
 	z-index: 50;
-
-	-webkit-transition: background-color 0.5s ease;  
-	-moz-transition: background-color 0.5s ease; 
-	-ms-transition: background-color 0.5s ease;
-	transition: background-color 0.5s ease; 
 }
 
 #mainHeader h1, #mainHeader h2 {
@@ -237,10 +232,10 @@ body {
 	z-index: 5;
 	overflow: hidden;
 	
-	-webkit-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease;  
-	-moz-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease; 
-	-ms-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease;
-	transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease; 
+	-webkit-transition: left 0.5s ease, right 0.5s ease;  
+	-moz-transition: left 0.5s ease, right 0.5s ease 
+	-ms-transition: left 0.5s ease, right 0.5s ease;
+	transition: left 0.5s ease, right 0.5s ease; 
 }
 
 #optionsContainer {
