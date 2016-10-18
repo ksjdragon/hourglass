@@ -13,8 +13,6 @@
 							<span class="username">{{username}} - </span>
 							<input id="description" class="clickModify restrict" style="color:#fff" value="{{description}}" maxLength="50">
         					<span class="resText">{{restrict 'description'}}</span>
-							<!-- <span class="change mo" restrict="50" id="description">{{description}}</span>
-							<span id="motdrestrict">{{commentLength}}</span> -->
 						</div>
 					</div>
 					<div id="profCards">
@@ -29,7 +27,7 @@
 						                    <span>{{school}}</span>
 						                    <i class="fa fa-caret-down" aria-hidden="true"></i>
 						                </div>
-						                <div class="optionHolder">
+						                <div class="optionHolder smallText">
 						                    {{#each selectOptions 'school'}}
 						                        {{> option}}
 						                    {{/each}}
