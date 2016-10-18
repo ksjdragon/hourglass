@@ -478,6 +478,7 @@ Template.profile.events({
         var lastSel = $(".selectedOption");
 
         if (event.keyCode === 38) {
+            event.preventDefault();
             if (lastSel === undefined) {
                 last.addClass("selectedOption");
             } else {
@@ -490,6 +491,7 @@ Template.profile.events({
                 }
             }
         } else if (event.keyCode === 40) {
+            event.preventDefault();
             if (lastSel === undefined) {
                 first.addClass("selectedOption");
                 last.removeClass("selectedOption");
