@@ -706,6 +706,7 @@ Template.main.events({
         }
     },
     'keydown .dropdown' (event) {
+        event.preventDefault();
         var first = $("#"+modifyingInput).next().children("p:first-child");
         var last = $("#"+modifyingInput).next().children("p:last-child"); 
         var next = $(".selectedOption").next();

@@ -151,8 +151,8 @@
                         {{else}}
                             {{> workDisplay}}
                         {{/if}}
-                        <div id="workInfo2">
-                            {{#unless newWork}}
+                        {{#unless newWork}}
+                            <div id="workInfo2">
                                 <div id="workComments">
                                     <h3>Comments</h3>
                                     <div>
@@ -167,9 +167,9 @@
                                             {{> comment}}
                                         {{/each}}
                                     </div>
-                                </div>
-                            {{/unless}}
-                        </div>
+                                </div> 
+                            </div>
+                        {{/unless}}
                     </div>
                     {{#unless newWork}}
                         <div id="workToggle">

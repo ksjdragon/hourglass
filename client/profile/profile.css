@@ -80,28 +80,12 @@
 	width: 50% !important;
 }
 
+#description:hover {
+	background-color: rgba(255,255,255,0.1);
+}
+
 .username {
 	margin-left: 20% !important;
-}
-
-#motdrestrict {
-	margin-right: 1% !important;
-	float: right;
-}
-
-.profOptions {
-	box-shadow: 2px 2px 5px 3px #666;
-
-	position: absolute;
-	display: none;
-	z-index: 5;
-
-	opacity: 0;
-
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease; 
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease; 
 }
 
 #profCards {
