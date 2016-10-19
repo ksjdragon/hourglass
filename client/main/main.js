@@ -760,7 +760,7 @@ Template.main.events({
             newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
             Session.set("currentWork", newSetting);
             serverData = Session.get("currentWork");
-            if(checkMissing()) return;
+            if(checkMissing() || Session.get("newWork")) return;
             sendData("editWork")
         } else {
             var newSetting = Session.get("user");
