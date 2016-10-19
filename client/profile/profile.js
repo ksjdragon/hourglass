@@ -588,13 +588,6 @@ Template.profile.events({
                 Session.set("autocompleteDivs", divs);
             }
         } catch (err) {}
-    },
-    'mouseenter .optionText' (event) {
-        console.log("hi");
-        event.target.className += " selectedOption";
-    },
-    'mouseleave .optionText' (event) {
-        event.target.className.replace(" selectedOption", "");
     }
 });
 
