@@ -71,7 +71,6 @@ Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     $(".optionText").hover(
         function() {
-            console.log("hi");
             $(this).addClass("selectedOption");
         },
         function() {
