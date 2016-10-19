@@ -274,7 +274,7 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
     var thisWork = Session.get("currentWork");
     if (Session.equals("currentWork", null)) return;
     if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
-        return defaultWork[value];
+        return (value === "dueDate") ? getReadableDate(new Date((new Date()).valueOf() + 1000*3600*24)) : defaultWork[value];
     } else {
         return formReadable(thisWork,value);
     }
@@ -965,7 +965,7 @@ function getHomeworkFormData() { // Get all data relating to work creation.
                 return $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase();
             } else if (title === "dueDate") {
                 var val = $("#"+inputs[i])[0].value;
-                return (val.includes(defaultWork[title].slice(0,-3))) ? val : toDate(val);
+                return toDate(val);
             } else {
                 return $("#"+inputs[i])[0].value;
             }
@@ -979,7 +979,7 @@ function getHomeworkFormData() { // Get all data relating to work creation.
 function checkMissing() {
     var no = false;
     for(var key in serverData) {
-        if(!_.contains(["name","dueDate","description","type"],key)) continue;
+        if(!_.contains(["name","dueDate","type"],key)) continue;
         var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
         if(serverData[key] === true || serverData[key] === "") {
             no = true;
