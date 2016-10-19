@@ -274,7 +274,7 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
     var thisWork = Session.get("currentWork");
     if (Session.equals("currentWork", null)) return;
     if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
-        return (value === "dueDate") ? getReadableDate(new Date((new Date()).valueOf() + 1000*3600*24)) : defaultWork[value];
+        return defaultWork[value];
     } else {
         return formReadable(thisWork,value);
     }
@@ -532,11 +532,10 @@ Template.main.events({
 
         if (e === "overlay") { // Overlay closing.
             closeDivFade(document.getElementsByClassName("overlay")[0]);
+            Session.set("newWork",false);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
-            $('.req').css("color", "");
-            Session.set("commentRestrict", null);
         }
 
         if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
@@ -601,7 +600,7 @@ Template.main.events({
             attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentWork",{class: attr});
+        Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
@@ -760,7 +759,12 @@ Template.main.events({
             newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
             Session.set("currentWork", newSetting);
             serverData = Session.get("currentWork");
-            if(checkMissing() || Session.get("newWork")) return;
+
+            $("#" + modifyingInput).next()
+            .fadeOut(250, "linear");
+            $(".selectedOption").removeClass("selectedOption");
+            if(Session.get("newWork")) return;
+            if(checkMissing()) return;
             sendData("editWork")
         } else {
             var newSetting = Session.get("user");
@@ -776,7 +780,7 @@ Template.main.events({
         }
 
         $("#" + modifyingInput).next()
-        .fadeOut(250, "linear");;
+        .fadeOut(250, "linear");
 
         $(".selectedOption").removeClass("selectedOption");
     },
@@ -931,6 +935,11 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
+    if(funcName === "editWork" || funcName === "createWork") {
+        for(var key in serverData) {
+            if(serverData[key] === true) serverData[key] = "";
+        }
+    }
     Meteor.call(funcName, serverData, function(error, result) {
         serverData = null;
         currWork = Session.get("currentWork");
@@ -971,17 +980,27 @@ function getHomeworkFormData() { // Get all data relating to work creation.
             }
         })();
         // True signifies missing field to prevent missing if value is'Missing field.'
-        data[title] = (thisData.toString().includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? true : thisData;
+        data[title] =  data[title] = (thisData.toString().includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? true : thisData;
     }
     return data;
 }
 
 function checkMissing() {
+    var required = ["name","dueDate","type"]
     var no = false;
+    if(serverData === null || Object.keys(serverData).length < 4) {
+        for(var i = 0; i < required.length; i++) {
+            var id = "w" + required[i].charAt(0).toUpperCase() + required[i].slice(1);
+            $("#"+id).addClass("formInvalid");
+            $("#"+id)[0].value = "";
+            $("#"+id)[0].placeholder = "Missing field";
+        }
+        return true;
+    }
     for(var key in serverData) {
-        if(!_.contains(["name","dueDate","type"],key)) continue;
+        if(!_.contains(required, key)) continue;
         var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
-        if(serverData[key] === true || serverData[key] === "") {
+        if(serverData[key] === true || serverData[key] === "" || serverData[key] === undefined) {
             no = true;
             $("#"+id).addClass("formInvalid");
             $("#"+id)[0].value = "";
