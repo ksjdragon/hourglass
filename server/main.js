@@ -494,7 +494,7 @@ Meteor.methods({
         current.banner = "/Banners/defaultcover.jpg";
         current.classes = [userId];
         current.preferences = {
-            "theme": themeColors.light,
+            "theme": themeColors.lux,
             "mode": "classes",
             "timeHide": 1,
             "done": true,

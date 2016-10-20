@@ -99,11 +99,6 @@ body {
 	position: absolute;
 	top: 0;
 	z-index: 50;
-
-	-webkit-transition: background-color 0.5s ease;  
-	-moz-transition: background-color 0.5s ease; 
-	-ms-transition: background-color 0.5s ease;
-	transition: background-color 0.5s ease; 
 }
 
 #mainHeader h1, #mainHeader h2 {
@@ -154,7 +149,7 @@ body {
 .noScroll input, .noScroll textarea {
 	font-family: 'Raleway';
 	background-color: #EBEBEB;
-	border: 3px solid #EBEBEB;
+	border: 3px solid #CECECE;
 	border-radius: 3px;
 	resize: none;
 }
@@ -237,10 +232,10 @@ body {
 	z-index: 5;
 	overflow: hidden;
 	
-	-webkit-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease;  
-	-moz-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease; 
-	-ms-transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease;
-	transition: left 0.5s ease, right 0.5s ease, background-color 0.5s ease; 
+	-webkit-transition: left 0.5s ease, right 0.5s ease;  
+	-moz-transition: left 0.5s ease, right 0.5s ease 
+	-ms-transition: left 0.5s ease, right 0.5s ease;
+	transition: left 0.5s ease, right 0.5s ease; 
 }
 
 #optionsContainer {
@@ -476,8 +471,8 @@ body {
 	white-space: normal;
 	word-break: break-all;
 
-	-webkit-filter: none;
-	filter: none;
+	-webkit-filter: none !important;
+	filter: none !important;
 }
 
 .mainClassHour {
@@ -489,7 +484,7 @@ body {
 	cursor: pointer;
 	box-shadow: 0px 5px 5px 1px #666;
 
-	-webkit-transition: background-color 0.4s ease;  
+	-webkit-transition: background-color 0.4 ease;  
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease;
@@ -555,8 +550,8 @@ body {
 	width: 50%;
 	margin-top: 0;
 	
-	-webkit-filter: none;
-	filter: none;
+	-webkit-filter: none !important;
+	filter: none !important;
 
 	display: table-cell;
 	white-space: normal;
@@ -574,10 +569,12 @@ body {
 }
 
 input.clickModify, textarea.clickModify {
+	width: 100%;
 	font-size: 2.2vh;
 	font-weight: 200;
 	background-color: rgba(0,0,0,0);
 	border-color: rgba(0,0,0,0);
+	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease, border-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease, border-color 0.4s ease; 
@@ -586,9 +583,8 @@ input.clickModify, textarea.clickModify {
 }
 
 input.clickModify:hover, textarea.clickModify:hover {
-	cursor: pointer;
-	background-color: rgba(255,255,255,0.1);
-	border-color: rgba(255,255,255,0.1);;
+	background-color: rgba(0,0,0,0.1);
+	
 }
 
 textarea.clickModify {
@@ -607,10 +603,13 @@ textarea.clickModify {
 #editWorkCont {
 	width: 100%;
 	height: 100%;
-	min-height: 68vh;
 
 	position: relative;
 	display: table;
+}
+
+#workInfoContainer {
+	min-height: 68vh;
 }
 
 #workTypeBar {
@@ -625,7 +624,16 @@ textarea.clickModify {
 #wName {
 	font-weight: 400;
 	font-size: 2.5vh;
-	width: 100%;
+	width: 70%;
+	margin-right: 2%;
+}
+
+#wDescription {
+	margin-bottom: 1%;
+}
+
+.info {
+	font-size: 130%;
 }
 
 .workTitle, .prefTitle {
@@ -645,20 +653,16 @@ textarea.clickModify {
 	position: relative;
 }
 
-#workNamerestrict, #workDescrestrict, #commentrestrict {
-	display: none;
-}
-
-#workNamerestrict, #workDescrestrict {
-	margin-top: 1.5%;
-	float: right;
+.noneLeft {
+	color: red;
 }
 
 .clickModify.dropdown {
 	font-size: 2.5vh;
 	width: 100%;
+	border: 1px solid #999797;
 
-	background-color: rgba(0,0,0,0.15);
+	background-color: rgba(0,0,0,0.07);
 	cursor: pointer;
 	outline: 0;
 
@@ -669,7 +673,7 @@ textarea.clickModify {
 }
 
 .clickModify.dropdown:hover {
-	background-color: rgba(0,0,0,0.07);
+	background-color: rgba(0,0,0,0.03);
 }
 
 .clickModify.dropdown span {
@@ -688,11 +692,14 @@ textarea.clickModify {
 
 .optionHolder {
 	width: 100%;
+	margin-top: -1px;
 
 	border: 1px solid #666;
+	border-top: none;
+
 	position: absolute;
-	
 	z-index: 5;
+	display: none;
 
 	opacity: 0;
 
@@ -702,12 +709,8 @@ textarea.clickModify {
 	transition: opacity 0.4s ease; 
 }
 
-.optionHolder:hover {
-	background-color: rgba(255,255,255,0.05);
-}
-
 .optionText {
-	font-size: 150%;
+	font-size: 120%;
 	min-width: 10%;
 	padding: 4% 7% 4% 7%;
 	margin: 0;
@@ -720,12 +723,8 @@ textarea.clickModify {
 	transition: box-shadow 0.4s ease;
 }
 
-.optionText:hover {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
-}
-
-.workOptions p:hover, .prefOptions p:hover {
-	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
+.selectedOption {
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.2);
 }
 
 #workInfoContainer, #workToggle {
@@ -752,12 +751,36 @@ textarea.clickModify {
 }
 
 #workInfoNmCont div {
-	margin-bottom: 5%;
+	margin-bottom: 3%;
+}
+
+#workInfo1 div, #workInfo2 div {
+	margin-bottom: 3%;
+}
+
+#workInfo1 {
+	margin: 0;
+	padding: 3% 0 0 7%
+}
+
+#workInfo2 {
+	margin: 0;
+	padding: 0 0 3% 7%;
 }
 
 #wType {
 	margin: 0 !important;
-	padding: 2%;
+}
+
+#typeWrapper {
+	margin: 0 !important;
+	min-width: 56%;
+	position: relative;
+	display: inline-block;
+}
+
+#typeWrapper .optionText:hover {
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.2);
 }
 
 .datepicker {
@@ -768,11 +791,7 @@ textarea.clickModify {
 }
 
 .type {
-	width: 95%;
-	margin-left: 1%;
-}
-.type p {
-	padding: 3% 5% 3% 5%;
+	margin: -1px 0 0 0 !important;
 }
 
 #workComments h3 {

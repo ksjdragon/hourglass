@@ -4,7 +4,7 @@ import {
 } from 'meteor/templating';
 
 var openValues = {
-    "owned": "-540px",
+    "owned": "-650px",
     "priv": "-160px"
 };
 
@@ -25,7 +25,7 @@ Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
 
 Template.profile.helpers({
-    themeName() {
+/*    themeName() {
         var vals = _.values(themeColors);
         var curtheme = Session.get("user").preferences.theme;
         for (var i = 0; i < vals.length; i++) {
@@ -35,7 +35,7 @@ Template.profile.helpers({
             }
         }
         return "Custom";
-    },
+    },*/
     classSettings() { // Returns autocomplete array for classes.
         return {
             position: "bottom",
@@ -86,7 +86,7 @@ Template.profile.helpers({
     username() { //Returns current user's username
         return Session.get("user").name;
     },
-    motd() { // Returns the current user's description
+    description() { // Returns the current user's description
         if (Session.get("user").description !== undefined && Session.get("user").description !== null && Session.get("user").description !== "") return Session.get("user").description;
         return "Say something about yourself!";
     },
@@ -95,10 +95,10 @@ Template.profile.helpers({
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null && Session.get("user").grade !== "") return Session.get("user").grade + "th";
+        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null && Session.get("user").grade !== "") return Session.get("user").grade;
         return "Click here to edit...";
     },
-    classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) 
+    classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) ( Only your school)
         var array = classes.find({
             status: {
                 $eq: true
@@ -107,7 +107,10 @@ Template.profile.helpers({
                 $eq: false
             },
             _id: {
-                $nin: Meteor.user().profile.classes
+                $nin: Session.get("user").classes
+            },
+            school: {
+                $eq: Session.get("user").school
             }
         }, {
             sort: {
@@ -136,12 +139,12 @@ Template.profile.helpers({
         return "0px";
     },
     profClassTabColor(status) {  // Change this [Supposed to show the current mode that's selected via color]    
-                               if (Session.equals("profClassTab", status)) {
-                                   return Meteor.user().profile.preferences.theme.modeHighlight;
-                               } else {
-                                   return;
-                               }
-                              },
+        if (Session.equals("profClassTab", status)) {
+           return Meteor.user().profile.preferences.theme.modeHighlight;
+        } else {
+           return;
+        }
+    },
     profClassTab(tab) { // Tells current class
         if (Session.equals("profClassTab", tab)) {
             return true;
@@ -174,23 +177,29 @@ Template.profile.helpers({
 });
 
 Template.profile.events({
-    'click' (event) { // Whenever a click happens
-        var modifyingInput = Session.get("modifying");
-        if (event.target.id !== modifyingInput &&
-            event.target.id !== modifyingInput + "a" &&
-            !Session.equals("modifying", null) &&
-            !event.target.parentNode.className.includes("profOptions")) {
-            closeInput(modifyingInput);
-        }
-        if (!event.target.className.includes("radio") &&
-            !event.target.parentNode.className.includes("profOptions") &&
-            event.target.readOnly !== true) {
-            for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
-                try {
-                    closeDivFade(document.getElementsByClassName("profOptions")[i]);
-                } catch (err) {}
+    'click' (event) { // Whenever a click happens'
+        var e = event.target.className;
+        if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
+            if (!(e.includes("optionHolder") || e.includes("optionText"))) {
+                if(document.getElementById(modifyingInput).className.includes("dropdown")) {
+                    $(".optionHolder")
+                    .fadeOut(250, "linear");
+
+                    $(".selectedOption").removeClass("selectedOption");
+                } else {
+                    if(modifyingInput === "description") {
+                        Session.set("restrictText", {});
+                        $("#"+modifyingInput).css('cursor','pointer');
+                        var newSetting = Session.get("user");
+                        newSetting[modifyingInput] = document.getElementById(modifyingInput).value;
+                        serverData = newSetting;
+                        sendData("editProfile");
+                    } 
+                }
+                modifyingInput = null;
             }
         }
+
         if (!document.getElementById("createdClasses").contains(event.target) &&
             !Session.equals("code", null) &&
             !event.target.className.includes("fa-times-circle-o")) {
@@ -219,39 +228,39 @@ Template.profile.events({
         }
     },
     'click .addClass' () { 
-                          if (Session.equals("profClassTab", "addClass")) return;         
-                          var functionHolder = document.getElementById("profClassInfoHolder");
-                          closeDivFade(functionHolder);
-                          var div = document.getElementById("profClasses");
-                          div.style.height = "50%";
-                          setTimeout(function() {            
-                                                 Session.set("profClassTab", "addClass");
-                                                 div.style.height = "90%";          
-                                                 openDivFade(functionHolder);        
-                                                }, 400);
-                         },
-        'click .manageClass' () { 
-                                 if (Session.equals("profClassTab", "manClass")) return;      
-                                 var functionHolder = document.getElementById("profClassInfoHolder");
-                                 closeDivFade(functionHolder);
-                                 var div = document.getElementById("profClasses");
-                                 div.style.height = "50%";     
-                                 setTimeout(function() {            
-                                                        Session.set("profClassTab", "manClass"); 
-                                                        div.style.height = "90%";           
-                                                        openDivFade(functionHolder);        
-                                                       }, 400);
-                                },
-        'click .createClass' () {
+        if (Session.equals("profClassTab", "addClass")) return;         
+        var functionHolder = document.getElementById("profClassInfoHolder");
+        closeDivFade(functionHolder);
+        var div = document.getElementById("profClasses");
+        div.style.height = "50%";
+        setTimeout(function() {            
+        Session.set("profClassTab", "addClass");
+            div.style.height = "70%";          
+            openDivFade(functionHolder);        
+        }, 400);
+     },
+    'click .manageClass' () { 
+        if (Session.equals("profClassTab", "manClass")) return;      
+        var functionHolder = document.getElementById("profClassInfoHolder");
+        closeDivFade(functionHolder);
+        var div = document.getElementById("profClasses");
+        div.style.height = "50%";     
+        setTimeout(function() {            
+            Session.set("profClassTab", "manClass"); 
+            div.style.height = "70%";           
+            openDivFade(functionHolder);        
+        }, 400);
+    },
+    'click .createClass' () {
         if (Session.equals("profClassTab", "creClass")) return;
         var functionHolder = document.getElementById("profClassInfoHolder");        
         closeDivFade(functionHolder);
         var div = document.getElementById("profClasses");
         div.style.height = "50%";
         setTimeout(function() {
-            Session.set("profClassTab", "creClass");
-            div.style.height = "90%";
-            openDivFade(functionHolder);
+                Session.set("profClassTab", "creClass");
+                div.style.height = "70%";
+                openDivFade(functionHolder);
         }, 400);
     },
     'click .classBox' (event) { // When you click on a box that holds class
@@ -281,6 +290,7 @@ Template.profile.events({
         } else {
             var attribute = event.target.getAttribute("classid");
         }
+        if(attribute === Meteor.userId()) return;
         Session.set("selectedClass", null);
         var usertype = ["moderators", "banned"];
         var array = classes.findOne({
@@ -364,7 +374,7 @@ Template.profile.events({
         input.className.replace(" formInvalid", "");
         var value = input.value;
         var classid = document.getElementById("createdClasses").getAttribute("classid");
-        input.value = "";
+        input.value = " ";
         if (checkUser(value, classid)) {
             input.className += " formInvalid";
             input.placeholder = "Not a valid user";
@@ -446,102 +456,108 @@ Template.profile.events({
         confirm = null;
     },
     // INPUT HANDLING
-    'click .change' (event) { // Click changable inputs. Creates an input where the span is.
-        var ele = event.target;
-        var modifyingInput = Session.get("modifying");
-        if (ele.id !== modifyingInput && modifyingInput !== null) closeInput(modifyingInput);
+    'focus .clickModify' (event) {
+        $(".optionHolder")
+        .fadeOut(250, "linear");
 
-        Session.set("modifying", ele.id);
-        var dim = ele.getBoundingClientRect();
-        ele.style.display = "none";
-        var input = document.createElement("input");
-
-        if (ele.getAttribute("type") !== null) {
-            input.type = ele.getAttribute("type");
-        } else {
-            input.type = "text";
-        }
-        input.value = ele.childNodes[0].nodeValue;
-        input.className = "changeInput";
-        input.style.height = 0.9 * dim.height.toString() + "px";
-        input.style.width = "55%";
-        input.style.padding = "0.1%";
-        input.id = ele.id + "a";
-        input.setAttribute("opc", ele.getAttribute("opc"));
-        ele.parentNode.appendChild(input);
-        if (ele.getAttribute("re") == "readonly") {
-            input.readOnly = true;
-            input.className += " op";
-            input.style.cursor = "pointer";
-        } else {
-            input.select();
-        }
-        input.focus();
-        var restrict = ele.getAttribute("restrict");
-        if (restrict !== null) {
-            input.maxLength = restrict;
-            input.className += " restrict";
-            Session.set("commentRestrict", restrict - input.value.length.toString() + " characters left");
-            var text = document.getElementById(Session.get("modifying") + "restrict");
-            text.style.display = "inherit";
-            text.style.color = "#7E7E7E";
+        if(modifyingInput !== null) {
+            if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
+        } 
+        modifyingInput = event.target.id;
+        if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
+            event.target.select();
+            event.target.style.cursor = "text";   
         }
     },
-    'click .radio' (event) { // Click dropdown input. Opens the dropdown menu.
-        var op = event.target;
-        try {
-            for (var i = 0; i < document.getElementsByClassName("profOptions").length; i++) {
-                var curr = document.getElementsByClassName("profOptions")[i];
-                if (curr.childNodes[1] !== op.nextSibling.nextSibling.childNodes[1] &&
-                    curr.childNodes[1] !== op.parentNode.parentNode.childNodes[3].childNodes[1]) {
-                    closeDivFade(document.getElementsByClassName("profOptions")[i]);
+    'keydown .dropdown' (event) {
+        event.preventDefault();
+        var first = $("#"+modifyingInput).next().children("p:first-child");
+        var last = $("#"+modifyingInput).next().children("p:last-child"); 
+        var next = $(".selectedOption").next();
+        var prev = $(".selectedOption").prev();
+        var lastSel = $(".selectedOption");
+
+        if (event.keyCode === 38) {
+            event.preventDefault();
+            if (lastSel === undefined) {
+                last.addClass("selectedOption");
+            } else {
+                if (prev.length === 0) {
+                    last.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");  
+                } else {
+                    prev.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
                 }
             }
-        } catch (err) {}
-
-        if (event.target.className.includes("op")) {
-            openDivFade(op.nextSibling.nextSibling);
-        } else {
-            openDivFade(op.parentNode.parentNode.childNodes[3]);
+        } else if (event.keyCode === 40) {
+            event.preventDefault();
+            if (lastSel === undefined) {
+                first.addClass("selectedOption");
+                last.removeClass("selectedOption");
+            } else {
+                if (next.length === 0) {
+                    first.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                } else {
+                    next.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                }
+            }    
+        } else if (event.keyCode === 13) {
+            lastSel[0].click();
         }
     },
-    'keydown input' (event) { // Restricts characters for certain inputs.
-        var modifyingInput = Session.get("modifying");
-        if (event.keyCode == 13) {
-            try {
-                closeInput(modifyingInput);
-            } catch (err) {}
+    'focus .dropdown' (event) {
+        $(".selectedOption").removeClass("selectedOption");
+
+        $("#" + modifyingInput).next()
+        .css('opacity',0)
+        .slideDown(300)
+        .animate(
+            { opacity: 1 },
+            { queue: false, duration: 100 }
+        );
+    },
+    'click .optionText' (event) { // Click each preferences setting.
+        var option = event.target.childNodes[0].nodeValue;
+        var userSettings = ["description","school","grade"];
+        var newSetting = Session.get("user");
+        
+        if(modifyingInput === "privacy" || modifyingInput === "category") {
+            document.getElementById(modifyingInput).value = option;
+            $("#" + modifyingInput).next()
+            .fadeOut(250, "linear");
+            $(".selectedOption").removeClass("selectedOption");
+            return;
         }
+
+        if(_.contains(userSettings, modifyingInput)) {
+            newSetting[modifyingInput] = (modifyingInput === "grade") ? parseInt(option) : option;
+        } else {
+            newSetting.preferences[modifyingInput] = (function() {
+                var value = options[modifyingInput].filter(function(entry) {
+                    return option === entry.alias;
+                })[0].val;
+                return (modifyingInput === 'theme') ? themeColors[value] : value;
+            })();
+        }
+        Session.set("user", newSetting);
+        serverData = Session.get("user");
+        sendData("editProfile"); 
+
+        $("#" + modifyingInput).next()
+        .fadeOut(250, "linear");
+
+        $(".selectedOption").removeClass("selectedOption");
     },
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
-        var text = document.getElementById(Session.get("modifying") + "restrict");
-        text.style.color = "#7E7E7E";
-        if (chars === restrict) { // Don't display if nothing in comment.
-            Session.set("commentRestrict", "");
-            return;
-        } else if (chars === 0) {
-            text.style.color = "#FF1A1A"; // Make text red if 0 characters left.
-            text.style.opacity = "0";
-        }
-        Session.set("commentRestrict", chars.toString() + " characters left");
-    },
-    'click .profOptionText' (event) { // Click each profile option setting.
-        var modifyingInput = Session.get("modifying");
-        var p = event.target;
-        if (p.className.includes("cre")) {
-            var input = p.parentNode.parentNode.childNodes[3];
-        } else {
-            var input = p.parentNode.parentNode.childNodes[1].childNodes[5];
-        }
-        input.value = p.childNodes[0].nodeValue;
-        try {
-            closeInput(modifyingInput);
-        } catch (err) {}
-
-        closeDivFade(p.parentNode);
-        input.focus();
+        var newSetting = Session.get("restrictText");
+        newSetting[event.target.id] = (chars === restrict) ? "" : (chars.toString() + ((chars === 1) ? " character " : " characters ") + "left");
+        newSetting.selected = event.target.id;
+        Session.set("restrictText", newSetting);
     },
     // AUTOCOMPLETE HANDLING
     'keyup #profClassSearch' (event) { // Auto-complete updater
@@ -572,10 +588,7 @@ Template.profile.events({
                 Session.set("autocompleteDivs", divs);
             }
         } catch (err) {}
-    },
-    'focus .op' (event) { // Selects input for next tabbing.
-        event.target.click();
-    },
+    }
 });
 
 function openDivFade(div) {
@@ -591,27 +604,6 @@ function closeDivFade(div) {
     setTimeout(function() {
         div.style.display = "none";
     }, 100);
-}
-
-function closeInput(modifyingInput) { // Closes current modifying input.
-    var input = document.getElementById(modifyingInput + "a");
-    var span = document.getElementById(modifyingInput);
-    input.parentNode.removeChild(input);
-    Session.set("commentRestrict", "");
-    try {
-        document.getElementById("modifyingInput" + "restrict").style.display = "none";
-    } catch (err) {}
-
-    if (input.value === "") {
-        span.childNodes[0].nodeValue = "Click here to edit...";
-    } else {
-        span.childNodes[0].nodeValue = input.value;
-    }
-    span.style.display = "initial";
-    Session.set("modifying", null);
-    Session.set("user", getProfileData());
-    serverData = Session.get("user");
-    sendData("editProfile");
 }
 
 function sendData(funcName) {

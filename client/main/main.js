@@ -39,10 +39,7 @@ Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests", false); // Status of requests.
 Session.set("newWork", null); // If user creating new work.
-Session.set("currentWorkId",null); // Stores current work Id.
 Session.set("currentWork",null);
-Session.set("currentReadableWork", null); // Stores readable selected work info.
-Session.set("modifying", null); // Stores current open input.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
@@ -50,7 +47,7 @@ Session.set("typeFilter", []); // Stores type filters for classes.
 Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
-Session.set("commentRestrict", ""); // Stores text for comment character restriction.
+Session.set("restrictText", {}); // Stores text for comment character restriction.
 
 
 Template.login.rendered = function() {
@@ -60,10 +57,26 @@ Template.login.rendered = function() {
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     setTimeout(startDragula, 300);
+    $(".optionText").hover(
+        function() {
+            $(this).addClass("selectedOption");
+        },
+        function() {
+            $(this).removeClass("selectedOption");
+        }
+    );
 };
 
 Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    $(".optionText").hover(
+        function() {
+            $(this).addClass("selectedOption");
+        },
+        function() {
+            $(this).removeClass("selectedOption");
+        }
+    );
 };
 
 Template.registerHelper('userProfile', () => {
@@ -229,29 +242,46 @@ Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     })[0].alias;
 });
 
-Template.registerHelper('commentLength', () => { // Returns characters left for comment length.
-    return Session.get("commentRestrict");
+Template.registerHelper('restrict', (input) => { // Returns characters left for comment length.
+    var restrict = Session.get("restrictText");
+    $(".resText").removeClass("noneLeft");
+    if(Object.keys(restrict).length === 0) return "";
+    if(restrict[restrict.selected][0] === "0") $(".resText").addClass("noneLeft");
+    return (restrict.selected === input) ? Session.get("restrictText")[input] : "";
 });
 
-function startDragula() {
-    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
-        moves: function(el, container, handle) {
-            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
-            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+Template.registerHelper('selectOptions', (val) => {
+    if(val === "grade") {
+        var grade = [];
+        for(var i = 0; i < 5; i++) {
+            var year = (new Date).getFullYear() + i;
+            grade.push( { "val": year, "alias": year.toString() } );
         }
-    })
-    .on('out', function(el) {
-        var els = document.getElementsByClassName("classWrapper");
-        var final = [];
-        for (var i = 0; i < els.length; i++) {
-            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
-            final.push(classid);
+        return grade;
+    } else if(val === "school") {
+        var school = [];
+        var schoolList = schools.find().fetch();
+        for(var i = 0; i < schoolList.length; i++) {
+            school.push( { "val": schoolList[i].name, "alias": schoolList[i].name } );
         }
-    });
-}
+        return school;
+    } else {
+        return options[val];
+    }
+});
+
+Template.registerHelper('work', (value) => {// Returns the specified work value.
+    var thisWork = Session.get("currentWork");
+    if (Session.equals("currentWork", null)) return;
+    if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
+        return defaultWork[value];
+    } else {
+        return formReadable(thisWork,value);
+    }
+});
 
 Template.main.helpers({
-    themeName() {
+    /*themeName() {
         var vals = _.values(themeColors);
         var curtheme = Session.get("user").preferences.theme;
         for (var i = 0; i < vals.length; i++) {
@@ -261,7 +291,7 @@ Template.main.helpers({
             }       
         }
         return "Custom";
-    },
+    },*/
     schoolName() { // Finds the name of the user's school.
         if (Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
@@ -372,7 +402,7 @@ Template.main.helpers({
             },
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
-                Session.set("currentWorkId", event.id);
+                Session.set("currentWork", work.findOne({_id: event.id}));
                 openDivFade(document.getElementsByClassName("overlay")[0]);
             },
             eventMouseover: function(event, jsEvent, view) {
@@ -421,18 +451,6 @@ Template.main.helpers({
         }
         return;
     },
-    work(value) { // Returns the specified work value.
-        var thisWork = Session.get("currentWork");
-        if (Session.equals("currentWork", null)) return;
-        if (Session.get("newWork") && (thisWork[value] === "Missing field" || thisWork[value] === undefined)) {
-            return defaultWork[value];
-        } else {
-            return formReadable(thisWork,value);
-        }
-    },
-    selectOptions(val) {
-        return options[val];
-    },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
     },
@@ -449,8 +467,9 @@ Template.main.helpers({
         return array;
     },
     inRole() { // Checks correct permissions.
+        if(Session.equals("currentWork",null)) return;
         var thisWork = work.findOne({
-            _id: Session.get("currentWorkId")
+            _id: Session.get("currentWork")._id
         });
         if (Session.get("newWork")) {
             return true;
@@ -482,14 +501,13 @@ Template.main.events({
         var e = event.target.className;
 
         if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
-            if (!_.contains(e, ["optionHolder", "optionText"])) {
+            if (!(e.includes("optionHolder") || e.includes("optionText"))) {
                 if(document.getElementById(modifyingInput).className.includes("dropdown")) {
                     $(".optionHolder")
-                    .fadeOut('fast')
-                    .hide('fast');
+                    .fadeOut(250, "linear");
 
-                    dropOpen = false;
-                } else {
+                    $(".selectedOption").removeClass("selectedOption");
+                } else {     
                     closeInput(modifyingInput);
                 }
                 modifyingInput = null;
@@ -514,12 +532,10 @@ Template.main.events({
 
         if (e === "overlay") { // Overlay closing.
             closeDivFade(document.getElementsByClassName("overlay")[0]);
+            Session.set("newWork",false);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
-            Session.set("newWork", null);
-            $('.req').css("color", "");
-            Session.set("commentRestrict", null);
         }
 
         if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
@@ -584,14 +600,14 @@ Template.main.events({
             attr = event.target.getAttribute("classid");
         }
         Session.set("newWork", true);
-        Session.set("currentWork",{"class": attr});
+        Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
         openDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #dropdown' (event) {
         if (document.getElementById("userDropdown").style.display === "block") return;
         setTimeout(function() {
             openDivFade(document.getElementById("userDropdown"));
-        }, 300);
+        }, 100);
     },
     'click .workCard' (event) { // Display work information on work card click.
         var dom = event.target;
@@ -637,74 +653,6 @@ Template.main.events({
             }, 750);
         });
     },
-    // HANDLING INPUT CHANGING
-    'click .clickModify' (event) {
-        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
-    },
-    'focus .clickModify' (event) {
-        if(modifyingInput !== event.target.id) modifyingInput = event.target.id;
-    },
-    'keydown .dropdown' (event) {
-        console.log("hi");
-    },
-    'focus .dropdown' (event) {
-         if(event.target.id === modifyingInput) return;
-        event.target.click();
-    },
-    'click .dropdown' (event) {
-        console.log(dropOpen);
-        console.log(event.target.id === modifyingInput);
-        if(event.target.id === modifyingInput && dropOpen) {
-            dropOpen = false;
-            modifyingInput = null;
-            $("#" + modifyingInput).next()
-            .fadeOut(200)
-            .hide(200);
-            console.log("hiasdf");
-            return;
-        }
-        dropOpen = true;
-
-        $("#" + modifyingInput).next()
-        .css('opacity',0)
-        .slideDown(300)
-        .animate(
-            { opacity: 1 },
-            { queue: false, duration: 100 }
-        ) 
-        //event.target.focus();
-        
-    },
-    'click .optionText' (event) { // Click each preferences setting.
-        var option = event.target.childNodes[0].nodeValue;
-        if(modifyingInput[0] === 'w') {
-            var newSetting = Session.get("currentWork");
-            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option;
-            Session.set("currentWork", newSetting);
-        } else {
-            var newSetting = Session.get("user");
-            newSetting.preferences[modifyingInput] = (function() {
-                var value = options[modifyingInput].filter(function(entry) {
-                    return option === entry.alias;
-                })[0].val;
-                return (modifyingInput === 'theme') ? themeColors[value] : value;
-            })();
-            Session.set("user", newSetting);
-            serverData = Session.get("user");
-            sendData("editProfile"); 
-        }
-
-        $("#" + modifyingInput).next()
-        .fadeOut('fast')
-        .hide('fast');
-    },
-    'click #workComment' (event) {
-        var restrict = event.target.maxLength;
-        Session.set("commentRestrict", restrict - event.target.value.length.toString() + " characters left");
-        var text = document.getElementById("commentrestrict");
-        text.style.display = "initial";
-        text.style.color = "#7E7E7E";
-    },
     'click #exportDiv' (event) {
         var events = [];
         var userClasses = Session.get("calendarClasses");
@@ -741,33 +689,108 @@ Template.main.events({
         });
         saveAs(eventBlob, "hourglass.csv");
     },
-    'keydown input' (event) { // Enter to close input.
-        var modifyingInput = Session.get("modifying");
-        if (event.keyCode == 13 && modifyingInput != "workDesc") {
-            try {
-                closeInput(modifyingInput);
-            } catch (err) {}
+    // HANDLING INPUT CHANGING
+    'focus .clickModify' (event) {
+        $(".optionHolder")
+        .fadeOut(250, "linear");
+
+        if(modifyingInput !== null) {
+            if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
+        } 
+        modifyingInput = event.target.id;
+        if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
+            event.target.select();
+            event.target.style.cursor = "text";   
         }
+    },
+    'keydown .dropdown' (event) {
+        var first = $("#"+modifyingInput).next().children("p:first-child");
+        var last = $("#"+modifyingInput).next().children("p:last-child"); 
+        var next = $(".selectedOption").next();
+        var prev = $(".selectedOption").prev();
+        var lastSel = $(".selectedOption");
+
+        if (event.keyCode === 38) {
+            event.preventDefault();
+            if (lastSel === undefined) {
+                last.addClass("selectedOption");
+            } else {
+                if (prev.length === 0) {
+                    last.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");  
+                } else {
+                    prev.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                }
+            }
+        } else if (event.keyCode === 40) {
+            event.preventDefault();
+            if (lastSel === undefined) {
+                first.addClass("selectedOption");
+                last.removeClass("selectedOption");
+            } else {
+                if (next.length === 0) {
+                    first.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                } else {
+                    next.addClass("selectedOption");
+                    lastSel.removeClass("selectedOption");
+                }
+            }    
+        } else if (event.keyCode === 13) {
+            lastSel[0].click();
+        }
+    },
+    'focus .dropdown' (event) {
+        $(".selectedOption").removeClass("selectedOption");
+
+        $("#" + modifyingInput).next()
+        .css('opacity',0)
+        .slideDown(300)
+        .animate(
+            { opacity: 1 },
+            { queue: false, duration: 100 }
+        );
+    },
+    'click .optionText' (event) { // Click each preferences setting.
+        var option = event.target.childNodes[0].nodeValue;
+        if(modifyingInput[0] === 'w') {
+            var newSetting = Session.get("currentWork");
+            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
+            Session.set("currentWork", newSetting);
+            serverData = Session.get("currentWork");
+
+            $("#" + modifyingInput).next()
+            .fadeOut(250, "linear");
+            $(".selectedOption").removeClass("selectedOption");
+            if(Session.get("newWork")) return;
+            if(checkMissing()) return;
+            sendData("editWork")
+        } else {
+            var newSetting = Session.get("user");
+            newSetting.preferences[modifyingInput] = (function() {
+                var value = options[modifyingInput].filter(function(entry) {
+                    return option === entry.alias;
+                })[0].val;
+                return (modifyingInput === 'theme') ? themeColors[value] : value;
+            })();
+            Session.set("user", newSetting);
+            serverData = Session.get("user");
+            sendData("editProfile"); 
+        }
+
+        $("#" + modifyingInput).next()
+        .fadeOut(250, "linear");
+
+        $(".selectedOption").removeClass("selectedOption");
     },
     'input .restrict' (event) {
         var restrict = event.target.maxLength;
         var chars = restrict - event.target.value.length;
-        var text;
-        if (event.target.id === "workComment") {
-            text = document.getElementById("commentrestrict");
-        } else if (event.target.id === "requestArea") {
-            text = document.getElementById("requestrestrict");
-        } else {
-            text = document.getElementById(Session.get("modifying") + "restrict");
-        }
-        text.style.color = "#7E7E7E";
-        if (chars === restrict) { // Don't display if nothing in comment.
-            Session.set("commentRestrict", "");
-            return;
-        } else if (chars === 0) {
-            text.style.color = "#FF1A1A"; // Make text red if 0 characters left.
-        }
-        Session.set("commentRestrict", chars.toString() + " characters left");
+        var newSetting = Session.get("restrictText");
+        newSetting[event.target.id] = (chars === restrict) ? "" : (chars.toString() + ((chars === 1) ? " character " : " characters ") + "left");
+        newSetting.selected = event.target.id;
+        Session.set("restrictText", newSetting);
     },
     'focus #wDueDate' () { // Open date picker.
         $('#wDueDate').datepicker({
@@ -776,46 +799,43 @@ Template.main.events({
             startDate: 'd',
             todayHighlight: true,
             todayBtn: true,
-            
-            onSelect: function(dateText, inst) {
-                alert("asdf");
-                closeInput(modifyingInput);
-            }
+            autoclose: true
         });
     },
     // WORK OVERLAY BUTTONS
     'click #commentSubmit' (event) { // Click to submit a comment.
-        workId = Session.get("currentWorkId");
+        workId = Session.get("currentWork")._id;
         var input = document.getElementById('workComment');
         comment = input.value;
         input.value = "";
-        Session.set("commentRestrict", null);
         if (comment !== "") {
             document.getElementById('workComment').value = "";
-            Meteor.call('addComment', [comment, workId]);
+            serverData = [comment, workId];
+            sendData("addComment");
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
         serverData = Session.get("currentWork");
+        if(checkMissing()) return;
         sendData("createWork");
-        Session.set("newWork", null);
+        Session.set("newWork",false);
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #workDelete' () {
-        serverData = Session.get("currentWorkId");
+        serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
         closeDivFade(document.getElementsByClassName("overlay")[0]);
     },
     'click #markDone' () { // Click done button.
-        serverData = [Session.get("currentWorkId"), "done"];
+        serverData = [Session.get("currentWork")._id, "done"];
         sendData("toggleWork");
     },
     'click #markConfirm' () { // Click confirm button.
-        serverData = [Session.get("currentWorkId"), "confirmations"];
+        serverData = [Session.get("currentWork")._id, "confirmations"];
         sendData("toggleWork");
     },
     'click #markReport' () { // Click report button.
-        serverData = [Session.get("currentWorkId"), "reports"];
+        serverData = [Session.get("currentWork")._id, "reports"];
         sendData("toggleWork");
     },
     // CLASS FILTERS
@@ -831,7 +851,7 @@ Template.main.events({
             var date = calWorkDate.split("-");
             date = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
             Session.set("newWork", true);
-            Session.get("currentWorkId", classid);
+            Session.set("currentWork", {class: classid, dueDate: date});
             openDivFade(document.getElementsByClassName("overlay")[0]);
         } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
@@ -897,6 +917,8 @@ Template.main.events({
     }
 });
 
+// Other Functions
+
 function openDivFade(div) {
     div.style.display = "block";
     div.style.opacity = "0";
@@ -913,19 +935,32 @@ function closeDivFade(div) {
 }
 
 function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
-    Meteor.call(funcName, serverData);
+    if(funcName === "editWork" || funcName === "createWork") {
+        for(var key in serverData) {
+            if(serverData[key] === true) serverData[key] = "";
+        }
+    }
+    Meteor.call(funcName, serverData, function(error, result) {
+        serverData = null;
+        currWork = Session.get("currentWork");
+        if(currWork !== null && currWork._id !== undefined) {
+            Session.set("currentWork", work.findOne({
+                _id: currWork._id
+            }));
+        }
+    });
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
     var data = getHomeworkFormData();   
     Session.set("currentWork", data);
-    
+    Session.set("restrictText", {});
+    $("#"+modifyingInput).css('cursor','pointer');
     if(!Session.get("newWork")) {
         serverData = Session.get("currentWork");
-         //sendData("editWork");
-    }
-    console.log(serverData);
-   
+        if(checkMissing()) return;
+        sendData("editWork");
+    } 
 }
 
 function getHomeworkFormData() { // Get all data relating to work creation.
@@ -934,10 +969,48 @@ function getHomeworkFormData() { // Get all data relating to work creation.
     var data = Session.get("currentWork");
     for(var i = 0; i < inputs.length; i++) {
         var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
-        var thisData = (title === 'type') ? $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue : $("#"+inputs[i])[0].value;
-        data[title] = (thisData.includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? "Missing field" : thisData;
+        var thisData = (function() {
+            if(title === "type") {
+                return $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase();
+            } else if (title === "dueDate") {
+                var val = $("#"+inputs[i])[0].value;
+                return toDate(val);
+            } else {
+                return $("#"+inputs[i])[0].value;
+            }
+        })();
+        // True signifies missing field to prevent missing if value is'Missing field.'
+        data[title] =  data[title] = (thisData.toString().includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? true : thisData;
     }
     return data;
+}
+
+function checkMissing() {
+    var required = ["name","dueDate","type"]
+    var no = false;
+    if(serverData === null || Object.keys(serverData).length < 4) {
+        for(var i = 0; i < required.length; i++) {
+            var id = "w" + required[i].charAt(0).toUpperCase() + required[i].slice(1);
+            $("#"+id).addClass("formInvalid");
+            $("#"+id)[0].value = "";
+            $("#"+id)[0].placeholder = "Missing field";
+        }
+        return true;
+    }
+    for(var key in serverData) {
+        if(!_.contains(required, key)) continue;
+        var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
+        if(serverData[key] === true || serverData[key] === "" || serverData[key] === undefined) {
+            no = true;
+            $("#"+id).addClass("formInvalid");
+            $("#"+id)[0].value = "";
+            $("#"+id)[0].placeholder = "Missing field";
+        } else {
+            $("#"+id)[0].placeholder = "";
+            $("#"+id).removeClass("formInvalid");
+        }
+    }
+    return no;
 }
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -1034,4 +1107,21 @@ function formReadable(input, val) { // Makes work information readable by users.
                 _id: input.creator
             }).profile.name;
     }
+}
+
+function startDragula() {
+    dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
+        moves: function(el, container, handle) {
+            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
+            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+        }
+    })
+    .on('out', function(el) {
+        var els = document.getElementsByClassName("classWrapper");
+        var final = [];
+        for (var i = 0; i < els.length; i++) {
+            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+            final.push(classid);
+        }
+    });
 }
