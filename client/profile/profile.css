@@ -6,7 +6,7 @@
 }
 
 .profTitle {
-	font-size: 3vh;
+	font-size: 1.5vw;
 	font-weight: 400;
 	margin: 0;
 	margin-bottom: 1%;
@@ -14,7 +14,8 @@
 }
 
 .profHea {
-	font-size: 5.5vh;
+	margin: 0;
+	font-size: 3vw;
 	font-weight: 200;
 	padding: 6% 6% 0 8%;
 }
@@ -44,10 +45,9 @@
 }
 
 #profAvatar {
-	height: 27vh;
-	width: 27vh;
+	height: 45%;
 
-	border: 10px solid #0D0D0D;
+	border: 7px solid #0D0D0D;
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
@@ -58,7 +58,7 @@
 	z-index: 5;
 }
 
-#motdBox {
+#motdBox, #motdBoxuser {
 	width: 100%;
 	height: 5%;
 	margin-top: -0.5vh;
@@ -70,14 +70,23 @@
 	border-right: 5px solid #0D0D0D;
 }
 
+#motdBoxuser {
+	font-size: 1.2vw;
+	padding: 0.7% 0 0.7% 0;
+}
+
 #motdBox span {
-	font-size: 130% !important;
+	font-size: 1.5vw !important;
 	margin: 0;
 	color: #FFF;
 }
 
 #motdBox input {
 	width: 50% !important;
+}
+
+#description {
+	font-size: 1.5vw;
 }
 
 #description:hover {
@@ -173,9 +182,9 @@
 }
 
 .profFunction {
-	font-size: 1.7vh;
+	font-size: 1.2vw;
 	margin-right: 1%;
-	padding: 2%;
+	padding: 0.7vw;
 
 	border: 2px solid rgba(0,0,0,0.2);
 
@@ -195,10 +204,7 @@
 
 .profFunction i, .profFunction h4 {
 	padding: 1% !important;
-}
-
-.profFunction h4 {
-	font-size: 120% !important;
+	font-size: 1.2vw !important;
 }
 
 #searchBar {
@@ -206,10 +212,10 @@
 }
 
 #profClassSearch {
-	font-size: 125%;
+	font-size: 1.5vw;
 	width: 30%;
 	margin-top: 3%;
-	padding: 1.5% 1% 1.5% 1%;
+	padding: 1%;
 
 	-webkit-animation: expand .7s ease 1;
     animation: expand .7s ease 1;
@@ -264,7 +270,7 @@
 }
 
 .classBox {
-	font-size: 2.7vh;
+	font-size: 1.3vw;
 	width: 94%;
 	margin-bottom: 3%;
 	padding: 2%;
@@ -286,11 +292,12 @@
 }
 
 #joinTop .fa-search {
-	font-size: 2.5vh;
+	font-size: 1.3vw;
 	margin-right: 3%;
 }
 
 #private {
+	font-size: 1.5vw;
 	margin-left: 5%;
 	padding: 1.5%;
 
@@ -397,7 +404,7 @@
 
 #creSubmit {
 	font-weight: 200;
-	font-size: 3vh;
+	font-size: 1.5vw;
 	width: 13vw;
 	margin: auto;
 	padding: 2%;
@@ -425,9 +432,9 @@
 }
 
 #mainpage, #logout2 {
-	font-size: 1.5vh;
+	font-size: 1vw;
 	margin: 0;
-	padding: 0.7%;
+	padding: 0.8%;
 	background-color: #617C9E;
 
 	box-shadow: -1px 2px 5px 1px #333;
@@ -463,6 +470,7 @@
 #mainpage h2, #logout2 h2 {
 	font-weight: 200;
 	width: 100%;
+	margin: 0;
 
 	-webkit-filter: none;
 	filter: none !important;

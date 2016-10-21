@@ -14,11 +14,11 @@ Template.user.helpers({
     username() { // Returns current user's username
         return this.profile.name;
     },
-    motd() { // Returns the current user's description
+   description() { // Returns the current user's description
         if (this.profile.description) {
             return Meteor.user().profile.description;
         } else {
-            return "";
+            return "Unknown";
         }
     },
     school() { // Returns the current user's school's name
@@ -30,7 +30,7 @@ Template.user.helpers({
     },
     grade() { // Returns the current user's grade
         if (this.profile.grade) {
-            return this.profile.grade + "th";
+            return this.profile.grade;
         } else {
             return "Unknown";
         }

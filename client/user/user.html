@@ -1,35 +1,41 @@
 <template name="user">
-	  <div id="mainpage{{userProfile}}" onclick="window.location='/'"><h2>Main Page</h2></div>
-	  <div id="profPage" style="background-color:{{divColor 'header'}};{{textColor}}{{loadNew}}">
-		    <div id="profMainContainer">
-			      <div id="profTop">
-				        <img id="profBanner" src='{{banner}}' alt="Banner">
-				        <img id="profAvatar" src='{{avatar}}' alt="Avatar">
-				        <div id="motdBox">
-					          <span class="username">{{username}} - </span><span class="value" restrict="50" id="motd">{{motd}}</span>
-				        </div>
-			      </div>
-			      <div id="profCards">
-				        <div id="cardColLeft">
-					        <!-- Card 1 -->
-					        <div id="profInfo" class="card" style="background-color:{{divColor 'cards'}}">
+		<div id="mainpage{{userProfile}}" onclick="window.location='/'"><h2>Main Page</h2></div>
+		<div id="logout2" onclick='document.getElementById("login-buttons-logout").click();'><h2>Logout</h2></div>
+		<div id="profWrapper">
+			<div id="profPage" style="background-color:{{divColor 'mainColor'}};min-width:{{screen}}{{textColor}}{{loadNew}}">
+				<div id="profMainContainer">
+					<div id="profTop">
+						<img id="profBanner" src='{{banner}}' alt="Banner">
+						<img id="profAvatar" src='{{avatar}}' alt="Avatar">
+						<div id="motdBoxuser">
+							<span class="username">{{username}} - </span>
+        					<span>{{description}}</span>
+						</div>
+					</div>
+					<div id="profCards">
+						<div id="cardColLeft">
+							<!-- Card 1 -->
+							<div id="profInfo" class="card" style="background-color:{{divColor 'secondaryColor'}}">
 								<h3 class="profHea">About</h3>
 								<div id="about">
-									<div>
-									    <p class="profTitle">School Name:</p>
-									    <span class="value" id="school">{{school}}</span>
-									</div><br>
-									<div>
-									<p class="profTitle" >Grade:</p>
-									<span class="value" re="readonly" id="grade">{{grade}}</span>
-									</div>
-				                </div>
-					        </div>
-				        </div>
-				        <div id="cardColRight">
-				        </div>
-			      </div>
-		    </div>
-	  </div>
+									<div class="prefWrapper">
+										<p class="profTitle">School Name:</p>
+						                <span>{{school}}</span>
+					                </div>
+									<br>
+									<div class="prefWrapper">
+										<p class="profTitle">Graduation Year:</p>
+										<span>{{grade}}</span>
+					                </div>
+						        </div>
+							</div>
+						</div>
+						<div id="cardColRight">
+						</div>
+					</div>
+				</div>
+			</div>
+			{{> loginButtons}}
+		</div>
 </template>
 
