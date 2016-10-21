@@ -167,7 +167,7 @@
                                             {{> comment}}
                                         {{/each}}
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                         {{/unless}}
                     </div>
@@ -180,7 +180,7 @@
                             </div>
                             <div id="toggleButtons">
                                 <div id="markDone" style="background-color:{{work 'doneCol'}}">
-                                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                    <i class="fa {{work 'doneIcon'}}" aria-hidden="true"></i>
                                     <p>{{work 'doneText'}}</p>
                                 </div>
                                 <div id="markConfirm" style="color:{{work 'userConfirm'}}">
@@ -188,7 +188,7 @@
                                     <p>{{work 'confirmations'}}</p>
                                 </div>
                                 <div id="markReport" style="color:{{work 'userReport'}}">
-                                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                     <p>{{work 'reports'}}</p>
                                 </div>
                                 <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
@@ -302,7 +302,7 @@
                 <div style="color:{{doneRatio}}">
     				<i class="fa fa-thumbs-up" aria-hidden="true"></i>	
     				<span>{{confirmationLength}}</span>
-    				<i class="fa fa-thumbs-down" aria-hidden="true"></i> 
+    				<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
     				<span>{{reportLength}}</span> 
                 </div>
 			</div>
