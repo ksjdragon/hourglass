@@ -286,7 +286,7 @@ body {
 	filter: drop-shadow(2px 2px 5px #666);
 }
 
-.fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap, .fa-exchange {
+.noScroll .fa-plus, .creWork .fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap, .fa-exchange {
 	font-size: 130%;
 	padding: 5%;
 

@@ -947,6 +947,8 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
             Session.set("currentWork", work.findOne({
                 _id: currWork._id
             }));
+        } else {
+            Session.set("currentWork",null);
         }
     });
 }

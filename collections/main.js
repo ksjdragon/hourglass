@@ -23,6 +23,7 @@ classes.schema = new SimpleSchema({
 	  subscribers: {type: [String], optional: true}
 });
 
+
 work.schema = new SimpleSchema({
 	  name: {type: String},
 	  class: {type: String},
@@ -42,3 +43,11 @@ requests.schema = new SimpleSchema({
     request: {type: String},
     timeRequested: {type: Date}
 });
+
+classes.helpers({
+	fullUserInfo() {
+		var user = Meteor.users.findOne({_id: this.admin});
+		console.log(user);
+		return this.admin + " | " + user.services.google.email + " | " + user.profile.name;
+	}
+})
