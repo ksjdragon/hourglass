@@ -24,12 +24,12 @@ One can join a public class by searching for and then clicking on the class they
 
 #Changelog
 
-# 0.1.2
+## 0.1.2
   - First beta version
   - Fixed resolution / display issues
   - Bug fixes
   
-# 0.1.1
+## 0.1.1
   - Added dynamic resizing, zooming and scaling support for CSS.
   - Fixed reactive updating on work.
   - Added personal work.
