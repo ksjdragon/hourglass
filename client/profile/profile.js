@@ -37,7 +37,7 @@ Template.profile.helpers({
         return "Custom";
     },*/
     classSettings() { // Returns autocomplete array for classes.
-        var hi = {
+        return {
             position: "bottom",
             limit: 10,
             rules: [{
@@ -54,7 +54,6 @@ Template.profile.helpers({
                 }
             }]
         };
-        return hi;
     },
     schoolComplete() { // Returns autocomplete array for schools.
         return {
@@ -586,11 +585,11 @@ Template.profile.events({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
                     hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.length / 17),
+                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.length.replace(",","") / 17),
                     _id: item.getAttribute("classid")
                 });
-                Session.set("autocompleteDivs", divs);
             }
+            Session.set("autocompleteDivs", divs.sort(function(a,b){return b.subscribers-a.subscribers}));
         } catch (err) {}
     }
 });
