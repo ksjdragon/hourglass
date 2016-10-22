@@ -504,8 +504,8 @@ Meteor.methods({
         if (_.contains(superadmins, currentuser.services.google.email)) { 
             Roles.addUsersToRoles(userId, 'superadmin');
             Roles.addUsersToRoles(userId, 'admin');
-        }  
-        
+        }
+
         Meteor.users.update({
             _id: userId
         }, {
@@ -523,7 +523,7 @@ Meteor.methods({
         });
         if (Meteor.user() !== null &&
             found !== null &&
-            pass === found.code &&
+            (pass === found.code || found.privacy === false) &&
             (found.status || found.admin === Meteor.userId()) &&
             !_.contains(prof.classes, change)) {
             var foundsubs = found.subscribers;
