@@ -15,7 +15,7 @@ classes.schema = new SimpleSchema({
 	  teacher: {type: String, optional: true},
 	  admin: {type: String, optional: true},
 	  status: {type: Boolean, defaultValue: false},
-	  code: {type: String, defaultValue: ""},
+	  code: {type: String, optional: true},
 	  privacy: {type: Boolean},
 	  category: {type: String},
 	  moderators: {type: [String], optional: true},
