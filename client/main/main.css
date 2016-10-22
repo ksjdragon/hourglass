@@ -31,12 +31,6 @@ html {
 
 	pointer-events: all;
 
-	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
 	-webkit-transition: color 0.5s ease;  
 	-moz-transition: color 0.5s ease; 
 	-ms-transition: color 0.5s ease;
@@ -86,6 +80,12 @@ body {
 	width: 100%;
 	height: 100%;
 	position: fixed;
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #mainHeader {
@@ -286,7 +286,7 @@ body {
 	filter: drop-shadow(2px 2px 5px #666);
 }
 
-.fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap, .fa-exchange {
+.noScroll .fa-plus, .creWork .fa-plus, .fa-minus, .fa-tasks, .fa-graduation-cap, .fa-exchange {
 	font-size: 130%;
 	padding: 5%;
 
@@ -349,7 +349,7 @@ body {
 	background-color: rgba(0,0,0,0.2);
 }
 
-.sideClass, .sideFilter {
+.sideClass, .sideFilter, #exportDiv {
 	width: 100%;
 	height: 5vh;
 	padding: 1.5vh;
@@ -372,7 +372,7 @@ body {
 	width: 80%;
 }
 
-.sideClass:hover, .sideFilter:hover {
+.sideClass:hover, .sideFilter:hover, #exportDiv:hover {
 	background-color: rgba(255,255,255,0.3);
 }
 
@@ -394,12 +394,12 @@ body {
 	display: inline-block;
 }
 
-.sideFilter {
+.sideFilter, #exportDiv {
 	height: auto;
 }
 
 .fa-dot-circle-o {
-	font-size: 3vh;
+	font-size: 1.1vw;
 	color: #53BD42;
 
 	float: right;
@@ -658,7 +658,7 @@ textarea.clickModify {
 }
 
 .clickModify.dropdown {
-	font-size: 2.5vh;
+	font-size: 1.2vw;
 	width: 100%;
 	border: 1px solid #999797;
 
@@ -685,7 +685,7 @@ textarea.clickModify {
 }
 
 .fa-caret-down {
-	font-size: 2.2vh;
+	font-size: 1.1vw;
 	text-align: right;
 	pointer-events: none;
 }
@@ -909,9 +909,11 @@ textarea.clickModify {
 	height: auto;
 
 	position: fixed;
-	top: 0;
-	left: 0;
+	top: 50%;
+	left: 50%;
 	z-index: -1;
+
+	transform:translate(-50%, -50%);
 }
 
 #mainBody {
@@ -1124,10 +1126,6 @@ textarea.clickModify {
 
 #prefCont .changeInput {
 	width: 70%;
-}
-
-.inputRadioPref {
-	margin-top: 6%;
 }
 
 #workComment {
@@ -1355,14 +1353,14 @@ textarea.clickModify {
 
 #userDropdownAvatar {
 	width: 100%;
-	height: 16vh;
+	height: 10vw;
 	position: relative;
 }
 
 #userDropdownAvatar img {
-	width: 9vh;
-	height: 9vh;
-	margin: -6.5vh 0 0 -5.25vh;
+	width: 6vw;
+	height: 6vw;
+	margin: -4vw 0 0 -3vw;
 
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
@@ -1374,10 +1372,10 @@ textarea.clickModify {
 }
 
 #userDropdownAvatar p {
-	font-size: 2.4vh;
+	font-size: 1.2vw;
 	width: 15vw;
 	margin: 0 auto 0 auto;
-	padding-top: 12.4vh;
+	padding-top: 7.5vw;
 	text-align: center;
 }
 
@@ -1387,7 +1385,7 @@ textarea.clickModify {
 }
 
 .userFunction {
-	font-size: 2.5vh;
+	font-size: 1.1vw;
 	width: 100%;
 	background-color: rgba(255,255,255,0.3);
 	cursor: pointer;
