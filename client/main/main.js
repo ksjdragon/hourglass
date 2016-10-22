@@ -1129,5 +1129,6 @@ function startDragula() {
                 var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
                 final.push(classid);
             }
+            Meteor.call("reorderClasses", final);
         });
 }
