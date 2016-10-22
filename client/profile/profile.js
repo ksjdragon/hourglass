@@ -586,7 +586,7 @@ Template.profile.events({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
                     hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: item.childNodes[7].childNodes[0].nodeValue.length / 17,
+                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.length / 17),
                     _id: item.getAttribute("classid")
                 });
                 Session.set("autocompleteDivs", divs);
