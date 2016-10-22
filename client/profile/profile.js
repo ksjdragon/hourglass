@@ -43,11 +43,13 @@ Template.profile.helpers({
             rules: [{
                 token: '',
                 collection: classes,
-                field: "name",
                 template: Template.classDisplay,
                 filter: {
                     privacy: false,
                     status: true
+                },
+                selector: (match) => {
+                    return {or: [{'name': match}, {'teacher': match}, {'hour': match}]};
                 }
             }]
         };
