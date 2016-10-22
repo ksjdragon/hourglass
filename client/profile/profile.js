@@ -37,24 +37,24 @@ Template.profile.helpers({
         return "Custom";
     },*/
     classSettings() { // Returns autocomplete array for classes.
-        return {
+        var hi = {
             position: "bottom",
             limit: 10,
             rules: [{
                 token: '',
                 collection: classes,
-                field: 'name',
                 template: Template.classDisplay,
                 filter: {
                     privacy: false,
                     status: true
                 },
                 selector: (match) => {
-                    match = new RegExp(match, 'i');
-                    return {or: [{'name': match}, {'teacher': match}, {'hour': match}]};
+                    regex = new RegExp(match, 'i');
+                    return {$or: [{'name': regex}, {'teacher': regex}, {'hour': regex}]};
                 }
             }]
         };
+        return hi;
     },
     schoolComplete() { // Returns autocomplete array for schools.
         return {
@@ -564,7 +564,7 @@ Template.profile.events({
         Session.set("restrictText", newSetting);
     },
     // AUTOCOMPLETE HANDLING
-    'keyup #profClassSearch' (event) { // Auto-complete updater
+    'input #profClassSearch' (event) { // Auto-complete updater
         if (event.target.value.length === 0) {
             Session.set("notsearching", true);
         } else {
