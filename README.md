@@ -21,3 +21,15 @@ On this page, it is possible to edit profile details as well as create, join, an
 After filling out class details, class creators must wait for the class to be approved by administrators. Public classes can be viewed and joined by all, while private classes are hidden from others and require a code to join.
 #### Joining a class
 One can join a public class by searching for and then clicking on the class they want to join. Joining a private class requires that the class administrator gives you a code, which you then provide in the "Join Private Class" button.
+
+#Changelog
+
+# 0.1.2
+  - First beta version
+  - Fixed resolution / display issues
+  - Bug fixes
+  
+# 0.1.1
+  - Added dynamic resizing, zooming and scaling support for CSS.
+  - Fixed reactive updating on work.
+  - Added personal work.
