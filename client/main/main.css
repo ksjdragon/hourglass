@@ -31,12 +31,6 @@ html {
 
 	pointer-events: all;
 
-	-webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
 	-webkit-transition: color 0.5s ease;  
 	-moz-transition: color 0.5s ease; 
 	-ms-transition: color 0.5s ease;
@@ -86,6 +80,12 @@ body {
 	width: 100%;
 	height: 100%;
 	position: fixed;
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #mainHeader {
