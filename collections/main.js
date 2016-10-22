@@ -44,6 +44,11 @@ requests.schema = new SimpleSchema({
     timeRequested: {type: Date}
 });
 
+schools.attachSchema(schools.schema);
+classes.attachSchema(classes.schema);
+work.attachSchema(work.schema);
+requests.attachSchema(requests.schema);
+
 classes.helpers({
 	fullUserInfo() {
 		var user = Meteor.users.findOne({_id: this.admin});
