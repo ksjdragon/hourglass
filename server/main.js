@@ -180,7 +180,9 @@ Meteor.methods({
                     privacy: false,
                     teacher: input.teacher,
                     hour: input.hour
-                }).fetch().length < 1) {
+                }).fetch().length < 1 ||
+                input.teacher === "" ||
+                input.hour === "") {
                 input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
                 input.admin = Meteor.userId();
                 Meteor.call('genCode', function(error, result) {
@@ -197,7 +199,7 @@ Meteor.methods({
                     Meteor.call('joinClass', [result, input.code]);
                 });
             } else {
-                throw new Meteor.Error("overlap", "This teacher is already teaching a class elsewhere!")
+                throw new Meteor.Error("overlap", "This teacher is already teaching a class elsewhere!");
             }
 
         } else {
