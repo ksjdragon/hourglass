@@ -33,7 +33,6 @@ shell-server@0.2.1
 http@1.2.9_1
 underscore@1.0.9
 ahref:dragula
-harrison:papa-parse
 pfafman:filesaver
 natestrauser:select2
 juliancwirko:s-alert
