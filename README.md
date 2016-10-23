@@ -10,7 +10,7 @@ After logging in with a Google account and setting up your profile, you can redi
 ##### Calendar Mode
 Calendar mode organizes work by due date rather than by class. Pressing on a date will open the left sidebar, allowing you to choose a class in which you want to create the work.
 ##### Class Mode
-Class mode allows you to organize work by the class it belongs to.
+Class mode allows you to organize work by the class it belongs to. You can drag classes to reorder them.
 ##### Work
 Every piece of work has a confirmed:reported ratio. This is the ratio of the number of people who confirm the presence of the work to the number of people who believe that this is a false report. The creator of a work can edit fields after creation by clicking on details needed to be changed. Lastly, by marking a work as done, it is hidden from view. To disable this, go to preferences.
 ##### Filters
@@ -21,6 +21,10 @@ On this page, it is possible to edit profile details as well as create, join, an
 After filling out class details, class creators must wait for the class to be approved by administrators. Public classes can be viewed and joined by all, while private classes are hidden from others and require a code to join.
 #### Joining a class
 One can join a public class by searching for and then clicking on the class they want to join. Joining a private class requires that the class administrator gives you a code, which you then provide in the "Join Private Class" button.
+#### Managing classes
+On this tab, you can see all of your current classes. If you are an admin of the class, clicking on it will allow you to manage details about the class. Otherwise, you can leave the class by clicking the x.
+### User Pages
+You can go to <url>/user/<email> to vist a user's profile.
 
 #Changelog
 
