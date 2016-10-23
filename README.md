@@ -4,11 +4,11 @@ All your work in one place. Finish before your time runs out.
 Hourglass is a planner tool specialized for schools.
 ## Usage
 How to use hourglass as an end product.
-If you find any bugs or have an idea to make this better, you can press the yield icon in the bottom right of the screen. 
+If you find any bugs or have an idea to make this better, you can press the question mark icon in the bottom right of the screen. 
 ### Main Page
-After logging in with a Google account, you are automatically redirected to this page. Here, you can view work from subscribed classes. Preferences are found in the right sidebar, while the left sidebar contains classes and class management. The left sidebar also has options to allow you to switch between displaying a calendar and displaying a list of classes. Hovering over classes in the left sidebar will highlight works from that class. Clicking on a class will filter works to only be of that class. You can filter more than one class at a time. Clicking on a work, both in calendar and class mode, will open a menu showing more details. Cards are colored according to the type of work they are.
+After logging in with a Google account and setting up your profile, you can redirect to this page. Here, you can view work from subscribed classes. Preferences are found in the right sidebar, while the left sidebar contains classes and class management. The left sidebar also has options to allow you to switch between displaying a calendar and displaying a list of classes. Hovering over classes in the left sidebar will highlight works from that class. Clicking on a class will filter works to only be of that class. You can filter more than one class at a time or filter by the type of work. Clicking on a work, both in calendar and class mode, will open a menu showing more details. Cards are colored according to the type of work they are.
 ##### Calendar Mode
-Calendar mode organizes work by due date rather than by class. Pressing on a date will open the left sidebar, allowing you to choose a class to create a piece of work under.
+Calendar mode organizes work by due date rather than by class. Pressing on a date will open the left sidebar, allowing you to choose a class in which you want to create the work.
 ##### Class Mode
 Class mode allows you to organize work by the class it belongs to.
 ##### Work
