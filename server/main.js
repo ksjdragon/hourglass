@@ -175,21 +175,30 @@ Meteor.methods({
             schools.findOne({
                 name: input.school
             })) {
-            input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
-            input.admin = Meteor.userId();
-            Meteor.call('genCode', function(error, result) {
-                input.code = result;
-            });
-            if (input.category != "class" && input.category != "club") {
-                input.category = "other";
-            }
-            input.subscribers = [];
-            input.moderators = [];
-            input.banned = [];
+            if (classes.find({
+                    status: true,
+                    privacy: false,
+                    teacher: input.teacher,
+                    hour: input.hour
+                }).fetch().length < 1) {
+                input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
+                input.admin = Meteor.userId();
+                Meteor.call('genCode', function(error, result) {
+                    input.code = result;
+                });
+                if (input.category != "class" && input.category != "club") {
+                    input.category = "other";
+                }
+                input.subscribers = [];
+                input.moderators = [];
+                input.banned = [];
 
-            classes.insert(input, function(err, result) {
-                Meteor.call('joinClass', [result, input.code]);
-            });
+                classes.insert(input, function(err, result) {
+                    Meteor.call('joinClass', [result, input.code]);
+                });
+            } else {
+                throw new Meteor.Error("overlap", "This teacher is already teaching a class elsewhere!")
+            }
 
         } else {
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
@@ -501,7 +510,7 @@ Meteor.methods({
             "hideReport": true
         };
 
-        if (_.contains(superadmins, currentuser.services.google.email)) { 
+        if (_.contains(superadmins, currentuser.services.google.email)) {
             Roles.addUsersToRoles(userId, 'superadmin');
             Roles.addUsersToRoles(userId, 'admin');
         }
