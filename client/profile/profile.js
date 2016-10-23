@@ -25,17 +25,17 @@ Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
 
 Template.profile.helpers({
-/*    themeName() {
-        var vals = _.values(themeColors);
-        var curtheme = Session.get("user").preferences.theme;
-        for (var i = 0; i < vals.length; i++) {
-            if (_.isEqual(vals[i], curtheme)) {
-                var name = _.keys(themeColors)[i];
-                return name.charAt(0).toUpperCase() + name.slice(1);
+    /*    themeName() {
+            var vals = _.values(themeColors);
+            var curtheme = Session.get("user").preferences.theme;
+            for (var i = 0; i < vals.length; i++) {
+                if (_.isEqual(vals[i], curtheme)) {
+                    var name = _.keys(themeColors)[i];
+                    return name.charAt(0).toUpperCase() + name.slice(1);
+                }
             }
-        }
-        return "Custom";
-    },*/
+            return "Custom";
+        },*/
     classSettings() { // Returns autocomplete array for classes.
         return {
             position: "bottom",
@@ -50,7 +50,15 @@ Template.profile.helpers({
                 },
                 selector: (match) => {
                     regex = new RegExp(match, 'i');
-                    return {$or: [{'name': regex}, {'teacher': regex}, {'hour': regex}]};
+                    return {
+                        $or: [{
+                            'name': regex
+                        }, {
+                            'teacher': regex
+                        }, {
+                            'hour': regex
+                        }]
+                    };
                 }
             }]
         };
@@ -143,9 +151,9 @@ Template.profile.helpers({
     },
     profClassTabColor(status) {  // Change this [Supposed to show the current mode that's selected via color]    
         if (Session.equals("profClassTab", status)) {
-           return Meteor.user().profile.preferences.theme.modeHighlight;
+            return Meteor.user().profile.preferences.theme.modeHighlight;
         } else {
-           return;
+            return;
         }
     },
     profClassTab(tab) { // Tells current class
@@ -182,22 +190,22 @@ Template.profile.helpers({
 Template.profile.events({
     'click' (event) { // Whenever a click happens'
         var e = event.target.className;
-        if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
+        if (modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
             if (!(e.includes("optionHolder") || e.includes("optionText"))) {
-                if(document.getElementById(modifyingInput).className.includes("dropdown")) {
+                if (document.getElementById(modifyingInput).className.includes("dropdown")) {
                     $(".optionHolder")
-                    .fadeOut(250, "linear");
+                        .fadeOut(250, "linear");
 
                     $(".selectedOption").removeClass("selectedOption");
                 } else {
-                    if(modifyingInput === "description") {
+                    if (modifyingInput === "description") {
                         Session.set("restrictText", {});
-                        $("#"+modifyingInput).css('cursor','pointer');
+                        $("#" + modifyingInput).css('cursor', 'pointer');
                         var newSetting = Session.get("user");
                         newSetting[modifyingInput] = document.getElementById(modifyingInput).value;
                         serverData = newSetting;
                         sendData("editProfile");
-                    } 
+                    }
                 }
                 modifyingInput = null;
             }
@@ -225,7 +233,10 @@ Template.profile.events({
     'click #mainpage' () {
         if (!Meteor.userId() || _.contains([null, undefined, ""], Meteor.user().profile.school)) {
             sAlert.closeAll();
-            sAlert.error('Please fill in your profile!', {effect: 'stackslide', position: 'top'});
+            sAlert.error('Please fill in your profile!', {
+                effect: 'stackslide',
+                position: 'top'
+            });
         } else {
             window.location = '/';
         }
@@ -237,12 +248,12 @@ Template.profile.events({
         var div = document.getElementById("profClasses");
         div.style.height = "50%";
         setTimeout(function() {            
-        Session.set("profClassTab", "addClass");
+            Session.set("profClassTab", "addClass");
             div.style.height = "70%";          
             openDivFade(functionHolder);        
         }, 400);
-     },
-    'click .manageClass' () { 
+    },
+        'click .manageClass' () { 
         if (Session.equals("profClassTab", "manClass")) return;      
         var functionHolder = document.getElementById("profClassInfoHolder");
         closeDivFade(functionHolder);
@@ -254,16 +265,16 @@ Template.profile.events({
             openDivFade(functionHolder);        
         }, 400);
     },
-    'click .createClass' () {
+        'click .createClass' () {
         if (Session.equals("profClassTab", "creClass")) return;
         var functionHolder = document.getElementById("profClassInfoHolder");        
         closeDivFade(functionHolder);
         var div = document.getElementById("profClasses");
         div.style.height = "50%";
         setTimeout(function() {
-                Session.set("profClassTab", "creClass");
-                div.style.height = "70%";
-                openDivFade(functionHolder);
+            Session.set("profClassTab", "creClass");
+            div.style.height = "70%";
+            openDivFade(functionHolder);
         }, 400);
     },
     'click .classBox' (event) { // When you click on a box that holds class
@@ -293,7 +304,7 @@ Template.profile.events({
         } else {
             var attribute = event.target.getAttribute("classid");
         }
-        if(attribute === Meteor.userId()) return;
+        if (attribute === Meteor.userId()) return;
         Session.set("selectedClass", null);
         var usertype = ["moderators", "banned"];
         var array = classes.findOne({
@@ -461,21 +472,21 @@ Template.profile.events({
     // INPUT HANDLING
     'focus .clickModify' (event) {
         $(".optionHolder")
-        .fadeOut(250, "linear");
+            .fadeOut(250, "linear");
 
-        if(modifyingInput !== null) {
-            if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
-        } 
+        if (modifyingInput !== null) {
+            if (!$("#" + modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
+        }
         modifyingInput = event.target.id;
-        if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
+        if (!$("#" + modifyingInput)[0].className.includes("dropdown")) {
             event.target.select();
-            event.target.style.cursor = "text";   
+            event.target.style.cursor = "text";
         }
     },
     'keydown .dropdown' (event) {
         event.preventDefault();
-        var first = $("#"+modifyingInput).next().children("p:first-child");
-        var last = $("#"+modifyingInput).next().children("p:last-child"); 
+        var first = $("#" + modifyingInput).next().children("p:first-child");
+        var last = $("#" + modifyingInput).next().children("p:last-child");
         var next = $(".selectedOption").next();
         var prev = $(".selectedOption").prev();
         var lastSel = $(".selectedOption");
@@ -487,7 +498,7 @@ Template.profile.events({
             } else {
                 if (prev.length === 0) {
                     last.addClass("selectedOption");
-                    lastSel.removeClass("selectedOption");  
+                    lastSel.removeClass("selectedOption");
                 } else {
                     prev.addClass("selectedOption");
                     lastSel.removeClass("selectedOption");
@@ -506,7 +517,7 @@ Template.profile.events({
                     next.addClass("selectedOption");
                     lastSel.removeClass("selectedOption");
                 }
-            }    
+            }
         } else if (event.keyCode === 13) {
             lastSel[0].click();
         }
@@ -515,27 +526,29 @@ Template.profile.events({
         $(".selectedOption").removeClass("selectedOption");
 
         $("#" + modifyingInput).next()
-        .css('opacity',0)
-        .slideDown(300)
-        .animate(
-            { opacity: 1 },
-            { queue: false, duration: 100 }
-        );
+            .css('opacity', 0)
+            .slideDown(300)
+            .animate({
+                opacity: 1
+            }, {
+                queue: false,
+                duration: 100
+            });
     },
     'click .optionText' (event) { // Click each preferences setting.
         var option = event.target.childNodes[0].nodeValue;
-        var userSettings = ["description","school","grade"];
+        var userSettings = ["description", "school", "grade"];
         var newSetting = Session.get("user");
-        
-        if(modifyingInput === "privacy" || modifyingInput === "category") {
+
+        if (modifyingInput === "privacy" || modifyingInput === "category") {
             document.getElementById(modifyingInput).value = option;
             $("#" + modifyingInput).next()
-            .fadeOut(250, "linear");
+                .fadeOut(250, "linear");
             $(".selectedOption").removeClass("selectedOption");
             return;
         }
 
-        if(_.contains(userSettings, modifyingInput)) {
+        if (_.contains(userSettings, modifyingInput)) {
             newSetting[modifyingInput] = (modifyingInput === "grade") ? parseInt(option) : option;
         } else {
             newSetting.preferences[modifyingInput] = (function() {
@@ -547,10 +560,10 @@ Template.profile.events({
         }
         Session.set("user", newSetting);
         serverData = Session.get("user");
-        sendData("editProfile"); 
+        sendData("editProfile");
 
         $("#" + modifyingInput).next()
-        .fadeOut(250, "linear");
+            .fadeOut(250, "linear");
 
         $(".selectedOption").removeClass("selectedOption");
     },
@@ -585,11 +598,13 @@ Template.profile.events({
                     name: item.childNodes[1].childNodes[0].nodeValue,
                     teacher: item.childNodes[3].childNodes[0].nodeValue,
                     hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.replace(",","").length / 17),
+                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.replace(",", "").length / 17),
                     _id: item.getAttribute("classid")
                 });
             }
-            Session.set("autocompleteDivs", divs.sort(function(a,b){return b.subscribers-a.subscribers}));
+            Session.set("autocompleteDivs", divs.sort(function(a, b) {
+                return b.subscribers - a.subscribers
+            }));
         } catch (err) {}
     }
 });
@@ -712,8 +727,8 @@ function checkUser(email, classid) { // Checks if user email exists.
         return true;
     } else {
         if (classes.findOne({
-            _id: classid
-        }).subscribers)
+                _id: classid
+            }).subscribers)
             return false;
     }
 }
