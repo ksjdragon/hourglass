@@ -654,9 +654,9 @@ Template.main.events({
         });
     },
     'click #exportDiv' (event) {
-        var events = [];
+        var events = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN";
         var userClasses = Session.get("calendarClasses");
-
+        var timestamp = new Date().toJSON().replace(/-|:|\./gi, "");
         for (var i = 0; i < userClasses.length; i++) {
             var works = userClasses[i].thisClassWork;
             for (var j = 0; j < works.length; j++) {
@@ -670,24 +670,27 @@ Template.main.events({
                 if (workclass === undefined) workclass = {
                     name: "Personal"
                 };
-                events.push([
-                    workclass.name + ": " + work.name,
-                    work.realDate.toLocaleDateString(),
-                    work.description,
-                    "True"
-                ]);
+                if (work.description === undefined) {
+                    work.description = "";
+                } else {
+                    work.description = " - " + work.description;
+                }
+                var duedate = work.realDate.toJSON().slice(0,10).replace(/-/gi,"");
+                events += "\nBEGIN:VEVENT" +
+                    "\nUID:" + timestamp + work._id + "@hourglass.tk" +
+                    "\nDTSTAMP:" + timestamp +
+                    "\nDTSTART:" + duedate +
+                    "\nDTEND:" + duedate +
+                    "\nSUMMARY:" + work.name + work.description +
+                    "\nCATEGORIES:" + workclass.name +
+                    "\nEND:VEVENT";
             }
+            events += "\nEND:VCALENDAR";
         }
-
-        var JSONevents = JSON.stringify(events);
-        var CSVevents = Papa.unparse({
-            fields: ["Subject", "Start Date", "Description", "All Day Event"],
-            data: JSONevents
+        var eventBlob = new Blob([events], {
+            type: "data:text/ics;charset=utf-8"
         });
-        var eventBlob = new Blob([CSVevents], {
-            type: "data:text/csv;charset=utf-8"
-        });
-        saveAs(eventBlob, "hourglass.csv");
+        saveAs(eventBlob, "hourglass.ics");
     },
     // HANDLING INPUT CHANGING
     'focus .clickModify' (event) {
