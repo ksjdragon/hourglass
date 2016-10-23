@@ -26,14 +26,14 @@ On this tab, you can see all of your current classes. If you are an admin of the
 ### User Pages
 You can go to <-url->/user/<-email-> to vist a user's profile.
 
-#Changelog
+##Changelog
 
-## 0.1.2
+### 0.1.2
   - First beta version
   - Fixed resolution / display issues
   - Bug fixes
   
-## 0.1.1
+### 0.1.1
   - Added dynamic resizing, zooming and scaling support for CSS.
   - Fixed reactive updating on work.
   - Added personal work.
