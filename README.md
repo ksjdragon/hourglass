@@ -24,7 +24,7 @@ One can join a public class by searching for and then clicking on the class they
 #### Managing classes
 On this tab, you can see all of your current classes. If you are an admin of the class, clicking on it will allow you to manage details about the class. Otherwise, you can leave the class by clicking the x.
 ### User Pages
-You can go to <url>/user/<email> to vist a user's profile.
+You can go to <-url->/user/<-email-> to vist a user's profile.
 
 #Changelog
 
