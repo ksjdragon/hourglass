@@ -10,10 +10,10 @@ var calWorkOpen = null;
 var calWorkDate = null;
 modifyingInput = null;
 dropOpen = null;
+var filterOpen =  false;
+var sidebarMode = [null,null]
 
 var openValues = {
-    "menu": "-270px",
-    "options": "-300px",
     "requests": "-235px"
 };
 
@@ -36,10 +36,10 @@ var defaultWork = {
 // Reactive variables.
 Session.set("user", {}); // Stores user preferences.
 Session.set("calendarClasses", []); // Stores calendar classes.
-Session.set("sidebar", null); // Status of sidebar.
 Session.set("requests", false); // Status of requests.
+Session.set("sidebarMode", [null,null]); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
-Session.set("currentWork",null);
+Session.set("currentWork",null); // Current stored work.
 Session.set("noclass", null); // If user does not have classes.
 Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
@@ -65,6 +65,7 @@ Template.main.rendered = function() {
             $(this).removeClass("selectedOption");
         }
     );
+    $("#menuContainer").toggle();
 };
 
 Template.profile.rendered = function() {
@@ -78,12 +79,6 @@ Template.profile.rendered = function() {
         }
     );
 };
-
-Template.registerHelper('userProfile', () => {
-    if (Meteor.user() === undefined || Meteor.user() === null) return;
-    Session.set("user", Meteor.user().profile);
-    return;
-});
 
 Template.registerHelper('adminPage', () => {
     return window.location.pathname.includes("/");
@@ -145,7 +140,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     found.mine = false;
                 }
             }
-            if (classDisp.indexOf(courses[i]) !== -1) found.selected = true; // Filter selected.
+            found.selected = ((classDisp.indexOf(courses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
             array.push(found);
 
             var thisWork = work.find({
@@ -296,15 +291,6 @@ Template.main.helpers({
         if (Session.get("user").school === undefined || Session.get("user").school === null) return;
         return " - " + Session.get("user").school;
     },
-    iconColor(icon) { // Sidebar status color
-        if (Session.equals("sidebar", icon + "Container")) {
-            return Session.get("user").preferences.theme.statusIcons;
-        } else if (Session.equals("sidebar", "both")) {
-            return Session.get("user").preferences.theme.statusIcons;
-        } else {
-            return;
-        }
-    },
     avatar() { // Returns avatar.
         return Meteor.user().services.google.picture;
     },
@@ -319,31 +305,16 @@ Template.main.helpers({
     bgSrc() { // Returns background.
         return "Backgrounds/" + Session.get("user").preferences.theme.background;
     },
-    menuStatus() { // Status of of menu sidebar.
-        if (Session.equals("sidebar", "menuContainer")) {
-            return "0px";
-        } else if (Session.equals("sidebar", "both")) {
-            return "0px";
-        } else {
-            return openValues.menu;
-        }
-    },
-    optionsStatus() { // Status of options sidebar.
-        if (Session.equals("sidebar", "optionsContainer")) {
-            return "0px";
-        } else if (Session.equals("sidebar", "both")) {
-            return "0px";
-        } else {
-            return openValues.options;
-        }
+    iconStatus(icon) {
+        var sidebar = Session.get("sidebarMode");
+        return (sidebar[0] === icon && sidebar[1]) ? Session.get("user").preferences.theme.iconHighlight + ";background-color:rgba(0,0,0,0.2)" : "";
     },
     requestStatus() {
         if (Session.get("requests")) return "0px";
         return openValues.requests;
     },
     modeStatus(status) { // Color status of display modes.
-        if (!Session.equals("mode", status)) return;
-        return Session.get("user").preferences.theme.modeHighlight;
+        return (Session.equals("mode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
     },
     currMode(name) { // Status of display mode.
         return Session.equals("mode", name);
@@ -397,6 +368,10 @@ Template.main.helpers({
                 });
                 var date = event.start.format().split("-");
                 current.dueDate = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
+                if(Date.parse(new Date) > Date.parse(current.dueDate)) {
+                    revertFunc();
+                    return;
+                } 
                 serverData = current;
                 sendData("editWork");
             },
@@ -426,12 +401,10 @@ Template.main.helpers({
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
     calCreWork() { // Display instructions for creating a work.
-        if (Session.get("calCreWork")) return true;
-        return false;
+        return Session.get("calCreWork");
     },
     filterOn() {
-        if (Session.get("classDisp").length !== 0) return true;
-        return false;
+        return Session.get("classDisp").length !== 0 || Session.get("typeFilter").length !== 0;
     },
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
@@ -461,7 +434,7 @@ Template.main.helpers({
             array.push({
                 "type": types[i],
                 "typeName": types[i][0].toUpperCase() + types[i].slice(1),
-                "selected": _.contains(Session.get("typeFilter"), types[i])
+                "selected": (_.contains(Session.get("typeFilter"), types[i])) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"
             });
         }
         return array;
@@ -503,8 +476,7 @@ Template.main.events({
         if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
             if (!(e.includes("optionHolder") || e.includes("optionText"))) {
                 if(document.getElementById(modifyingInput).className.includes("dropdown")) {
-                    $(".optionHolder")
-                        .fadeOut(250, "linear");
+                    $(".optionHolder").fadeOut(100);
 
                     $(".selectedOption").removeClass("selectedOption");
                 } else {     
@@ -514,11 +486,10 @@ Template.main.events({
             }
         }
 
-        if (!Session.equals("sidebar", e) && // Sidebar closing.
-            !e.includes("fa-cog") &&
+        if (!e.includes("fa-cog") && // Sidebar closing.
             !e.includes("fa-bars") &&
             !document.getElementById("menuContainer").contains(event.target) &&
-            !document.getElementById("optionsContainer").contains(event.target)) {
+            !document.getElementById("menuBar").contains(event.target)) {
             if (Session.get("calCreWork")) {
                 if (!calWorkOpen) {
                     Session.set("calCreWork", false);
@@ -526,7 +497,9 @@ Template.main.events({
                 }
                 calWorkOpen = false;
             } else {
-                Session.set("sidebar", null);
+                Session.set("sidebarMode", Session.get("sidebarMode")[0], false);
+                toggleSidebar(false);
+                Session.set("sidebarMode", [null,null]);
             }
         }
 
@@ -542,29 +515,40 @@ Template.main.events({
         if (!document.getElementById("requests").contains(event.target)) Session.set("requests", false);
     },
     // MAIN MENU BUTTONS
-    'click .fa-bars' () { // Click menu button.
-        var side = Session.get("sidebar");
-        if (side === "menuContainer") {
-            Session.set("sidebar", null);
-        } else if (side === "optionsContainer") {
-            Session.set("sidebar", "both");
-        } else if (side === "both") {
-            Session.set("sidebar", "optionsContainer");
+    'click .fa-bars' (event) { // Click menu button.
+        var sidebar = Session.get("sidebarMode");
+        if(sidebar[0] === "menu" && sidebar[1]) {
+            Session.set("sidebarMode", ["menu",false]);
+            toggleSidebar(false);
         } else {
-            Session.set("sidebar", "menuContainer");
+            Session.set("sidebarMode", ["menu",true]);
+
+            $(".menuWrapper.option").fadeOut(200);
+            toggleSidebar(true);
+            $(".menuWrapper.menu").slideDown(350);
         }
     },
-    'click .fa-cog' () { // Click settings button.
-        var side = Session.get("sidebar");
-        if (side === "optionsContainer") {
-            Session.set("sidebar", null);
-        } else if (side === "menuContainer") {
-            Session.set("sidebar", "both");
-        } else if (side === "both") {
-            Session.set("sidebar", "menuContainer");
+    'click .fa-cog' (event) { // Click settings button.
+        var sidebar = Session.get("sidebarMode");
+        if(sidebar[0] === "option" && sidebar[1]) {
+            Session.set("sidebarMode", ["option",false]);
+            toggleSidebar(false);
         } else {
-            Session.set("sidebar", "optionsContainer");
+            Session.set("sidebarMode", ["option",true]);
+
+            $(".menuWrapper.menu").slideUp(200);
+            toggleSidebar(true);
+            $(".menuWrapper.option").slideDown(350);
         }
+    },
+    'click #filterHead' (event) {
+        if(event.target.id === "disableFilter") return;
+        if(!filterOpen) {
+            $("#filterWrapper").slideDown(300);
+        } else {
+            $("#filterWrapper").slideUp(300);
+        }
+        filterOpen = !filterOpen;
     },
     'click #requests .fa-question' () {
         Session.set("requests", !Session.get("requests"));
@@ -578,7 +562,9 @@ Template.main.events({
             openDivFade(modeHolder);
         }, 300);
         setTimeout(startDragula, 500);
-        Session.set("sidebar", null); // Closes all sidebars.
+        Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
+        toggleSidebar(false);
+        Session.set("sidebarMode", [null,null]);
         Session.set("calCreWork", null);
     },
     'click .calendar' () { // Click calendar mode button.
@@ -589,7 +575,9 @@ Template.main.events({
             Session.set("mode", "calendar");
             openDivFade(modeHolder);
         }, 300);
-        Session.set("sidebar", null); // Closes all sidebars.
+        Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
+        toggleSidebar(false);
+        Session.set("sidebarMode", [null,null]); 
         Session.set("calCreWork", null);
     },
     'click .creWork' (event) { // Cick add work button.
@@ -610,10 +598,7 @@ Template.main.events({
         }, 100);
     },
     'click .workCard' (event) { // Display work information on work card click.
-        var dom = event.target;
-        while (event.target.className !== "workCard") event.target = event.target.parentNode;
         var workid = event.target.getAttribute("workid");
-
         var thisWork = work.findOne({
             _id: workid
         });
@@ -621,7 +606,7 @@ Template.main.events({
         Session.set("newWork", false);
         Session.set("currentWork", thisWork);
 
-        if (!Session.get("newWork") && !document.getElementById("optionsContainer").contains(event.target)) {
+        if (!Session.get("newWork")) {
             var currClass = classes.findOne({
                 _id: thisWork["class"]
             });
@@ -692,7 +677,7 @@ Template.main.events({
     // HANDLING INPUT CHANGING
     'focus .clickModify' (event) {
         $(".optionHolder")
-            .fadeOut(250, "linear");
+            .fadeOut(100);
 
         if(modifyingInput !== null) {
             if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
@@ -761,7 +746,7 @@ Template.main.events({
             serverData = Session.get("currentWork");
 
             $("#" + modifyingInput).next()
-                .fadeOut(250, "linear");
+                .fadeOut(100);
             $(".selectedOption").removeClass("selectedOption");
             if(Session.get("newWork")) return;
             if(checkMissing()) return;
@@ -780,7 +765,7 @@ Template.main.events({
         }
 
         $("#" + modifyingInput).next()
-            .fadeOut(250, "linear");
+            .fadeOut(100);
 
         $(".selectedOption").removeClass("selectedOption");
     },
@@ -878,6 +863,7 @@ Template.main.events({
     },
     'click #disableFilter' () {
         Session.set("classDisp", []);
+        Session.set("typeFilter", []);
     },
     'mouseover .sideClass' (event) { // Highlight/scale filter on-hover.
         var div;
@@ -918,6 +904,16 @@ Template.main.events({
 });
 
 // Other Functions
+
+function toggleSidebar(open) {
+    if(open) {
+        $("#menuContainer").show("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '36vh'}, 250);
+    } else {
+        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '6vh'}, 250);
+    }
+}
 
 function openDivFade(div) {
     div.style.display = "block";
