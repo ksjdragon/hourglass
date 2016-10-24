@@ -320,7 +320,7 @@ a
 	font-size: 2vh;
 }
 
-.noScroll .fa-plus, .creWork .fa-plus, .fa-minus, .fa-graduation-cap, .fa-exchange {
+.noScroll .fa-plus, .creWork .fa-plus, .fa-minus, .noScroll .fa-graduation-cap, .fa-exchange {
 	font-size: 130%;
 	padding: 5%;
 }

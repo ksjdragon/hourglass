@@ -24,8 +24,6 @@ UI.registerHelper 'AdminConfig', ->
 UI.registerHelper 'admin_skin', ->
 	AdminConfig?.skin or 'blue'
 
-UI.registerHelper 'admin_collections', adminCollections
-
 UI.registerHelper 'admin_collection_name', ->
 	Session.get 'admin_collection_name'
 
@@ -111,3 +109,4 @@ UI.registerHelper 'adminUserEmail', (user) ->
 		user.services.facebook.email
 	else if user && user.services && user.services.google && user.services.google.email
 		user.services.google.email
+
