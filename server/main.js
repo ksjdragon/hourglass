@@ -206,6 +206,21 @@ Meteor.methods({
             throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
         }
     },
+    'approveClass': function(classId) {
+        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+            var currentclass = classes.find({
+                _id: classId
+            });
+            currentclass.status = true;
+            Meteor.update({
+                _id: classId
+            }, {
+                $set: {
+                    currentclass
+                }
+            });
+        }
+    },
     // For class admins to get code
     'getCode': function(classId) {
         var foundclass = classes.findOne({
