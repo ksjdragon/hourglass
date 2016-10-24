@@ -146,7 +146,7 @@ a
 }
 
 .noScroll h4, .gu-mirror h4 {
-	font-size: 130%;
+	font-size: 1.9vh;
 	font-weight: 200;
 	padding: 5%;
 
@@ -262,9 +262,14 @@ a
 
 .sectionTitle {
 	font-weight: 200;
+	font-size: 2vh;
 	width: 100%;
 	padding: 6%;
 	background-color: rgba(255,255,255,0.1);
+}
+
+.sectionTitle h3 {
+	font-size: 2vh;
 }
 
 .mode {
@@ -312,7 +317,7 @@ a
 }
 
 #divLeftBar .fa-university, #divLeftBar .fa-calendar, #divLeftBar .fa-download, #divLeftBar .fa-tasks {
-	font-size: 150%;
+	font-size: 2vh;
 }
 
 .noScroll .fa-plus, .creWork .fa-plus, .fa-minus, .fa-graduation-cap, .fa-exchange {
@@ -356,7 +361,7 @@ a
 .sideClass span {
 	font-weight: 400;
 	margin: 0;
-	font-size: 110%;
+	font-size: 1.7vh;
 	padding: 5%;
 	display: table-cell;
 }
@@ -372,7 +377,7 @@ a
 }
 
 .sideTypeName {
-	font-size: 110%;
+	font-size: 1.7vh;
 	width: 92%;
 	margin: 0;
 	padding: 5%;
@@ -681,7 +686,7 @@ textarea.clickModify {
 }
 
 .clickModify.dropdown {
-	font-size: 120%;
+	font-size: 2.1vh;
 	width: calc(100% - 2px);
 	border: 1px solid #999797;
 
