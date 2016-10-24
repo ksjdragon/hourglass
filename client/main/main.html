@@ -40,19 +40,23 @@
                             <i class="fa fa-angle-down" aria-hidden="true"></i>
                         </div>
                         <div id="filterWrapper">
-                            <h3 class="sectionTitle">By Type</h3>
+                            <div id="typeFilterWrapper" class="sectionTitle">
+                                <h3>By Type</h3>
+                                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                            </div>
                             <div id="classFilterHolder">
                                 {{#each types}}
                                     {{> sideTypeFilter}}
                                 {{/each}}
                             </div>
-                            <div id="classListHolder">
-                                <h3 class="sectionTitle">By Class</h3>    
-                                <div id="sideClassWrapper">
-                                    {{#each myClasses}}
-                                        {{> sidebarClasses}}
-                                    {{/each}}
-                                </div>
+                            <div id="classFilterWrapper" class="sectionTitle">
+                                    <h3>By Class</h3>
+                                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                            </div> 
+                            <div id="classListHolder">    
+                                {{#each myClasses}}
+                                    {{> sidebarClasses}}
+                                {{/each}}
                             </div>
                         </div>
                     </div>

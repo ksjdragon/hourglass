@@ -328,13 +328,8 @@ a
 #classListHolder {
 	max-height: 48%;
 	width: 100%;
-	padding-right: 50%;
 
 	overflow-y: auto;
-}
-
-#sideClassWrapper {
-	max-height: 20vh;
 }
 
 .sideClass, .sideFilter {
@@ -367,12 +362,12 @@ a
 }
 
 .sideClassName {
-	width: 65%;
+	width: 50%;
 	padding-left: 5%;
 }
 
 .sideClassHour {
-	width: 30%;
+	width: 50%;
 	color: #CCC;
 }
 
@@ -394,7 +389,7 @@ a
 	white-space: nowrap;
 }
 
-#filterHead {
+#filterHead, #filterWrapper .sectionTitle {
 	font-weight: 200;
 	padding: 0;
 
@@ -406,18 +401,18 @@ a
 	transition: background-color 0.4s ease; 
 }
 
-#filterHead:hover {
+#filterHead:hover, #filterWrapper .sectionTitle:hover {
 	background-color: rgba(255,255,255,0.2);
 }
 
-#filterHead h3:first-child {
+#filterHead h3:first-child, #filterWrapper .sectionTitle h3:first-child {
 	font-weight: 200;
 	padding: 5%;
 	display: inline-block;
 	pointer-events: none;
 }
 
-#filterHead .fa {
+#filterHead .fa, #filterWrapper .sectionTitle .fa {
 	font-size: 120%;
 	padding: 5%;
 	float: right;

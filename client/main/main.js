@@ -10,7 +10,7 @@ var calWorkOpen = null;
 var calWorkDate = null;
 modifyingInput = null;
 dropOpen = null;
-var filterOpen =  false;
+var filterOpen =  [false,true,true];
 var sidebarMode = [null,null]
 
 var openValues = {
@@ -66,6 +66,13 @@ Template.main.rendered = function() {
         }
     );
     $("#menuContainer").toggle();
+    $("#classListHolder").slimScroll({
+        height: '30vh',
+        size: '5px',
+        railVisible: true,
+        railColor: '#222',
+        railOpacity: 0.1,
+    })
 };
 
 Template.profile.rendered = function() {
@@ -543,12 +550,28 @@ Template.main.events({
     },
     'click #filterHead' (event) {
         if(event.target.id === "disableFilter") return;
-        if(!filterOpen) {
+        if(!filterOpen[0]) {
             $("#filterWrapper").slideDown(300);
         } else {
             $("#filterWrapper").slideUp(300);
         }
-        filterOpen = !filterOpen;
+        filterOpen[0] = !filterOpen[0];
+    },
+    'click #typeFilterWrapper' () {
+        if(!filterOpen[1]) {
+            $("#classFilterHolder").slideDown(300);
+        } else {
+            $("#classFilterHolder").slideUp(300);
+        }
+        filterOpen[1] = !filterOpen[1];
+    },
+    'click #classFilterWrapper' () {
+        if(!filterOpen[2]) {
+            $("#classListHolder").slideDown(300);
+        } else {
+            $("#classListHolder").slideUp(300);
+        }
+        filterOpen[2] = !filterOpen[2];
     },
     'click #requests .fa-question' () {
         Session.set("requests", !Session.get("requests"));
