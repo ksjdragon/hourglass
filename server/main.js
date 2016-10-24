@@ -211,11 +211,7 @@ Meteor.methods({
             var currentclass = classes.find({
                 _id: classId
             });
-            if (currentclass.status) {
-                currentclass.status = false;
-            } else {
-                currentclass.status = true;
-            }
+            currentclass.status = !currentclass.status;
             Meteor.update({
                 _id: classId
             }, {
