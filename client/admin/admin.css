@@ -1,0 +1,56 @@
+.adminUserIcon {
+	width: 2.7vw;
+	margin: 1%;
+
+	cursor: pointer;
+
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.adminUserInfo {
+	margin-top: 1vh;
+	padding: 0.5% 1.5% 0.5% 1.5%;
+
+	background-color: #fff;
+	-webkit-filter: drop-shadow(0px -1px 2px #666);
+	filter: drop-shadow(0px -1px 2px #666);
+
+	position: fixed;
+	display: none;
+	z-index: 5;
+}
+
+.adminUserInfo p {
+	margin: 5% 0 5% 0;
+}
+
+.infoTitle {
+	font-weight: 600;
+}
+
+.infoTab {
+	width: 0; 
+	height: 0; 
+
+	border-bottom: 2vh solid #fff;
+	border-left: 1.5vh solid transparent;
+	border-right: 1.5vh solid transparent;
+
+	position: absolute;
+	right: 1vh;
+	top: -1.9vh;
+}
+
+.approveStatus {
+	cursor: pointer;
+}
+
+.approveStatus .fa {
+	font-size: 5vh
+}
+
+.approveStatus .fa-toggle-on {
+	color: #288cd3;
+}

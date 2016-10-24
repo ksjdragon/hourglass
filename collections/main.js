@@ -48,11 +48,3 @@ schools.attachSchema(schools.schema);
 classes.attachSchema(classes.schema);
 work.attachSchema(work.schema);
 requests.attachSchema(requests.schema);
-
-classes.helpers({
-	fullUserInfo() {
-		var user = Meteor.users.findOne({_id: this.admin});
-		console.log(user);
-		return this.admin + " | " + user.services.google.email + " | " + user.profile.name;
-	}
-})
