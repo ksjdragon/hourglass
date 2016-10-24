@@ -1,0 +1,17 @@
+<template name="adminUserDisplay">
+	{{#each info}}
+		<img class="adminUserIcon" src="{{icon}}">
+		<div class="adminUserInfo">
+			<div class="infoTab"></div>
+			<p><span class="infoTitle">ID: </span><span>{{id}}</span></p>
+			<p><span class="infoTitle">Email: </span><span>{{email}}</span></p>
+			<p><span class="infoTitle">Name: </span><span>{{name}}</span></p>
+		</div>
+	{{/each}}
+</template>
+
+<template name="statusButton">
+	<div class="approveStatus">
+		<i class="fa fa-toggle-{{status}}" aria-hidden="true"></i>
+	</div>
+</template>

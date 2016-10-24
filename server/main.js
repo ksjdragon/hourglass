@@ -208,15 +208,15 @@ Meteor.methods({
     },
     'approveClass': function(classId) {
         if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
-            var currentclass = classes.find({
+            var currentclass = classes.findOne({
                 _id: classId
             });
-            currentclass.status = !currentclass.status;
-            Meteor.update({
+
+            classes.update({
                 _id: classId
             }, {
                 $set: {
-                    currentclass
+                    status: !currentclass.status
                 }
             });
         }
