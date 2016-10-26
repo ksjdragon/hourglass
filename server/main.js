@@ -145,90 +145,98 @@ var errors = [
     ["other", "Error could not be processed"]
 ];
 
-function securityCheck(checklist) {
+function securityCheck(checklist, input) {
     var error = -1;
-    for(var checkpoint = 0; checkpoint < checklist.length; checklist++) {
+    var results = [];
+    for(var checkpoint = 0; checkpoint < checklist.length - 1; checklist++) {
+        if (Array.isArray(checkpoint)) {
+            results.push(securityCheck(checkpoint, input));
+            continue;
+        }
         switch (checkpoint) {
         // Superadmin
         case 0:
             if (!Roles.userIsInRole(Meteor.userId(), ['superadmin'])) error = 0;
-            continue;
+            break;
         // Any admin
         case 1:
             if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = 0;
-            continue;
+            break;
         // Unverified classes
         case 2:
             if (classes.find({status:false, admin: Meteor.userId()}).fetch().length > 5) error = 1;
-            continue;
+            break;
         // School existence
         case 3:
             if (!schools.findOne({name: input.school})) error = 2;
-            continue;
+            break;
         // TODO: teachers with same name
         // Duplicate classes
         case 4:
             if (classes.findOne({school: input.school, status: true, privacy: false, teacher: input.teacher, hour: input.hour}) || (input.teacher === "" && input.hour === "")) error = 3;
-            continue;
+            break;
         // Class admin
         case 5:
             if (input.admin !== Meteor.userId) error = 4;
-            continue;
+            break;
         // Class existence
         case 6:
             if (!input) error = 5;
-            continue;
+            break;
         // User existence
         case 7:
             if (!input) error = 6;
-            continue;
+            break;
         // Not banned
         case 8:
             if (_.contains(input.banned, input.userId)) error = 7;
-            continue;
+            break;
         // Subscribed
         case 9:
             if (!_.contains(input.subscribers, input.userId)) error = 8;
-            continue;
+            break;
         // Date is today or onward
         case 10:
             var ref = new Date();
             ref.setHours(0, 0, 0, 0);
             ref = ref.getTime();
             if (ref > input.dueDate.getTime()) error = 9;
-            continue;
+            break;
         case 11:
             if (input.name > 50) error = 10;
-            continue;
+            break;
         case 12:
             if (input.description > 150) error = 11;
-            continue;
+            break;
         case 13:
             if (!_.contains(input.moderators.concat(input.admin)), Meteor.userId()) error = 4;
-            continue;
+            break;
         case 14:
             if (Meteor.userId() !== input.creator) error = 12;
-            continue;
+            break;
         case 15:
             if (input.comment > 200) error = 13;
-            continue;
+            break;
         case 16:
             if (input.class !== Meteor.userId()) error = errors.length - 1;
-            continue;
+            break;
         case 17:
             if (input.code !== pass && input.privacy) error = 14;
-            continue;
+            break;
         case 18:
             if (_.contains(input.classes, input.classId)) error = 15;
-            continue;
+            break;
         case 19:
             if (input.content.length > 500) error = 16;
-            continue;
+            break;
         }
+        results.push(error);
     }
-    if (error => 0) return [false].concat(errors[error]);
+    error = results.find(function(result){return result >= 0;});
+    if (checklist[checklist.length - 1] && error !== undefined) return error;
+    else if (results.find(function(result){return result === -1;}) === undefined) return results[0];
+    else return -1;
 }
-
 
 Meteor.methods({
     // Stuff that is accessible in client
