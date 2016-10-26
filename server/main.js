@@ -123,6 +123,113 @@ Meteor.publish('users', function() {
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
 
+var errors = [
+    ["unauthorized", "Sorry, you are not authorized to complete this action."],
+    ["unauthorized", "You have too many unverified classes right now. Try again later."],
+    ["matching", "The school you have requested does not exist."],
+    ["matching", "This teacher is already teaching a class elsewhere!"],
+    ["unauthorized", "You are not an administrator of this class."],
+    ["matching", "This class does not exist."],
+    ["matching", "This user does not exist"],
+    ["matching", "This user is banned from this class"],
+    ["matching", "This user is not enrolled in the class"],
+    ["trivial", "The past is in the past! Let it go!"],
+    ["trivial", "This name is too long"],
+    ["trivial", "This description is too long"],
+    ["unauthorized", "You are not the creator of this work."],
+    ["trivial", "This comment is too long."],
+    ["unauthorized", "Incorrect code, try again."],
+    ["trivial", "You are already enrolled in this class."],
+    ["trivial", "This request is too long."],
+
+    ["other", "Error could not be processed"]
+];
+
+function securityCheck(checklist) {
+    var error = -1;
+    for(var checkpoint = 0; checkpoint < checklist.length; checklist++) {
+        switch (checkpoint) {
+        // Superadmin
+        case 0:
+            if (!Roles.userIsInRole(Meteor.userId(), ['superadmin'])) error = 0;
+            continue;
+        // Any admin
+        case 1:
+            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = 0;
+            continue;
+        // Unverified classes
+        case 2:
+            if (classes.find({status:false, admin: Meteor.userId()}).fetch().length > 5) error = 1;
+            continue;
+        // School existence
+        case 3:
+            if (!schools.findOne({name: input.school})) error = 2;
+            continue;
+        // TODO: teachers with same name
+        // Duplicate classes
+        case 4:
+            if (classes.findOne({school: input.school, status: true, privacy: false, teacher: input.teacher, hour: input.hour}) || (input.teacher === "" && input.hour === "")) error = 3;
+            continue;
+        // Class admin
+        case 5:
+            if (input.admin !== Meteor.userId) error = 4;
+            continue;
+        // Class existence
+        case 6:
+            if (!input) error = 5;
+            continue;
+        // User existence
+        case 7:
+            if (!input) error = 6;
+            continue;
+        // Not banned
+        case 8:
+            if (_.contains(input.banned, input.userId)) error = 7;
+            continue;
+        // Subscribed
+        case 9:
+            if (!_.contains(input.subscribers, input.userId)) error = 8;
+            continue;
+        // Date is today or onward
+        case 10:
+            var ref = new Date();
+            ref.setHours(0, 0, 0, 0);
+            ref = ref.getTime();
+            if (ref > input.dueDate.getTime()) error = 9;
+            continue;
+        case 11:
+            if (input.name > 50) error = 10;
+            continue;
+        case 12:
+            if (input.description > 150) error = 11;
+            continue;
+        case 13:
+            if (!_.contains(input.moderators.concat(input.admin)), Meteor.userId()) error = 4;
+            continue;
+        case 14:
+            if (Meteor.userId() !== input.creator) error = 12;
+            continue;
+        case 15:
+            if (input.comment > 200) error = 13;
+            continue;
+        case 16:
+            if (input.class !== Meteor.userId()) error = errors.length - 1;
+            continue;
+        case 17:
+            if (input.code !== pass && input.privacy) error = 14;
+            continue;
+        case 18:
+            if (_.contains(input.classes, input.classId)) error = 15;
+            continue;
+        case 19:
+            if (input.content.length > 500) error = 16;
+            continue;
+        }
+    }
+    if (error => 0) return [false].concat(errors[error]);
+}
+
+
 Meteor.methods({
     // Stuff that is accessible in client
 
