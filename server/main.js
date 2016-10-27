@@ -124,38 +124,42 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 
 var errors = [
-    ["unauthorized", "Sorry, you are not authorized to complete this action."],
+    ["unauthorized", "Sorry, you are not authorized to complete this action."], // 0
     ["unauthorized", "You have too many unverified classes right now. Try again later."],
     ["matching", "The school you have requested does not exist."],
     ["matching", "This teacher is already teaching a class elsewhere!"],
     ["unauthorized", "You are not an administrator of this class."],
-    ["matching", "This class does not exist."],
+    ["matching", "This class does not exist."], // 5
     ["matching", "This user does not exist"],
     ["matching", "This user is banned from this class"],
     ["matching", "This user is not enrolled in the class"],
     ["trivial", "The past is in the past! Let it go!"],
-    ["trivial", "This name is too long"],
+    ["trivial", "This name is too long"], // 10
     ["trivial", "This description is too long"],
     ["unauthorized", "You are not the creator of this work."],
     ["trivial", "This comment is too long."],
     ["unauthorized", "Incorrect code, try again."],
-    ["trivial", "You are already enrolled in this class."],
+    ["trivial", "You are already enrolled in this class."], // 15
     ["trivial", "This request is too long."],
+    ["trivial", "Not a valid work type"],
 
     ["other", "Error could not be processed"]
 ];
 
 function securityCheck(checklist, input) {
-    var error = -1;
+    var error;
     var results = [];
-    for(var checkpoint = 0; checkpoint < checklist.length - 1; checklist++) {
+    for(var i = 0; i < checklist.length - 1; i++) {
+        var checkpoint = checklist[i];
+        error = 0;
         if (Array.isArray(checkpoint)) {
-            results.push(securityCheck(checkpoint, input));
+            var arrayresult = securityCheck(checkpoint, input);
+            results.push(arrayresult);
             continue;
         }
         switch (checkpoint) {
         // Superadmin
-        case 0:
+        case -1:
             if (!Roles.userIsInRole(Meteor.userId(), ['superadmin'])) error = 0;
             break;
         // Any admin
@@ -179,14 +183,6 @@ function securityCheck(checklist, input) {
         case 5:
             if (input.admin !== Meteor.userId) error = 4;
             break;
-        // Class existence
-        case 6:
-            if (!input) error = 5;
-            break;
-        // User existence
-        case 7:
-            if (!input) error = 6;
-            break;
         // Not banned
         case 8:
             if (_.contains(input.banned, input.userId)) error = 7;
@@ -200,42 +196,55 @@ function securityCheck(checklist, input) {
             var ref = new Date();
             ref.setHours(0, 0, 0, 0);
             ref = ref.getTime();
-            if (ref > input.dueDate.getTime()) error = 9;
+            if (!(input.dueDate instanceof Date) || ref > input.dueDate.getTime()) error = 9;
             break;
+        // Name too long
         case 11:
             if (input.name > 50) error = 10;
             break;
+        // Description too long
         case 12:
             if (input.description > 150) error = 11;
             break;
+        // Moderator or admin
         case 13:
             if (!_.contains(input.moderators.concat(input.admin)), Meteor.userId()) error = 4;
             break;
+        // Creator of work
         case 14:
             if (Meteor.userId() !== input.creator) error = 12;
             break;
+        // Comment too long
         case 15:
             if (input.comment > 200) error = 13;
             break;
+        // Private class
         case 16:
             if (input.class !== Meteor.userId()) error = errors.length - 1;
             break;
+        // Code is wrong
         case 17:
             if (input.code !== pass && input.privacy) error = 14;
             break;
+        // Check if user is already enrolled
         case 18:
             if (_.contains(input.classes, input.classId)) error = 15;
             break;
+        // Request too long
         case 19:
             if (input.content.length > 500) error = 16;
+            break;
+        // Is valid work type
+        case 20:
+            if (!_.contains(worktype, input.type)) error = 17;
             break;
         }
         results.push(error);
     }
-    error = results.find(function(result){return result >= 0;});
+    error = results.find(function(result){return result !== 0;});
     if (checklist[checklist.length - 1] && error !== undefined) return error;
-    else if (results.find(function(result){return result === -1;}) === undefined) return results[0];
-    else return -1;
+    else if (results.find(function(result){return result === 0;}) === undefined) return results[0];
+    else return 0;
 }
 
 Meteor.methods({
@@ -439,23 +448,15 @@ Meteor.methods({
 
     // Work Functions
     'createWork': function(input) {
-        var ref = new Date();
-        ref.setHours(0, 0, 0, 0);
-        ref = ref.getTime();
         input.creator = Meteor.userId();
         work.schema.validate(input);
         var found = classes.findOne({
             _id: input.class
         });
-
-        if (Meteor.user() &&
-            ((found && _.contains(Meteor.user().profile.classes, input.class) &&
-                    !_.contains(found.banned, Meteor.userId())) ||
-                (Meteor.userId() === input.class)) &&
-            input.dueDate instanceof Date && input.dueDate.getTime() >= ref &&
-            _.contains(worktype, input.type) &&
-            input.name.length <= 50 && input.description.length <= 150) {
-
+        var security = securityCheck([[[8, 9, true], 16, false], 10, 20, 11, 12, true],
+                                     Object.assign(found || {}, input, {userId: Meteor.userId()}));
+        console.log(security);
+        if (!security) {
             input.confirmations = [Meteor.userId()];
             input.reports = [];
             input.done = [];
@@ -463,7 +464,7 @@ Meteor.methods({
             input.comments = [];
             work.insert(input);
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
 
     },
