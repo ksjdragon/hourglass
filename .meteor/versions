@@ -24,6 +24,7 @@ caching-compiler@1.1.7
 caching-html-compiler@1.0.7
 callback-hook@1.0.9
 check@1.2.3
+chuangbo:cookie@1.1.0
 coffeescript@1.2.4
 cosmos:browserify@0.9.4
 dandv:caret-position@2.1.1
@@ -70,6 +71,8 @@ mdg:validation-error@0.5.1
 meteor@1.2.17_1
 meteor-base@1.0.4
 meteorhacks:meteorx@1.4.1
+meteorhacks:picker@1.0.3
+meteorhacks:sikka@1.0.1
 meteorhacks:unblock@1.1.0
 mfactory:admin-lte@0.0.2
 minifier-css@1.2.14_1
