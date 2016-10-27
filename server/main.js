@@ -455,13 +455,8 @@ Meteor.methods({
         });
         var security = securityCheck([[[8, 9, true], 16, false], 10, 20, 11, 12, true],
                                      Object.assign(found || {}, input, {userId: Meteor.userId()}));
-        console.log(security);
         if (!security) {
-            input.confirmations = [Meteor.userId()];
-            input.reports = [];
-            input.done = [];
-            input.numberdone = 0;
-            input.comments = [];
+            input = Object.assign(input, {confirmations: [Meteor.userId()], reports: [], done: [], numberdone: 0, comments: []});
             work.insert(input);
         } else {
             throw new Meteor.Error(errors[security]);
