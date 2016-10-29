@@ -787,7 +787,7 @@ Template.main.events({
             })();
             Session.set("user", newSetting);
             serverData = Session.get("user");
-            sendData("editProfile"); 
+            sendData("editProfile");
         }
 
         $("#" + modifyingInput).next()
@@ -972,11 +972,17 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
         } else {
             Session.set("currentWork",null);
         }
+        if (error !== undefined) {
+            sAlert.error(error.error[1] || error.message, {
+                effect: 'stackslide',
+                position: 'top'
+            });
+        }
     });
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
-    var data = getHomeworkFormData();   
+    var data = getHomeworkFormData();
     Session.set("currentWork", data);
     Session.set("restrictText", {});
     $("#"+modifyingInput).css('cursor','pointer');

@@ -218,7 +218,7 @@ function securityCheck(checklist, input) {
             break;
         // Comment too long
         case 15:
-            if (typeof input.comment !== "string" || input.comment > 200) error = 13;
+            if (typeof input.comment !== "string" || input.comment.length > 200) error = 13;
             break;
         // Private class
         case 16:
