@@ -124,7 +124,7 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 
 var errors = [
-    ["unauthorized", "Sorry, you are not authorized to complete this action."], // 0
+    "Success.", // 0
     ["unauthorized", "You have too many unverified classes right now. Try again later."],
     ["matching", "The school you have requested does not exist."],
     ["matching", "This teacher is already teaching a class elsewhere!"],
@@ -142,7 +142,9 @@ var errors = [
     ["trivial", "You are already enrolled in this class."], // 15
     ["trivial", "This request is too long."],
     ["trivial", "Not a valid work type"],
+    ["unauthorized", "This class has not been approved yet"],
 
+    ["unauthorized", "Sorry, you are not authorized to complete this action."],
     ["other", "Error could not be processed"]
 ];
 
@@ -160,11 +162,11 @@ function securityCheck(checklist, input) {
         switch (checkpoint) {
         // Superadmin
         case -1:
-            if (!Roles.userIsInRole(Meteor.userId(), ['superadmin'])) error = 0;
+            if (!Roles.userIsInRole(Meteor.userId(), ['superadmin'])) error = errors.length - 2;
             break;
         // Any admin
         case 1:
-            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = 0;
+            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = errors.length - 2;
             break;
         // Unverified classes
         case 2:
@@ -181,7 +183,7 @@ function securityCheck(checklist, input) {
             break;
         // Class admin
         case 5:
-            if (input.admin !== Meteor.userId) error = 4;
+            if (input.admin !== Meteor.userId()) error = 4;
             break;
         // Not banned
         case 8:
@@ -200,15 +202,15 @@ function securityCheck(checklist, input) {
             break;
         // Name too long
         case 11:
-            if (input.name > 50) error = 10;
+            if (typeof input.name !== "string" || input.name.length > 50) error = 10;
             break;
         // Description too long
         case 12:
-            if (input.description > 150) error = 11;
+            if (typeof input.description !== "string" || input.description.length > 150) error = 11;
             break;
-        // Moderator or admin
+        // Moderator of class
         case 13:
-            if (!_.contains(input.moderators.concat(input.admin)), Meteor.userId()) error = 4;
+            if (!_.contains(input.moderators, Meteor.userId())) error = 4;
             break;
         // Creator of work
         case 14:
@@ -216,7 +218,7 @@ function securityCheck(checklist, input) {
             break;
         // Comment too long
         case 15:
-            if (input.comment > 200) error = 13;
+            if (typeof input.comment !== "string" || input.comment > 200) error = 13;
             break;
         // Private class
         case 16:
@@ -224,19 +226,39 @@ function securityCheck(checklist, input) {
             break;
         // Code is wrong
         case 17:
-            if (input.code !== pass && input.privacy) error = 14;
+            if (input.code !== input.pass && input.privacy) error = 14;
             break;
         // Check if user is already enrolled
         case 18:
-            if (_.contains(input.classes, input.classId)) error = 15;
+            if (_.contains(input.subscribers, input.userId)) error = 15;
             break;
         // Request too long
         case 19:
-            if (input.content.length > 500) error = 16;
+            if (typeof input.request !== "string" || input.request.length > 500) error = 16;
             break;
         // Is valid work type
         case 20:
             if (!_.contains(worktype, input.type)) error = 17;
+            break;
+        // Tracking in moderators or banned
+        case 21:
+            if (!_.contains(["moderators", "banned"], input.userlist)) error = errors.length - 1;
+            break;
+        // Editing list moderators
+        case 22:
+            if (input.userlist === "moderators") error = errors.length - 2;
+            break;
+        // Toggling possible toggleWork
+        case 23:
+            if(_.contains(["confirmations", "reports", "done"], input.toggle)) error = errors.length - 1;
+            break;
+        // Class is approved
+        case 24:
+            if (!input.status) error = 18;
+            break;
+        // User is logged in
+        case 25:
+            if (Meteor.userId === null) error = errors.length - 1;
             break;
         }
         results.push(error);
@@ -269,69 +291,55 @@ Meteor.methods({
 
     // Ability to create schools for selections
     'createSchool': function(schoolname) {
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        var security = securityCheck([1, true]);
+        if (!security) {
             schools.insert({
                 name: schoolname
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     // Deletes school
     'deleteSchool': function(schoolId) {
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        var security = securityCheck([1, true]);
+        if (!security) {
             schools.remove({
                 _id: schoolId
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
 
     // Class Functions
     'createClass': function(input) {
         classes.schema.validate(input);
-        if (Meteor.user() &&
-            classes.find({
-                status: false,
-                admin: Meteor.userId()
-            }).fetch().length < 5 &&
-            schools.findOne({
-                name: input.school
-            })) {
-            if (classes.find({
-                    status: true,
-                    privacy: false,
-                    teacher: input.teacher,
-                    hour: input.hour
-                }).fetch().length < 1 ||
-                input.teacher === "" ||
-                input.hour === "") {
-                input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
-                input.admin = Meteor.userId();
-                Meteor.call('genCode', function(error, result) {
-                    input.code = result;
-                });
-                if (input.category != "class" && input.category != "club") {
-                    input.category = "other";
-                }
-                input.subscribers = [];
-                input.moderators = [];
-                input.banned = [];
-
-                classes.insert(input, function(err, result) {
-                    Meteor.call('joinClass', [result, input.code]);
-                });
-            } else {
-                throw new Meteor.Error("overlap", "This teacher is already teaching a class elsewhere!");
+        var security = securityCheck([2, 3, 4, true],
+                                     input);
+        if (!security) {
+            input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
+            input.admin = Meteor.userId();
+            Meteor.call('genCode', function(error, result) {
+                input.code = result;
+            });
+            if (input.category != "class" && input.category != "club") {
+                input.category = "other";
             }
+            input.subscribers = [];
+            input.moderators = [];
+            input.banned = [];
 
+            classes.insert(input, function(err, result) {
+                Meteor.call('joinClass', [result, input.code]);
+            });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'approveClass': function(classId) {
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        var security = securityCheck([1, true]);
+        if (!security) {
             var currentclass = classes.findOne({
                 _id: classId
             });
@@ -343,6 +351,8 @@ Meteor.methods({
                     status: !currentclass.status
                 }
             });
+        } else {
+            throw new Meteor.Error(errors[security]);
         }
     },
     // For class admins to get code
@@ -350,10 +360,11 @@ Meteor.methods({
         var foundclass = classes.findOne({
             _id: classId
         });
-        if (foundclass !== undefined && foundclass.admin === Meteor.userId()) {
+        var security = securityCheck([5, true], foundclass);
+        if (!security) {
             return (foundclass.code === '') ? "None" : foundclass.code;
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'changeAdmin': function(input) {
@@ -365,12 +376,9 @@ Meteor.methods({
         var foundclass = classes.find({
             _id: classId
         });
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-
-            (found && foundclass && foundclass.admin == Meteor.userId() &&
-                !_.contains(foundclass.banned, userId) &&
-                _.contains(foundclass.subscribers, userId)
-            )) {
+        var security = securityCheck([1, [5, 8, 9, true], false],
+                                     Object.assign(foundclass || {}, {userId: found._id}));
+        if (!security) {
             classes.update({
                 _id: classId
             }, {
@@ -379,51 +387,43 @@ Meteor.methods({
                 }
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
 
     // Allows someone to manage the class
-
     'trackUserInClass': function(input) {
         var userId = input[0];
         var classId = input[1];
         var userlist = input[2];
-        var dowhat = input[3];
         var foundclass = classes.findOne({
             _id: classId
         });
-        classlist = foundclass[userlist];
-        var index = ["moderators", "banned"].indexOf(userlist);
-        var set = foundclass;
-        var presence = false;
-        if (dowhat) {
-            set[userlist] = set[userlist].concat(userId);
-            presence = true;
-        } else {
-            set[userlist] = _.without(set[userlist], userId);
-        }
-
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-
-            (foundclass && foundclass.admin == Meteor.userId() && index !== -1 &&
-                (index === 0 ^ _.contains(foundclass.moderators, Meteor.userId())) &&
-                (!_.contains(classlist, userId) ^ presence))) {
+        var security = securityCheck([1, [[5, [13, 22, true], false], 9, 21, true], false],
+                                     Object.assign(foundclass, {userlist: userlist}));
+        if (!security) {
+            if (_.contains(foundclass[userlist], userId)) {
+                foundclass[userlist] = _.without(foundclass[userlist], userId);
+            } else {
+                foundclass[userlist] = foundclass[userlist].concat(userId);
+            }
             classes.update({
                 _id: classId
             }, {
-                $set: set
+                $set: foundclass
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
+
     'deleteClass': function(classid) {
         var found = classes.findOne({
             _id: classid
         });
-        if (Meteor.user() && found &&
-            (found.admin === Meteor.user()._id || Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']))) {
+        var security = securityCheck([1, 5, false],
+                                     found);
+        if (!security) {
             for (var i = 0; i < found.subscribers.length; i++) {
                 var current = Meteor.users.findOne({
                     _id: found.subscribers[i]
@@ -442,7 +442,7 @@ Meteor.methods({
                 _id: classid
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
 
@@ -464,27 +464,15 @@ Meteor.methods({
 
     },
     'editWork': function(change) {
-        var ref = new Date();
-        ref.setHours(0, 0, 0, 0);
-        ref = ref.getTime();
         var currentwork = work.findOne({
             _id: change._id
         });
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
-            work.update({
-                _id: currentwork._id
-            }, {
-                $set: change
-            });
-        } else if ((currentwork.class === Meteor.userId() ||
-                _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) ||
-                Meteor.userId() === currentwork.creator) &&
-            change.name.length <= 50 && change.description.length <= 150 &&
-            change.dueDate instanceof Date && change.dueDate.getTime() >= ref &&
-            _.contains(worktype, change.type)) {
+        var security = securityCheck([[1, 16, 13, 5, false], 11, 12, 10, 20, true],
+                                     Object.assign(currentclass, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
+        if (!security) {
             work.update({
                 _id: change._id
             }, {
@@ -497,7 +485,7 @@ Meteor.methods({
                 }
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'addComment': function(input) {
@@ -509,10 +497,9 @@ Meteor.methods({
             _id: workobject.class
         });
         var user = Meteor.userId();
-        if (typeof comment === "string" && comment.length <= 200 &&
-            (workobject.class === Meteor.userId() ||
-                (_.contains(currentclass.subscribers, Meteor.userId()) &&
-                    !_.contains(currentclass.banned, Meteor.userId())))) {
+        var security = securityCheck([15, [16, [8, 9, true], false]],
+                                     Object.assign(workobject, currentclass, {userId: Meteor.userId(), comment: comment}));
+        if (!security) {
             var commentInfo = {
                 "comment": input[0],
                 "user": user,
@@ -527,7 +514,7 @@ Meteor.methods({
                 }
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
 
@@ -538,7 +525,9 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: workobject.class
         });
-        if ((Meteor.userId() === workobject.class || _.contains(currentclass.subscribers, Meteor.userId())) && _.contains(["confirmations", "reports", "done"], input[1])) {
+        var security = securityCheck([[16, 9, false], 23],
+                                     Object.assign(workobject, currentclass, {userId: Meteor.userId(), toggle: input[1]}));
+        if (!security) {
             var userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
                 workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
@@ -558,7 +547,7 @@ Meteor.methods({
                 $set: workobject
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'deleteWork': function(workId) {
@@ -568,14 +557,13 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-            currentwork.class === Meteor.userId() ||
-            _.contains(currentclass.moderators.concat(currentclass.admin), Meteor.userId()) || Meteor.userId() === currentwork.class) {
+        var security = securityCheck([1, 16, 13, 5]);
+        if (!security) {
             work.remove({
                 _id: workId
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
 
@@ -596,7 +584,7 @@ Meteor.methods({
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
         }
-        if (current.grade <= refyear || current.grade >= refyear + 4) {
+        if ((current.grade <= refyear || current.grade >= refyear + 4) && current.grade != "Faculty") {
             current.grade = refyear;
         }
         Meteor.users.update({
@@ -620,7 +608,7 @@ Meteor.methods({
                 }
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[errors.length - 1]);
         }
     },
     'createProfile': function(userId) {
@@ -654,15 +642,12 @@ Meteor.methods({
     'joinClass': function(input) {
         var change = input[0];
         var pass = input[1];
-        var prof = Meteor.user().profile;
         var found = classes.findOne({
             _id: change
         });
-        if (Meteor.user() !== null &&
-            found !== null &&
-            (pass === found.code || found.privacy === false) &&
-            (found.status || found.admin === Meteor.userId()) &&
-            !_.contains(prof.classes, change)) {
+        var security = securityCheck([17, [5, 24, false], 18, true],
+                                     Object.assign(found, {userId: Meteor.userId(), pass: pass}));
+        if (!security) {
             var foundsubs = found.subscribers;
             classes.update({
                 _id: found._id
@@ -682,7 +667,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'joinPrivateClass': function(input) {
@@ -711,7 +696,7 @@ Meteor.methods({
             });
             return true;
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[14]);
         }
     },
     'leaveClass': function(change) {
@@ -740,34 +725,37 @@ Meteor.methods({
                             subscribers: newstudents
                         }
                     });
-                    return true;
                 } else {
                     throw new Meteor.Error("unauthorized", "You are currently the admin of this class. Transfer ownership in order to leave this class.");
                 }
             }
 
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[errors.length - 1]);
         }
     },
 
     // Admin Functions
     'createAdmin': function(userId) {
-        if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
+        var security = securityCheck([-1, true]);
+        if (!security) {
             Roles.addUsersToRoles(userId, ['admin']);
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'deleteAdmin': function(userId) {
-        if (Roles.userIsInRole(Meteor.user()._id, ['superadmin'])) {
+        var security = securityCheck([-1, true]);
+        if (!security) {
             Roles.removeUsersToRoles(userId, ['admin']);
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'createRequest': function(request) {
-        if (request.content.length <= 500 && Meteor.userId() !== null) {
+        var security = securityCheck([19, 25, true],
+                                     request);
+        if (!security) {
             requests.insert({
                 requestor: Meteor.userId(),
                 request: request.content,
@@ -775,16 +763,17 @@ Meteor.methods({
                 timeRequested: new Date()
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     },
     'deleteRequest': function(requestId) {
-        if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) {
+        var security = securityCheck([1, true]);
+        if (!security) {
             requests.remove({
                 _id: requestId
             });
         } else {
-            throw new Meteor.Error("unauthorized", "You are not authorized to complete this action.");
+            throw new Meteor.Error(errors[security]);
         }
     }
 });
