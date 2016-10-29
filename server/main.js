@@ -585,7 +585,7 @@ Meteor.methods({
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
         }
-        if ((current.grade <= refyear || current.grade >= refyear + 4) && current.grade != "Faculty") {
+        if ((current.grade <= refyear || current.grade >= refyear + 4) && current.grade !== 0) {
             current.grade = refyear;
         }
         Meteor.users.update({
