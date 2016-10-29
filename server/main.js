@@ -206,7 +206,7 @@ function securityCheck(checklist, input) {
             break;
         // Description too long
         case 12:
-            if (typeof input.description !== "string" || input.description.length > 150) error = 11;
+            if ((typeof input.description !== "string" || input.description.length > 150) && input.description !== undefined) error = 11;
             break;
         // Moderator of class
         case 13:
@@ -250,7 +250,7 @@ function securityCheck(checklist, input) {
             break;
         // Toggling possible toggleWork
         case 23:
-            if(_.contains(["confirmations", "reports", "done"], input.toggle)) error = errors.length - 1;
+            if(!_.contains(["confirmations", "reports", "done"], input.toggle)) error = errors.length - 1;
             break;
         // Class is approved
         case 24:
@@ -471,7 +471,7 @@ Meteor.methods({
             _id: currentwork.class
         });
         var security = securityCheck([[1, 16, 13, 5, false], 11, 12, 10, 20, true],
-                                     Object.assign(currentclass, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
+                                     Object.assign(currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
         if (!security) {
             work.update({
                 _id: change._id
@@ -498,19 +498,19 @@ Meteor.methods({
         });
         var user = Meteor.userId();
         var security = securityCheck([15, [16, [8, 9, true], false]],
-                                     Object.assign(workobject, currentclass, {userId: Meteor.userId(), comment: comment}));
+                                     Object.assign(workobject, currentclass || {}, {userId: user, comment: comment}));
         if (!security) {
             var commentInfo = {
-                "comment": input[0],
+                "comment": comment,
                 "user": user,
                 "date": new Date()
             };
-            var comments = workobject.comments.concat(commentInfo);
+            var newchain = workobject.comments.concat(commentInfo);
             work.update({
                 _id: input[1]
             }, {
                 $set: {
-                    comments: comments
+                    comments: newchain
                 }
             });
         } else {
@@ -525,8 +525,8 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: workobject.class
         });
-        var security = securityCheck([[16, 9, false], 23],
-                                     Object.assign(workobject, currentclass, {userId: Meteor.userId(), toggle: input[1]}));
+        var security = securityCheck([[16, 9, false], 23, true],
+                                     Object.assign(workobject, currentclass || {}, {userId: Meteor.userId(), toggle: input[1]}));
         if (!security) {
             var userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
@@ -557,7 +557,8 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        var security = securityCheck([1, 16, 13, 5]);
+        var security = securityCheck([1, 16, 13, 5, false],
+                                     Object.assign(currentwork, currentclass || {}));
         if (!security) {
             work.remove({
                 _id: workId

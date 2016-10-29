@@ -30,7 +30,7 @@ work.schema = new SimpleSchema({
 	  dueDate: {type: Date},
 	  description: {type: String, optional: true},
 	  creator: {type: String},
-	  comments: {type: [String], optional: true},
+	  comments: {type: [Object], blackbox: true, optional: true},
 	  confirmations: {type: [String], optional: true},
 	  reports: {type: [String], optional: true},
 	  attachments: {type: [String], optional: true},
