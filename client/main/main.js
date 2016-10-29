@@ -11,7 +11,7 @@ var calWorkDate = null;
 modifyingInput = null;
 dropOpen = null;
 var filterOpen =  [false,true,true];
-var sidebarMode = [null,null]
+var sidebarMode = [null,null];
 
 var openValues = {
     "requests": "-235px"
@@ -72,7 +72,7 @@ Template.main.rendered = function() {
         railVisible: true,
         railColor: '#222',
         railOpacity: 0.1,
-    })
+    });
 };
 
 Template.profile.rendered = function() {
@@ -213,7 +213,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 var conf = thisWork[j].confirmations.length;
                 var repo = thisWork[j].reports.length;
                 var ratio = conf / repo;
-                var normalColor = Session.get("user").preferences.theme["text"];
+                var normalColor = Session.get("user").preferences.theme.text;
                 if (Math.abs(conf - repo)) {
                     if ((conf + repo) <= 1) {
                         thisWork[j].doneRatio = normalColor;
@@ -256,7 +256,7 @@ Template.registerHelper('selectOptions', (val) => {
     if(val === "grade") {
         var grade = [];
         for(var i = 0; i < 5; i++) {
-            var year = (new Date).getFullYear() + i;
+            var year = (new Date()).getFullYear() + i;
             grade.push( { "val": year, "alias": year.toString() } );
         }
         return grade;
@@ -290,7 +290,7 @@ Template.main.helpers({
      if (_.isEqual(vals[i], curtheme)) {
      var name = _.keys(themeColors)[i];
      return name.charAt(0).toUpperCase() + name.slice(1);
-     }       
+     }
      }
      return "Custom";
      },*/
@@ -375,10 +375,10 @@ Template.main.helpers({
                 });
                 var date = event.start.format().split("-");
                 current.dueDate = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
-                if(Date.parse(new Date) > Date.parse(current.dueDate)) {
+                if(Date.parse(new Date()) > Date.parse(current.dueDate)) {
                     revertFunc();
                     return;
-                } 
+                }
                 serverData = current;
                 sendData("editWork");
             },
@@ -486,7 +486,7 @@ Template.main.events({
                     $(".optionHolder").fadeOut(100);
 
                     $(".selectedOption").removeClass("selectedOption");
-                } else {     
+                } else {
                     closeInput(modifyingInput);
                 }
                 modifyingInput = null;
@@ -600,7 +600,7 @@ Template.main.events({
         }, 300);
         Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
         toggleSidebar(false);
-        Session.set("sidebarMode", [null,null]); 
+        Session.set("sidebarMode", [null,null]);
         Session.set("calCreWork", null);
     },
     'click .creWork' (event) { // Cick add work button.
@@ -707,16 +707,16 @@ Template.main.events({
 
         if(modifyingInput !== null) {
             if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
-        } 
+        }
         modifyingInput = event.target.id;
         if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
             event.target.select();
-            event.target.style.cursor = "text";   
+            event.target.style.cursor = "text";
         }
     },
     'keydown .dropdown' (event) {
         var first = $("#"+modifyingInput).next().children("p:first-child");
-        var last = $("#"+modifyingInput).next().children("p:last-child"); 
+        var last = $("#"+modifyingInput).next().children("p:last-child");
         var next = $(".selectedOption").next();
         var prev = $(".selectedOption").prev();
         var lastSel = $(".selectedOption");
@@ -728,7 +728,7 @@ Template.main.events({
             } else {
                 if (prev.length === 0) {
                     last.addClass("selectedOption");
-                    lastSel.removeClass("selectedOption");  
+                    lastSel.removeClass("selectedOption");
                 } else {
                     prev.addClass("selectedOption");
                     lastSel.removeClass("selectedOption");
@@ -747,7 +747,7 @@ Template.main.events({
                     next.addClass("selectedOption");
                     lastSel.removeClass("selectedOption");
                 }
-            }    
+            }
         } else if (event.keyCode === 13) {
             lastSel[0].click();
         }
@@ -776,7 +776,7 @@ Template.main.events({
             $(".selectedOption").removeClass("selectedOption");
             if(Session.get("newWork")) return;
             if(checkMissing()) return;
-            sendData("editWork")
+            sendData("editWork");
         } else {
             var newSetting = Session.get("user");
             newSetting.preferences[modifyingInput] = (function() {
@@ -977,6 +977,12 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
                 effect: 'stackslide',
                 position: 'top'
             });
+        } else {
+            sAlert.success("Success!", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 2500
+            });
         }
     });
 }
@@ -990,7 +996,7 @@ function closeInput() { // Close a changeable input and change it back to span.
         serverData = Session.get("currentWork");
         if(checkMissing()) return;
         sendData("editWork");
-    } 
+    }
 }
 
 function getHomeworkFormData() { // Get all data relating to work creation.
@@ -1016,7 +1022,7 @@ function getHomeworkFormData() { // Get all data relating to work creation.
 }
 
 function checkMissing() {
-    var required = ["name","dueDate","type"]
+    var required = ["name","dueDate","type"];
     var no = false;
     if(serverData === null || Object.keys(serverData).length < 4) {
         for(var i = 0; i < required.length; i++) {
