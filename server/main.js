@@ -170,7 +170,7 @@ function securityCheck(checklist, input) {
             break;
         // Unverified classes
         case 2:
-            if (classes.find({status:false, admin: Meteor.userId()}).fetch().length > 5) error = 1;
+            if (classes.find({status:false, admin: Meteor.userId()}).fetch().length > 8) error = 1;
             break;
         // School existence
         case 3:
