@@ -7,15 +7,6 @@
 	border-collapse: collapse;
 }
 
-#bottomBar {
-	width: 100%;
-	height: 4px;
-	background-color: #33ADFF;
-	position: absolute;
-	top: 11vh;
-	z-index: 51;
-}
-
 #loginHeader {
 	font-weight: 600;
 	width: 100%;
@@ -48,14 +39,12 @@
 	height: 11vh;
 	line-height: 11vh;
 	padding: 0 0 0 1vw;
-
-	-webkit-filter: none;
-	filter: none;
+	margin: 0;
 }
 
 #loginMain {
 	width: 100%;
-	height: 84vh;
+	height: 83vh;
 	
 	display: table-row;
 	position: absolute;
@@ -63,15 +52,14 @@
 }
 
 #bannerBg {
-	margin-top: 1%;
-	height: 86vh;
+	min-width: 100vw;
+	height: 83vh;
 
 	position: fixed;
-	top: 50%;
 	left: 50%;
 	z-index: -1;
 
-	transform:translate(-50%, -50%);
+	transform:translateX(-50%);
 }
 
 #circle {
@@ -104,9 +92,6 @@
 .text {
 	text-align: center;
 	color: #FFF;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #444);
-	filter: drop-shadow(2px 2px 5px #444);
 }
 
 h2.text {
@@ -174,9 +159,6 @@ p.text {
 
 	line-height: 6vh;
 	display: inline-block;
-
-	-webkit-filter: drop-shadow(2px 2px 5px #444);
-	filter: drop-shadow(2px 2px 5px #444);
 }
 
 #version {
