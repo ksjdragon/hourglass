@@ -106,7 +106,9 @@ Template.profile.helpers({
         return "Click here to edit...";
     },
     grade() { // Returns the current user's grade
-        if (Session.get("user").grade !== undefined && Session.get("user").grade !== null && Session.get("user").grade !== "") return Session.get("user").grade;
+        if (Session.get("user").grade !== undefined && 
+            Session.get("user").grade !== null && 
+            Session.get("user").grade !== "") return (Session.get("user").grade === 0) ? "Faculty" : Session.get("user").grade;
         return "Click here to edit...";
     },
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) ( Only your school)

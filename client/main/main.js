@@ -9,9 +9,11 @@ var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
 modifyingInput = null;
-dropOpen = null;
+var clickDisabled = false;
 var filterOpen =  [false,true,true];
 var sidebarMode = [null,null];
+var optionOpen = false;
+
 
 var openValues = {
     "requests": "-235px"
@@ -37,7 +39,7 @@ var defaultWork = {
 Session.set("user", {}); // Stores user preferences.
 Session.set("calendarClasses", []); // Stores calendar classes.
 Session.set("requests", false); // Status of requests.
-Session.set("sidebarMode", [null,null]); // Status of sidebars.
+Session.set("sidebarMode", ""); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWork",null); // Current stored work.
 Session.set("noclass", null); // If user does not have classes.
@@ -57,26 +59,21 @@ Template.login.rendered = function() {
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     setTimeout(startDragula, 300);
-    $(".optionText").hover(
-        function() {
-            $(this).addClass("selectedOption");
-        },
-        function() {
-            $(this).removeClass("selectedOption");
-        }
-    );
     $("#menuContainer").toggle();
-    $("#classListHolder").slimScroll({
+    /*$("#classListHolder").slimScroll({
         height: '30vh',
         size: '5px',
         railVisible: true,
         railColor: '#222',
         railOpacity: 0.1,
-    });
+    });*/
 };
 
 Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+};
+
+Template.selectOptionMenu.rendered = function() {
     $(".optionText").hover(
         function() {
             $(this).addClass("selectedOption");
@@ -84,8 +81,26 @@ Template.profile.rendered = function() {
         function() {
             $(this).removeClass("selectedOption");
         }
-    );
-};
+    );   
+}
+
+Template.sidebarMenuPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+}
+
+Template.sidebarMenuPlate.helpers({
+    modeStatus(status) { // Color status of display modes.
+        return (Session.equals("mode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
+    }
+});
+
+Template.sidebarOptionPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+}
+
+Template.sidebarRequestPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+}
 
 Template.registerHelper('adminPage', () => {
     return window.location.pathname.includes("/");
@@ -259,6 +274,7 @@ Template.registerHelper('selectOptions', (val) => {
             var year = (new Date()).getFullYear() + i;
             grade.push( { "val": year, "alias": year.toString() } );
         }
+        grade.push( { "val": 0, "alias": "Faculty" } ); 
         return grade;
     } else if(val === "school") {
         var school = [];
@@ -314,14 +330,14 @@ Template.main.helpers({
     },
     iconStatus(icon) {
         var sidebar = Session.get("sidebarMode");
-        return (sidebar[0] === icon && sidebar[1]) ? Session.get("user").preferences.theme.iconHighlight + ";background-color:rgba(0,0,0,0.2)" : "";
+        return (sidebar === icon) ? Session.get("user").preferences.theme.iconHighlight + ";background-color:rgba(0,0,0,0.2)" : "";
+    },
+    sidebarStatus(sidebar) {
+        return sidebar === Session.get("sidebarMode");  
     },
     requestStatus() {
         if (Session.get("requests")) return "0px";
         return openValues.requests;
-    },
-    modeStatus(status) { // Color status of display modes.
-        return (Session.equals("mode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
     },
     currMode(name) { // Status of display mode.
         return Session.equals("mode", name);
@@ -484,6 +500,7 @@ Template.main.events({
             if (!(e.includes("optionHolder") || e.includes("optionText"))) {
                 if(document.getElementById(modifyingInput).className.includes("dropdown")) {
                     $(".optionHolder").fadeOut(100);
+                    optionOpen = [null,false];
 
                     $(".selectedOption").removeClass("selectedOption");
                 } else {
@@ -495,58 +512,37 @@ Template.main.events({
 
         if (!e.includes("fa-cog") && // Sidebar closing.
             !e.includes("fa-bars") &&
+            !e.includes("fa-question") &&
             !document.getElementById("menuContainer").contains(event.target) &&
             !document.getElementById("menuBar").contains(event.target)) {
             if (Session.get("calCreWork")) {
                 if (!calWorkOpen) {
                     Session.set("calCreWork", false);
-                    Session.set("sidebar", null);
                 }
                 calWorkOpen = false;
             } else {
-                Session.set("sidebarMode", Session.get("sidebarMode")[0], false);
-                toggleSidebar(false);
-                Session.set("sidebarMode", [null,null]);
+                toggleToSidebar(false);
             }
         }
 
         if (e === "overlay") { // Overlay closing.
             closeDivFade(document.getElementsByClassName("overlay")[0]);
-            Session.set("newWork",false);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
         }
 
         if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
-        if (!document.getElementById("requests").contains(event.target)) Session.set("requests", false);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' (event) { // Click menu button.
-        var sidebar = Session.get("sidebarMode");
-        if(sidebar[0] === "menu" && sidebar[1]) {
-            Session.set("sidebarMode", ["menu",false]);
-            toggleSidebar(false);
-        } else {
-            Session.set("sidebarMode", ["menu",true]);
-
-            $(".menuWrapper.option").fadeOut(200);
-            toggleSidebar(true);
-            $(".menuWrapper.menu").slideDown(350);
-        }
+        toggleToSidebar("menu");
     },
     'click .fa-cog' (event) { // Click settings button.
-        var sidebar = Session.get("sidebarMode");
-        if(sidebar[0] === "option" && sidebar[1]) {
-            Session.set("sidebarMode", ["option",false]);
-            toggleSidebar(false);
-        } else {
-            Session.set("sidebarMode", ["option",true]);
-
-            $(".menuWrapper.menu").slideUp(200);
-            toggleSidebar(true);
-            $(".menuWrapper.option").slideDown(350);
-        }
+        toggleToSidebar("option");
+    },
+    'click .fa-question' (event) {
+        toggleToSidebar("requests");
     },
     'click #filterHead' (event) {
         if(event.target.id === "disableFilter") return;
@@ -586,7 +582,7 @@ Template.main.events({
         }, 300);
         setTimeout(startDragula, 500);
         Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
-        toggleSidebar(false);
+        toggleToSidebar(false);
         Session.set("sidebarMode", [null,null]);
         Session.set("calCreWork", null);
     },
@@ -599,7 +595,7 @@ Template.main.events({
             openDivFade(modeHolder);
         }, 300);
         Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
-        toggleSidebar(false);
+        toggleToSidebar(false);
         Session.set("sidebarMode", [null,null]);
         Session.set("calCreWork", null);
     },
@@ -653,11 +649,15 @@ Template.main.events({
             "userClasses": Session.get("calendarClasses")
         };
         Meteor.call("createRequest", array, function(err, result) {
-            area.value = "Request sent!";
+            area.value = "";
+            Session.set("restrictText", {});
+            $("#requestSubmit span:first-child").fadeOut(200, function() {
+                $("#requestSubmit span:nth-child(2)").fadeIn(200);
+            })
             setTimeout(function() {
-                document.getElementById("requests").style.marginBottom = "-15.5vw";
-                area.value = "";
-                Session.set("commentRestrict", null);
+                $("#requestSubmit span:nth-child(2)").fadeOut(200, function() {
+                    $("#requestSubmit span:first-child").fadeIn(200);
+                })
             }, 750);
         });
     },
@@ -703,7 +703,7 @@ Template.main.events({
     // HANDLING INPUT CHANGING
     'focus .clickModify' (event) {
         $(".optionHolder")
-            .fadeOut(100);
+        .fadeOut(100);
 
         if(modifyingInput !== null) {
             if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
@@ -750,18 +750,18 @@ Template.main.events({
             }
         } else if (event.keyCode === 13) {
             lastSel[0].click();
+            $("#"+modifyingInput)[0].focus();
         }
     },
-    'focus .dropdown' (event) {
-        $(".selectedOption").removeClass("selectedOption");
-
-        $("#" + modifyingInput).next()
-            .css('opacity',0)
-            .slideDown(300)
-            .animate(
-                { opacity: 1 },
-                { queue: false, duration: 100 }
-            );
+    'click .dropdown, focus .dropdown' (event) {
+        if(clickDisabled) return;
+        clickDisabled = true;
+        if(event.target.id === optionOpen[0] && optionOpen[1]) {
+            toggleOptionMenu(false, event.target.id);
+        } else {
+            toggleOptionMenu(true, event.target.id);
+        }
+        setTimeout(function(){clickDisabled = false;},130); // Prevents spamming and handles extra click events.
     },
     'click .optionText' (event) { // Click each preferences setting.
         var option = event.target.childNodes[0].nodeValue;
@@ -772,7 +772,8 @@ Template.main.events({
             serverData = Session.get("currentWork");
 
             $("#" + modifyingInput).next()
-                .fadeOut(100);
+            .fadeOut(100);
+            optionOpen = [null,false];
             $(".selectedOption").removeClass("selectedOption");
             if(Session.get("newWork")) return;
             if(checkMissing()) return;
@@ -791,7 +792,8 @@ Template.main.events({
         }
 
         $("#" + modifyingInput).next()
-            .fadeOut(100);
+        .fadeOut(100);
+        optionOpen = [null,false];
 
         $(".selectedOption").removeClass("selectedOption");
     },
@@ -931,13 +933,37 @@ Template.main.events({
 
 // Other Functions
 
-function toggleSidebar(open) {
-    if(open) {
+function toggleToSidebar(sidebar) {
+    if(Session.get("sidebarMode") === sidebar || !sidebar) {
+        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
+            Session.set("sidebarMode", "");
+        });
+    } else {
         $("#menuContainer").show("slide",  {direction: "left"}, 250);
         $("#divCenter").stop().animate({left: '36vh'}, 250);
+        $(".menuWrapper").fadeOut(200, function() {
+            Session.set("sidebarMode", sidebar);
+        });
+    }
+}
+
+function toggleOptionMenu(toggle, menu) {
+    if(toggle) {
+        $(".selectedOption").removeClass("selectedOption");
+        $("#" + menu).next()
+        .css('opacity', 0)
+        .slideDown(300)
+        .animate(
+            { opacity: 1 },
+            { queue: false, duration: 100 }
+        );
+        optionOpen = [menu, toggle];
     } else {
-        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '6vh'}, 250);
+        $("#" + menu).next().slideUp(100, function() {
+            $(this).css("opacity", 0);
+        });
+        optionOpen = [null, toggle]; 
     }
 }
 

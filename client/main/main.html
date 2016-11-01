@@ -11,125 +11,19 @@
             <div id="menuBar" style="background-color:{{divColor 'sidebarColor'}}">
                 <i class="fa fa-bars" style="color:{{iconStatus 'menu'}}" aria-hidden="true"></i>
                 <i class="fa fa-cog" style="color:{{iconStatus 'option'}}" aria-hidden="true"></i>
+                <i class="fa fa-question" style="color:{{iconStatus 'requests'}}" aria-hidden="true"></i>
             </div>
             <div id="menuContainer" style="background-color:{{divColor 'sidebarColor'}};">
-                <div class="menuWrapper menu">
-                    <div id="modes">
-                        <h3 class="sectionTitle">Main</h3>
-                        <div class="mode classes">
-                            <div class="status" style="background-color:{{modeStatus 'classes'}}"></div>
-                            <i class="fa fa-university" aria-hidden="true"></i>
-                            <h4>Classes</h4>
-                        </div>
-                        <div class="mode calendar">
-                            <div class="status" style="background-color:{{modeStatus 'calendar'}}"></div>
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            <h4>Calendar</h4>
-                        </div>
-                        <div class="mode manageClass" onclick="window.location='/profile'">
-                            <div class="status"></div>
-                            <i class="fa fa-tasks" aria-hidden="true"></i>
-                            <h4>Manage Classes</h4>
-                        </div>
-                    </div>
-                    <div id="filters">
-                        <div id="filterHead" class="sectionTitle">
-                            <h3>Filters</h3>
-                            {{#if filterOn}}
-                                <h3 id="disableFilter">Disable All</h3>
-                            {{/if}}
-                            <i class="fa fa-angle-down" aria-hidden="true"></i>
-                        </div>
-                        <div id="filterWrapper">
-                            <div id="typeFilterWrapper" class="sectionTitle">
-                                <h3>By Type</h3>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div id="classFilterHolder">
-                                {{#each types}}
-                                    {{> sideTypeFilter}}
-                                {{/each}}
-                            </div>
-                            <div id="classFilterWrapper" class="sectionTitle">
-                                    <h3>By Class</h3>
-                                    <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div> 
-                            <div id="classListHolder">    
-                                {{#each myClasses}}
-                                    {{> sidebarClasses}}
-                                {{/each}}
-                            </div>
-                        </div>
-                    </div>
-                    <div id="exportDiv" class="mode">
-                        <i class="fa fa-download" aria-hidden="true"></i>
-                        <h4>Export</h4>
-                    </div>
-                </div>
-                <div class="menuWrapper option">
-                    <h3 class="sectionTitle option">Preferences</h3>
-                    <div id="prefCont">
-                        <div class="prefWrapper">
-                            <h3 class="sectionTitle prefText">Theme:</h3>
-                            <div id="theme" class="clickModify dropdown" tabindex="1">
-                                <span>{{pref 'theme'}}</span>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div class="optionHolder">
-                                {{#each selectOptions 'theme'}}
-                                    {{> option}}
-                                {{/each}}
-                            </div>
-                        </div>
-                        <div class="prefWrapper">
-                            <h3 class="sectionTitle prefText">Default Mode:</h3>
-                            <div id="mode" class="clickModify dropdown" tabindex="2">
-                                <span>{{pref 'mode'}}</span>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div class="optionHolder">
-                                {{#each selectOptions 'mode'}}
-                                    {{> option}}
-                                {{/each}}
-                            </div>
-                        </div>
-                        <div class="prefWrapper">
-                            <h3 class="sectionTitle prefText">Hide Homework:</h3>
-                            <div id="timeHide" class="clickModify dropdown" tabindex="3">
-                                <span>{{pref 'timeHide'}}</span>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div class="optionHolder">
-                                {{#each selectOptions 'timeHide'}}
-                                    {{> option}}
-                                {{/each}}
-                            </div>
-                        </div>
-                        <div class="prefWrapper">
-                            <h3 class="sectionTitle prefText">Hide Done:</h3>
-                            <div id="done" class="clickModify dropdown" tabindex="4">
-                                <span>{{pref 'done'}}</span>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div class="optionHolder">
-                                {{#each selectOptions 'done'}}
-                                    {{> option}}
-                                {{/each}}
-                            </div>
-                        </div>
-                        <div class="prefWrapper">
-                            <h3 class="sectionTitle prefText">Hide Reported:</h3>
-                            <div id="hideReport" class="clickModify dropdown" tabindex="5">
-                                <span>{{pref 'hideReport'}}</span>
-                                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                            </div>
-                            <div class="optionHolder">
-                                {{#each selectOptions 'hideReport'}}
-                                    {{> option}}
-                                {{/each}}
-                            </div>
-                        </div>
-                    </div>
+                <div class="menuWrapper">
+                    {{#if sidebarStatus 'menu'}}
+                        {{> sidebarMenuPlate}}
+                    {{/if}}
+                    {{#if sidebarStatus 'option'}}
+                        {{> sidebarOptionPlate}}
+                    {{/if}}
+                    {{#if sidebarStatus 'requests'}}
+                        {{> sidebarRequestPlate}}
+                    {{/if}}
                 </div>
             </div>
         </div>
@@ -254,19 +148,120 @@
                 </div>
             </div>
         </div>
+        {{> loginButtons}}
+    </div>
+</template>
 
-        <div id="requests" style="bottom:{{requestStatus}};background-color:{{divColor 'secondaryColor'}}">
-            <div id="requestTab" style="background-color:{{divColor 'secondaryColor'}}">
-                <i class="fa fa-question" aria-hidden="true"></i>
+<template name="sidebarMenuPlate">
+    <div id="modes">
+        <h3 class="sectionTitle">Main</h3>
+        <div class="mode classes">
+            <div class="status" style="background-color:{{modeStatus 'classes'}}"></div>
+            <i class="fa fa-university" aria-hidden="true"></i>
+            <h4>Classes</h4>
+        </div>
+        <div class="mode calendar">
+            <div class="status" style="background-color:{{modeStatus 'calendar'}}"></div>
+            <i class="fa fa-calendar" aria-hidden="true"></i>
+            <h4>Calendar</h4>
+        </div>
+        <div class="mode manageClass" onclick="window.location='/profile'">
+            <div class="status"></div>
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+            <h4>Manage Classes</h4>
+        </div>
+    </div>
+    <div id="filters">
+        <div id="filterHead" class="sectionTitle">
+            <h3>Filters</h3>
+            {{#if filterOn}}
+                <h3 id="disableFilter">Disable All</h3>
+            {{/if}}
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </div>
+        <div id="filterWrapper">
+            <div id="typeFilterWrapper" class="sectionTitle">
+                <h3>By Type</h3>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
             </div>
-            <p>Send an help request, feature, or bug report.</p>
-            <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
-            <div id="requestCont" style="background-color:{{divColor 'secondaryColor'}}">
-                <span class="resText">{{restrict 'requestArea'}}</span>
-                <div id="requestSubmit">Send</div>
+            <div id="classFilterHolder">
+                {{#each types}}
+                    {{> sideTypeFilter}}
+                {{/each}}
+            </div>
+            <div id="classFilterWrapper" class="sectionTitle">
+                    <h3>By Class</h3>
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div> 
+            <div id="classListHolder">    
+                {{#each myClasses}}
+                    {{> sidebarClasses}}
+                {{/each}}
             </div>
         </div>
-        {{> loginButtons}}
+    </div>
+    <div id="exportDiv" class="mode">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        <h4>Export</h4>
+    </div>
+</template>
+
+<template name="sidebarOptionPlate">
+    <h3 class="sectionTitle option">Preferences</h3>
+    <div id="prefCont">
+        <div class="prefWrapper">
+            <h3 class="sectionTitle prefText">Theme:</h3>
+            <div id="theme" class="clickModify dropdown" tabindex="1">
+                <span>{{pref 'theme'}}</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
+            {{> selectOptionMenu optionName="theme"}}
+        </div>
+        <div class="prefWrapper">
+            <h3 class="sectionTitle prefText">Default Mode:</h3>
+            <div id="mode" class="clickModify dropdown" tabindex="2">
+                <span>{{pref 'mode'}}</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
+            {{> selectOptionMenu optionName="mode"}}
+        </div>
+        <div class="prefWrapper">
+            <h3 class="sectionTitle prefText">Hide Homework:</h3>
+            <div id="timeHide" class="clickModify dropdown" tabindex="3">
+                <span>{{pref 'timeHide'}}</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
+            {{> selectOptionMenu optionName="timeHide"}}
+        </div>
+        <div class="prefWrapper">
+            <h3 class="sectionTitle prefText">Hide Done:</h3>
+            <div id="done" class="clickModify dropdown" tabindex="4">
+                <span>{{pref 'done'}}</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
+            {{> selectOptionMenu optionName="done"}}
+        </div>
+        <div class="prefWrapper">
+            <h3 class="sectionTitle prefText">Hide Reported:</h3>
+            <div id="hideReport" class="clickModify dropdown" tabindex="5">
+                <span>{{pref 'hideReport'}}</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
+            {{> selectOptionMenu optionName="hideReport"}}
+        </div>
+    </div>
+</template>
+
+<template name="sidebarRequestPlate">
+    <h3 class="sectionTitle option">Requests</h3>
+    <p id="requestDesc">Ask for help, submit a bug, or request a feature! We won't bite.</p>
+    <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
+    <span id="requestRes" class="resText">{{restrict 'requestArea'}}</span>
+    <span style="opacity:0">.</span>
+    <div id="requestSubmit">
+        <span>Send</span>
+        <span style="display:none">Request sent!</span>
+        <i class="fa fa-paper-plane" aria-hidden="true"></i>
     </div>
 </template>
 
@@ -368,7 +363,7 @@
         </div>
         <div>
             <span class="workTitle">Description:</span><br>
-            <span id="wDueDate" class="info">{{work 'description'}}</span>
+            <span id="wDueDate" class="info form-control">{{work 'description'}}</span>
         </div>
         <div>
             <span class="workTitle">Type:</span>
@@ -419,5 +414,13 @@
                 <a href={{link}}>{{filename}}</a>
             {{/each}}
         </div> -->
+    </div>
+</template>
+
+<template name="selectOptionMenu">
+    <div class="optionHolder">
+        {{#each selectOptions optionName}}
+            {{> option}}
+        {{/each}}
     </div>
 </template>

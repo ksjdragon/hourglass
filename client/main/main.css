@@ -166,7 +166,7 @@ a
 	resize: none;
 }
 
-.fa-bars, .fa-cog {
+.fa-bars, .fa-cog, .fa-question {
 	font-size: 3.5vh;
 	width: 6vh;
 	height: calc(6vh - 1px);
@@ -185,7 +185,7 @@ a
 	transition: color 0.5s ease, background-color 0.5s ease; 
 }
 
-.fa-bars:hover, .fa-cog:hover {
+.fa-bars:hover, .fa-cog:hover, .fa-question:hover {
 	background-color: rgba(0,0,0,0.2);
 }
 
@@ -253,6 +253,7 @@ a
 }
 
 .menuWrapper {
+	height: 94vh;
 	display: none;
 }
 
@@ -337,6 +338,10 @@ a
 	overflow-y: auto;
 }
 
+#classFilterHolder {
+	width: 100%;
+}
+
 .sideClass, .sideFilter {
 	width: 100%;
 
@@ -394,6 +399,10 @@ a
 	white-space: nowrap;
 }
 
+#filterWrapper {
+	width: 100%;
+}
+
 #filterHead, #filterWrapper .sectionTitle {
 	font-weight: 200;
 	padding: 0;
@@ -418,7 +427,6 @@ a
 }
 
 #filterHead .fa, #filterWrapper .sectionTitle .fa {
-	font-size: 120%;
 	padding: 5%;
 	float: right;
 	display: inline-block;
@@ -673,6 +681,10 @@ textarea.clickModify {
 
 .menuWrapper .prefWrapper {
 	width: 100%;
+	position: relative;
+}
+
+.prefWrapper {
 	position: relative;
 }
 
@@ -1404,83 +1416,36 @@ textarea.clickModify {
 	display: inline-block;
 }
 
-#requests {
-	width: 300px;
-	height: 170px;
-	padding: 30px;
+#requestDesc {
+	font-size: 1.8vh;
+	margin-left: 5%;
+	width: 90%;
 
-	border-top: 5px solid #852E6D;
-	box-shadow: -2px 0px 5px 1px #444;
-
-	position: absolute;
-	right: 5vw;
-	bottom: 0;
-
-	z-index: 30;
-
-	-webkit-transition: bottom 0.4s ease;  
-	-moz-transition: bottom 0.4s ease; 
-	-ms-transition: bottom 0.4s ease;
-	transition: bottom 0.4s ease;
-}
-
-#requestTab {
-	width: 70px;
-	height: 50px;
-
-	border-top: 5px solid #852E6D;
-	box-shadow: -2px -4px 5px 0px #444;
-
-	position: absolute;
-	right: 0;
-	top: -55px;
-
-	cursor: pointer;
-	z-index: 15;
-}
-
-.fa-question {
-	font-size: 36px;
-	width: 50px;
-	padding: 5px 10px 1px 10px;
 	text-align: center;
-
-	-webkit-transition: background-color 0.4s ease;  
-	-moz-transition: background-color 0.4s ease; 
-	-ms-transition: background-color 0.4s ease;
-	transition: background-color 0.4s ease;
 }
 
-.fa-question:hover {
-	background-color: rgba(0,0,0,0.1);
+#requestArea {
+	font-size: 1.8vh;
+	width: 85%;
+	height: 35%;
+	margin-left: calc(7.5% - 6px);
+	margin-bottom: 5px;
+
+	outline: none;
 }
 
-#requests p {
-	font-size: 80%;
-	font-weight: 400;
-	margin: 0;
-	margin-bottom: 1vh;
-}
-
-#requests textarea {
-	width: 96%;
-	height: 100px;
-	margin-bottom: 10px;
-}
-
-#requestCont{
-	width: 100%;
+#requestRes {
+	margin-left: 7.5%;
 }
 
 #requestSubmit {
 	font-weight: 200;
-	font-size: 20px;
-	margin-right: 2%;
-	padding: 2%;
+	font-size: 2vh;
+	width: 80%;
+	margin: 5px auto 0 auto;
+	padding: 3%;
 
 	background-color: rgba(0,0,0,0.25);
-	float: right;
-
 	text-align: center;
 	cursor: pointer;
 
@@ -1492,6 +1457,10 @@ textarea.clickModify {
 
 #requestSubmit:hover {
 	background-color: rgba(0,0,0,0.15);
+}
+
+#requestSubmit span {
+	margin-right: 5%;
 }
 
 .scaled {
