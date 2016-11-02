@@ -39,6 +39,10 @@ Template.login.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
 };
 
+Template.main.created = function() {
+    Session.set("mode", Session.get("user").preferences.mode); 
+}
+
 Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     setTimeout(startDragula, 300);
@@ -50,10 +54,12 @@ Template.main.rendered = function() {
         railColor: '#222',
         railOpacity: 0.1,
     });*/
+    document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
 
 Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
+    document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
 
 Template.selectOptionMenu.rendered = function() {
@@ -81,11 +87,6 @@ Template.registerHelper('screen', (multiplier, fraction) => {
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
     return Session.get("user").preferences.theme[div];
-});
-
-Template.registerHelper('textColor', () => { // Reactive color for text.
-    document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
-    return;
 });
 
 Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
@@ -287,11 +288,6 @@ Template.main.helpers({
     username() { // Returns user name.
         return Session.get("user").name;
     },
-    defaultMode() { //Loads the default display mode for user.
-        if (load) 
-        load = false;
-        return;
-    },
     bgSrc() { // Returns background.
         return "Backgrounds/" + Session.get("user").preferences.theme.background;
     },
@@ -491,28 +487,14 @@ Template.main.events({
     },
     'click .classes' () { // Click classes mode button.
         if (Session.equals("mode", "classes")) return;
-        var modeHolder = document.getElementById("mainBody");
-        closeDivFade(modeHolder);
-        setTimeout(function() {
-            Session.set("mode", "classes");
-            openDivFade(modeHolder);
-        }, 300);
+        toggleToMode("classes")
         setTimeout(startDragula, 500);
-        Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
         toggleToSidebar(false);
-        Session.set("sidebarMode", [null,null]);
     },
     'click .calendar' () { // Click calendar mode button.
-        if (Session.equals("mode", "calendar")) return;
-        var modeHolder = document.getElementById("mainBody");
-        closeDivFade(modeHolder);
-        setTimeout(function() {
-            Session.set("mode", "calendar");
-            openDivFade(modeHolder);
-        }, 300);
-        Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
+         if (Session.equals("mode", "calendar")) return;
+        toggleToMode("calendar");
         toggleToSidebar(false);
-        Session.set("sidebarMode", [null,null]);
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
@@ -871,6 +853,13 @@ function toggleOptionMenu(toggle, menu) {
         });
         optionOpen = [null, toggle]; 
     }
+}
+
+function toggleToMode(mode) {
+    $("#mainBody").fadeOut(250, function() {
+        Session.set("mode",mode);
+        $("#mainBody").fadeIn(250);
+    });
 }
 
 function openDivFade(div) {
