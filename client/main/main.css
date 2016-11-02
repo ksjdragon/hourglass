@@ -411,7 +411,7 @@ a
 	width: 100%;
 }
 
-#filterHead, #filterWrapper .sectionTitle {
+.openable {
 	font-weight: 200;
 	padding: 0;
 
@@ -423,20 +423,27 @@ a
 	transition: background-color 0.4s ease; 
 }
 
-#filterHead:hover, #filterWrapper .sectionTitle:hover {
+.openable:hover {
 	background-color: rgba(255,255,255,0.2);
 }
 
-#filterHead h3:first-child, #filterWrapper .sectionTitle h3:first-child {
+.openable h3:first-child {
 	font-weight: 200;
 	padding: 5%;
 	display: inline-block;
 	pointer-events: none;
 }
 
-#filterHead .fa, #filterWrapper .sectionTitle .fa {
+.openable .fa {
 	padding: 5%;
 	float: right;
+	display: inline-block;
+	pointer-events: none;
+}
+
+#filterHead h3:first-child, #filterWrapper .sectionTitle h3:first-child {
+	font-weight: 200;
+	padding: 5%;
 	display: inline-block;
 	pointer-events: none;
 }
@@ -497,7 +504,7 @@ a
 	cursor: pointer;
 }
 
-.sectionTitle.option {
+.sectionTitle.downOffset {
 	margin-top: 6vh;
 }
 

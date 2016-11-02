@@ -10,23 +10,7 @@ var calWorkOpen = null;
 var calWorkDate = null;
 modifyingInput = null;
 var clickDisabled = false;
-var filterOpen =  [false,true,true];
-var sidebarMode = [null,null];
 var optionOpen = false;
-
-
-var openValues = {
-    "requests": "-235px"
-};
-
-// Sets colors for different assignment statuses
-var workColors = {
-    "normal": "#2E4F74",
-    "quiz": "#409333",
-    "test": "#AD3C44",
-    "project": "#D8831A",
-    "other": "#852E6D"
-};
 
 var defaultWork = {
     name: "Name | Click here to edit...",
@@ -81,40 +65,6 @@ Template.selectOptionMenu.rendered = function() {
             $(this).removeClass("selectedOption");
         }
     );   
-}
-
-Template.sidebarMenuPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
-}
-
-Template.sidebarMenuPlate.helpers({
-    modeStatus(status) { // Color status of display modes.
-        return (Session.equals("mode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
-    },
-    types() {
-        var types = Object.keys(workColors);
-        var array = [];
-        for (var i = 0; i < types.length; i++) {
-            array.push({
-                "type": types[i],
-                "typeName": types[i][0].toUpperCase() + types[i].slice(1),
-                "selected": (_.contains(Session.get("typeFilter"), types[i])) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"
-            });
-        }
-        return array;
-    }
-});
-
-Template.sidebarOptionPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
-}
-
-Template.sidebarRequestPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
-}
-
-Template.sidebarCreatePlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
 }
 
 // Global Helpers
@@ -338,7 +288,7 @@ Template.main.helpers({
         return Session.get("user").name;
     },
     defaultMode() { //Loads the default display mode for user.
-        if (load) Session.set("mode", Session.get("user").preferences.mode);
+        if (load) 
         load = false;
         return;
     },
@@ -536,36 +486,8 @@ Template.main.events({
     'click .fa-cog' (event) { // Click settings button.
         toggleToSidebar("option");
     },
-    'click .fa-question' (event) {
+    'click .fa-question' (event) { // Click requests button.
         toggleToSidebar("requests");
-    },
-    'click #filterHead' (event) {
-        if(event.target.id === "disableFilter") return;
-        if(!filterOpen[0]) {
-            $("#filterWrapper").slideDown(300);
-        } else {
-            $("#filterWrapper").slideUp(300);
-        }
-        filterOpen[0] = !filterOpen[0];
-    },
-    'click #typeFilterWrapper' () {
-        if(!filterOpen[1]) {
-            $("#classFilterHolder").slideDown(300);
-        } else {
-            $("#classFilterHolder").slideUp(300);
-        }
-        filterOpen[1] = !filterOpen[1];
-    },
-    'click #classFilterWrapper' () {
-        if(!filterOpen[2]) {
-            $("#classListHolder").slideDown(300);
-        } else {
-            $("#classListHolder").slideUp(300);
-        }
-        filterOpen[2] = !filterOpen[2];
-    },
-    'click #requests .fa-question' () {
-        Session.set("requests", !Session.get("requests"));
     },
     'click .classes' () { // Click classes mode button.
         if (Session.equals("mode", "classes")) return;
