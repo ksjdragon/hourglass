@@ -42,8 +42,6 @@ Session.set("requests", false); // Status of requests.
 Session.set("sidebarMode", ""); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
 Session.set("currentWork",null); // Current stored work.
-Session.set("noclass", null); // If user does not have classes.
-Session.set("calCreWork", null); // If user is creating a work from calendar.
 Session.set("classDisp", []); // Stores current filter for classes.
 Session.set("typeFilter", []); // Stores type filters for classes.
 Session.set("typeFilterHover", null); // Stores current hovered type filter.
@@ -51,6 +49,7 @@ Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("restrictText", {}); // Stores text for comment character restriction.
 
+// On render actions
 
 Template.login.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
@@ -91,6 +90,18 @@ Template.sidebarMenuPlate.rendered = function() {
 Template.sidebarMenuPlate.helpers({
     modeStatus(status) { // Color status of display modes.
         return (Session.equals("mode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
+    },
+    types() {
+        var types = Object.keys(workColors);
+        var array = [];
+        for (var i = 0; i < types.length; i++) {
+            array.push({
+                "type": types[i],
+                "typeName": types[i][0].toUpperCase() + types[i].slice(1),
+                "selected": (_.contains(Session.get("typeFilter"), types[i])) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"
+            });
+        }
+        return array;
     }
 });
 
@@ -101,6 +112,12 @@ Template.sidebarOptionPlate.rendered = function() {
 Template.sidebarRequestPlate.rendered = function() {
     $(".menuWrapper").slideDown(300);
 }
+
+Template.sidebarCreatePlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+}
+
+// Global Helpers
 
 Template.registerHelper('adminPage', () => {
     return window.location.pathname.includes("/");
@@ -132,7 +149,6 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
     if (Session.get("user").classes.length === 0) { // Null checking.
-        Session.set("noclass", true); // Makes sure to display nothing.
         return [];
     } else {
         var array = [];
@@ -245,7 +261,6 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                 return Date.parse(a.realDate) - Date.parse(b.realDate);
             });
         }
-        Session.set("noclass", false);
         Session.set("calendarClasses", array);
         Session.set("refetchEvents", refetch);
         return array;
@@ -297,6 +312,8 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
         return formReadable(thisWork,value);
     }
 });
+
+// Main template helpers and events
 
 Template.main.helpers({
     /*themeName() {
@@ -410,21 +427,18 @@ Template.main.helpers({
                 this.style.boxShadow = "";
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
-                if (jsEvent.target.className.includes("fc-past") || Session.get("noclass")) return;
-                Session.set("calCreWork", true);
-                calWorkDate = date.format();
-                calWorkOpen = true;
+                if (jsEvent.target.className.includes("fc-past")) return;
+                var realDate = date.format();
+                realDate = new Date(realDate[0], parseInt(realDate[1]) - 1, realDate[2], 11, 59, 59);
                 Session.set("newWork", true);
-                Session.set("sidebar", "menuContainer");
+                Session.set("currentWork", {dueDate: realDate});
+                if(!Session.equals("sidebarMode", "create")) toggleToSidebar("create");
             }
         };
     },
     calCenter() { // Centers the calendar
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
-    },
-    calCreWork() { // Display instructions for creating a work.
-        return Session.get("calCreWork");
     },
     filterOn() {
         return Session.get("classDisp").length !== 0 || Session.get("typeFilter").length !== 0;
@@ -449,18 +463,6 @@ Template.main.helpers({
     },
     newWork() { // If user is creating a new work.
         return Session.get("newWork");
-    },
-    types() {
-        var types = Object.keys(workColors);
-        var array = [];
-        for (var i = 0; i < types.length; i++) {
-            array.push({
-                "type": types[i],
-                "typeName": types[i][0].toUpperCase() + types[i].slice(1),
-                "selected": (_.contains(Session.get("typeFilter"), types[i])) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"
-            });
-        }
-        return array;
     },
     inRole() { // Checks correct permissions.
         if(Session.equals("currentWork",null)) return;
@@ -499,10 +501,7 @@ Template.main.events({
         if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {
             if (!(e.includes("optionHolder") || e.includes("optionText"))) {
                 if(document.getElementById(modifyingInput).className.includes("dropdown")) {
-                    $(".optionHolder").fadeOut(100);
-                    optionOpen = [null,false];
-
-                    $(".selectedOption").removeClass("selectedOption");
+                    toggleOptionMenu(false, modifyingInput);
                 } else {
                     closeInput(modifyingInput);
                 }
@@ -515,14 +514,10 @@ Template.main.events({
             !e.includes("fa-question") &&
             !document.getElementById("menuContainer").contains(event.target) &&
             !document.getElementById("menuBar").contains(event.target)) {
-            if (Session.get("calCreWork")) {
-                if (!calWorkOpen) {
-                    Session.set("calCreWork", false);
+                if(!(e.includes("fc-day") && !e.includes("fc-past"))) {
+                    toggleToSidebar(false);
                 }
-                calWorkOpen = false;
-            } else {
-                toggleToSidebar(false);
-            }
+                
         }
 
         if (e === "overlay") { // Overlay closing.
@@ -584,7 +579,6 @@ Template.main.events({
         Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
         toggleToSidebar(false);
         Session.set("sidebarMode", [null,null]);
-        Session.set("calCreWork", null);
     },
     'click .calendar' () { // Click calendar mode button.
         if (Session.equals("mode", "calendar")) return;
@@ -597,7 +591,6 @@ Template.main.events({
         Session.set("sidebarMode", Session.get("sidebarMode")[0], false); // Closes all sidebars.
         toggleToSidebar(false);
         Session.set("sidebarMode", [null,null]);
-        Session.set("calCreWork", null);
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
@@ -658,7 +651,7 @@ Template.main.events({
                 $("#requestSubmit span:nth-child(2)").fadeOut(200, function() {
                     $("#requestSubmit span:first-child").fadeIn(200);
                 })
-            }, 750);
+            }, 1250);
         });
     },
     'click #exportDiv' (event) {
@@ -771,10 +764,7 @@ Template.main.events({
             Session.set("currentWork", newSetting);
             serverData = Session.get("currentWork");
 
-            $("#" + modifyingInput).next()
-            .fadeOut(100);
-            optionOpen = [null,false];
-            $(".selectedOption").removeClass("selectedOption");
+            toggleOptionMenu(false, modifyingInput);
             if(Session.get("newWork")) return;
             if(checkMissing()) return;
             sendData("editWork");
@@ -791,9 +781,7 @@ Template.main.events({
             sendData("editProfile");
         }
 
-        $("#" + modifyingInput).next()
-        .fadeOut(100);
-        optionOpen = [null,false];
+        toggleOptionMenu(false, modifyingInput);
 
         $(".selectedOption").removeClass("selectedOption");
     },
@@ -857,14 +845,10 @@ Template.main.events({
         while (div.getAttribute("classid") === null) div = div.parentNode;
         var classid = div.getAttribute("classid");
 
-        if (Session.get("calCreWork")) { // If creating work from calendar.
-            Session.get("calCreWork", null);
-            Session.set("sidebar", null);
-
-            var date = calWorkDate.split("-");
-            date = new Date(date[0], parseInt(date[1]) - 1, date[2], 11, 59, 59);
-            Session.set("newWork", true);
-            Session.set("currentWork", {class: classid, dueDate: date});
+        if (Session.equals("sidebarMode","create")) { // If creating work from calendar.
+            var newSetting = Session.get("currentWork");
+            newSetting.class = classid;
+            Session.set("currentWork", newSetting);
             openDivFade(document.getElementsByClassName("overlay")[0]);
         } else { // Normal clicking turns on filter.
             var array = Session.get("classDisp");
@@ -934,7 +918,7 @@ Template.main.events({
 // Other Functions
 
 function toggleToSidebar(sidebar) {
-    if(Session.get("sidebarMode") === sidebar || !sidebar) {
+    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
         $("#menuContainer").hide("slide",  {direction: "left"}, 250);
         $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
             Session.set("sidebarMode", "");

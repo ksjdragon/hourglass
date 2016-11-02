@@ -391,6 +391,14 @@ a
 	display: table-cell;
 }
 
+.sidebarDesc {
+	font-size: 1.8vh;
+	margin-left: 5%;
+	width: 90%;
+
+	text-align: center;
+}
+
 #classesMode {
 	height: 94vh;
 
@@ -1053,65 +1061,6 @@ textarea.clickModify {
 	display: inline-block;
 }
 
-#calCreWork {
-	margin-left: 0 !important;
-	color: #fff;
-
-	-webkit-animation: neonglow 1.5s ease-in-out infinite alternate;
-    -moz-animation: neonglow 1.5s ease-in-out infinite alternate;
-  	animation: neonglow 1.5s ease-in-out infinite alternate;
-}
-
-@-webkit-keyframes neonglow {
-  from {
-    text-shadow: 
-    0 0 10px #fff, 
-    0 0 20px #fff, 
-    0 0 30px #fff, 
-    0 0 40px #228DFF, 
-    0 0 70px #228DFF, 
-    0 0 80px #228DFF, 
-    0 0 100px #228DFF, 
-    0 0 150px #228DFF;
-  }
-  to {
-    text-shadow: 
-    0 0 5px #fff, 
-    0 0 10px #fff, 
-    0 0 15px #fff, 
-    0 0 20px #228DFF, 
-    0 0 35px #228DFF, 
-    0 0 40px #228DFF, 
-    0 0 50px #228DFF, 
-    0 0 75px #228DFF;
-  }
-}
-
-@keyframes neonglow {
-	from {
-    text-shadow: 
-    0 0 10px #fff, 
-    0 0 20px #fff, 
-    0 0 30px #fff, 
-    0 0 40px #228DFF, 
-    0 0 70px #228DFF, 
-    0 0 80px #228DFF, 
-    0 0 100px #228DFF, 
-    0 0 150px #228DFF;
-  }
-  to {
-    text-shadow: 
-    0 0 5px #fff, 
-    0 0 10px #fff, 
-    0 0 15px #fff, 
-    0 0 20px #228DFF, 
-    0 0 35px #228DFF, 
-    0 0 40px #228DFF, 
-    0 0 50px #228DFF, 
-    0 0 75px #228DFF;
-  }
-}
-
 .fc-past {
 	background-color: rgba(0,0,0,0.2);
 }
@@ -1414,14 +1363,6 @@ textarea.clickModify {
 	margin: 0;
 	padding: 7% 0 7% 10%;
 	display: inline-block;
-}
-
-#requestDesc {
-	font-size: 1.8vh;
-	margin-left: 5%;
-	width: 90%;
-
-	text-align: center;
 }
 
 #requestArea {

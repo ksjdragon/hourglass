@@ -24,6 +24,9 @@
                     {{#if sidebarStatus 'requests'}}
                         {{> sidebarRequestPlate}}
                     {{/if}}
+                    {{#if sidebarStatus 'create'}}
+                        {{> sidebarCreatePlate}}
+                    {{/if}}
                 </div>
             </div>
         </div>
@@ -254,7 +257,7 @@
 
 <template name="sidebarRequestPlate">
     <h3 class="sectionTitle option">Requests</h3>
-    <p id="requestDesc">Ask for help, submit a bug, or request a feature! We won't bite.</p>
+    <p class="sidebarDesc">Ask for help, submit a bug, or request a feature! We won't bite.</p>
     <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
     <span id="requestRes" class="resText">{{restrict 'requestArea'}}</span>
     <span style="opacity:0">.</span>
@@ -265,11 +268,17 @@
     </div>
 </template>
 
+<template name="sidebarCreatePlate">
+    <h3 class="sectionTitle option">Classes</h3>
+    <p class="sidebarDesc">Pick a class to create work for.</p>
+    {{#each myClasses}}
+        {{> sidebarClasses}}
+    {{/each}}
+</template>
+
 <template name="sidebarClasses">
     <div class="sideClass" classid="{{_id}}">
-        {{#unless calCreWork}}
-            <div class="status" style="background-color:{{selected}}"></div>
-        {{/unless}}
+        <div class="status" style="background-color:{{selected}}"></div>
         <span class="sideClassName">{{name}}</span>
         <span class="sideClassHour">{{hour}}</span>
     </div>
