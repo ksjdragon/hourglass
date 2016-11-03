@@ -88,6 +88,8 @@ UI.registerHelper 'adminCollectionLabel', (collection)->
 UI.registerHelper 'adminCollectionCount', (collection)->
 	if collection == 'Users'
 		Meteor.users.find().count()
+	else if collection == 'admins'
+		Meteor.users.find({roles: {$elemMatch: {$eq: "admin"}}}).count()
 	else
 		AdminCollectionsCount.findOne({collection: collection})?.count
 

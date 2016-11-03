@@ -1,4 +1,41 @@
-.adminUserIcon {
+.content-wrapper {
+	background-image: url("/Backgrounds/escheresque_ste.png");
+}
+
+.content-wrapper h4 {
+	color: #FEFEFE;
+}
+
+.col-lg-3 {
+	-webkit-filter: drop-shadow(2px 2px 2px #CCC);
+	filter: drop-shadow(2px 2px 2px #666);
+}
+
+.main-header .logo {
+	background-color: #222d32;
+}
+.main-sidebar {
+	box-shadow: -2px 1px 1px 5px #666;
+}
+
+.navbar {
+	background-color: #2F414A !important;
+	box-shadow: 7px -2px 1px 5px #666;
+}
+
+.content-header h1, #adminAddWrapper {
+	background-color: #FFF;
+	border: 5px solid #FFF;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.breadcrumb {
+	margin-right: 1%;
+}
+
+.adminUserIcon, .simpleUserIcon {
 	width: 2.7vw;
 	margin: 1%;
 
@@ -52,5 +89,47 @@
 }
 
 .approveStatus .fa-toggle-on {
-	color: #288cd3;
+	color: #288CD3;
 }
+
+.addAdmin {
+	width: 35% !important;
+}
+
+.simpleUserIcon {
+	margin: 0.5% 0.3% 0.5% 0.2%;
+	display: inline-block;
+	vertical-align: top;
+	cursor: default;
+}
+
+.simpleUserInfo {
+	margin: 0.5% 0.3% 0.5% 0.2%;
+	background-color: #FFF;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.simpleUserInfo p {
+	margin: 1%;
+}
+
+.simpleUserInfo p:first-child {
+	font-weight: 400;
+}
+
+.simpleUserInfo p:last-child {
+	font-weight: 200;
+	color: #D8D8D8;
+}
+
+.addAdmin {
+	margin: 0 0 1% 1%;
+	display: inline-block !important;
+}
+
+#addAdmin {
+	margin-left: 1%;
+	display: inline-block;
+}
+

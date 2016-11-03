@@ -12,7 +12,7 @@ Template.adminUserDisplay.helpers({
 				email: user.services.google.email,
 				id: user._id,
 				icon: user.services.google.picture
-			})
+			});
 		}
 		return userInfo;
 	}
@@ -20,7 +20,6 @@ Template.adminUserDisplay.helpers({
 
 Template.statusButton.helpers({
 	status() {
-		console.log(this.value);
 	 	return (this.value) ? "on" : "off";
 	}
 });
@@ -51,16 +50,54 @@ Template.AdminLTE.events({
 		if(!event.target.className.includes("adminUserInfo") &&
 		!event.target.className.includes("adminUserIcon") && 
 		openUserDisplay !== null) {
-			openUserDisplay.fadeOut(200);
-			openUserDisplay = null;
+			if(!openUserDisplay[0].contains(event.target)) {
+				openUserDisplay.fadeOut(200, function() {
+					openUserDisplay = null;
+				});
+			}
 		}
 	}
 });
 
 Template.statusButton.events({
 	'click .approveStatus' () {
-		console.log(this.doc._id);
 		Meteor.call("approveClass", this.doc._id);
 	}
-})
+});
 
+Template.userEditor.helpers({
+	userInfo : function() {
+		return Session.get("admin_doc")
+	},
+	superAdmin: function() {
+		return Roles.userIsInRole(Meteor.userId(), ['superadmin']);
+	}
+});
+
+Template.createAdmin.helpers({
+	userComplete() {
+		return {
+            position: "bottom",
+            limit: 7,
+            rules: [{
+                token: '',
+                collection: Meteor.users,
+                field: 'services.google.email',
+                filter: {roles: {$not: {$elemMatch: {$eq: "admin"}}}},
+                template: Template.simpleUser
+            }]
+        };
+	},
+	superAdmin: function() {
+		return Roles.userIsInRole(Meteor.userId(), ['superadmin']);
+	}
+});
+
+Template.createAdmin.events({
+	'click #addAdmin' () {
+		var value = document.getElementsByClassName("form-control")[0].value;
+		var user = Meteor.users.findOne({'services.google.email': value});
+		if(user === undefined) return;
+		Meteor.call("addAdmin", user._id);
+	}
+})

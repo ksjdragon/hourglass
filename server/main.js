@@ -15,6 +15,12 @@ var superadmins = [
 
 var worktype = ["test", "quiz", "project", "normal", "other"];
 
+Meteor.users.allow({
+    update: function(userId, doc, fields, modifier) {
+        return Roles.userIsInRole(userId, ['superadmin']);
+    }
+});
+
 Meteor.publish('schools', function() {
     return schools.find();
 });
@@ -234,7 +240,7 @@ function securityCheck(checklist, input) {
             break;
         // Request too long
         case 19:
-            if (typeof input.request !== "string" || input.request.length > 500) error = 16;
+            if (typeof input.content !== "string" || input.content.length > 500) error = 16;
             break;
         // Is valid work type
         case 20:
@@ -258,7 +264,7 @@ function securityCheck(checklist, input) {
             break;
         // User is logged in
         case 25:
-            if (Meteor.userId === null) error = errors.length - 1;
+            if (Meteor.userId() === null) error = errors.length - 1;
             break;
         }
         results.push(error);

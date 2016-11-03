@@ -15,3 +15,37 @@
 		<i class="fa fa-toggle-{{status}}" aria-hidden="true"></i>
 	</div>
 </template>
+
+<template name="userEditor">
+	{{#if superAdmin}}
+		{{> quickForm id="editUser" collection="Meteor.users" doc=userInfo schema="userSchema" type="update"}}
+	{{else}}
+		<h4>You are not authorized to edit users.</h4>
+	{{/if}}
+</template>
+
+<template name="createAdmin">
+	{{#if superAdmin}}
+		<div id="adminAddWrapper">
+			<h3>Search</h3>
+			<div>
+				{{> inputAutocomplete settings=userComplete class="form-control addAdmin" type="text"  placeholder="Example: 1234@abc.xyz" }}
+				<button id="addAdmin" class="btn btn-primary">Add</button>
+			</div>
+		</div>
+	{{else}}
+		{{> disableUser}}
+	{{/if}}
+</template>
+
+<template name="disableUser">
+	<h4>You are not authorized to edit this.</h4>
+</template>
+
+<template name="simpleUser">
+	<img class="simpleUserIcon" src="{{services.google.picture}}">
+	<div class="simpleUserInfo">
+		<p>{{profile.name}}</p>
+		<p>{{services.google.email}}</p>
+	</div>
+</template>

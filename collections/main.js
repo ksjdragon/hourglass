@@ -2,6 +2,7 @@ schools = new Mongo.Collection("Schools");
 classes = new Mongo.Collection("Classes");
 work = new Mongo.Collection("Work");
 requests = new Mongo.Collection("Requests");
+admins = Meteor.users;
 
 schools.schema = new SimpleSchema({
 	  name: {type: String},
@@ -23,7 +24,6 @@ classes.schema = new SimpleSchema({
 	  subscribers: {type: [String], optional: true}
 });
 
-
 work.schema = new SimpleSchema({
 	  name: {type: String},
 	  class: {type: String},
@@ -41,7 +41,19 @@ work.schema = new SimpleSchema({
 requests.schema = new SimpleSchema({
     requestor: {type: String},
     request: {type: String},
-    timeRequested: {type: Date}
+    timeRequested: {type: Date},
+    'info.users': {type: [Object], label: "Debug Users"},
+    'info.userInfo': {type: Object, label: "Debug User Info"},
+    'info.userClasses': {type: [Object], label: "Debug User Classes"}
+});
+
+userSchema = new SimpleSchema({
+	'profile.name': {type: String, label: "Name"},
+	'profile.grade': {type: Number, label: "Graduation Year"},
+	'profile.school': {type: String, label: "School"},
+	'services.google.email': {type: String, label: "Email"},
+	'services.google.picture': {type: String, label: "Icon URL"},
+	'profile.classes': {type: [String], label: "Classes"}
 });
 
 schools.attachSchema(schools.schema);

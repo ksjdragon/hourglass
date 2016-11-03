@@ -12,8 +12,15 @@ Template.AdminDeleteModal.events
 	'click #confirm-delete': () ->
 		collection = Session.get 'admin_collection_name'
 		_id = Session.get 'admin_id'
-		Meteor.call 'adminRemoveDoc', collection, _id, (e,r)->
-			$('#admin-delete-modal').modal('hide')
+		if collection == 'classes'
+			Meteor.call 'deleteClass', _id, (e,r) ->
+				$('#admin-delete-modal').modal('hide')
+		else if collection == 'admins'
+			Meteor.call 'deleteAdmin', _id, (e,r) ->
+				$('#admin-delete-modal').modal('hide')
+		else
+			Meteor.call 'adminRemoveDoc', collection, _id, (e,r)->
+				$('#admin-delete-modal').modal('hide')
 
 Template.AdminDashboardUsersEdit.events
 	'click .btn-add-role': (e,t) ->
