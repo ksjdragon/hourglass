@@ -166,7 +166,7 @@ function securityCheck(checklist, input) {
             break;
         // Any admin
         case 1:
-            if (Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = errors.length - 2;
+            if (!Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin'])) error = errors.length - 2;
             break;
         // Unverified classes
         case 2:
