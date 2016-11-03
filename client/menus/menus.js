@@ -1,4 +1,6 @@
-var filterOpen =  [false,true,true];
+Session.set("settingMode", "manageClass");
+
+var filterOpen =  [false, true, true, true, true];
 var sidebarMode = [null,null];
 
 Template.sidebarMenuPlate.rendered = function(){$(".menuWrapper").slideDown(300);}
@@ -25,6 +27,17 @@ Template.sidebarMenuPlate.helpers({
 });
 
 Template.sidebarMenuPlate.events({
+    'click .classes' () { // Click classes mode button.
+        if (Session.equals("mode", "classes")) return;
+        toggleToMode("classes")
+        setTimeout(startDragula, 500);
+        toggleToSidebar(false);
+    },
+    'click .calendar' () { // Click calendar mode button.
+         if (Session.equals("mode", "calendar")) return;
+        toggleToMode("calendar");
+        toggleToSidebar(false);
+    },
     'click #filterHead' (event) {
         if(event.target.id === "disableFilter") return;
         if(!filterOpen[0]) {
@@ -52,6 +65,46 @@ Template.sidebarMenuPlate.events({
     }
 });
 
-Template.sidebarOptionPlate.events({
-
+Template.sidebarOptionPlate.helpers({
+    modeStatus(status) { // Color status of display modes.
+        return (Session.equals("settingMode", status)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
+    },
 });
+
+Template.sidebarOptionPlate.events({
+    'click .manageClass' () { // Click classes mode button.
+        if (Session.equals("settingMode", "manageClass")) return;
+        toggleToMode("manageClass");
+    },
+    'click .addClass' () { // Click classes mode button.
+        if (Session.equals("settingMode", "addClass")) return;
+        toggleToMode("addClass");
+    },
+    'click .createClass' () { // Click classes mode button.
+        if (Session.equals("settingMode", "createClass")) return;
+        toggleToMode("createClass");
+    },
+    'click #settingMode' () {
+        if(!filterOpen[3]) {
+            $("#settingModeWrapper").slideDown(300);
+        } else {
+            $("#settingModeWrapper").slideUp(300);
+        }
+        filterOpen[3] = !filterOpen[3];
+    },
+    'click #preferencesWrapper' () {
+        if(!filterOpen[4]) {
+            $("#prefCont").slideDown(300);
+        } else {
+            $("#prefCont").slideUp(300);
+        }
+        filterOpen[4] = !filterOpen[4];
+    }
+});
+
+function toggleToMode(mode) {
+    $("#mainBody").fadeOut(250, function() {
+        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
+        $("#mainBody").fadeIn(250);
+    });
+}

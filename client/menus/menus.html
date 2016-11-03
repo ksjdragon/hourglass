@@ -11,11 +11,6 @@
             <i class="fa fa-calendar" aria-hidden="true"></i>
             <h4>Calendar</h4>
         </div>
-        <div class="mode manageClass" onclick="window.location='/profile'">
-            <div class="status"></div>
-            <i class="fa fa-tasks" aria-hidden="true"></i>
-            <h4>Manage Classes</h4>
-        </div>
     </div>
     <div id="filters">
         <div id="filterHead" class="sectionTitle openable">
@@ -53,7 +48,28 @@
 </template>
 
 <template name="sidebarOptionPlate">
-    <div id="preferencesWrapper" class="sectionTitle openable downOffset">
+    <div id="settingMode" class="sectionTitle openable downOffset">
+        <h3>Classes</h3>
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </div>
+    <div id="settingModeWrapper">
+        <div class="mode manageClass">
+            <div class="status" style="background-color:{{modeStatus 'manageClass'}}"></div>
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+            <h4>Manage Classes</h4>
+        </div>
+        <div class="mode addClass">
+            <div class="status" style="background-color:{{modeStatus 'addClass'}}"></div>
+            <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+            <h4>Join Classes</h4>
+        </div>
+        <div class="mode createClass">
+            <div class="status" style="background-color:{{modeStatus 'createClass'}}"></div>
+            <i class="fa fa-book" aria-hidden="true"></i>
+            <h4>Create Classes</h4>
+        </div>
+    </div>
+    <div id="preferencesWrapper" class="sectionTitle openable">
         <h3>Preferences</h3>
         <i class="fa fa-angle-down" aria-hidden="true"></i>
     </div>

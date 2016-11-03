@@ -303,7 +303,7 @@ Template.main.helpers({
         return openValues.requests;
     },
     currMode(name) { // Status of display mode.
-        return Session.equals("mode", name);
+        return (Session.equals("sidebarMode", "option")) ? Session.equals("settingMode", mode) : Session.equals("mode", name);
     },
     calendarOptions() { // Settings for the calendar, including work displaying.
         return {
@@ -484,17 +484,6 @@ Template.main.events({
     },
     'click .fa-question' (event) { // Click requests button.
         toggleToSidebar("requests");
-    },
-    'click .classes' () { // Click classes mode button.
-        if (Session.equals("mode", "classes")) return;
-        toggleToMode("classes")
-        setTimeout(startDragula, 500);
-        toggleToSidebar(false);
-    },
-    'click .calendar' () { // Click calendar mode button.
-         if (Session.equals("mode", "calendar")) return;
-        toggleToMode("calendar");
-        toggleToSidebar(false);
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
@@ -821,21 +810,6 @@ Template.main.events({
 
 // Other Functions
 
-function toggleToSidebar(sidebar) {
-    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
-        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
-            Session.set("sidebarMode", "");
-        });
-    } else {
-        $("#menuContainer").show("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '36vh'}, 250);
-        $(".menuWrapper").fadeOut(200, function() {
-            Session.set("sidebarMode", sidebar);
-        });
-    }
-}
-
 function toggleOptionMenu(toggle, menu) {
     if(toggle) {
         $(".selectedOption").removeClass("selectedOption");
@@ -855,12 +829,28 @@ function toggleOptionMenu(toggle, menu) {
     }
 }
 
+function toggleToSidebar(sidebar) {
+    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
+        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
+            Session.set("sidebarMode", "");
+        });
+    } else {
+        $("#menuContainer").show("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '36vh'}, 250);
+        $(".menuWrapper").fadeOut(200, function() {
+            Session.set("sidebarMode", sidebar);
+        });
+    }
+}
+
 function toggleToMode(mode) {
     $("#mainBody").fadeOut(250, function() {
-        Session.set("mode",mode);
+        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
         $("#mainBody").fadeIn(250);
     });
 }
+
 
 function openDivFade(div) {
     div.style.display = "block";
