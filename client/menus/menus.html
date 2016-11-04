@@ -151,7 +151,15 @@
 <template name="manageClass">
     <div id="backgroundOverlay" style="background-color:{{divColor 'secondaryColor'}}">
         <div id="colLeft">
-            <h2>My Classes</h2>
+            <div class="settingHeader">
+                <div>
+                    <h2>My Classes</h2>
+                    <p>Manage Classes</p>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                </div>
+            </div>
             <div id="settingClassWrapper">
                 <div id="label" class="classBox">
                     <span class="name classText">Class Name</span>
@@ -165,7 +173,16 @@
             </div>
         </div>
         <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
-            <h2>Information</h2>
+            <div class="settingHeader">
+                <div>
+                    <h2>Information</h2>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-info" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div id="infoClassWrapper">
+            </div>
         </div>
     </div>
 </template>

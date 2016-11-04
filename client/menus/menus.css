@@ -88,13 +88,19 @@
 }
 
 #colLeft h2, #colRight h2 {
-	padding: 2% 2% 0 3%;
+	padding: 3% 3% 0 4%;
 	font-size: 4vh;
 	font-weight: 300;
 }
 
+#colLeft p, #colRight p {
+	font-size: 2vh;
+	margin: 0;
+	padding: 0 2% 0 7%;
+}
+
 #colLeft {
-	width: 52%;
+	width: 59%;
 }
 
 #colRight {
@@ -105,8 +111,8 @@
 }
 
 #settingClassWrapper {
-	width: 100%;
-	padding: 2% 0 0 5%;
+	width: 90%;
+	padding: 2% 0 0 3%;
 }
 
 #label {
@@ -124,9 +130,9 @@
 	margin-bottom: 3%;
 	padding: 2%;
 
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 
 	display: table;
 	table-layout: fixed;
@@ -173,3 +179,43 @@
 .hour.classText, .subscribers.classText {
 	text-align: center;
 }
+
+.settingHeader div:first-child {
+	width: 60%;
+	display: inline-block;
+}
+
+.settingHeader div:last-child {
+	float: right;
+	margin: 2% 1% 1% 1%;
+	vertical-align: bottom;
+	display: inline-block;
+}
+
+#colRight .settingHeader div:last-child {
+	margin-top: 1%;
+}
+
+#colRight .settingHeader {
+	padding: 2% 2% 2% 3%;
+}
+
+.circleIcon {
+	width: 6vh;
+	height: 6vh;
+
+	background-color: rgba(0,0,0,0.2);
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;	
+}
+
+.circleIcon .fa {
+	font-size: 2.5vh;
+	margin-top: 0.25vh;
+	width: 6vh;
+	height: 6vh;
+	line-height: 6vh;
+	text-align: center;
+}
+
