@@ -235,62 +235,6 @@
     100% { width: 30%; }
 }
 
-#label {
-	margin-top: 2.5%;
-	margin-bottom: 2%;
-	
-	background-color: rgba(0,0,0,0.2);
-	box-shadow: none;
-
-	display: table;
-	cursor: default;
-}
-
-.classHolder {
-	width: 100%;
-	max-height: 41vh;
-	padding: 1%;
-	padding-right: 100%;
-
-	display: inline-block;
-
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-
-.classHolder h3 {
-	font-style: italic;
-	font-weight: 200;
-	margin-left: 1%;
-
-	color: #999;
-
-	-webkit-filter :none;
-	filter: none;
-}
-
-.classBox {
-	font-size: 1.3vw;
-	width: 94%;
-	margin-bottom: 3%;
-	padding: 2%;
-
-	background-color: #19B3B3;
-	box-shadow: 2px 2px 5px 3px #666;
-	display: table;
-	table-layout: fixed;
-	cursor: pointer;
-
-	-webkit-transition: background-color 0.4s ease;  
-	-moz-transition: background-color 0.4s ease; 
-	-ms-transition: background-color 0.4s ease;
-	transition: background-color 0.4s ease;
-}
-
-.classBox:hover {
-	background-color: #138686;
-}
-
 #joinTop .fa-search {
 	font-size: 1.3vw;
 	margin-right: 3%;
@@ -315,38 +259,7 @@
 	background-color: rgba(0,0,0,0.1);
 }
 
-.owned {
-	background-color: #27646D;
 
-	-webkit-transition: background-color 0.4s ease;  
-	-moz-transition: background-color 0.4s ease; 
-	-ms-transition: background-color 0.4s ease;
-	transition: background-color 0.4s ease;
-}
-
-.owned:hover {
-	background-color: #52848B;
-}
-
-.classText {
-	margin-left: .5%;
-	margin-right: 10%;
-	display: table-cell;
-	text-align: left;
-}
-
-.classBox .fa-times {
-	display: table-cell;
-	width: 5%;
-}
-
-.name {
-	width: 40%;
-}
-
-.hour.classText, .subscribers.classText {
-	text-align: center;
-}
 
 #creRules {
 	margin: 5%;
