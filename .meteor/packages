@@ -27,7 +27,7 @@ ongoworks:security
 mizzao:autocomplete
 alanning:roles
 rzymek:fullcalendar
-momentjs:moment
+momentjs:moment@=2.15.1
 shell-server@0.2.1
 http@1.2.10
 underscore@1.0.10
