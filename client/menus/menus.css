@@ -1,0 +1,221 @@
+#filterWrapper {
+	width: 100%;
+}
+
+.sectionTitle {
+	font-weight: 200;
+	font-size: 2vh;
+	width: 100%;
+	height: 6vh;
+	background-color: rgba(255,255,255,0.1);
+}
+
+.sectionTitle h3 {
+	font-weight: 200;
+	font-size: 2vh;
+	padding-left: 6%;
+	line-height: 6vh;
+}
+
+.sectionTitle.downOffset {
+	margin-top: 6vh;
+}
+
+.openable {
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+.openable:hover {
+	background-color: rgba(255,255,255,0.2);
+}
+
+.openable h3:first-child {
+	font-weight: 200;
+	display: inline-block;
+	pointer-events: none;
+}
+
+.openable .fa {
+	padding: 6%;
+	float: right;
+	display: inline-block;
+	pointer-events: none;
+}
+
+#disableFilter {
+	font-weight: 200;
+	font-size: 90%;
+	margin-left: 10%;
+	padding: 4%;
+
+	background-color: rgba(255,255,255,0.2);
+
+	display: inline-block;
+	cursor: pointer;
+	line-height: normal;
+	pointer-events: all;
+	z-index: 2;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#disableFilter:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+
+#filterWrapper {
+	display: none;
+}
+
+#backgroundOverlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+}
+
+#colLeft, #colRight {
+	height: 100%;
+	display: inline-block;
+}
+
+#colLeft h2, #colRight h2 {
+	padding: 3% 3% 0 4%;
+	font-size: 4vh;
+	font-weight: 300;
+}
+
+#colLeft p, #colRight p {
+	font-size: 2vh;
+	margin: 0;
+	padding: 0 2% 0 7%;
+}
+
+#colLeft {
+	width: 59%;
+}
+
+#colRight {
+	border-left: 1px solid #666;
+	float: right;
+	width: 40%;
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.2);
+}
+
+#settingClassWrapper {
+	width: 90%;
+	padding: 2% 0 0 3%;
+}
+
+#label {
+	background-color: rgba(0,0,0,0.2);
+	box-shadow: none;
+	border: none;
+
+	display: table;
+	cursor: default;
+}
+
+.classBox {
+	font-size: 1.3vw;
+	width: 100%;
+	margin-bottom: 3%;
+	padding: 2%;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	display: table;
+	table-layout: fixed;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.classBox:hover {
+	background-color: rgba(0,0,0,0.3);
+}
+
+.owned {
+	box-shadow: inset 0 0 0 99999px rgba(255,255,255,0.3);
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+.owned:hover {
+	background-color: rgba(0,0,0,0.3);
+}
+
+.classText {
+	margin-left: .5%;
+	margin-right: 10%;
+	display: table-cell;
+	text-align: left;
+}
+
+.classBox .fa-times {
+	display: table-cell;
+	width: 5%;
+}
+
+.name {
+	width: 40%;
+}
+
+.hour.classText, .subscribers.classText {
+	text-align: center;
+}
+
+.settingHeader div:first-child {
+	width: 60%;
+	display: inline-block;
+}
+
+.settingHeader div:last-child {
+	float: right;
+	margin: 2% 1% 1% 1%;
+	vertical-align: bottom;
+	display: inline-block;
+}
+
+#colRight .settingHeader div:last-child {
+	margin-top: 1%;
+}
+
+#colRight .settingHeader {
+	padding: 2% 2% 2% 3%;
+}
+
+.circleIcon {
+	width: 6vh;
+	height: 6vh;
+
+	background-color: rgba(0,0,0,0.2);
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;	
+}
+
+.circleIcon .fa {
+	font-size: 2.5vh;
+	margin-top: 0.25vh;
+	width: 6vh;
+	height: 6vh;
+	line-height: 6vh;
+	text-align: center;
+}
+

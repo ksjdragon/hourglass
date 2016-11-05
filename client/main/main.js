@@ -302,8 +302,11 @@ Template.main.helpers({
         if (Session.get("requests")) return "0px";
         return openValues.requests;
     },
-    currMode(name) { // Status of display mode.
-        return Session.equals("mode", name);
+    currMode(mode) { // Status of display mode.
+        return Session.equals("mode", mode);
+    },
+    currSettingMode(mode) {
+        return Session.equals("settingMode", mode) && Session.equals("sidebarMode", "option");
     },
     calendarOptions() { // Settings for the calendar, including work displaying.
         return {
@@ -386,9 +389,6 @@ Template.main.helpers({
         var width = window.innerWidth * 0.85;
         return "width:" + width.toString() + "px;margin-left:" + (0.5 * window.innerWidth - 0.5 * width).toString() + "px;";
     },
-    filterOn() {
-        return Session.get("classDisp").length !== 0 || Session.get("typeFilter").length !== 0;
-    },
     highlight() { // Calendar highlight/scale option.
         var hoverHighlight = Session.get("classDispHover");
         var typeHighlight = Session.get("typeFilterHover");
@@ -456,14 +456,14 @@ Template.main.events({
         }
 
         if (!e.includes("fa-cog") && // Sidebar closing.
-            !e.includes("fa-bars") &&
-            !e.includes("fa-question") &&
-            !document.getElementById("menuContainer").contains(event.target) &&
-            !document.getElementById("menuBar").contains(event.target)) {
-                if(!(e.includes("fc-day") && !e.includes("fc-past"))) {
-                    toggleToSidebar(false);
-                }
-                
+        !e.includes("fa-bars") &&
+        !e.includes("fa-question") &&
+        !document.getElementById("menuContainer").contains(event.target) &&
+        !document.getElementById("menuBar").contains(event.target)) {
+            if(!(e.includes("fc-day") && !e.includes("fc-past")) && 
+            !Session.equals("sidebarMode", "option")) {
+                toggleToSidebar(false);
+            }
         }
 
         if (e === "overlay") { // Overlay closing.
@@ -484,17 +484,6 @@ Template.main.events({
     },
     'click .fa-question' (event) { // Click requests button.
         toggleToSidebar("requests");
-    },
-    'click .classes' () { // Click classes mode button.
-        if (Session.equals("mode", "classes")) return;
-        toggleToMode("classes")
-        setTimeout(startDragula, 500);
-        toggleToSidebar(false);
-    },
-    'click .calendar' () { // Click calendar mode button.
-         if (Session.equals("mode", "calendar")) return;
-        toggleToMode("calendar");
-        toggleToSidebar(false);
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
@@ -742,99 +731,10 @@ Template.main.events({
     'click #markReport' () { // Click report button.
         serverData = [Session.get("currentWork")._id, "reports"];
         sendData("toggleWork");
-    },
-    // CLASS FILTERS
-    'click .sideClass' (event) { // Click class list in sidebar.
-        var div = event.target;
-        while (div.getAttribute("classid") === null) div = div.parentNode;
-        var classid = div.getAttribute("classid");
-
-        if (Session.equals("sidebarMode","create")) { // If creating work from calendar.
-            var newSetting = Session.get("currentWork");
-            newSetting.class = classid;
-            Session.set("currentWork", newSetting);
-            openDivFade(document.getElementsByClassName("overlay")[0]);
-        } else { // Normal clicking turns on filter.
-            var array = Session.get("classDisp");
-            if (array.indexOf(classid) !== -1) {
-                array.splice(array.indexOf(classid), 1);
-            } else {
-                array.push(classid);
-            }
-            Session.set("classDisp", array);
-        }
-    },
-    'click .sideFilter' (event) {
-        var div = event.target;
-        while (div.getAttribute("type") === null) div = div.parentNode;
-        var type = div.getAttribute("type");
-
-        var array = Session.get("typeFilter");
-        if (array.indexOf(type) !== -1) {
-            array.splice(array.indexOf(type), 1);
-        } else {
-            array.push(type);
-        }
-        Session.set("typeFilter", array);
-    },
-    'click #disableFilter' () {
-        Session.set("classDisp", []);
-        Session.set("typeFilter", []);
-    },
-    'mouseover .sideClass' (event) { // Highlight/scale filter on-hover.
-        var div;
-        if (event.target.className !== "sideClass") {
-            div = event.target.parentNode;
-        } else {
-            div = event.target;
-        }
-        while (div.getAttribute("classid") === null) div = div.parentNode;
-        var classid = div.getAttribute("classid");
-        Session.set("classDispHover", classid);
-    },
-    'mouseleave .sideClass' (event) { // Turn off highlight/scale filter on-leave.
-        if (event.target.className !== "sideClass") {
-            var div = event.target.parentNode;
-            if (div.contains(event.target)) return;
-        }
-        Session.set("classDispHover", null);
-    },
-    'mouseover .sideFilter' (event) {
-        var div;
-        if (event.target.className !== "sideFilter") {
-            div = event.target.parentNode;
-        } else {
-            div = event.target;
-        }
-        while (div.getAttribute("type") === null) div = div.parentNode;
-        var type = div.getAttribute("type");
-        Session.set("typeFilterHover", type);
-    },
-    'mouseleave .sideFilter' (event) {
-        if (event.target.className !== "sideFilter") {
-            var div = event.target.parentNode;
-            if (div.contains(event.target)) return;
-        }
-        Session.set("typeFilterHover", null);
     }
 });
 
 // Other Functions
-
-function toggleToSidebar(sidebar) {
-    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
-        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
-            Session.set("sidebarMode", "");
-        });
-    } else {
-        $("#menuContainer").show("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '36vh'}, 250);
-        $(".menuWrapper").fadeOut(200, function() {
-            Session.set("sidebarMode", sidebar);
-        });
-    }
-}
 
 function toggleOptionMenu(toggle, menu) {
     if(toggle) {
@@ -855,12 +755,31 @@ function toggleOptionMenu(toggle, menu) {
     }
 }
 
+function toggleToSidebar(sidebar) {
+    try {
+        $("#backgroundOverlay").fadeOut(250);
+    } catch(err) {}
+    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
+        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
+            Session.set("sidebarMode", "");
+        });
+    } else {
+        $("#menuContainer").show("slide",  {direction: "left"}, 250);
+        $("#divCenter").stop().animate({left: '36vh'}, 250);
+        $(".menuWrapper").fadeOut(200, function() {
+            Session.set("sidebarMode", sidebar);
+        });
+    }
+}
+
 function toggleToMode(mode) {
     $("#mainBody").fadeOut(250, function() {
-        Session.set("mode",mode);
+        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
         $("#mainBody").fadeIn(250);
     });
 }
+
 
 function openDivFade(div) {
     div.style.display = "block";
@@ -905,6 +824,7 @@ function sendData(funcName) { // Call Meteor function, and do actions after func
                 timeout: 2500
             });
         }
+        document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
     });
 }
 

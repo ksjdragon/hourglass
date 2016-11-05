@@ -1,49 +1,42 @@
 <template name="sidebarMenuPlate">
-    <div id="modes">
-        <h3 class="sectionTitle">Main</h3>
-        <div class="mode classes">
-            <div class="status" style="background-color:{{modeStatus 'classes'}}"></div>
-            <i class="fa fa-university" aria-hidden="true"></i>
-            <h4>Classes</h4>
-        </div>
-        <div class="mode calendar">
-            <div class="status" style="background-color:{{modeStatus 'calendar'}}"></div>
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-            <h4>Calendar</h4>
-        </div>
-        <div class="mode manageClass" onclick="window.location='/profile'">
-            <div class="status"></div>
-            <i class="fa fa-tasks" aria-hidden="true"></i>
-            <h4>Manage Classes</h4>
-        </div>
+    <div class="sectionTitle downOffset">
+        <h3>Main</h3>
     </div>
-    <div id="filters">
-        <div id="filterHead" class="sectionTitle openable">
-            <h3>Filters</h3>
-            {{#if filterOn}}
-                <h3 id="disableFilter">Disable All</h3>
-            {{/if}}
+    <div class="mode classes">
+        <div class="status" style="background-color:{{modeStatus 'classes'}}"></div>
+        <i class="fa fa-university" aria-hidden="true"></i>
+        <h4>Classes</h4>
+    </div>
+    <div class="mode calendar">
+        <div class="status" style="background-color:{{modeStatus 'calendar'}}"></div>
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+        <h4>Calendar</h4>
+    </div>
+    <div id="filterHead" class="sectionTitle openable">
+        <h3>Filters</h3>
+        {{#if filterOn}}
+            <h3 id="disableFilter">Disable All</h3>
+        {{/if}}
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </div>
+    <div id="filterWrapper">
+        <div id="typeFilterWrapper" class="sectionTitle openable">
+            <h3>By Type</h3>
             <i class="fa fa-angle-down" aria-hidden="true"></i>
         </div>
-        <div id="filterWrapper">
-            <div id="typeFilterWrapper" class="sectionTitle openable">
-                <h3>By Type</h3>
+        <div id="classFilterHolder">
+            {{#each types}}
+                {{> sideTypeFilter}}
+            {{/each}}
+        </div>
+        <div id="classFilterWrapper" class="sectionTitle openable">
+                <h3>By Class</h3>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
-            </div>
-            <div id="classFilterHolder">
-                {{#each types}}
-                    {{> sideTypeFilter}}
-                {{/each}}
-            </div>
-            <div id="classFilterWrapper" class="sectionTitle openable">
-                    <h3>By Class</h3>
-                    <i class="fa fa-angle-down" aria-hidden="true"></i>
-            </div> 
-            <div id="classListHolder">    
-                {{#each myClasses}}
-                    {{> sidebarClasses}}
-                {{/each}}
-            </div>
+        </div> 
+        <div id="classListHolder">    
+            {{#each myClasses}}
+                {{> sidebarClasses}}
+            {{/each}}
         </div>
     </div>
     <div id="exportDiv" class="mode">
@@ -53,13 +46,36 @@
 </template>
 
 <template name="sidebarOptionPlate">
-    <div id="preferencesWrapper" class="sectionTitle openable downOffset">
+    <div id="settingMode" class="sectionTitle openable downOffset">
+        <h3>Classes</h3>
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </div>
+    <div id="settingModeWrapper">
+        <div class="mode manageClass">
+            <div class="status" style="background-color:{{modeStatus 'manageClass'}}"></div>
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+            <h4>Manage Classes</h4>
+        </div>
+        <div class="mode addClass">
+            <div class="status" style="background-color:{{modeStatus 'addClass'}}"></div>
+            <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+            <h4>Join Classes</h4>
+        </div>
+        <div class="mode createClass">
+            <div class="status" style="background-color:{{modeStatus 'createClass'}}"></div>
+            <i class="fa fa-book" aria-hidden="true"></i>
+            <h4>Create Classes</h4>
+        </div>
+    </div>
+    <div id="preferencesWrapper" class="sectionTitle openable">
         <h3>Preferences</h3>
         <i class="fa fa-angle-down" aria-hidden="true"></i>
     </div>
     <div id="prefCont">
         <div class="prefWrapper">
-            <h3 class="sectionTitle prefText">Theme:</h3>
+            <div class="sectionTitle prefText">
+                <h3>Theme</h3>
+            </div>
             <div id="theme" class="clickModify dropdown" tabindex="1">
                 <span>{{pref 'theme'}}</span>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -67,7 +83,9 @@
             {{> selectOptionMenu optionName="theme"}}
         </div>
         <div class="prefWrapper">
-            <h3 class="sectionTitle prefText">Default Mode:</h3>
+            <div class="sectionTitle prefText">
+                <h3>Default Mode</h3>
+            </div>
             <div id="mode" class="clickModify dropdown" tabindex="2">
                 <span>{{pref 'mode'}}</span>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -75,7 +93,9 @@
             {{> selectOptionMenu optionName="mode"}}
         </div>
         <div class="prefWrapper">
-            <h3 class="sectionTitle prefText">Hide Homework:</h3>
+            <div class="sectionTitle prefText">
+                <h3>Hide Homework</h3>
+            </div>
             <div id="timeHide" class="clickModify dropdown" tabindex="3">
                 <span>{{pref 'timeHide'}}</span>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -83,7 +103,9 @@
             {{> selectOptionMenu optionName="timeHide"}}
         </div>
         <div class="prefWrapper">
-            <h3 class="sectionTitle prefText">Hide Done:</h3>
+            <div class="sectionTitle prefText">
+                <h3>Hide Done</h3>
+            </div>
             <div id="done" class="clickModify dropdown" tabindex="4">
                 <span>{{pref 'done'}}</span>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -91,7 +113,9 @@
             {{> selectOptionMenu optionName="done"}}
         </div>
         <div class="prefWrapper">
-            <h3 class="sectionTitle prefText">Hide Reported:</h3>
+            <div class="sectionTitle prefText">
+                <h3>Hide Reported</h3>
+            </div>
             <div id="hideReport" class="clickModify dropdown" tabindex="5">
                 <span>{{pref 'hideReport'}}</span>
                 <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -102,7 +126,9 @@
 </template>
 
 <template name="sidebarRequestPlate">
-    <h3 class="sectionTitle downOffset">Requests</h3>
+    <div class="sectionTitle downOffset">
+        <h3>Requests</h3>
+    </div>
     <p class="sidebarDesc">Ask for help, submit a bug, or request a feature! We won't bite.</p>
     <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
     <span id="requestRes" class="resText">{{restrict 'requestArea'}}</span>
@@ -120,4 +146,57 @@
     {{#each myClasses}}
         {{> sidebarClasses}}
     {{/each}}
+</template>
+
+<template name="manageClass">
+    <div id="backgroundOverlay" style="background-color:{{divColor 'secondaryColor'}}">
+        <div id="colLeft">
+            <div class="settingHeader">
+                <div>
+                    <h2>My Classes</h2>
+                    <p>Manage Classes</p>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div id="settingClassWrapper">
+                <div id="label" class="classBox">
+                    <span class="name classText">Class Name</span>
+                    <span class="teacher classText">Teacher</span>
+                    <span class="hour classText">Hour</span>
+                    <span class="subscriptions classText">Members</span>
+                </div>
+                {{#each myClasses}}
+                    {{> classDisplay}}
+                {{/each}}
+            </div>
+        </div>
+        <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
+            <div class="settingHeader">
+                <div>
+                    <h2>Information</h2>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-info" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div id="infoClassWrapper">
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="classDisplay">
+    <div class="classBox{{box}}" classid="{{_id}}" style="border:1px solid {{divColor 'textColor'}}">
+        <span class="name classText">{{name}}</span>
+        <span class="teacher classText">{{teacher}}</span>
+        <span class="hour classText">{{hour}}</span>
+        <span class="subscribers classText">{{subscribers}}</span>
+        {{#if mine}}
+            <i class="fa fa-times" aria-hidden="true"></i>
+        {{else}}
+            <i class="fa fa-times" aria-hidden="true" style="visibility:hidden"></i>
+        {{/if}}
+    </div>
 </template>

@@ -52,6 +52,11 @@
                         {{> fullcalendar calendarOptions}}
                     </div>
                 {{/if}}
+
+                {{#if currSettingMode 'manageClass'}}
+                    {{> manageClass}}
+                {{/if}}
+                
             </div>
         </div>
 
