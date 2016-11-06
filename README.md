@@ -27,6 +27,13 @@ On this tab, you can see all of your current classes. If you are an admin of the
 You can go to <-url->/user/<-email-> to vist a user's profile.
 
 ##Changelog
+### 0.1.3
+- Changed some icons
+- Fixed some resolution issues
+- Fixed class approval (you can now join other people’s classes)
+- Change export format to iCal
+- Admin/Server fixes
+- Minor bug fixes
 
 ### 0.1.2
   - First beta version
