@@ -170,7 +170,7 @@ body {
 	width: 6vh;
 	height: calc(6vh - 1px);
 
-	border-bottom: 2px solid #333;
+	border-bottom: 2px solid rgba(255,255,255,0.1);
 
 	position: relative;
 	line-height: 6vh;
@@ -639,7 +639,6 @@ textarea.clickModify {
 .clickModify.dropdown {
 	font-size: 2.1vh;
 	width: calc(100% - 2px);
-	border: 1px solid #999797;
 
 	background-color: rgba(0,0,0,0.07);
 	cursor: pointer;
@@ -664,10 +663,9 @@ textarea.clickModify {
 }
 
 .optionHolder {
-	width: calc(100% - 2px);
+	width: 100%;
 	margin-top: -1px;
 
-	border: 1px solid #666;
 	border-top: none;
 
 	position: absolute;
@@ -687,6 +685,7 @@ textarea.clickModify {
 	min-width: 10%;
 	padding: 4% 7% 4% 7%;
 	margin: 0;
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.05);
 
 	cursor: pointer;
 	
@@ -880,24 +879,20 @@ textarea.clickModify {
 	min-height: 100%;
 	width: 100%;
 	height: auto;
+	margin-top: -6vh;
 
 	position: fixed;
-	top: 50%;
+	bottom: 0;
 	left: 50%;
 	z-index: -1;
 
-	transform:translate(-50%, -50%);
+	transform:translateX(-50%);
 }
 
 #mainBody {
 	width: 100%;
 	height: 100%;
 	position: relative;
-
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease; 
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease;
 }
 
 #calendar {

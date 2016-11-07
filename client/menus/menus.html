@@ -175,13 +175,91 @@
         <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
             <div class="settingHeader">
                 <div>
-                    <h2>Information</h2>
+                    <h2>Class Information</h2>
                 </div>
                 <div class="circleIcon">
                     <i class="fa fa-info" aria-hidden="true"></i>
                 </div>
             </div>
             <div id="infoClassWrapper">
+                <div id="classInfoModeWrapper">
+                    <span style="border-bottom: 3px solid {{classInfoMode 'general'}}">General</span>
+                    <span style="border-bottom: 3px solid {{classInfoMode 'users'}}">Users</span>
+                </div>
+                <div id="infoClassCont">
+                    {{#if classInfoMode 'general' 'a'}}
+                        {{> classInfoGeneral}}
+                    {{else}}
+                        {{> classInfoUsers}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="joinClass">
+    <div id="backgroundOverlay" style="background-color:{{divColor 'secondaryColor'}}">
+        <div id="colLeft">
+            <div class="settingHeader">
+                <div>
+                    <h2>Available Classes</h2>
+                    <p>Join Classes</p>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div id="joinTop">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                {{> inputAutocomplete id="classSearch" settings=classSettings placeholder="Search..."}}
+                <!-- <h4 id="private">Join Private Class</h4> -->
+            </div>
+            <div id="settingClassWrapper">
+                <div id="label" class="classBox">
+                    <span class="name classText">Class Name</span>
+                    <span class="teacher classText">Teacher</span>
+                    <span class="hour classText">Hour</span>
+                    <span class="subscriptions classText">Members</span>
+                </div>
+                {{#if notsearching}}
+                    {{#each classes}}
+                        {{> classDisplay}}
+                    {{/each}}
+                    {{#if noclass}}
+                        <h3>No results found...</h3>
+                    {{/if}}
+                {{else}}
+                    {{#each autocompleteClasses}}
+                        {{> classDisplay}}
+                    {{/each}}
+                    {{#if notfound}}
+                        <h3>No results found...</h3>
+                    {{/if}}
+                {{/if}}
+            </div>
+        </div>
+        <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
+            <div class="settingHeader">
+                <div>
+                    <h2>Class Information</h2>
+                </div>
+                <div class="circleIcon">
+                    <i class="fa fa-info" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div id="infoClassWrapper">
+                <div id="classInfoModeWrapper">
+                    <span style="border-bottom: 3px solid {{classInfoMode 'general'}}">General</span>
+                    <span style="border-bottom: 3px solid {{classInfoMode 'users'}}">Users</span>
+                </div>
+                <div id="infoClassCont">
+                    {{#if classInfoMode 'general' 'a'}}
+                        {{> classInfoGeneral}}
+                    {{else}}
+                        {{> classInfoUsers}}
+                    {{/if}}
+                </div>
             </div>
         </div>
     </div>
@@ -200,3 +278,116 @@
         {{/if}}
     </div>
 </template>
+
+<template name="classInfoGeneral">
+    <div id="privacy">
+        {{#if classInfo 'privacy'}}
+            <div class="circleIcon">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+            </div>
+            <span>Private</span>
+        {{else}}
+            <div class="circleIcon">
+                <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+            </div>
+            <span>Public</span>
+        {{/if}}
+    </div>
+    <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+        <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Class Name</h4>
+        <span>{{classInfo 'name'}}</span>
+    </div>
+    <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+        <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Hour</h4>
+        <span>{{classInfo 'hour'}}</span>
+    </div>
+    <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+        <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Teacher</h4>
+        <span>{{classInfo 'teacher'}}</span>
+    </div>
+    <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+        <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Category</h4>
+        <span>{{classInfo 'category'}}</span>
+    </div>
+    <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+        <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Owner</h4>
+        {{> classInfoUserDisp classInfo 'admin'}}
+    </div>
+    {{> classInfoCode classInfo 'code'}}
+</template>
+
+<template name="classInfoUsers">
+    {{#if classInfo 'personal'}}
+        <p>It's just you!</p>
+    {{else}}
+        <div>
+            <div class="userAdder">
+                <h4>Moderators:</h4>
+                {{#if classInfo 'mine'}}
+                    <input class="userAddInput" type="text" placeholder="1234@abc.xyz">
+                    <i class="fa fa-plus" aria-hidden="true" user="moderators" onmouseover="$(this).css('color','{{divColor 'iconHighlight'}}')" onmouseleave="$(this).css('color','{{divColor 'textColor'}}')"></i>
+                {{/if}}
+            </div>
+            <div class="userHolder">
+                {{#each classInfo 'moderators'}}
+                    <div class="userDisp" userid="{{_id}}">
+                        {{> classInfoUserDisp}}
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+        <div>
+            <div class="userAdder">
+                <h4>Banned Users:</h4>
+                {{#if classInfo 'mine'}}
+                    <input class="userAddInput" type="text" placeholder="1234@abc.xyz">
+                    <i class="fa fa-plus" aria-hidden="true" user="banned" onmouseover="$(this).css('color','{{divColor 'iconHighlight'}}')" onmouseleave="$(this).css('color','{{divColor 'textColor'}}')"></i>
+                {{/if}}
+            </div>
+            <div class="userHolder">    
+                {{#each classInfo 'banned'}}
+                    <div class="userDisp" userid="{{_id}}">
+                        {{> classInfoUserDisp}}  
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+        <div>
+            <div class="userAdder">
+                <h4>Subscribers:</h4>
+            </div>
+            <div class="userHolder">    
+                {{#each classInfo 'subscribers'}}
+                    <div class="userDisp" userid="{{_id}}">
+                        {{> classInfoUserDisp}}  
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    {{/if}}
+</template>
+
+<template name="classInfoUserDisp">
+    <span>
+        <img src="{{services.google.picture}}">
+        {{profile.name}}
+        {{#if delete}}
+            {{#if classInfo 'mine'}}
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{/if}}
+        {{/if}}
+    </span>
+</template>
+
+<template name="classInfoCode">
+    {{#if exists}}
+        <div id="code" class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+            <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Code</h4>
+            <span>{{code}}</span>
+            <input id="copyHolder" value="{{code}}">
+            <i class="fa fa-files-o" aria-hidden="true" onmouseover="$(this).css('color','{{divColor 'iconHighlight'}}')" onmouseleave="$(this).css('color','{{divColor 'textColor'}}')"></i>
+            <div>Copied!</div>
+        </div>
+    {{/if}}
+</template>
+

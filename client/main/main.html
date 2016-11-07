@@ -56,7 +56,10 @@
                 {{#if currSettingMode 'manageClass'}}
                     {{> manageClass}}
                 {{/if}}
-                
+
+                {{#if currSettingMode 'addClass'}}
+                    {{> joinClass}}
+                {{/if}}
             </div>
         </div>
 

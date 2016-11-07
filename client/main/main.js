@@ -40,7 +40,8 @@ Template.login.rendered = function() {
 };
 
 Template.main.created = function() {
-    Session.set("mode", Session.get("user").preferences.mode); 
+    Session.set("mode", Session.get("user").preferences.mode);
+    Session.set("classInfo", Session.get("user").classes[0]);
 }
 
 Template.main.rendered = function() {
@@ -289,7 +290,7 @@ Template.main.helpers({
         return Session.get("user").name;
     },
     bgSrc() { // Returns background.
-        return "Backgrounds/" + Session.get("user").preferences.theme.background;
+        return "MDBackgrounds/" + "MD"+Session.get("user").preferences.theme.background;
     },
     iconStatus(icon) {
         var sidebar = Session.get("sidebarMode");
@@ -755,32 +756,6 @@ function toggleOptionMenu(toggle, menu) {
     }
 }
 
-function toggleToSidebar(sidebar) {
-    try {
-        $("#backgroundOverlay").fadeOut(250);
-    } catch(err) {}
-    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
-        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
-            Session.set("sidebarMode", "");
-        });
-    } else {
-        $("#menuContainer").show("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '36vh'}, 250);
-        $(".menuWrapper").fadeOut(200, function() {
-            Session.set("sidebarMode", sidebar);
-        });
-    }
-}
-
-function toggleToMode(mode) {
-    $("#mainBody").fadeOut(250, function() {
-        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
-        $("#mainBody").fadeIn(250);
-    });
-}
-
-
 function openDivFade(div) {
     div.style.display = "block";
     div.style.opacity = "0";
@@ -796,7 +771,7 @@ function closeDivFade(div) {
     }, 100);
 }
 
-function sendData(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
+sendData = function(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
     if(funcName === "editWork" || funcName === "createWork") {
         for(var key in serverData) {
             if(serverData[key] === true) serverData[key] = "";
@@ -990,7 +965,7 @@ function formReadable(input, val) { // Makes work information readable by users.
     }
 }
 
-function startDragula() {
+startDragula = function() {
     dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
         moves: function(el, container, handle) {
             // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
