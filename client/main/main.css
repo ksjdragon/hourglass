@@ -299,12 +299,15 @@ body {
 	padding: 0 6% 0 6%;
 	line-height: 6vh;
 	display: table-cell;
+	vertical-align: middle;
 }
 
 .mode h4 {
-	width: 74%;
+	width: 65%;
+	padding-left: 9%;
 	line-height: 6vh;
 	display: table-cell;
+	vertical-align: middle;
 }
 
 #divLeftBar .fa-university, #divLeftBar .fa-calendar, #divLeftBar .fa-download, #divLeftBar .fa-tasks,
