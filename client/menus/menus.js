@@ -233,7 +233,11 @@ Template.registerHelper("classInfo", (info) => {
 Template.registerHelper("classInfoMode", (mode, check) => {
     if(typeof check === "string") return Session.equals("classInfoMode",mode);
     return (Session.equals("classInfoMode", mode)) ? Session.get("user").preferences.theme.modeHighlight + ";background-color:rgba(0,0,0,0.1);" : "rgba(0,0,0,0)";
-})
+});
+
+Template.registerHelper("classSelected", () => {
+    return !Session.equals("classInfo", null);
+});
 
 Template.manageClass.events({
     'click .classBox' (event) {
@@ -248,6 +252,31 @@ Template.manageClass.events({
     'click #classInfoModeWrapper span:last-child' () {
         if(Session.equals("classInfoMode","users")) return;
         toggleToClassInfoMode("users");
+    },
+    'click .infoCard .fa-pencil-square-o' () {
+        $("#changeAdminWrapper").fadeIn(250);
+    },
+    'click #adminSubmit' () {
+        var input = document.getElementById("changeAdmin");
+        var value = input.value;
+        var classid = Session.get("classInfo");
+        var user = Meteor.users.findOne({
+            "services.google.email": value
+        });
+        if(!user)  {
+            sAlert.error("Invalid email!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 3000
+            });
+            return;
+        }
+        serverData = [
+            user._id,
+            classid
+        ];
+        sendData("changeAdmin");
+        input.value = "";
     }
 });
 
@@ -315,7 +344,7 @@ Template.joinClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
         if(Session.equals("classInfo",classId)) return;
-        toggleToClassInfo(classId); 
+        toggleToClassInfo(classId);
     },
     'click #classInfoModeWrapper span:first-child' () {
         if(Session.equals("classInfoMode","general")) return;
@@ -355,6 +384,27 @@ Template.joinClass.events({
                 return b.subscribers - a.subscribers
             }));
         } catch (err) {}
+    },
+    'click #private' () {
+       $("#privateCode").css('display','inline-block');
+       var input = document.getElementById("privateCode");
+       input.focus();
+       if(input.value === "") return;
+       Meteor.call("joinPrivateClass", input.value, function(error, result) {
+            if(result) {
+                sAlert.success("Joined!", {
+                    effect: 'genie',
+                    position: 'bottom-right',
+                    timeout: 1500
+                });
+            } else {
+                sAlert.error("Invalid code!", {
+                    effect: 'stackslide',
+                    position: 'top',
+                    timeout: 1500
+                });
+            }
+        });
     }
 });
 
@@ -422,6 +472,7 @@ Template.classInfoCode.events({
 toggleToMode = function(mode) {
     $("#mainBody").fadeOut(250, function() {
         (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
+        Session.set("classInfo", null);
         $("#mainBody").fadeIn(250);
     });
 }
@@ -445,6 +496,7 @@ toggleToSidebar = function(sidebar) {
 }
 
 toggleToClassInfo = function(classId) {
+    $("#changeAdminWrapper").fadeOut(250);
     $("#infoClassCont").fadeOut(250, function() {
         Session.set("classInfo", classId);
         Session.set("classInfoMode", "general");

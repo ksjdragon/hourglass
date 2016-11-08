@@ -41,7 +41,7 @@ Template.login.rendered = function() {
 
 Template.main.created = function() {
     Session.set("mode", Session.get("user").preferences.mode);
-    Session.set("classInfo", Session.get("user").classes[0]);
+    Session.set("classInfo", null);
 }
 
 Template.main.rendered = function() {

@@ -298,7 +298,7 @@
 	display: inline-block;
 }
 
-#infoClassCont div .fa-files-o{
+#infoClassCont div .fa-files-o, #infoClassCont div .fa-pencil-square-o {
 	font-size: 2vh;
 
 	position: absolute;
@@ -333,6 +333,41 @@
 	visibility: hidden;
 	pointer-events: none;
 	position: absolute;
+}
+
+#changeAdminWrapper {
+	margin-top: 1%;
+	display: none;
+}
+
+#changeAdminWrapper span {
+	font-size: 2vh;
+	display: inline-block !important;
+}
+
+#changeAdmin {
+	width: 40%;
+	margin: 0 1% 0 1%;
+	font-size: 2vh;
+	padding: 1%;
+	outline: none;
+}
+
+#adminSubmit {
+	padding: 2%;
+	background-color: rgba(0,0,0,0.1);
+	display: inline-block;
+
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#adminSubmit:hover {
+	background-color: rgba(0,0,0,0.2);	
 }
 
 .userAdder {
@@ -400,3 +435,59 @@
 .userDisp .fa:hover {
 	color: #FF1A1A;
 }
+
+#joinTop {
+	margin: 2% 0 0 5%;
+}
+
+#joinTop .-autocomplete-container {
+	display: none;
+}
+
+#joinTop .fa {
+	font-size: 2.5vh;
+}
+
+#classSearch, #privateCode {
+	font-size: 2vh;
+	padding: 1%;
+	outline: none;
+}
+
+#private {
+	font-size: 2.4vh;
+	padding: 1.5%;
+	margin: 0 2% 0 2%;
+
+	background-color: rgba(0,0,0,0.1);
+
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#private:hover {
+	background-color: rgba(0,0,0,0.2);
+}
+
+#privateCode {
+	width: 25%;
+	display: none;
+
+	-webkit-animation: expand .7s ease 1;
+	animation: expand .7s ease 1;
+}
+
+@-webkit-keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 25%; }
+} 
+
+@keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 25%; }
+}
+

@@ -60,6 +60,10 @@
                 {{#if currSettingMode 'addClass'}}
                     {{> joinClass}}
                 {{/if}}
+
+                {{$if currSettingMode 'createClass'}}
+                    {{> createClass}}
+                {{/if}}
             </div>
         </div>
 

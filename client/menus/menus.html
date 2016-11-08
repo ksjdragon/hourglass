@@ -187,10 +187,14 @@
                     <span style="border-bottom: 3px solid {{classInfoMode 'users'}}">Users</span>
                 </div>
                 <div id="infoClassCont">
-                    {{#if classInfoMode 'general' 'a'}}
-                        {{> classInfoGeneral}}
+                    {{#if classSelected}}
+                        {{#if classInfoMode 'general' 'a'}}
+                            {{> classInfoGeneral}}
+                        {{else}}
+                            {{> classInfoUsers}}
+                        {{/if}}
                     {{else}}
-                        {{> classInfoUsers}}
+                        <p>Click on a class to see its info.</p>
                     {{/if}}
                 </div>
             </div>
@@ -213,7 +217,8 @@
             <div id="joinTop">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 {{> inputAutocomplete id="classSearch" settings=classSettings placeholder="Search..."}}
-                <!-- <h4 id="private">Join Private Class</h4> -->
+                <h4 id="private">Join Private Class</h4>
+                <input id="privateCode" placeholder="Enter code here...">
             </div>
             <div id="settingClassWrapper">
                 <div id="label" class="classBox">
@@ -254,14 +259,61 @@
                     <span style="border-bottom: 3px solid {{classInfoMode 'users'}}">Users</span>
                 </div>
                 <div id="infoClassCont">
-                    {{#if classInfoMode 'general' 'a'}}
-                        {{> classInfoGeneral}}
+                    {{#if classSelected}}
+                        {{#if classInfoMode 'general' 'a'}}
+                            {{> classInfoGeneral}}
+                        {{else}}
+                            {{> classInfoUsers}}
+                        {{/if}}
                     {{else}}
-                        {{> classInfoUsers}}
+                        <p>Click on a class to see its info!</p>
                     {{/if}}
                 </div>
             </div>
         </div>
+    </div>
+</template>
+
+<template name="createClass">
+    <div id="backgroundOverlay" style="background-color:{{divColor 'secondaryColor'}}">
+        <div id="creRules"><p>Submit a request for a class to be approved by an administrator. You can have up to 8 unapproved classes at once.</p></div>
+        <div id="formContainer">
+            <div class="formDiv">
+                <p class="profTitle">School:</p>
+               {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" name="school" placeholder="Example: International Academy" }}
+           </div>
+           <div class="formDiv">
+               <p class="profTitle">Hour:</p>
+               <input class="creInput" type="text">
+           </div>
+           <div class="formDiv">
+               <p class="profTitle">Teacher:</p>
+               {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" name="teacher" placeholder="Example: Woods" }}
+           </div>
+           <div class="formDiv">
+               <p class="profTitle">Class Name:</p>
+               <input class="creInput" type="text">
+           </div>
+           <div class="formDiv">
+               <p class="profTitle">Privacy:</p>
+               <input id="privacy" class="creInput clickModify dropdown" type="text" readonly>
+               <div class="optionHolder">
+                   {{#each selectOptions 'privacy'}}
+                       {{> option}}
+                   {{/each}}
+               </div>
+           </div>
+           <div class="formDiv">
+               <p class="profTitle">Category:</p>
+               <input id="category" class="creInput clickModify dropdown" type="text" readonly>
+               <div class="optionHolder">
+                   {{#each selectOptions 'category'}}
+                       {{> option}}
+                   {{/each}}
+               </div>
+           </div>
+       </div>
+       <h3 id="creSubmit">Submit Request</h3>
     </div>
 </template>
 
@@ -312,8 +364,19 @@
     <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
         <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Owner</h4>
         {{> classInfoUserDisp classInfo 'admin'}}
+        {{#unless classInfo 'personal'}}
+            {{#if classInfo 'mine'}}
+                <i class="fa fa-pencil-square-o" aria-hidden="true" onmouseover="$(this).css('color','{{divColor 'iconHighlight'}}')" onmouseleave="$(this).css('color','{{divColor 'textColor'}}')"></i>
+            {{/if}}
+        {{/unless}}
     </div>
     {{> classInfoCode classInfo 'code'}}
+
+    <div id="changeAdminWrapper">
+        <span>Change Admin: </span>
+        <input id="changeAdmin">
+        <div id="adminSubmit">Change</div>
+    </div>
 </template>
 
 <template name="classInfoUsers">
