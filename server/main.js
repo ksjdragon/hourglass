@@ -149,9 +149,10 @@ var errors = [
     ["trivial", "This request is too long."],
     ["trivial", "Not a valid work type"],
     ["unauthorized", "This class has not been approved yet"],
+    ["matching", "This teacher already exists"],
 
-    ["unauthorized", "Sorry, you are not authorized to complete this action."],
-    ["other", "Error could not be processed"]
+    ["unauthorized", "Sorry, you are not authorized to complete this action."], // n - 2
+    ["other", "Error could not be processed"] // n - 1
 ];
 
 function securityCheck(checklist, input) {
@@ -182,7 +183,6 @@ function securityCheck(checklist, input) {
         case 3:
             if (!schools.findOne({name: input.school})) error = 2;
             break;
-        // TODO: teachers with same name
         // Duplicate classes
         case 4:
             if (classes.findOne({school: input.school, status: true, privacy: false, teacher: input.teacher, hour: input.hour}) || (input.teacher === "" && input.hour === "")) error = 3;
@@ -265,6 +265,10 @@ function securityCheck(checklist, input) {
         // User is logged in
         case 25:
             if (Meteor.userId() === null) error = errors.length - 1;
+            break;
+        // New Teacher doesn't already exist
+        case 26:
+            if (teachers.find({name: input.teacherName, school: input.school}).fetch().length > 0) error = 19;
             break;
         }
         results.push(error);
@@ -778,6 +782,17 @@ Meteor.methods({
         if (!security) {
             requests.remove({
                 _id: requestId
+            });
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'createTeacher': function(teacherName, schoolName) {
+        var security = securityCheck([26, 3, true], {teachername: teacherName, school: schoolName});
+        if (!security) {
+            teachers.insert({
+                name: teacherName,
+                school: schoolName
             });
         } else {
             throw new Meteor.Error(errors[security]);

@@ -3,9 +3,10 @@ classes = new Mongo.Collection("Classes");
 work = new Mongo.Collection("Work");
 requests = new Mongo.Collection("Requests");
 admins = Meteor.users;
+teachers = new Mongo.Collection("Teachers");
 
 schools.schema = new SimpleSchema({
-	  name: {type: String},
+	  name: {type: String}
 });
 
 classes.schema = new SimpleSchema({
@@ -56,7 +57,13 @@ userSchema = new SimpleSchema({
 	'profile.classes': {type: [String], label: "Classes"}
 });
 
+teachers.schema = new SimpleSchema({
+    name: {type: String},
+    school: {type: String}
+});
+
 schools.attachSchema(schools.schema);
 classes.attachSchema(classes.schema);
 work.attachSchema(work.schema);
 requests.attachSchema(requests.schema);
+teachers.attachSchema(teachers.schema);
