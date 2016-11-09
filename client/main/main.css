@@ -304,7 +304,7 @@ body {
 
 .mode h4 {
 	width: 65%;
-	padding-left: 9%;
+	padding-left: 5%;
 	line-height: 6vh;
 	display: table-cell;
 	vertical-align: middle;
@@ -363,6 +363,7 @@ body {
 	font-size: 1.7vh;
 	padding: 5%;
 	display: table-cell;
+	pointer-events: none;
 }
 
 .sideClassName {
@@ -684,9 +685,9 @@ textarea.clickModify {
 }
 
 .optionText {
-	font-size: 120%;
+	font-size: 120% !important;
 	min-width: 10%;
-	padding: 4% 7% 4% 7%;
+	padding: 4% 7% 4% 7% !important;
 	margin: 0;
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.05);
 
@@ -798,23 +799,16 @@ textarea.clickModify {
 	background-color: rgba(0,0,0,0.15);
 }
 
-.overlay {
+.overlay, #confirmOverlay {
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(0,0,0,0.7);
 
 	display: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	z-index: 51;
-
-	opacity: 0;
-	
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease; 
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease; 
 }
 
 .overlayCont {
@@ -824,11 +818,12 @@ textarea.clickModify {
 	margin: auto;
 	margin-top: 25vh;
 	padding: 1%;
-	box-shadow: 2px 2px 5px 3px #666;
+	
+	box-shadow: 2px 2px 5px 1px #666;
 
-	-moz-border-radius: 30px;
-	-webkit-border-radius: 30px;
-	border-radius: 30px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 
 	text-align: center;
 }
@@ -1230,13 +1225,6 @@ textarea.clickModify {
 	top: 0.5vh;
 	right: 1.5vw;
 	z-index: 20;
-
-	opacity: 0;
-
-	-webkit-transition: opacity 0.4s ease;  
-	-moz-transition: opacity 0.4s ease;
-	-ms-transition: opacity 0.4s ease;
-	transition: opacity 0.4s ease; 
 }
 
 #userDropdownAvatar {

@@ -1,5 +1,8 @@
 Session.set("settingMode", "manageClass");
 Session.set("classInfoMode", "general");
+Session.set("notsearching", true); // If user isn't searching
+Session.set("noclass", null); // If user doesn't have classes.
+Session.set("notfound", null); // If no results for autocomplete.
 
 var filterOpen =  [false, true, true, true, true];
 var sidebarMode = [null,null];
@@ -69,24 +72,14 @@ Template.sidebarMenuPlate.events({
     },
     // CLASS FILTERS
     'click .sideClass' (event) { // Click class list in sidebar.
-        var div = event.target;
-        while (div.getAttribute("classid") === null) div = div.parentNode;
-        var classid = div.getAttribute("classid");
-
-        if (Session.equals("sidebarMode","create")) { // If creating work from calendar.
-            var newSetting = Session.get("currentWork");
-            newSetting.class = classid;
-            Session.set("currentWork", newSetting);
-            openDivFade(document.getElementsByClassName("overlay")[0]);
-        } else { // Normal clicking turns on filter.
-            var array = Session.get("classDisp");
-            if (array.indexOf(classid) !== -1) {
-                array.splice(array.indexOf(classid), 1);
-            } else {
-                array.push(classid);
-            }
-            Session.set("classDisp", array);
+        var classid = event.target.getAttribute("classid")
+        var array = Session.get("classDisp");
+        if (array.indexOf(classid) !== -1) {
+            array.splice(array.indexOf(classid), 1);
+        } else {
+            array.push(classid);
         }
+        Session.set("classDisp", array);
     },
     'click .sideFilter' (event) {
         var div = event.target;
@@ -180,6 +173,16 @@ Template.sidebarOptionPlate.events({
     }
 });
 
+Template.sidebarCreatePlate.events({
+    'click .sideClass' (event) { // Click class list in sidebar.
+        var classid = event.target.getAttribute("classid");
+        var newSetting = Session.get("currentWork");
+        newSetting.class = classid;
+        Session.set("currentWork", newSetting);
+        $(".overlay").fadeIn(250);
+    }
+})
+
 Template.registerHelper("classInfo", (info) => {
     var thisClass = classes.findOne({_id:Session.get("classInfo")});
     var isYou = Session.equals("classInfo", Meteor.userId());
@@ -197,7 +200,8 @@ Template.registerHelper("classInfo", (info) => {
         case "admin":
             return Meteor.users.findOne({_id: (isYou) ? Meteor.userId() : thisClass.admin});
         case "code":
-            return (isYou || !thisClass.code) ? {exists: false} : {exists: true, code: thisClass.code};
+            if(isYou) return {exists: false}
+            return (isYou || Meteor.userId() !== this.admin) ? {exists: false} : {exists: true, code: Meteor.call('getCode', thisClass._id)};
         case "mine":
             return (isYou) ? true : Meteor.userId() === thisClass.admin;
         case "moderators":
@@ -275,8 +279,21 @@ Template.manageClass.events({
             user._id,
             classid
         ];
-        sendData("changeAdmin");
-        input.value = "";
+        Session.set("confirmText", "Change ownership?");
+        confirm = "changeAdmin";
+        $("#confirmOverlay").fadeIn(250);
+    },
+    'click #deleteClass' () {
+        serverData = Session.get("classInfo");
+        confirm = "deleteClass";
+        Session.set("confirmText", "Delete this class?");
+        $("#confirmOverlay").fadeIn(250);
+    },
+    'click .classBox .fa-times' (event) {
+        serverData = event.target.parentNode.getAttribute("classid");
+        confirm = "leaveClass";
+        Session.set("confirmText", "Leave this class?");
+        $("#confirmOverlay").fadeIn(250);
     }
 });
 
@@ -293,7 +310,9 @@ Template.joinClass.helpers({
         ).fetch();
 
         for (var i = 0; i < array.length; i++) {
+            array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
+            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
         }
         if (array.length === 0) {
             Session.set("noclass", true);
@@ -385,6 +404,12 @@ Template.joinClass.events({
             }));
         } catch (err) {}
     },
+    'click .classBox .fa-plus' (event) {
+        serverData = [event.target.parentNode.getAttribute("classid"), ""];
+        confirm = "joinClass";
+        Session.set("confirmText", "Join this class?");
+        $("#confirmOverlay").fadeIn(250); 
+    },
     'click #private' () {
        $("#privateCode").css('display','inline-block');
        var input = document.getElementById("privateCode");
@@ -406,6 +431,80 @@ Template.joinClass.events({
             }
         });
     }
+});
+
+Template.createClass.helpers({
+    schoolComplete() { // Returns autocomplete array for schools.
+        return {
+            position: "bottom",
+            limit: 6,
+            rules: [{
+                token: '',
+                collection: schools,
+                field: 'name',
+                matchAll: true,
+                template: Template.schoolList
+            }]
+        };
+    },
+    teacherComplete() { // Returns autocomplete array for teachers.
+        return {
+            position: "bottom",
+            limit: 1,
+            rules: [{
+                token: '',
+                collection: teachers,
+                field: 'name',
+                template: Template.teacherList
+            }]
+        };
+    },
+});
+
+Template.createClass.events({
+    'click #creSubmit' () {
+        var inputs = document.getElementsByClassName("creInput");
+        var values = new Object;
+        var required = ["school","name","privacy","category"];
+        var no = [];
+        for(var i = 0; i < inputs.length; i++) {
+            var val = inputs[i].value;
+            var where = inputs[i].getAttribute("form");
+            if(val === "" && _.contains(required, where)) {
+                no.push(where);
+            }
+            values[where] = val;
+        }
+
+        if(no.length !== 0) { // Check missing fields.
+            sAlert.error("Missing " + no.reduce(function(a,b) { return (b === no[no.length-1]) ? a + ", and " + b : a + ", " + b }), {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 3000
+            });
+            return;
+        }
+        values.privacy = (values.privacy === "Public") ? false : true;
+        values.status = false;
+        values.category.toLowerCase();
+        values.code = "";
+        serverData = values;
+        if(!teachers.findOne({name: values["teacher"]})) {
+            Meteor.call("createTeacher", values["teacher"], function(error,result) {
+                console.log(error);
+                if (error !== undefined) {
+                    sAlert.error(error.message, {
+                        effect: 'stackslide',
+                        position: 'top'
+                    });
+                } else {
+                    sendData("createClass");
+                }
+            });
+        } else {
+            sendData("createClass");
+        }
+    } 
 });
 
 Template.classInfoUsers.events({

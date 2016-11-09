@@ -155,6 +155,23 @@
 	background-color: rgba(0,0,0,0.3);
 }
 
+.classBox .fa {
+	text-align: center;
+	
+	-webkit-transition: color 0.4s ease;  
+	-moz-transition: color 0.4s ease; 
+	-ms-transition: color 0.4s ease;
+	transition: color 0.4s ease; 
+}
+
+.classBox .fa-times:hover {
+	color: #FF1A1A;
+}
+
+.classBox .fa-plus:hover {
+	color: #85E085;
+}
+
 .owned {
 	box-shadow: inset 0 0 0 99999px rgba(255,255,255,0.3);
 	-webkit-transition: background-color 0.4s ease;  
@@ -175,16 +192,23 @@
 	pointer-events: none;
 }
 
-.classBox .fa-times {
-	display: table-cell;
-	width: 5%;
+.classBox .fa {
+	font-size: 2.5vh !important;
+	padding: 0 !important;
+	display: table-cell !important;
+	width: 5% !important;
 }
 
 .name {
 	width: 40%;
 }
 
+.teacher {
+	width: 25%;
+}
+
 .hour.classText, .subscribers.classText {
+	width: 15%;
 	text-align: center;
 }
 
@@ -370,6 +394,24 @@
 	background-color: rgba(0,0,0,0.2);	
 }
 
+#deleteClass {
+	cursor: pointer;
+	float: right;
+}
+
+#deleteClass:hover {
+	color: #FF1A1A;
+}
+
+#deleteClass .fa {
+	margin-top: 0;
+
+	-webkit-transition: color 0.4s ease;  
+	-moz-transition: color 0.4s ease; 
+	-ms-transition: color 0.4s ease;
+	transition: color 0.4s ease;
+}
+
 .userAdder {
 	width: 100%;
 	margin-bottom: 3%;
@@ -491,3 +533,74 @@
     100% { width: 25%; }
 }
 
+#createWrapper {
+	padding: 3%;
+}
+
+#creRules p {
+	padding: 0;
+}
+
+.formDiv {
+	margin-left: 25%;
+	padding: 1% 2% 1% 2%;
+	width: 30%;
+	background-color: rgba(255,255,255,0.1);
+	position: relative;
+	display: table;
+}
+
+.formDiv:first-child {
+	padding-top: 2%;
+}
+
+.formDiv:last-child {
+	padding-bottom: 2%;
+}
+
+.formDiv input {
+	font-size: 2vh;
+	width: calc(98% - 8px) !important;
+	padding: 1%;
+	margin: 1%;
+}
+
+.formDiv .optionHolder {
+	width: 89%;
+}
+
+.formDiv .-autocomplete-container {
+	margin: 1% 0 0 0.5%;
+}
+
+.profTitle {
+	padding-left: 0 !important;
+}
+
+#formContainer {
+	margin: 2%;
+}
+
+#creSubmit {
+	font-weight: 200;
+	width: 30%;
+	padding: 2%;
+	margin-top: 2%;
+	margin-left: 25%;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#creSubmit:hover {
+	background-color: rgba(0,0,0,0.1);
+}

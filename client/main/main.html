@@ -61,7 +61,7 @@
                     {{> joinClass}}
                 {{/if}}
 
-                {{$if currSettingMode 'createClass'}}
+                {{#if currSettingMode 'createClass'}}
                     {{> createClass}}
                 {{/if}}
             </div>
@@ -137,6 +137,16 @@
                 </div>
             </div>
         </div>
+
+        <div id="confirmOverlay">
+           <div class="overlayCont" style="background-color:{{divColor 'mainColor'}}">
+               <p>{{confirmText}}</p>
+               <div id="faCont">
+                   <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                   <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+               </div>
+           </div>
+       </div>
 
         <div id="userDropdown" style="background-color:{{divColor 'userDropdownColor'}}">
             <div id="userTab" style="border-bottom: 3vh solid {{divColor 'userDropdownColor'}}"></div>
@@ -249,7 +259,7 @@
 </template>
 
 <template name="option">
-    <p class="optionText" style="background-color:{{divColor 'mainColor'}}">{{alias}}</p>
+    <p class="optionText" style="background-color:{{divColor 'mainColor'}};" onmouseover="$(this).css('box-shadow','inset 0 0 0 99999px rgba(0,0,0,0.2)');" onmouseleave="$(this).css('box-shadow','');">{{alias}}</p>
 </template>
 
 <template name="workDisplay">

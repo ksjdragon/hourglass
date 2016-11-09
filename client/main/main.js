@@ -32,6 +32,7 @@ Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("restrictText", {}); // Stores text for comment character restriction.
+Session.set("confirmText", ""); // Stores text for confirmations.
 
 // On render actions
 
@@ -62,17 +63,6 @@ Template.profile.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
-
-Template.selectOptionMenu.rendered = function() {
-    $(".optionText").hover(
-        function() {
-            $(this).addClass("selectedOption");
-        },
-        function() {
-            $(this).removeClass("selectedOption");
-        }
-    );   
-}
 
 // Global Helpers
 
@@ -124,12 +114,14 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
                     _id: courses[i]
                 });
                 found.subscribers = found.subscribers.length;
+                found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
                 found.mine = true;
                 if (found.admin === Meteor.userId()) { // If user owns this class.
                     found.box = " owned";
                     found.mine = false;
                 }
             }
+
             found.selected = ((classDisp.indexOf(courses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
             array.push(found);
 
@@ -265,6 +257,10 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
     }
 });
 
+Template.registerHelper('confirmText', () => {
+    return Session.get("confirmText");
+})
+
 // Main template helpers and events
 
 Template.main.helpers({
@@ -368,7 +364,7 @@ Template.main.helpers({
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
-                openDivFade(document.getElementsByClassName("overlay")[0]);
+                $(".overlay").fadeIn(250);
             },
             eventMouseover: function(event, jsEvent, view) {
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
@@ -468,13 +464,13 @@ Template.main.events({
         }
 
         if (e === "overlay") { // Overlay closing.
-            closeDivFade(document.getElementsByClassName("overlay")[0]);
+            $(".overlay").fadeOut(250);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
         }
 
-        if (!document.getElementById("userDropdown").contains(event.target)) closeDivFade(document.getElementById("userDropdown"));
+        if (!document.getElementById("userDropdown").contains(event.target)) $("#userDropdown").fadeOut(250);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' (event) { // Click menu button.
@@ -495,13 +491,28 @@ Template.main.events({
         }
         Session.set("newWork", true);
         Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
-        openDivFade(document.getElementsByClassName("overlay")[0]);
+        $(".overlay").fadeIn(250);
+    },
+    'click .fa-check-circle-o' () { // Confirmation Button
+        sendData(confirm);
+        $("#confirmOverlay").fadeOut(250);
+        if(confirm === "changeAdmin") {
+            $("#changeAdminWrapper").fadeOut(250);
+        } else if(confirm === "deleteClass") {
+            Session.set("classInfo", null);
+        }
+        serverData = null;
+        confirm = null;
+        
+    },
+    'click .fa-times-circle-o' () { // Deny Button
+        $("#confirmOverlay").fadeOut(250);
+        serverData = null;
+        confirm = null;
     },
     'click #dropdown' (event) {
         if (document.getElementById("userDropdown").style.display === "block") return;
-        setTimeout(function() {
-            openDivFade(document.getElementById("userDropdown"));
-        }, 100);
+        $("#userDropdown").fadeIn(250);
     },
     'click .workCard' (event) { // Display work information on work card click.
         var workid = event.target.getAttribute("workid");
@@ -523,7 +534,7 @@ Template.main.events({
                 var inputs = $('#editWork .clickModify').css("cursor", "default");
             }
         }
-        openDivFade(document.getElementsByClassName("overlay")[0]);
+        $(".overlay").fadeIn(250);
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");
@@ -662,6 +673,8 @@ Template.main.events({
             if(Session.get("newWork")) return;
             if(checkMissing()) return;
             sendData("editWork");
+        } else if(modifyingInput.slice(0,3) === "cre") {
+            document.getElementById(modifyingInput).value = option;
         } else {
             var newSetting = Session.get("user");
             newSetting.preferences[modifyingInput] = (function() {
@@ -714,12 +727,12 @@ Template.main.events({
         if(checkMissing()) return;
         sendData("createWork");
         Session.set("newWork",false);
-        closeDivFade(document.getElementsByClassName("overlay")[0]);
+        $(".overlay").fadeOut(250);
     },
     'click #workDelete' () {
         serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
-        closeDivFade(document.getElementsByClassName("overlay")[0]);
+        $(".overlay").fadeOut(250);
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];
@@ -756,21 +769,6 @@ function toggleOptionMenu(toggle, menu) {
     }
 }
 
-function openDivFade(div) {
-    div.style.display = "block";
-    div.style.opacity = "0";
-    setTimeout(function() {
-        div.style.opacity = "1";
-    }, 100);
-}
-
-function closeDivFade(div) {
-    div.style.opacity = "0";
-    setTimeout(function() {
-        div.style.display = "none";
-    }, 100);
-}
-
 sendData = function(funcName) { // Call Meteor function, and do actions after function is completed depending on function.
     if(funcName === "editWork" || funcName === "createWork") {
         for(var key in serverData) {
@@ -780,6 +778,7 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
     Meteor.call(funcName, serverData, function(error, result) {
         serverData = null;
         currWork = Session.get("currentWork");
+
         if(currWork !== null && currWork._id !== undefined) {
             Session.set("currentWork", work.findOne({
                 _id: currWork._id
@@ -798,6 +797,13 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
                 position: 'bottom-right',
                 timeout: 2500
             });
+            if(funcName === "createClass") {
+                var inputs = document.getElementsByClassName("creInput");
+                for(var i = 0; i < inputs.length; i++) {
+                    inputs[i].value = "";
+                }
+                toggleToMode("manageClass");
+            }
         }
         document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
     });
