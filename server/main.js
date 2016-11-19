@@ -25,6 +25,10 @@ Meteor.publish('schools', function() {
     return schools.find();
 });
 
+Meteor.publish('teachers', function() {
+    return teachers.find({}, {fields: {name: 1, school: 1}});
+});
+
 // Returns the code for classes (for debug)
 
 Meteor.publish('classes', function() {
@@ -125,15 +129,15 @@ Meteor.publish('users', function() {
     }
 });
 
+
 // Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
-Accounts.validateLoginAttempt(function(info) {
-    var user = info.user;
+// Accounts.validateLoginAttempt(function(info) {
+//     var user = info.user;
+//     if(user.banned) throw new Meteor.Error(403, 'You are banned');
 
-    if(user.isBanned) throw new Meteor.Error(403, 'You are banned');
-
-});
+// });
 
 
 var errors = [
@@ -156,7 +160,8 @@ var errors = [
     ["trivial", "This request is too long."],
     ["trivial", "Not a valid work type"],
     ["unauthorized", "This class has not been approved yet"],
-    ["matching", "This teacher already exists"],
+    ["matching", "This teacher already exists!"],
+    ["trivial", "Please put the full name!"], // 20
 
     ["unauthorized", "Sorry, you are not authorized to complete this action."], // n - 2
     ["other", "Error could not be processed"] // n - 1
@@ -192,7 +197,7 @@ function securityCheck(checklist, input) {
             break;
         // Duplicate classes
         case 4:
-            if (classes.findOne({school: input.school, status: true, privacy: false, teacher: input.teacher, hour: input.hour}) || (input.teacher === "" && input.hour === "")) error = 3;
+            if (classes.findOne({school: input.school, teacher: input.teacher, status: true, privacy: false, hour: input.hour}) || (input.teacher === "" && input.hour === "")) error = 3;
             break;
         // Class admin
         case 5:
@@ -275,11 +280,15 @@ function securityCheck(checklist, input) {
             break;
         // New Teacher doesn't already exist
         case 26:
-            if (teachers.find({name: input.teacherName, school: input.school}).fetch().length > 0) error = 19;
+            if (teachers.find({name: input.teachername, school: input.school}).fetch().length > 0) error = 19;
             break;
-            // Not banning admin
+        // Not banning admin
         case 27:
             if (Roles.userIsInRole(input.userId, ['superadmin', 'admin'])) error = errors.length - 2;
+            break;
+        // Incorrect teacher format
+        case 28:
+            if (input.teachername.split(" ").length < 2) error = 20;
             break;
         }
         results.push(error);
@@ -332,7 +341,6 @@ Meteor.methods({
             throw new Meteor.Error(errors[security]);
         }
     },
-
     // Class Functions
     'createClass': function(input) {
         classes.schema.validate(input);
@@ -350,7 +358,6 @@ Meteor.methods({
             input.subscribers = [];
             input.moderators = [];
             input.banned = [];
-
             classes.insert(input, function(err, result) {
                 Meteor.call('joinClass', [result, input.code]);
             });
@@ -726,9 +733,11 @@ Meteor.methods({
             var current = Meteor.user().profile;
             var index = current.classes.indexOf(change);
             if (index >= 0) {
+                console.log("hi");
                 if (classes.findOne({
                         _id: change
                     }).admin != Meteor.userId()) {
+                    console.log("f");
                     current.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()
@@ -799,11 +808,13 @@ Meteor.methods({
         }
     },
     'createTeacher': function(teacherName, schoolName) {
-        var security = securityCheck([26, 3, true], {teachername: teacherName, school: schoolName});
+        teachers.schema.validate({name: teacherName, school: schoolName});
+        var security = securityCheck([26, 28, 3, true], {teachername: teacherName, school: schoolName});
         if (!security) {
             teachers.insert({
                 name: teacherName,
-                school: schoolName
+                school: schoolName,
+                creator: Meteor.userId()
             });
         } else {
             throw new Meteor.Error(errors[security]);

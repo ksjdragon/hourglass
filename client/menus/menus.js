@@ -1,13 +1,17 @@
+/* jshint esversion: 6 */
 Session.set("settingMode", "manageClass");
 Session.set("classInfoMode", "general");
+Session.set("notsearching", true); // If user isn't searching
+Session.set("noclass", null); // If user doesn't have classes.
+Session.set("notfound", null); // If no results for autocomplete.
 
 var filterOpen =  [false, true, true, true, true];
 var sidebarMode = [null,null];
 
-Template.sidebarMenuPlate.rendered = function(){$(".menuWrapper").slideDown(300);}
-Template.sidebarOptionPlate.rendered = function(){$(".menuWrapper").slideDown(300);}
-Template.sidebarRequestPlate.rendered = function(){$(".menuWrapper").slideDown(300);}
-Template.sidebarCreatePlate.rendered = function(){$(".menuWrapper").slideDown(300);}
+Template.sidebarMenuPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
+Template.sidebarOptionPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
+Template.sidebarRequestPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
+Template.sidebarCreatePlate.rendered = function(){$(".menuWrapper").slideDown(300);};
 
 Template.sidebarMenuPlate.helpers({
     modeStatus(status) { // Color status of display modes.
@@ -27,13 +31,13 @@ Template.sidebarMenuPlate.helpers({
     },
     filterOn() {
         return Session.get("classDisp").length !== 0 || Session.get("typeFilter").length !== 0;
-    },
+    }
 });
 
 Template.sidebarMenuPlate.events({
     'click .classes' () { // Click classes mode button.
         if (Session.equals("mode", "classes")) return;
-        toggleToMode("classes")
+        toggleToMode("classes");
         setTimeout(startDragula, 500);
         toggleToSidebar(false);
     },
@@ -69,24 +73,14 @@ Template.sidebarMenuPlate.events({
     },
     // CLASS FILTERS
     'click .sideClass' (event) { // Click class list in sidebar.
-        var div = event.target;
-        while (div.getAttribute("classid") === null) div = div.parentNode;
-        var classid = div.getAttribute("classid");
-
-        if (Session.equals("sidebarMode","create")) { // If creating work from calendar.
-            var newSetting = Session.get("currentWork");
-            newSetting.class = classid;
-            Session.set("currentWork", newSetting);
-            openDivFade(document.getElementsByClassName("overlay")[0]);
-        } else { // Normal clicking turns on filter.
-            var array = Session.get("classDisp");
-            if (array.indexOf(classid) !== -1) {
-                array.splice(array.indexOf(classid), 1);
-            } else {
-                array.push(classid);
-            }
-            Session.set("classDisp", array);
+        var classid = event.target.getAttribute("classid");
+        var array = Session.get("classDisp");
+        if (array.indexOf(classid) !== -1) {
+            array.splice(array.indexOf(classid), 1);
+        } else {
+            array.push(classid);
         }
+        Session.set("classDisp", array);
     },
     'click .sideFilter' (event) {
         var div = event.target;
@@ -180,6 +174,16 @@ Template.sidebarOptionPlate.events({
     }
 });
 
+Template.sidebarCreatePlate.events({
+    'click .sideClass' (event) { // Click class list in sidebar.
+        var classid = event.target.getAttribute("classid");
+        var newSetting = Session.get("currentWork");
+        newSetting.class = classid;
+        Session.set("currentWork", newSetting);
+        $(".overlay").fadeIn(250);
+    }
+});
+
 Template.registerHelper("classInfo", (info) => {
     var thisClass = classes.findOne({_id:Session.get("classInfo")});
     var isYou = Session.equals("classInfo", Meteor.userId());
@@ -197,7 +201,8 @@ Template.registerHelper("classInfo", (info) => {
         case "admin":
             return Meteor.users.findOne({_id: (isYou) ? Meteor.userId() : thisClass.admin});
         case "code":
-            return (isYou || !thisClass.code) ? {exists: false} : {exists: true, code: thisClass.code};
+        if(isYou) return {exists: false};
+            return (isYou || Meteor.userId() !== this.admin) ? {exists: false} : {exists: true, code: Meteor.call('getCode', thisClass._id)};
         case "mine":
             return (isYou) ? true : Meteor.userId() === thisClass.admin;
         case "moderators":
@@ -233,13 +238,17 @@ Template.registerHelper("classInfo", (info) => {
 Template.registerHelper("classInfoMode", (mode, check) => {
     if(typeof check === "string") return Session.equals("classInfoMode",mode);
     return (Session.equals("classInfoMode", mode)) ? Session.get("user").preferences.theme.modeHighlight + ";background-color:rgba(0,0,0,0.1);" : "rgba(0,0,0,0)";
-})
+});
+
+Template.registerHelper("classSelected", () => {
+    return !Session.equals("classInfo", null);
+});
 
 Template.manageClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
         if(Session.equals("classInfo",classId)) return;
-        toggleToClassInfo(classId); 
+        toggleToClassInfo(classId);
     },
     'click #classInfoModeWrapper span:first-child' () {
         if(Session.equals("classInfoMode","general")) return;
@@ -248,6 +257,44 @@ Template.manageClass.events({
     'click #classInfoModeWrapper span:last-child' () {
         if(Session.equals("classInfoMode","users")) return;
         toggleToClassInfoMode("users");
+    },
+    'click .infoCard .fa-pencil-square-o' () {
+        $("#changeAdminWrapper").fadeIn(250);
+    },
+    'click #adminSubmit' () {
+        var input = document.getElementById("changeAdmin");
+        var value = input.value;
+        var classid = Session.get("classInfo");
+        var user = Meteor.users.findOne({
+            "services.google.email": value
+        });
+        if(!user)  {
+            sAlert.error("Invalid email!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 3000
+            });
+            return;
+        }
+        serverData = [
+            user._id,
+            classid
+        ];
+        Session.set("confirmText", "Change ownership?");
+        confirm = "changeAdmin";
+        $("#confirmOverlay").fadeIn(250);
+    },
+    'click #deleteClass' () {
+        serverData = Session.get("classInfo");
+        confirm = "deleteClass";
+        Session.set("confirmText", "Delete this class?");
+        $("#confirmOverlay").fadeIn(250);
+    },
+    'click .classBox .fa-times' (event) {
+        serverData = event.target.parentNode.getAttribute("classid");
+        confirm = "leaveClass";
+        Session.set("confirmText", "Leave this class?");
+        $("#confirmOverlay").fadeIn(250);
     }
 });
 
@@ -264,7 +311,9 @@ Template.joinClass.helpers({
         ).fetch();
 
         for (var i = 0; i < array.length; i++) {
+            array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
+            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
         }
         if (array.length === 0) {
             Session.set("noclass", true);
@@ -308,14 +357,14 @@ Template.joinClass.helpers({
     },
     notfound() { // Returns if autocomplete has no results.
         return Session.get("notfound");
-    },
+    }
 });
 
 Template.joinClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
         if(Session.equals("classInfo",classId)) return;
-        toggleToClassInfo(classId); 
+        toggleToClassInfo(classId);
     },
     'click #classInfoModeWrapper span:first-child' () {
         if(Session.equals("classInfoMode","general")) return;
@@ -352,9 +401,110 @@ Template.joinClass.events({
                 });
             }
             Session.set("autocompleteDivs", divs.sort(function(a, b) {
-                return b.subscribers - a.subscribers
+                return b.subscribers - a.subscribers;
             }));
         } catch (err) {}
+    },
+    'click .classBox .fa-plus' (event) {
+        serverData = [event.target.parentNode.getAttribute("classid"), ""];
+        confirm = "joinClass";
+        Session.set("confirmText", "Join this class?");
+        $("#confirmOverlay").fadeIn(250); 
+    },
+    'click #private' () {
+       $("#privateCode").css('display','inline-block');
+       var input = document.getElementById("privateCode");
+       input.focus();
+       if(input.value === "") return;
+       Meteor.call("joinPrivateClass", input.value, function(error, result) {
+            if(result) {
+                sAlert.success("Joined!", {
+                    effect: 'genie',
+                    position: 'bottom-right',
+                    timeout: 1500
+                });
+            } else {
+                sAlert.error("Invalid code!", {
+                    effect: 'stackslide',
+                    position: 'top',
+                    timeout: 1500
+                });
+            }
+        });
+    }
+});
+
+Template.createClass.helpers({
+    schoolComplete() { // Returns autocomplete array for schools.
+        return {
+            position: "bottom",
+            limit: 6,
+            rules: [{
+                token: '',
+                collection: schools,
+                field: 'name',
+                matchAll: true,
+                template: Template.schoolList
+            }]
+        };
+    },
+    teacherComplete() { // Returns autocomplete array for teachers.
+        return {
+            position: "bottom",
+            limit: 1,
+            rules: [{
+                token: '',
+                collection: teachers,
+                field: 'name',
+                template: Template.teacherList
+            }]
+        };
+    }
+});
+
+Template.createClass.events({
+    'click #creSubmit' () {
+        var inputs = document.getElementsByClassName("creInput");
+        var values = {};
+        var required = ["school","name","privacy","category"];
+        var no = [];
+        for(var i = 0; i < inputs.length; i++) {
+            var val = inputs[i].value;
+            var where = inputs[i].getAttribute("form");
+            if(val === "" && _.contains(required, where)) {
+                no.push(where);
+            }
+            values[where] = val;
+        }
+        console.log(values);
+        console.log(no);
+        if(no.length > 0) { // Check missing fields.
+            sAlert.error("Missing " + no.reduce(function(a,b) { return (b === no[no.length-1]) ? a + ", and " + b : a + ", " + b;}), {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 3000
+            });
+            return;
+        }
+        values.privacy = (values.privacy === "Public") ? false : true;
+        values.status = false;
+        values.category.toLowerCase();
+        values.code = "";
+        serverData = values;
+        if(!teachers.findOne({name: values.teacher})) {
+            Meteor.call("createTeacher", values.teacher, values.school, function(error,result) {
+                if (error !== undefined) {
+                    sAlert.error(error.message, {
+                        effect: 'stackslide',
+                        position: 'top'
+                    });
+                } else {
+                    sendData("createClass");
+                }
+            });
+        } else {
+            sendData("createClass");
+        }
     }
 });
 
@@ -385,7 +535,7 @@ Template.classInfoUsers.events({
         input.value = "";
     },
     'click .userDisp .fa' (event) {
-        var outerInput = event.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
+        var outerInput = event.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
         var type = outerInput.childNodes[6].getAttribute("user");
         var userid = event.target.parentNode.parentNode.getAttribute("userid");
         if(!Meteor.users.findOne({_id: userid})) {
@@ -421,10 +571,11 @@ Template.classInfoCode.events({
 
 toggleToMode = function(mode) {
     $("#mainBody").fadeOut(250, function() {
-        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode",mode);
+        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode", mode);
+        Session.set("classInfo", null);
         $("#mainBody").fadeIn(250);
     });
-}
+};
 
 toggleToSidebar = function(sidebar) {
     try {
@@ -442,19 +593,20 @@ toggleToSidebar = function(sidebar) {
             Session.set("sidebarMode", sidebar);
         });
     }
-}
+};
 
 toggleToClassInfo = function(classId) {
+    $("#changeAdminWrapper").fadeOut(250);
     $("#infoClassCont").fadeOut(250, function() {
         Session.set("classInfo", classId);
         Session.set("classInfoMode", "general");
         $(this).fadeIn(250);
     });
-}
+};
 
 toggleToClassInfoMode = function(mode) {
     $("#infoClassCont").fadeOut(250, function() {
         Session.set("classInfoMode", mode);
         $(this).fadeIn(250);
-    });   
-}
+    });
+};

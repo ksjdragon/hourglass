@@ -155,6 +155,23 @@
 	background-color: rgba(0,0,0,0.3);
 }
 
+.classBox .fa {
+	text-align: center;
+	
+	-webkit-transition: color 0.4s ease;  
+	-moz-transition: color 0.4s ease; 
+	-ms-transition: color 0.4s ease;
+	transition: color 0.4s ease; 
+}
+
+.classBox .fa-times:hover {
+	color: #FF1A1A;
+}
+
+.classBox .fa-plus:hover {
+	color: #85E085;
+}
+
 .owned {
 	box-shadow: inset 0 0 0 99999px rgba(255,255,255,0.3);
 	-webkit-transition: background-color 0.4s ease;  
@@ -175,16 +192,23 @@
 	pointer-events: none;
 }
 
-.classBox .fa-times {
-	display: table-cell;
-	width: 5%;
+.classBox .fa {
+	font-size: 2.5vh !important;
+	padding: 0 !important;
+	display: table-cell !important;
+	width: 5% !important;
 }
 
 .name {
 	width: 40%;
 }
 
+.teacher {
+	width: 25%;
+}
+
 .hour.classText, .subscribers.classText {
+	width: 15%;
 	text-align: center;
 }
 
@@ -298,7 +322,7 @@
 	display: inline-block;
 }
 
-#infoClassCont div .fa-files-o{
+#infoClassCont div .fa-files-o, #infoClassCont div .fa-pencil-square-o {
 	font-size: 2vh;
 
 	position: absolute;
@@ -333,6 +357,59 @@
 	visibility: hidden;
 	pointer-events: none;
 	position: absolute;
+}
+
+#changeAdminWrapper {
+	margin-top: 1%;
+	display: none;
+}
+
+#changeAdminWrapper span {
+	font-size: 2vh;
+	display: inline-block !important;
+}
+
+#changeAdmin {
+	width: 40%;
+	margin: 0 1% 0 1%;
+	font-size: 2vh;
+	padding: 1%;
+	outline: none;
+}
+
+#adminSubmit {
+	padding: 2%;
+	background-color: rgba(0,0,0,0.1);
+	display: inline-block;
+
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#adminSubmit:hover {
+	background-color: rgba(0,0,0,0.2);	
+}
+
+#deleteClass {
+	cursor: pointer;
+	float: right;
+}
+
+#deleteClass:hover {
+	color: #FF1A1A;
+}
+
+#deleteClass .fa {
+	margin-top: 0;
+
+	-webkit-transition: color 0.4s ease;  
+	-moz-transition: color 0.4s ease; 
+	-ms-transition: color 0.4s ease;
+	transition: color 0.4s ease;
 }
 
 .userAdder {
@@ -399,4 +476,131 @@
 
 .userDisp .fa:hover {
 	color: #FF1A1A;
+}
+
+#joinTop {
+	margin: 2% 0 0 5%;
+}
+
+#joinTop .-autocomplete-container {
+	display: none;
+}
+
+#joinTop .fa {
+	font-size: 2.5vh;
+}
+
+#classSearch, #privateCode {
+	font-size: 2vh;
+	padding: 1%;
+	outline: none;
+}
+
+#private {
+	font-size: 2.4vh;
+	padding: 1.5%;
+	margin: 0 2% 0 2%;
+
+	background-color: rgba(0,0,0,0.1);
+
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#private:hover {
+	background-color: rgba(0,0,0,0.2);
+}
+
+#privateCode {
+	width: 25%;
+	display: none;
+
+	-webkit-animation: expand .7s ease 1;
+	animation: expand .7s ease 1;
+}
+
+@-webkit-keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 25%; }
+} 
+
+@keyframes expand {
+    0%	 { width: 0%; }
+    100% { width: 25%; }
+}
+
+#createWrapper {
+	padding: 3%;
+}
+
+#creRules p {
+	padding: 0;
+}
+
+.formDiv {
+	margin-left: 25%;
+	padding: 1% 2% 1% 2%;
+	width: 30%;
+	background-color: rgba(255,255,255,0.1);
+	position: relative;
+	display: table;
+}
+
+.formDiv:first-child {
+	padding-top: 2%;
+}
+
+.formDiv:last-child {
+	padding-bottom: 2%;
+}
+
+.formDiv input {
+	font-size: 2vh;
+	width: calc(98% - 8px) !important;
+	padding: 1%;
+	margin: 1%;
+}
+
+.formDiv .optionHolder {
+	width: 89%;
+}
+
+.formDiv .-autocomplete-container {
+	margin: 1% 0 0 0.5%;
+}
+
+.profTitle {
+	padding-left: 0 !important;
+}
+
+#formContainer {
+	margin: 2%;
+}
+
+#creSubmit {
+	font-weight: 200;
+	width: 30%;
+	padding: 2%;
+	margin-top: 2%;
+	margin-left: 25%;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#creSubmit:hover {
+	background-color: rgba(0,0,0,0.1);
 }
