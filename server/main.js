@@ -128,6 +128,13 @@ Meteor.publish('users', function() {
 // Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
+Accounts.validateLoginAttempt(function(info) {
+    var user = info.user;
+
+    if(user.isBanned) throw new Meteor.Error(403, 'You are banned');
+
+});
+
 
 var errors = [
     "Success.", // 0
@@ -269,6 +276,10 @@ function securityCheck(checklist, input) {
         // New Teacher doesn't already exist
         case 26:
             if (teachers.find({name: input.teacherName, school: input.school}).fetch().length > 0) error = 19;
+            break;
+            // Not banning admin
+        case 27:
+            if (Roles.userIsInRole(input.userId, ['superadmin', 'admin'])) error = errors.length - 2;
             break;
         }
         results.push(error);
@@ -794,6 +805,22 @@ Meteor.methods({
                 name: teacherName,
                 school: schoolName
             });
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'ban': function(studentId) {
+        var security = securityCheck([1, 27, true], {userId: studentId});
+        if (!security) {
+            Meteor.users.update({_id: studentId}, {$set: {banned: true}});
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'unban': function(studentId) {
+        var security = securityCheck([1, true], {userId: studentId});
+        if (!security) {
+            Meteor.users.update({_id: studentId}, {$set: {banned: false}});
         } else {
             throw new Meteor.Error(errors[security]);
         }
