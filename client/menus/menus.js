@@ -5,13 +5,21 @@ Session.set("notsearching", true); // If user isn't searching
 Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
 
-var filterOpen =  [false, true, true, true, true];
-var sidebarMode = [null,null];
+var filterOpen = [false, true, true, true, true];
+var sidebarMode = [null, null];
 
-Template.sidebarMenuPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
-Template.sidebarOptionPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
-Template.sidebarRequestPlate.rendered = function(){$(".menuWrapper").slideDown(300);};
-Template.sidebarCreatePlate.rendered = function(){$(".menuWrapper").slideDown(300);};
+Template.sidebarMenuPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+};
+Template.sidebarOptionPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+};
+Template.sidebarRequestPlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+};
+Template.sidebarCreatePlate.rendered = function() {
+    $(".menuWrapper").slideDown(300);
+};
 
 Template.sidebarMenuPlate.helpers({
     modeStatus(status) { // Color status of display modes.
@@ -42,13 +50,13 @@ Template.sidebarMenuPlate.events({
         toggleToSidebar(false);
     },
     'click .calendar' () { // Click calendar mode button.
-         if (Session.equals("mode", "calendar")) return;
+        if (Session.equals("mode", "calendar")) return;
         toggleToMode("calendar");
         toggleToSidebar(false);
     },
     'click #filterHead' (event) {
-        if(event.target.id === "disableFilter") return;
-        if(!filterOpen[0]) {
+        if (event.target.id === "disableFilter") return;
+        if (!filterOpen[0]) {
             $("#filterWrapper").slideDown(300);
         } else {
             $("#filterWrapper").slideUp(300);
@@ -56,7 +64,7 @@ Template.sidebarMenuPlate.events({
         filterOpen[0] = !filterOpen[0];
     },
     'click #typeFilterWrapper' () {
-        if(!filterOpen[1]) {
+        if (!filterOpen[1]) {
             $("#classFilterHolder").slideDown(300);
         } else {
             $("#classFilterHolder").slideUp(300);
@@ -64,7 +72,7 @@ Template.sidebarMenuPlate.events({
         filterOpen[1] = !filterOpen[1];
     },
     'click #classFilterWrapper' () {
-        if(!filterOpen[2]) {
+        if (!filterOpen[2]) {
             $("#classListHolder").slideDown(300);
         } else {
             $("#classListHolder").slideUp(300);
@@ -157,7 +165,7 @@ Template.sidebarOptionPlate.events({
         toggleToMode("createClass");
     },
     'click #settingMode' () {
-        if(!filterOpen[3]) {
+        if (!filterOpen[3]) {
             $("#settingModeWrapper").slideDown(300);
         } else {
             $("#settingModeWrapper").slideUp(300);
@@ -165,7 +173,7 @@ Template.sidebarOptionPlate.events({
         filterOpen[3] = !filterOpen[3];
     },
     'click #preferencesWrapper' () {
-        if(!filterOpen[4]) {
+        if (!filterOpen[4]) {
             $("#prefCont").slideDown(300);
         } else {
             $("#prefCont").slideUp(300);
@@ -185,31 +193,44 @@ Template.sidebarCreatePlate.events({
 });
 
 Template.registerHelper("classInfo", (info) => {
-    var thisClass = classes.findOne({_id:Session.get("classInfo")});
+    var thisClass = classes.findOne({
+        _id: Session.get("classInfo")
+    });
     var isYou = Session.equals("classInfo", Meteor.userId());
     switch (info) {
         case "name":
             return (isYou) ? "Personal" : thisClass.name;
         case "teacher":
-            return (isYou) ? "None": thisClass.teacher;
+            return (isYou) ? "None" : thisClass.teacher;
         case "hour":
             return (isYou) ? "None" : thisClass.hour;
         case "category":
-            return (isYou) ? "Personal" :  thisClass.category[0].toUpperCase() + thisClass.category.slice(1);
+            return (isYou) ? "Personal" : thisClass.category[0].toUpperCase() + thisClass.category.slice(1);
         case "privacy":
             return (isYou) ? true : thisClass.privacy;
         case "admin":
-            return Meteor.users.findOne({_id: (isYou) ? Meteor.userId() : thisClass.admin});
+            return Meteor.users.findOne({
+                _id: (isYou) ? Meteor.userId() : thisClass.admin
+            });
         case "code":
-        if(isYou) return {exists: false};
-            return (isYou || Meteor.userId() !== this.admin) ? {exists: false} : {exists: true, code: Meteor.call('getCode', thisClass._id)};
+            if (isYou) return {
+                exists: false
+            };
+            return (isYou || Meteor.userId() !== this.admin) ? {
+                exists: false
+            } : {
+                exists: true,
+                code: Meteor.call('getCode', thisClass._id)
+            };
         case "mine":
             return (isYou) ? true : Meteor.userId() === thisClass.admin;
         case "moderators":
             if (isYou || thisClass.moderators.length === 0) return [];
             var moderators = [];
             thisClass.moderators.forEach(function(ele) {
-                var array = Meteor.users.findOne({_id: ele});
+                var array = Meteor.users.findOne({
+                    _id: ele
+                });
                 array.delete = true;
                 moderators.push(array);
             });
@@ -218,7 +239,9 @@ Template.registerHelper("classInfo", (info) => {
             if (isYou || thisClass.banned.length === 0) return [];
             var banned = [];
             thisClass.banned.forEach(function(ele) {
-                var array = Meteor.users.findOne({_id: ele});
+                var array = Meteor.users.findOne({
+                    _id: ele
+                });
                 array.delete = true;
                 banned.push(array);
             });
@@ -227,7 +250,9 @@ Template.registerHelper("classInfo", (info) => {
             if (isYou || thisClass.subscribers.length === 0) return [];
             var subscribers = [];
             thisClass.subscribers.forEach(function(ele) {
-                subscribers.push(Meteor.users.findOne({_id: ele}));
+                subscribers.push(Meteor.users.findOne({
+                    _id: ele
+                }));
             });
             return subscribers;
         case "personal":
@@ -236,7 +261,7 @@ Template.registerHelper("classInfo", (info) => {
 });
 
 Template.registerHelper("classInfoMode", (mode, check) => {
-    if(typeof check === "string") return Session.equals("classInfoMode",mode);
+    if (typeof check === "string") return Session.equals("classInfoMode", mode);
     return (Session.equals("classInfoMode", mode)) ? Session.get("user").preferences.theme.modeHighlight + ";background-color:rgba(0,0,0,0.1);" : "rgba(0,0,0,0)";
 });
 
@@ -247,15 +272,15 @@ Template.registerHelper("classSelected", () => {
 Template.manageClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
-        if(Session.equals("classInfo",classId)) return;
+        if (Session.equals("classInfo", classId)) return;
         toggleToClassInfo(classId);
     },
     'click #classInfoModeWrapper span:first-child' () {
-        if(Session.equals("classInfoMode","general")) return;
+        if (Session.equals("classInfoMode", "general")) return;
         toggleToClassInfoMode("general");
     },
     'click #classInfoModeWrapper span:last-child' () {
-        if(Session.equals("classInfoMode","users")) return;
+        if (Session.equals("classInfoMode", "users")) return;
         toggleToClassInfoMode("users");
     },
     'click .infoCard .fa-pencil-square-o' () {
@@ -268,7 +293,7 @@ Template.manageClass.events({
         var user = Meteor.users.findOne({
             "services.google.email": value
         });
-        if(!user)  {
+        if (!user) {
             sAlert.error("Invalid email!", {
                 effect: 'stackslide',
                 position: 'top',
@@ -299,21 +324,34 @@ Template.manageClass.events({
 });
 
 Template.joinClass.helpers({
-     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) ( Only your school)
+    classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) ( Only your school)
         var array = classes.find({
-            status: {$eq: true},
-            privacy: {$eq: false},
-            _id: {$nin: Session.get("user").classes},
-            school: {$eq: Session.get("user").school}
-        }, 
-        {sort: {subscribers: -1}}, 
-        {limit: 20}
-        ).fetch();
+            status: {
+                $eq: true
+            },
+            privacy: {
+                $eq: false
+            },
+            _id: {
+                $nin: Session.get("user").classes
+            },
+            school: {
+                $eq: Session.get("user").school
+            }
+        }, {
+            sort: {
+                subscribers: -1
+            }
+        }, {
+            limit: 20
+        }).fetch();
 
         for (var i = 0; i < array.length; i++) {
             array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
-            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
+                return a + " " + b;
+            });
         }
         if (array.length === 0) {
             Session.set("noclass", true);
@@ -363,15 +401,15 @@ Template.joinClass.helpers({
 Template.joinClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
-        if(Session.equals("classInfo",classId)) return;
+        if (Session.equals("classInfo", classId)) return;
         toggleToClassInfo(classId);
     },
     'click #classInfoModeWrapper span:first-child' () {
-        if(Session.equals("classInfoMode","general")) return;
+        if (Session.equals("classInfoMode", "general")) return;
         toggleToClassInfoMode("general");
     },
     'click #classInfoModeWrapper span:last-child' () {
-        if(Session.equals("classInfoMode","users")) return;
+        if (Session.equals("classInfoMode", "users")) return;
         toggleToClassInfoMode("users");
     },
     'input #classSearch' (event) { // Auto-complete updater
@@ -409,15 +447,15 @@ Template.joinClass.events({
         serverData = [event.target.parentNode.getAttribute("classid"), ""];
         confirm = "joinClass";
         Session.set("confirmText", "Join this class?");
-        $("#confirmOverlay").fadeIn(250); 
+        $("#confirmOverlay").fadeIn(250);
     },
     'click #private' () {
-       $("#privateCode").css('display','inline-block');
-       var input = document.getElementById("privateCode");
-       input.focus();
-       if(input.value === "") return;
-       Meteor.call("joinPrivateClass", input.value, function(error, result) {
-            if(result) {
+        $("#privateCode").css('display', 'inline-block');
+        var input = document.getElementById("privateCode");
+        input.focus();
+        if (input.value === "") return;
+        Meteor.call("joinPrivateClass", input.value, function(error, result) {
+            if (result) {
                 sAlert.success("Joined!", {
                     effect: 'genie',
                     position: 'bottom-right',
@@ -466,20 +504,22 @@ Template.createClass.events({
     'click #creSubmit' () {
         var inputs = document.getElementsByClassName("creInput");
         var values = {};
-        var required = ["school","name","privacy","category"];
+        var required = ["school", "name", "privacy", "category"];
         var no = [];
-        for(var i = 0; i < inputs.length; i++) {
+        for (var i = 0; i < inputs.length; i++) {
             var val = inputs[i].value;
             var where = inputs[i].getAttribute("form");
-            if(val === "" && _.contains(required, where)) {
+            if (val === "" && _.contains(required, where)) {
                 no.push(where);
             }
             values[where] = val;
         }
         console.log(values);
         console.log(no);
-        if(no.length > 0) { // Check missing fields.
-            sAlert.error("Missing " + no.reduce(function(a,b) { return (b === no[no.length-1]) ? a + ", and " + b : a + ", " + b;}), {
+        if (no.length > 0) { // Check missing fields.
+            sAlert.error("Missing " + no.reduce(function(a, b) {
+                return (b === no[no.length - 1]) ? a + ", and " + b : a + ", " + b;
+            }), {
                 effect: 'stackslide',
                 position: 'top',
                 timeout: 3000
@@ -491,8 +531,10 @@ Template.createClass.events({
         values.category.toLowerCase();
         values.code = "";
         serverData = values;
-        if(!teachers.findOne({name: values.teacher})) {
-            Meteor.call("createTeacher", values.teacher, values.school, function(error,result) {
+        if (!teachers.findOne({
+                name: values.teacher
+            })) {
+            Meteor.call("createTeacher", values.teacher, values.school, function(error, result) {
                 if (error !== undefined) {
                     sAlert.error(error.message, {
                         effect: 'stackslide',
@@ -517,7 +559,7 @@ Template.classInfoUsers.events({
         var user = Meteor.users.findOne({
             "services.google.email": value
         });
-        if(!user)  {
+        if (!user) {
             sAlert.error("Invalid email!", {
                 effect: 'stackslide',
                 position: 'top',
@@ -538,7 +580,9 @@ Template.classInfoUsers.events({
         var outerInput = event.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
         var type = outerInput.childNodes[6].getAttribute("user");
         var userid = event.target.parentNode.parentNode.getAttribute("userid");
-        if(!Meteor.users.findOne({_id: userid})) {
+        if (!Meteor.users.findOne({
+                _id: userid
+            })) {
             sAlert.error("Stop hacking, reload the page.", {
                 effect: 'stackslide',
                 position: 'top',
@@ -571,7 +615,7 @@ Template.classInfoCode.events({
 
 toggleToMode = function(mode) {
     $("#mainBody").fadeOut(250, function() {
-        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode) : Session.set("mode", mode);
+        (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode): Session.set("mode", mode);
         Session.set("classInfo", null);
         $("#mainBody").fadeIn(250);
     });
@@ -580,15 +624,23 @@ toggleToMode = function(mode) {
 toggleToSidebar = function(sidebar) {
     try {
         $("#backgroundOverlay").fadeOut(250);
-    } catch(err) {}
-    if(Session.equals("sidebarMode", sidebar) || !sidebar) {
-        $("#menuContainer").hide("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '6vh'}, 250, function() {
+    } catch (err) {}
+    if (Session.equals("sidebarMode", sidebar) || !sidebar) {
+        $("#menuContainer").hide("slide", {
+            direction: "left"
+        }, 250);
+        $("#divCenter").stop().animate({
+            left: '6vh'
+        }, 250, function() {
             Session.set("sidebarMode", "");
         });
     } else {
-        $("#menuContainer").show("slide",  {direction: "left"}, 250);
-        $("#divCenter").stop().animate({left: '36vh'}, 250);
+        $("#menuContainer").show("slide", {
+            direction: "left"
+        }, 250);
+        $("#divCenter").stop().animate({
+            left: '36vh'
+        }, 250);
         $(".menuWrapper").fadeOut(200, function() {
             Session.set("sidebarMode", sidebar);
         });

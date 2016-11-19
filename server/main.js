@@ -133,11 +133,11 @@ Meteor.publish('users', function() {
 // Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
 
-// Accounts.validateLoginAttempt(function(info) {
-//     var user = info.user;
-//     if(user.banned) throw new Meteor.Error(403, 'You are banned');
-
-// });
+Accounts.validateLoginAttempt(function(info) {
+    var user = info.user;
+    if(user.banned) throw new Meteor.Error(403, 'You are banned');
+    return true;
+});
 
 
 var errors = [
