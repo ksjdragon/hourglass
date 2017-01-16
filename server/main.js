@@ -26,8 +26,8 @@ Meteor.publish('schools', function() {
 });
 
 Meteor.publish('teachers', function() {
-    return teachers.find();
-})
+    return teachers.find({}, {fields: {name: 1, school: 1}});
+});
 
 // Returns the code for classes (for debug)
 
@@ -129,8 +129,15 @@ Meteor.publish('users', function() {
     }
 });
 
+
 // Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
+
+Accounts.validateLoginAttempt(function(info) {
+    var user = info.user;
+    if(user.banned) throw new Meteor.Error(403, 'You are banned');
+    return true;
+});
 
 
 var errors = [
@@ -153,11 +160,11 @@ var errors = [
     ["trivial", "This request is too long."],
     ["trivial", "Not a valid work type"],
     ["unauthorized", "This class has not been approved yet"],
-
-    ["unauthorized", "Sorry, you are not authorized to complete this action."],
-    ["other", "Error could not be processed"],
     ["matching", "This teacher already exists!"],
-    ["trivial", "Please put the full name!"]
+    ["trivial", "Please put the full name!"], // 20
+
+    ["unauthorized", "Sorry, you are not authorized to complete this action."], // n - 2
+    ["other", "Error could not be processed"] // n - 1
 ];
 
 function securityCheck(checklist, input) {
@@ -271,13 +278,17 @@ function securityCheck(checklist, input) {
         case 25:
             if (Meteor.userId() === null) error = errors.length - 1;
             break;
-        // Teacher already exists
+        // New Teacher doesn't already exist
         case 26:
-            if (teachers.findOne({name: {$eq: input.teacher}, school: {$eq: input.school}})) error = 21;
+            if (teachers.find({name: input.teachername, school: input.school}).fetch().length > 0) error = 19;
+            break;
+        // Not banning admin
+        case 27:
+            if (Roles.userIsInRole(input.userId, ['superadmin', 'admin'])) error = errors.length - 2;
             break;
         // Incorrect teacher format
-        case 27: 
-            if(input.split(" ").length < 2) error = 22;
+        case 28:
+            if (input.teachername.split(" ").length < 2) error = 20;
             break;
         }
         results.push(error);
@@ -325,18 +336,6 @@ Meteor.methods({
         if (!security) {
             schools.remove({
                 _id: schoolId
-            });
-        } else {
-            throw new Meteor.Error(errors[security]);
-        }
-    },
-    'createTeacher': function(name) {
-        teachers.schema.validate({name: name});
-        var security = securityCheck([26, 27, true],
-                                     name);
-        if(!security) {
-            teachers.insert({
-                name: name
             });
         } else {
             throw new Meteor.Error(errors[security]);
@@ -609,7 +608,8 @@ Meteor.methods({
             "description": change.description,
             "banner": change.banner,
             "preferences": change.preferences,
-            "name": current.name
+            "name": current.name,
+            "complete": current.complete
         };
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);
@@ -804,6 +804,35 @@ Meteor.methods({
             requests.remove({
                 _id: requestId
             });
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'createTeacher': function(teacherName, schoolName) {
+        teachers.schema.validate({name: teacherName, school: schoolName});
+        var security = securityCheck([26, 28, 3, true], {teachername: teacherName, school: schoolName});
+        if (!security) {
+            teachers.insert({
+                name: teacherName,
+                school: schoolName,
+                creator: Meteor.userId()
+            });
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'ban': function(studentId) {
+        var security = securityCheck([1, 27, true], {userId: studentId});
+        if (!security) {
+            Meteor.users.update({_id: studentId}, {$set: {banned: true}});
+        } else {
+            throw new Meteor.Error(errors[security]);
+        }
+    },
+    'unban': function(studentId) {
+        var security = securityCheck([1, true], {userId: studentId});
+        if (!security) {
+            Meteor.users.update({_id: studentId}, {$set: {banned: false}});
         } else {
             throw new Meteor.Error(errors[security]);
         }

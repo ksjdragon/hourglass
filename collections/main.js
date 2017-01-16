@@ -10,9 +10,11 @@ schools.schema = new SimpleSchema({
 });
 
 teachers.schema = new SimpleSchema({
-	name: {type: String},
-	school: {type: String}
-})
+	  name: {type: String},
+	  school: {type: String},
+    creator: {type: String, optional: true}
+
+});
 
 classes.schema = new SimpleSchema({
 	  school: {type: String},
@@ -59,7 +61,13 @@ userSchema = new SimpleSchema({
 	'profile.school': {type: String, label: "School"},
 	'services.google.email': {type: String, label: "Email"},
 	'services.google.picture': {type: String, label: "Icon URL"},
-	'profile.classes': {type: [String], label: "Classes"}
+	  'profile.classes': {type: [String], label: "Classes"},
+    'profile.complete': {type: Boolean}
+});
+
+teachers.schema = new SimpleSchema({
+    name: {type: String},
+    school: {type: String}
 });
 
 schools.attachSchema(schools.schema);
@@ -67,3 +75,4 @@ teachers.attachSchema(teachers.schema);
 classes.attachSchema(classes.schema);
 work.attachSchema(work.schema);
 requests.attachSchema(requests.schema);
+teachers.attachSchema(teachers.schema);

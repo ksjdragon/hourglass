@@ -984,4 +984,4 @@ startDragula = function() {
             }
             Meteor.call("reorderClasses", final);
         });
-}
+};

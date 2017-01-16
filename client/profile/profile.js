@@ -16,7 +16,6 @@ Template.profile.helpers({
 
 Template.profile.events({
     'click' (event) { // Closes respective divs when clicking outside of them. Order matters.
-        console.log("asdf");
         var e = event.target.className;
 
         if(modifyingInput !== null && event.target !== document.getElementById(modifyingInput)) {

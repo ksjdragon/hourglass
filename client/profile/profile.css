@@ -2,7 +2,7 @@
 	width: 100%;
 	height: 100%;
 
-	background-color: #DBDBDB;
+	background-color: #282933;
 
 	position: absolute;
 	top: 0;
@@ -15,16 +15,17 @@
 
 #newUserWrapper {
 	width: 25%;
-	padding: 3%;
+	padding: 2.5%;
 	margin: auto;
 
-	background-color: rgba(255,255,255,0.3);
+	background-color: rgba(255,255,255,0.2);
 }
 
 #newUserWrapper .formDiv {
 	width: 100%;
 	margin: 0;
 	padding: 0;
+	background-color: transparent;
 }
 
 .opTitle {
@@ -53,4 +54,3 @@
 #basicNext:hover {
 	background-color: rgba(0,0,0,0.1);
 }
-
