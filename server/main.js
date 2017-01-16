@@ -608,7 +608,8 @@ Meteor.methods({
             "description": change.description,
             "banner": change.banner,
             "preferences": change.preferences,
-            "name": current.name
+            "name": current.name,
+            "complete": current.complete
         };
         if (current.description && current.description.length > 50) {
             current.description = current.description.slice(0, 50);

@@ -61,7 +61,8 @@ userSchema = new SimpleSchema({
 	'profile.school': {type: String, label: "School"},
 	'services.google.email': {type: String, label: "Email"},
 	'services.google.picture': {type: String, label: "Icon URL"},
-	'profile.classes': {type: [String], label: "Classes"}
+	  'profile.classes': {type: [String], label: "Classes"},
+    'profile.complete': {type: Boolean}
 });
 
 teachers.schema = new SimpleSchema({

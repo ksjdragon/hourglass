@@ -1,12 +1,42 @@
 <template name="profile">
     {{> sAlert}}
     <div id="schoolgrade">
-        <!-- SCHOOL INPUT -->
-        <!-- GRAD YEAR INPUT -->
-    </div>
-    <button id="schoolnext" {{schoolgradenext}}>Next</button>
+
+        <div id="profInfo" class="card" style="background-color:{{divColor 'secondaryColor'}}">
+						<h2 class="profHea">About You</h2>
+						<div id="about">
+								<div class="prefWrapper">
+										<p class="profTitle">School Name:</p>
+										<div id="school" class="clickModify dropdown" tabindex="1">
+						            <span>{{school}}</span>
+						            <i class="fa fa-caret-down" aria-hidden="true"></i>
+						        </div>
+						        <div class="optionHolder smallText">
+						            {{#each selectOptions 'school'}}
+						            {{> option}}
+						            {{/each}}
+						        </div>
+					      </div>
+								<br>
+								<div class="prefWrapper">
+										<p class="profTitle">Graduation Year:</p>
+										<div id="grade" class="clickModify dropdown" tabindex="2">
+						            <span>{{grade}}</span>
+						            <i class="fa fa-caret-down" aria-hidden="true"></i>
+						        </div>
+						        <div class="optionHolder">
+						            {{#each selectOptions 'grade'}}
+						            {{> option}}
+						            {{/each}}
+						        </div>
+					      </div>
+						</div>
+    <p id="schoolnext" {{schoolgradenext}}>Next</p>
     <div id="classsection" style="display:none;">
         <!-- CLASS ENROLLMENT + CREATE -->
     </div>
-    <button>Finish</button>
+				</div>
+
+        <!-- GRAD YEAR INPUT -->
+    </div>
 </template>
