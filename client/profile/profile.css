@@ -1,0 +1,56 @@
+#profPageWrapper {
+	width: 100%;
+	height: 100%;
+
+	background-color: #DBDBDB;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#basicInfo {
+	margin-top: 10%;
+}
+
+#newUserWrapper {
+	width: 25%;
+	padding: 3%;
+	margin: auto;
+
+	background-color: rgba(255,255,255,0.3);
+}
+
+#newUserWrapper .formDiv {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.opTitle {
+	font-weight: 200;
+	margin: 0;
+}
+
+#newUserWrapper .optionHolder {
+	width: 100% !important;
+}
+
+#basicNext {
+	padding: 2%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center; 
+
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
+}
+
+#basicNext:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+

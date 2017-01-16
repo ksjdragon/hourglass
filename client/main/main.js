@@ -8,9 +8,6 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
-modifyingInput = null;
-var clickDisabled = false;
-var optionOpen = false;
 
 var defaultWork = {
     name: "Name | Click here to edit...",
@@ -77,7 +74,7 @@ Template.registerHelper('screen', (multiplier, fraction) => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    return Session.get("user").preferences.theme[div];
+    return (Object.keys(Session.get("user")).length === 0) ? themeColors["lux"][div] : Session.get("user").preferences.theme[div];
 });
 
 Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
@@ -750,7 +747,7 @@ Template.main.events({
 
 // Other Functions
 
-function toggleOptionMenu(toggle, menu) {
+toggleOptionMenu = function(toggle, menu) {
     if(toggle) {
         $(".selectedOption").removeClass("selectedOption");
         $("#" + menu).next()
