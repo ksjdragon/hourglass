@@ -76,6 +76,10 @@ body {
 	pointer-events: all;
 }
 
+input {
+	font-family: Raleway !important;
+}
+
 .noScroll {
 	width: 100%;
 	height: 100%;

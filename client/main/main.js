@@ -8,9 +8,6 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
-modifyingInput = null;
-var clickDisabled = false;
-var optionOpen = false;
 
 var defaultWork = {
     name: "Name | Click here to edit...",
@@ -59,11 +56,6 @@ Template.main.rendered = function() {
     document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
 
-Template.profile.rendered = function() {
-    Accounts._loginButtonsSession.set('dropdownVisible', true);
-    document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
-};
-
 // Global Helpers
 
 Template.registerHelper('adminPage', () => {
@@ -77,7 +69,7 @@ Template.registerHelper('screen', (multiplier, fraction) => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
-    return Session.get("user").preferences.theme[div];
+    return (Object.keys(Session.get("user")).length === 0) ? themeColors["lux"][div] : Session.get("user").preferences.theme[div];
 });
 
 Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay container.
@@ -750,7 +742,7 @@ Template.main.events({
 
 // Other Functions
 
-function toggleOptionMenu(toggle, menu) {
+toggleOptionMenu = function(toggle, menu) {
     if(toggle) {
         $(".selectedOption").removeClass("selectedOption");
         $("#" + menu).next()
@@ -969,6 +961,26 @@ function formReadable(input, val) { // Makes work information readable by users.
             _id: input.creator
         }).profile.name;
     }
+}
+
+checkComplete = function(required, inputs) {
+    var values = {};
+    var no = [];
+    for (var i = 0; i < inputs.length; i++) {
+        var val = inputs[i].value;
+        var where = inputs[i].getAttribute("form");
+        if (val === "" && _.contains(required, where)) {
+            no.push(where);
+        }
+        values[where] = val;
+    }
+    if (no.length > 0) { // Check missing fields.
+        return [false,no.reduce(function(a, b) {
+            return (b === no[no.length - 1]) ? a + ((no.length === 2) ? " and " : ", and ") + b : a + ", " + b;
+        }), values];
+    } else {
+        return [true,"", values];
+    }   
 }
 
 startDragula = function() {

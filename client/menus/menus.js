@@ -503,23 +503,11 @@ Template.createClass.helpers({
 Template.createClass.events({
     'click #creSubmit' () {
         var inputs = document.getElementsByClassName("creInput");
-        var values = {};
         var required = ["school", "name", "privacy", "category"];
-        var no = [];
-        for (var i = 0; i < inputs.length; i++) {
-            var val = inputs[i].value;
-            var where = inputs[i].getAttribute("form");
-            if (val === "" && _.contains(required, where)) {
-                no.push(where);
-            }
-            values[where] = val;
-        }
-        console.log(values);
-        console.log(no);
-        if (no.length > 0) { // Check missing fields.
-            sAlert.error("Missing " + no.reduce(function(a, b) {
-                return (b === no[no.length - 1]) ? a + ", and " + b : a + ", " + b;
-            }), {
+        var alert = checkComplete(required, inputs);
+        var values = alert[2];
+        if (!alert[0]) { // Check missing fields.
+            sAlert.error("Missing " + alert[1], {
                 effect: 'stackslide',
                 position: 'top',
                 timeout: 3000
