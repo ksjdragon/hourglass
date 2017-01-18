@@ -367,7 +367,7 @@ Template.joinClass.helpers({
             rules: [{
                 token: '',
                 collection: classes,
-                template: Template.classDisplay,
+                template: Template.classAutoList,
                 filter: {
                     privacy: false,
                     status: true
@@ -421,27 +421,32 @@ Template.joinClass.events({
         Session.set("autocompleteDivs", null);
         var divs = [];
         try {
-            var items = document.getElementsByClassName("-autocomplete-container")[0].childNodes[3].childNodes;
-            if (items.length === 0) { // If no results.
+            var items = document.getElementsByClassName("-autocomplete-container")[0].children;  
+            if(items[0].tagName === "I") {
                 Session.set("notfound", true);
+                return;
             } else {
+                items = items[0].children;
+                for(var i = 0; i < items.length; i++) {
+                    var item = items[i].children;
+                    var id = item[4].textContent;
+                    if(Session.get("user").classes.indexOf(id) !== -1) continue;
+                    divs.push({
+                        name: item[0].textContent,
+                        teachershort: item[1].textContent.split(" ")[1],
+                        hour: item[2].textContent,
+                        subscribers: (item[3].textContent.match(new RegExp(",","g")) || []).length+1,
+                        _id: id,
+                        join: true
+                    })
+                }
+                Session.set("autocompleteDivs", divs.sort(function(a, b) {
+                    return b.subscribers - a.subscribers;
+                }));
                 Session.set("notfound", false);
+                return;
             }
-            for (var i = 2; i < items.length; i += 3) { // Iterate through autocomplete div.
-                var item = items[i].childNodes[3];
-                if (Meteor.user().profile.classes.indexOf(item.getAttribute("classid")) !== -1) continue;
-                divs.push({
-                    name: item.childNodes[1].childNodes[0].nodeValue,
-                    teacher: item.childNodes[3].childNodes[0].nodeValue,
-                    hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.replace(",", "").length / 17),
-                    _id: item.getAttribute("classid")
-                });
-            }
-            Session.set("autocompleteDivs", divs.sort(function(a, b) {
-                return b.subscribers - a.subscribers;
-            }));
-        } catch (err) {}
+        } catch(err) {}
     },
     'click .classBox .fa-plus' (event) {
         serverData = [event.target.parentNode.getAttribute("classid"), ""];

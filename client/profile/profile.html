@@ -32,8 +32,7 @@
                 <div id="joinTop">
                     <i class="fa fa-search" aria-hidden="true"></i>
                     {{> inputAutocomplete id="classSearch" settings=classSettings placeholder="Search..."}}
-                    <!-- <h4 id="private">Join Private Class</h4>
-                    <input id="privateCode" placeholder="Enter code here..."> -->
+                    <span id="createActivate">Class not here?</span>
                 </div>
                 <div id="settingClassWrapper">
                     <div id="label" class="classBox">
@@ -60,11 +59,64 @@
                 </div>
             </div>
         </div>
-        <div id="classsection" style="display:none;">
-            <!-- CLASS ENROLLMENT + CREATE -->
+        <div id="enrollClassList">
+            <h3>My Classes</h3>
+            {{#each enrollClass}}
+                {{> enrollSideClass}}
+            {{/each}}
+        </div>
+        <div id="createInfo">
+            <div id="createWrapper">
+                <div id="creRules">
+                    <p>Submit a request for a class to be approved by an administrator.<br> 
+                    You can have up to 8 unapproved classes at once.</p>
+                </div>
+                <div id="formContainer">
+                    <div class="formDiv">
+                       {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
+                   </div>
+                   <div class="formDiv">
+                       <input class="creInput" type="text" form="hour" placeholder="Hour">
+                   </div>
+                   <div class="formDiv">
+                       {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" form="teacher" placeholder="Teacher | Ex: Marc DeZwaan" }}
+                   </div>
+                   <div class="formDiv">
+                       <input class="creInput" type="text" form="name" placeholder="**Class Name">
+                   </div>
+                   <div class="formDiv">
+                       <p class="profTitle">**Privacy:</p>
+                       <input id="creprivacy" style="color:{{divColor 'textColor'}}" class="creInput clickModify dropdown" type="text" form="privacy" placeholder="Click here to edit..." readonly>
+                       <div class="optionHolder">
+                           {{#each selectOptions 'privacy'}}
+                               {{> option}}
+                           {{/each}}
+                       </div>
+                   </div>
+                   <div class="formDiv">
+                       <p class="profTitle">**Category:</p>
+                       <input id="crecategory" style="color:{{divColor 'textColor'}}" class="creInput clickModify dropdown" type="text" form="category" placeholder="Click here to edit..." readonly>
+                       <div class="optionHolder">
+                           {{#each selectOptions 'category'}}
+                               {{> option}}
+                           {{/each}}
+                       </div>
+                   </div>
+                   <h3 id="creSubmit" style="border:1px solid {{divColor 'textColor'}}">Submit Request</h3>
+               </div>
+            </div>
         </div>
         <div id="forwardArrow" class="circleIcon moveArrow" style="display:{{showArrow 'forward'}}">
             <i class="fa fa-chevron-down" aria-hidden="true"></i>
         </div>
+    </div>
+</template>
+
+<template name="enrollSideClass">
+    <div id="ESCWrapper" classid="{{_id}}">
+        <h4 class="enrollSideClass">{{name}}</h4>
+        {{#if x}}
+            <i class="fa fa-times" aria-hidden="true"></i>
+        {{/if}}
     </div>
 </template>

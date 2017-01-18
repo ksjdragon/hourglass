@@ -38,6 +38,10 @@
 	border: 1px solid #FCF0F0 !important;
 }
 
+#profPageWrapper #createWrapper {
+
+}
+
 #basicInfo {
 	width: 100%;
 	position: absolute;
@@ -138,7 +142,119 @@
 
 #enrollUserWrapper {
 	width: 60%;
+	height: 42vh;
 	margin: auto;
 	padding: 1%;
 	background-color: rgba(255,255,255,0.2);
+	overflow-y: auto;
+}
+
+#enrollClassList {
+	width: 10%;
+	height: 100%;
+
+	background-color: rgba(0,0,0,0.2);
+
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#enrollClassList h3 {
+	font-weight: 300;
+	margin: 0;
+	padding: 10%;
+	
+	background-color: rgba(0,0,0,0.4);
+	border: 0;
+
+	text-align: center;
+}
+
+#enrollClassList h4 {
+	font-weight: 300;
+	margin: 0;
+	width: 90%;
+	padding: 10%;
+
+	display: table-cell;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
+}
+
+#enrollClassList i {
+	font-size: 2vh;
+	width: 20%;
+	display: table-cell;
+	cursor: pointer;
+	text-align: right;
+
+	-webkit-transition: color 0.5s ease;  
+	-moz-transition: color 0.5s ease; 
+	-ms-transition: color 0.5s ease;
+	transition: color 0.5s ease;
+}
+
+#enrollClassList i:hover {
+	color: #FF1A1A;
+}
+
+#ESCWrapper {
+	background-color: rgba(0,0,0,0.2);
+}
+
+#ESCWrapper:hover {
+	background-color: rgba(0,0,0,0.25);
+}
+
+#createActivate {
+	margin-right: 5%;
+	padding: 1%;
+	background-color: rgba(0,0,0,0.1);
+
+	float: right;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
+}
+
+#createActivate:hover {
+	background-color: rgba(0,0,0,0.2)
+}
+
+#createInfo {
+	width: 100%;
+	position: absolute;
+	top: 150%;
+}
+
+#createWrapper {
+	margin: auto;
+	width: 30%;
+
+	background-color: rgba(255,255,255,0.2);
+}
+
+#createWrapper .formDiv {
+	width: 100%;
+	margin: 0;
+	background-color: transparent;
+}
+
+#createWrapper #creSubmit {
+	width: 30%;
+	margin: auto;
+	border: 1px solid #FCF0F0 !important;
+}
+
+#createWrapper p {
+	margin: 0;
 }

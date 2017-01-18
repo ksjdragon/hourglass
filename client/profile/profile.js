@@ -5,7 +5,8 @@ import {
 
 
 Session.set("sections", [0,0]) // [Completed, Viewing] 
-Session.set("profile", {});
+Session.set("profile", {classes: []});
+Session.set("autocompleteDivs", null);
 Session.set("notsearching", true); // If user isn't searching
 Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
@@ -40,6 +41,9 @@ Template.profile.helpers({
             privacy: {
                 $eq: false
             },
+            _id: {
+                $nin: Session.get("profile").classes
+            },
             school: {
                 $eq: Session.get("profile").school
             }
@@ -72,7 +76,7 @@ Template.profile.helpers({
             rules: [{
                 token: '',
                 collection: classes,
-                template: Template.classDisplay,
+                template: Template.classAutoList,
                 filter: {
                     privacy: false,
                     status: true
@@ -92,6 +96,31 @@ Template.profile.helpers({
             }]
         };
     },
+    schoolComplete() { // Returns autocomplete array for schools.
+        return {
+            position: "bottom",
+            limit: 6,
+            rules: [{
+                token: '',
+                collection: schools,
+                field: 'name',
+                matchAll: true,
+                template: Template.schoolList
+            }]
+        };
+    },
+    teacherComplete() { // Returns autocomplete array for teachers.
+        return {
+            position: "bottom",
+            limit: 1,
+            rules: [{
+                token: '',
+                collection: teachers,
+                field: 'name',
+                template: Template.teacherList
+            }]
+        };
+    },
     notsearching() { // Tells whether user is using the searchbox
         return Session.get("notsearching");
     },
@@ -100,6 +129,11 @@ Template.profile.helpers({
     },
     notfound() { // Returns if autocomplete has no results.
         return Session.get("notfound");
+    },
+    enrollClass() {
+        var myClasses = Session.get("profile").classes;
+        if(myClasses === undefined || myClasses.length === 0) return [{name:"Enroll!",x:false}];
+        return myClasses.map(function(a){return {name:classes.findOne({_id:a}).name,x:true,_id:a}});
     }
 });
 
@@ -131,8 +165,12 @@ Template.profile.events({
         profile.school = values["school"];
         profile.grade = values["grade"];
         Session.set("profile", profile);
-        Session.set("sections", [(Session.get("sections")[0] < 1) ? 1 : Session.get("sections")[0], Session.get("sections")[1]])
+        Session.set("sections", [(Session.get("sections")[0] < 1) ? 1 : Session.get("sections")[0], Session.get("sections")[1]]);
         slideToField(1);
+    },
+    'click #createActivate' () {
+        Session.set("sections", [(Session.get("sections")[0] < 2) ? 2 : Session.get("sections")[0], Session.get("sections")[1]]);
+        slideToField(2);
     },
     'click #backArrow' () {
         slideToField(Session.get("sections")[1]-1);
@@ -218,33 +256,71 @@ Template.profile.events({
         Session.set("autocompleteDivs", null);
         var divs = [];
         try {
-            var items = document.getElementsByClassName("-autocomplete-container")[0].childNodes[3].childNodes;
-            if (items.length === 0) { // If no results.
+            var items = document.getElementsByClassName("-autocomplete-container")[0].children;  
+            if(items[0].tagName === "I") {
                 Session.set("notfound", true);
+                return;
             } else {
+                items = items[0].children;
+                for(var i = 0; i < items.length; i++) {
+                    var item = items[i].children;
+                    var id = item[4].textContent;
+                    if(Session.get("profile").classes.indexOf(id) !== -1) continue;
+                    divs.push({
+                        name: item[0].textContent,
+                        teachershort: item[1].textContent.split(" ")[1],
+                        hour: item[2].textContent,
+                        subscribers: (item[3].textContent.match(new RegExp(",","g")) || []).length+1,
+                        _id: id,
+                        join: true
+                    })
+                }
+                Session.set("autocompleteDivs", divs.sort(function(a, b) {
+                    return b.subscribers - a.subscribers;
+                }));
                 Session.set("notfound", false);
+                return;
             }
-            for (var i = 2; i < items.length; i += 3) { // Iterate through autocomplete div.
-                var item = items[i].childNodes[3];
-                if (Meteor.user().profile.classes.indexOf(item.getAttribute("classid")) !== -1) continue;
-                divs.push({
-                    name: item.childNodes[1].childNodes[0].nodeValue,
-                    teacher: item.childNodes[3].childNodes[0].nodeValue,
-                    hour: item.childNodes[5].childNodes[0].nodeValue,
-                    subscribers: Math.floor(item.childNodes[7].childNodes[0].nodeValue.replace(",", "").length / 17),
-                    _id: item.getAttribute("classid")
-                });
-            }
+        } catch(err) {}
+    },
+    'click .classBox .fa-plus' (event) {
+        var profile = Session.get("profile");
+        var id = event.target.parentNode.getAttribute("classid");
+        if(profile.classes.indexOf(id) === -1) {
+            profile.classes.push(id);
+            Session.set("profile", profile);
+            if(Session.get("autocompleteDivs") === null) return;
+            var divs = Session.get("autocompleteDivs");
+            divs.splice(divs.map(function(a) {
+                return a._id; 
+            }).indexOf(id),1);
+            Session.set("autocompleteDivs", divs);
+        }
+    },
+    'click #ESCWrapper .fa-times' (event) {
+        var profile = Session.get("profile");
+        var id = event.target.parentNode.getAttribute("classid");
+        if(profile.classes.indexOf(id) !== -1) {
+            profile.classes.splice(profile.classes.indexOf(id),1);
+            Session.set("profile", profile);
+            if(Session.get("autocompleteDivs") === null) return;
+            var divs = Session.get("autocompleteDivs");
+            var myClass = classes.findOne({_id: id});
+            myClass.subscribers = myClass.subscribers.length;
+            myClass.teachershort = myClass.teacher.split(" ")[1]
+            myClass.join = true;
+            divs.push(myClass);
             Session.set("autocompleteDivs", divs.sort(function(a, b) {
                 return b.subscribers - a.subscribers;
             }));
-        } catch (err) {}
-    },
+        }
+    }
 });
 
 function slideToField(field) {
-    var order = ["basicInfo", "enrollInfo"];
+    var order = ["basicInfo", "enrollInfo", "createInfo"];
     $(".moveArrow").animate({"opacity":0})
+    $("#enrollClassList").fadeOut(200);
     var viewing = Session.get("sections")[1]
     var move = (viewing-field < 0) ? "-50%" : "150%";
     $("#"+order[viewing]).animate({top: move});
@@ -254,6 +330,9 @@ function slideToField(field) {
         complete: function() {
             Session.set("sections", [Session.get("sections")[0],field]);
             $(".moveArrow").animate({"opacity":1});
+            if(field === 1) {
+                $("#enrollClassList").fadeIn(200);
+            }
         }
     });
 }
