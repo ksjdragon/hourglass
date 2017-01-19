@@ -3,7 +3,6 @@ import {
     Template
 } from 'meteor/templating';
 
-
 Session.set("sections", [0,0]) // [Completed, Viewing] 
 Session.set("profile", {classes: []});
 Session.set("newClasses", []);
@@ -175,6 +174,7 @@ Template.profile.events({
         Session.set("profile", profile);
         Session.set("sections", [(Session.get("sections")[0] < 1) ? 1 : Session.get("sections")[0], Session.get("sections")[1]]);
         slideToField(1);
+        $("#profileSubmit").fadeIn(200);
     },
     'click #createActivate' () {
         Session.set("sections", [(Session.get("sections")[0] < 2) ? 2 : Session.get("sections")[0], Session.get("sections")[1]]);

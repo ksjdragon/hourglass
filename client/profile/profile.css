@@ -265,6 +265,34 @@
 }
 
 #profileSubmit {
+	font-weight: 300;
+	font-size: 3vh;
+	padding: 1.5%;
+
+	border-right: 5px solid #FCF0F0;
+	background-color: rgba(0,0,0,0.2);
+
+	display: none;
 	position:absolute;
-	top: 5%;
+	top: 40%;
+	right: 0;	
+
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.5s ease;  
+	-moz-transition: background-color 0.5s ease; 
+	-ms-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
+}
+
+#profileSubmit span, #profileSubmit i {
+	vertical-align: middle;
+}
+
+#profileSubmit i {
+	position: relative;
+}
+
+#profileSubmit:hover {
+	background-color: rgba(0,0,0,0.3);
 }
