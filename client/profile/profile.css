@@ -34,12 +34,12 @@
 	background-color: rgba(0,0,0,0.2);
 }
 
-#profPageWrapper .classBox:not(:first-child) {
+#profPageWrapper .classBox:not(#label) {
 	border: 1px solid #FCF0F0 !important;
 }
 
-#profPageWrapper #createWrapper {
-
+#profPageWrapper .optionHolder {
+	width: 100%;
 }
 
 #basicInfo {
@@ -50,26 +50,15 @@
 
 #newUserWrapper {
 	width: 25%;
-	padding: 2.5%;
+	padding: 2%;
 	margin: auto;
 
 	background-color: rgba(255,255,255,0.2);
 }
 
-#newUserWrapper .formDiv {
-	width: 100%;
-	margin: 0;
-	padding: 0;
-	background-color: transparent;
-}
-
 .opTitle {
 	font-weight: 200;
 	margin: 0;
-}
-
-#newUserWrapper .optionHolder {
-	width: 100% !important;
 }
 
 #basicNext {
@@ -142,11 +131,14 @@
 
 #enrollUserWrapper {
 	width: 60%;
-	height: 42vh;
+	height: 60vh;
 	margin: auto;
 	padding: 1%;
 	background-color: rgba(255,255,255,0.2);
-	overflow-y: auto;
+}
+
+#enrollUserWrapper #classBody {
+	height: 40vh;
 }
 
 #enrollClassList {
@@ -236,25 +228,43 @@
 	top: 150%;
 }
 
-#createWrapper {
+#profPageWrapper #createWrapper {
 	margin: auto;
+	padding: 3%;
+	padding-bottom: 2%;
 	width: 30%;
 
 	background-color: rgba(255,255,255,0.2);
 }
 
-#createWrapper .formDiv {
+.formDiv {
 	width: 100%;
 	margin: 0;
+	padding: 2%;
 	background-color: transparent;
+	display: inline;
 }
 
-#createWrapper #creSubmit {
-	width: 30%;
-	margin: auto;
+#profPageWrapper #creSubmit {
 	border: 1px solid #FCF0F0 !important;
+}
+
+#profPageWrapper .profTitle {
+	margin-bottom: 1%;
 }
 
 #createWrapper p {
 	margin: 0;
+}
+
+#profPageWrapper input {
+	margin: 0;
+	padding: 2%;
+	background-color: rgba(0,0,0,0.1);
+	border: 0;
+}
+
+#profileSubmit {
+	position:absolute;
+	top: 5%;
 }

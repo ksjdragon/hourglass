@@ -113,7 +113,8 @@
 
 #settingClassWrapper {
 	width: 90%;
-	padding: 2% 0 0 3%;
+	margin: auto;
+	padding-top: 2%;
 }
 
 #label {
@@ -125,6 +126,12 @@
 	cursor: default;
 }
 
+#classBody {
+	height: 64vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
 #settingClassWrapper h3 {
 	font-weight: 300;
 	font-style: italic;
@@ -133,7 +140,7 @@
 
 .classBox {
 	font-size: 1.3vw;
-	width: 100%;
+	width: 95%;
 	margin-bottom: 3%;
 	padding: 2%;
 
@@ -492,7 +499,7 @@
 
 #classSearch, #privateCode {
 	font-size: 2vh;
-	padding: 1%;
+	padding: 1% !important;
 	outline: none;
 }
 
@@ -534,7 +541,11 @@
 }
 
 #createWrapper {
+	margin: auto;
+	margin-top: 3%;
+	width: 80%;
 	padding: 3%;
+	background-color: rgba(0,0,0,0.1);
 }
 
 #creRules p {
@@ -542,12 +553,12 @@
 }
 
 .formDiv {
-	margin-left: 25%;
-	padding: 1% 2% 1% 2%;
-	width: 30%;
-	background-color: rgba(255,255,255,0.1);
+	width: 100%;
+	margin: 0;
+	padding: 2%;
+	background-color: transparent;
 	position: relative;
-	display: table;
+	display: inline;
 }
 
 .formDiv:first-child {
@@ -562,11 +573,6 @@
 	font-size: 2vh;
 	width: calc(98% - 8px) !important;
 	padding: 1%;
-	margin: 1%;
-}
-
-.formDiv .optionHolder {
-	width: 89%;
 }
 
 .formDiv .-autocomplete-container {
@@ -585,9 +591,9 @@
 	font-weight: 200;
 	width: 30%;
 	padding: 2%;
+	margin: auto;
 	margin-top: 2%;
-	margin-left: 25%;
-
+	
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;

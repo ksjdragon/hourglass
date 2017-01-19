@@ -18,7 +18,8 @@ var defaultWork = {
 
 // Reactive variables.
 Session.set("user", {}); // Stores user preferences.
-Session.set("calendarClasses", []); // Stores calendar classes.
+Session.set("calendarEvents", []); // Stores calendar classes.
+Session.set("myClasses", []); // Stores user classes.
 Session.set("requests", false); // Status of requests.
 Session.set("sidebarMode", ""); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
@@ -27,7 +28,6 @@ Session.set("classDisp", []); // Stores current filter for classes.
 Session.set("typeFilter", []); // Stores type filters for classes.
 Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
-Session.set("refetchEvents", null); // Stores whether to get calendar events again.
 Session.set("restrictText", {}); // Stores text for comment character restriction.
 Session.set("confirmText", ""); // Stores text for confirmations.
 
@@ -85,120 +85,11 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
     if (Session.get("user").classes.length === 0) { // Null checking.
         return [];
     } else {
-        var array = [];
-        var refetch = true;
-        var courses = Session.get("user").classes;
-        var classDisp = Session.get("classDisp"); // Get sidebar class filter.
-        var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
-        var hide = Session.get("user").preferences.timeHide;
-
-        for (var i = 0; i < courses.length; i++) { // For each user class.
-            if (courses[i] === Meteor.userId()) {
-                found = {
-                    _id: courses[i],
-                    name: "Personal",
-                    subscribers: 1,
-                    mine: false,
-                    box: " owned"
-                };
-            } else {
-                found = classes.findOne({
-                    _id: courses[i]
-                });
-                found.subscribers = found.subscribers.length;
-                found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
-                found.mine = true;
-                if (found.admin === Meteor.userId()) { // If user owns this class.
-                    found.box = " owned";
-                    found.mine = false;
-                }
-            }
-
-            found.selected = ((classDisp.indexOf(courses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
-            array.push(found);
-
-            var thisWork = work.find({
-                class: courses[i]
-            }).fetch();
-
-            if (classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) { // Filter classes based on filter.
-                array[i].thisClassWork = [];
-                continue;
-            }
-
-            for (var j = 0; j < thisWork.length; j++) { // For each work in class.
-                if (hide !== 0) { // Time to hide isn't never.
-                    var due = (moment(thisWork[j].dueDate))._d;
-                    var offset = (moment().subtract(hide, 'days'))._d;
-                    if (offset > due) { // If due is before hide days before today
-                        thisWork[j] = "no";
-                    }
-                }
-
-                if (thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
-                    if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
-                        thisWork[j] = "no";
-                    }
-                }
-
-                if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
-                    thisWork[j] = "no";
-                }
-
-                if (thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length / thisWork[j].reports.length) <= 0.9) {
-                    thisWork[j] = "no";
-                }
-
-            }
-            while (thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"), 1); // Splice all filtered works.
-
-            for (j = 0; j < thisWork.length; j++) {
-                thisWork[j].classid = courses[i];
-                thisWork[j].realDate = thisWork[j].dueDate;
-                thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
-                    sameDay: '[Today]',
-                    nextDay: '[Tomorrow]',
-                    nextWeek: 'dddd',
-                    lastDay: '[Yesterday]',
-                    lastWeek: '[Last] dddd',
-                    sameElse: 'MMMM Do'
-                });
-
-                if (thisWork[j].dueDate === "Today") { // Font weight based on date proximity.
-                    thisWork[j].cardDate = "600";
-                } else if (thisWork[j].dueDate === "Tomorrow") {
-                    thisWork[j].cardDate = "400";
-                }
-                thisWork[j].typeColor = workColors[thisWork[j].type];
-
-                thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
-                thisWork[j].reportLength = thisWork[j].reports.length;
-
-                thisWork[j].creator = Meteor.users.findOne({
-                    _id: thisWork[j].creator
-                }).profile.name;
-                var conf = thisWork[j].confirmations.length;
-                var repo = thisWork[j].reports.length;
-                var ratio = conf / repo;
-                var normalColor = Session.get("user").preferences.theme.text;
-                if (Math.abs(conf - repo)) {
-                    if ((conf + repo) <= 1) {
-                        thisWork[j].doneRatio = normalColor;
-                    } else {
-                        thisWork[j].doneRatio = "#F9F906";
-                    }
-                } else if (ratio >= 2) {
-                    thisWork[j].doneRatio = "#33DD33";
-                } else if (ratio <= 0.9) {
-                    thisWork[j].doneRatio = "#FF1A1A";
-                }
-            }
-            array[i].thisClassWork = thisWork.sort(function(a, b) {
-                return Date.parse(a.realDate) - Date.parse(b.realDate);
-            });
-        }
-        Session.set("calendarClasses", array);
-        Session.set("refetchEvents", refetch);
+        var array = myClasses();
+        Session.set("myClasses", array);
+        calendarEvents(array);
+        $("#fullcalendar").fullCalendar("removeEvents");
+        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"))
         return array;
     }
 });
@@ -308,38 +199,7 @@ Template.main.helpers({
                 day: 'Day'
             },
             eventLimit: 3,
-            events: function(start, end, timezone, callback) {
-                var events = [];
-                var userClasses = Session.get("calendarClasses");
-
-                for (var i = 0; i < userClasses.length; i++) {
-                    var works = userClasses[i].thisClassWork;
-                    for (var j = 0; j < works.length; j++) {
-                        var work = works[j];
-                        var currClass = classes.findOne({
-                            _id: work.class
-                        });
-                        var inRole = false;
-
-                        if (work.class === Meteor.userId() ||
-                            Meteor.userId() === work.creator ||
-                            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                            currClass.banned.indexOf(Meteor.userId()) !== -1
-                           ) inRole = true;
-                        events.push({
-                            id: work._id,
-                            start: work.realDate.toISOString().slice(0, 10),
-                            title: work.name,
-                            backgroundColor: workColors[work.type],
-                            borderColor: "#444",
-                            startEditable: inRole,
-                            className: work.type + " workevent " + work.class
-                        });
-                    }
-                }
-                callback(events);
-            },
+            events: Session.get("calendarEvents"),
             eventDrop: function(event, delta, revertFunc) { // When user drops from click-dragging.
                 var current = work.findOne({
                     _id: event.id
@@ -420,12 +280,6 @@ Template.main.helpers({
     },
     admin() {
         return Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin']);
-    },
-    refetchEvents() {
-        if (Session.get("refetchEvents")) {
-            $("#fullcalendar").fullCalendar('refetchEvents');
-            Session.set("refetchEvents", null);
-        }
     }
 });
 
@@ -536,7 +390,7 @@ Template.main.events({
         array.info = {
             "users": Meteor.users.find().fetch(),
             "userInfo": Meteor.user(),
-            "userClasses": Session.get("calendarClasses")
+            "userClasses": Session.get("myClasses")
         };
         Meteor.call("createRequest", array, function(err, result) {
             area.value = "";
@@ -553,7 +407,7 @@ Template.main.events({
     },
     'click #exportDiv' (event) {
         var events = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN";
-        var userClasses = Session.get("calendarClasses");
+        var userClasses = Session.get("myClasses");
         var timestamp = new Date().toJSON().replace(/-|:|\./gi, "");
         for (var i = 0; i < userClasses.length; i++) {
             var works = userClasses[i].thisClassWork;
@@ -784,11 +638,11 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
                 position: 'top'
             });
         } else {
-            sAlert.success("Success!", {
+            /*sAlert.success("Success!", {
                 effect: 'stackslide',
                 position: 'bottom-right',
                 timeout: 2500
-            });
+            });*/
             if(funcName === "createClass") {
                 var inputs = document.getElementsByClassName("creInput");
                 for(var i = 0; i < inputs.length; i++) {
@@ -797,6 +651,9 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
                 toggleToMode("manageClass");
             }
         }
+        calendarEvents(myClasses());
+        $("#fullcalendar").fullCalendar("removeEvents");
+        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
         document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
     });
 }
@@ -1000,3 +857,151 @@ startDragula = function() {
             Meteor.call("reorderClasses", final);
         });
 };
+
+function myClasses() {
+    var array = [];
+    var courses = Session.get("user").classes;
+    var classDisp = Session.get("classDisp"); // Get sidebar class filter.
+    var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
+    var hide = Session.get("user").preferences.timeHide;
+
+    for (var i = 0; i < courses.length; i++) { // For each user class.
+        if (courses[i] === Meteor.userId()) {
+            found = {
+                _id: courses[i],
+                name: "Personal",
+                subscribers: 1,
+                mine: false,
+                box: " owned"
+            };
+        } else {
+            found = classes.findOne({
+                _id: courses[i]
+            });
+            found.subscribers = found.subscribers.length;
+            found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            found.mine = true;
+            if (found.admin === Meteor.userId()) { // If user owns this class.
+                found.box = " owned";
+                found.mine = false;
+            }
+        }
+
+        found.selected = ((classDisp.indexOf(courses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
+        array.push(found);
+
+        var thisWork = work.find({
+            class: courses[i]
+        }).fetch();
+
+        if (classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) { // Filter classes based on filter.
+            array[i].thisClassWork = [];
+            continue;
+        }
+
+        for (var j = 0; j < thisWork.length; j++) { // For each work in class.
+            if (hide !== 0) { // Time to hide isn't never.
+                var due = (moment(thisWork[j].dueDate))._d;
+                var offset = (moment().subtract(hide, 'days'))._d;
+                if (offset > due) { // If due is before hide days before today
+                    thisWork[j] = "no";
+                }
+            }
+
+            if (thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
+                if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
+                    thisWork[j] = "no";
+                }
+            }
+
+            if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
+                thisWork[j] = "no";
+            }
+
+            if (thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length / thisWork[j].reports.length) <= 0.9) {
+                thisWork[j] = "no";
+            }
+
+        }
+        while (thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"), 1); // Splice all filtered works.
+
+        for (j = 0; j < thisWork.length; j++) {
+            thisWork[j].classid = courses[i];
+            thisWork[j].realDate = thisWork[j].dueDate;
+            thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
+                sameDay: '[Today]',
+                nextDay: '[Tomorrow]',
+                nextWeek: 'dddd',
+                lastDay: '[Yesterday]',
+                lastWeek: '[Last] dddd',
+                sameElse: 'MMMM Do'
+            });
+
+            if (thisWork[j].dueDate === "Today") { // Font weight based on date proximity.
+                thisWork[j].cardDate = "600";
+            } else if (thisWork[j].dueDate === "Tomorrow") {
+                thisWork[j].cardDate = "400";
+            }
+            thisWork[j].typeColor = workColors[thisWork[j].type];
+
+            thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
+            thisWork[j].reportLength = thisWork[j].reports.length;
+
+            thisWork[j].creator = Meteor.users.findOne({
+                _id: thisWork[j].creator
+            }).profile.name;
+            var conf = thisWork[j].confirmations.length;
+            var repo = thisWork[j].reports.length;
+            var ratio = conf / repo;
+            var normalColor = Session.get("user").preferences.theme.text;
+            if (Math.abs(conf - repo)) {
+                if ((conf + repo) <= 1) {
+                    thisWork[j].doneRatio = normalColor;
+                } else {
+                    thisWork[j].doneRatio = "#F9F906";
+                }
+            } else if (ratio >= 2) {
+                thisWork[j].doneRatio = "#33DD33";
+            } else if (ratio <= 0.9) {
+                thisWork[j].doneRatio = "#FF1A1A";
+            }
+        }
+        array[i].thisClassWork = thisWork.sort(function(a, b) {
+            return Date.parse(a.realDate) - Date.parse(b.realDate);
+        });
+    }
+    return array;
+}
+
+function calendarEvents(array) {
+    var events = [];
+    var userClasses = array;
+
+    for (var i = 0; i < userClasses.length; i++) {
+        var works = userClasses[i].thisClassWork;
+        for (var j = 0; j < works.length; j++) {
+            var work = works[j];
+            var currClass = classes.findOne({
+                _id: work.class
+            });
+            var inRole = false;
+
+            if (work.class === Meteor.userId() ||
+                Meteor.userId() === work.creator ||
+                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+                currClass.banned.indexOf(Meteor.userId()) !== -1
+               ) inRole = true;
+            events.push({
+                id: work._id,
+                start: work.realDate.toISOString().slice(0, 10),
+                title: work.name,
+                backgroundColor: workColors[work.type],
+                borderColor: "#444",
+                startEditable: inRole,
+                className: work.type + " workevent " + work.class
+            });
+        }
+    }
+    Session.set("calendarEvents", events);
+}

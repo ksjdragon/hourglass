@@ -6,6 +6,7 @@ import {
 
 Session.set("sections", [0,0]) // [Completed, Viewing] 
 Session.set("profile", {classes: []});
+Session.set("newClasses", []);
 Session.set("autocompleteDivs", null);
 Session.set("notsearching", true); // If user isn't searching
 Session.set("noclass", null); // If user doesn't have classes.
@@ -132,8 +133,15 @@ Template.profile.helpers({
     },
     enrollClass() {
         var myClasses = Session.get("profile").classes;
-        if(myClasses === undefined || myClasses.length === 0) return [{name:"Enroll!",x:false}];
-        return myClasses.map(function(a){return {name:classes.findOne({_id:a}).name,x:true,_id:a}});
+        var newClasses = Session.get("newClasses");
+        if((myClasses === undefined || myClasses.length === 0) && newClasses.length === 0) return [{name:"Enroll!",x:false}];
+        var array = myClasses.map(function(a) {
+            return {name:classes.findOne({_id:a}).name,x:true,_id:a}
+        });
+        array.push.apply(array,newClasses.map(function(a){
+            return {name:a.name,_id:(Math.floor(Math.random()*1000)).toString(),x:true};
+        }));
+        return array;
     }
 });
 
@@ -171,6 +179,58 @@ Template.profile.events({
     'click #createActivate' () {
         Session.set("sections", [(Session.get("sections")[0] < 2) ? 2 : Session.get("sections")[0], Session.get("sections")[1]]);
         slideToField(2);
+    },
+    'click #creSubmit' () {
+        var inputs = document.getElementsByClassName("creInput");
+        var required = ["school", "name", "privacy", "category"];
+        var alert = checkComplete(required, inputs);
+        var values = alert[2];
+        if(!alert[0]) {
+            sAlert.error("Missing " + alert[1], {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 3000
+            });
+            return;
+        }
+        values.privacy = (values.privacy === "Public") ? false : true;
+        values.status = false;
+        values.category.toLowerCase();
+        values.code = "";
+        var newClasses = Session.get("newClasses");
+        var duplicate = false;
+        for(var i = 0; i < newClasses.length; i++) {
+            if(JSON.stringify(newClasses[i]) === JSON.stringify(values)) duplicate = true;
+        }
+        if(!duplicate && newClasses.length < 8) newClasses.push(values);
+        if(duplicate) sAlert.error("You already created this class!", {
+            effect: 'stackslide',
+            position: 'bottom-right',
+            timeout: 3000
+        });
+        if(newClasses.length === 8) sAlert.error("You already created 8 classes!", {
+            effect: 'stackslide',
+            position: 'bottom-right',
+            timeout: 3000
+        });
+        Session.set("newClasses", newClasses);
+        $(".creInput").each(function(){$(this).val('');});
+        /*if (!teachers.findOne({
+                name: values.teacher
+            })) {
+            Meteor.call("createTeacher", values.teacher, values.school, function(error, result) {
+                if (error !== undefined) {
+                    sAlert.error(error.message, {
+                        effect: 'stackslide',
+                        position: 'top'
+                    });
+                } else {
+                    sendData("createClass");
+                }
+            });
+        } else {
+            sendData("createClass");
+        }*/
     },
     'click #backArrow' () {
         slideToField(Session.get("sections")[1]-1);
@@ -300,6 +360,14 @@ Template.profile.events({
     'click #ESCWrapper .fa-times' (event) {
         var profile = Session.get("profile");
         var id = event.target.parentNode.getAttribute("classid");
+        if(id.length < 17) {
+            var newClasses = Session.get("newClasses");
+            newClasses.splice(newClasses.map(function(a) {
+                return a._id;
+            }).indexOf(id),1);
+            Session.set("newClasses", newClasses);
+            return;
+        }
         if(profile.classes.indexOf(id) !== -1) {
             profile.classes.splice(profile.classes.indexOf(id),1);
             Session.set("profile", profile);
@@ -320,19 +388,17 @@ Template.profile.events({
 function slideToField(field) {
     var order = ["basicInfo", "enrollInfo", "createInfo"];
     $(".moveArrow").animate({"opacity":0})
-    $("#enrollClassList").fadeOut(200);
+    if(field === 0) $("#enrollClassList").fadeOut(200);
     var viewing = Session.get("sections")[1]
-    var move = (viewing-field < 0) ? "-50%" : "150%";
+    var move = (viewing-field < 0) ? "-100%" : "150%";
     $("#"+order[viewing]).animate({top: move});
     $("#"+order[field]).animate({
-        top:"20%"
+        top:"17%"
     },{
         complete: function() {
             Session.set("sections", [Session.get("sections")[0],field]);
             $(".moveArrow").animate({"opacity":1});
-            if(field === 1) {
-                $("#enrollClassList").fadeIn(200);
-            }
+            if(field === 1) $("#enrollClassList").fadeIn(200);
         }
     });
 }

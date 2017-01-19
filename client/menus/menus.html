@@ -130,7 +130,7 @@
         <h3>Requests</h3>
     </div>
     <p class="sidebarDesc">Ask for help, submit a bug, or request a feature! We won't bite.</p>
-    <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..."></textarea><br>
+    <textarea id="requestArea" class="restrict" rows="4" cols="50" maxlength="500" placeholder="Enter request here..." style="color:{{divColor 'textColor'}}"></textarea><br>
     <span id="requestRes" class="resText">{{restrict 'requestArea'}}</span>
     <span style="opacity:0">.</span>
     <div id="requestSubmit">
@@ -142,7 +142,7 @@
 
 <template name="sidebarCreatePlate">
     <div class="sectionTitle downOffset">
-        <h3>Requests</h3>
+        <h3>Classes</h3>
     </div>
     <p class="sidebarDesc">Pick a class to create work for.</p>
     {{#each myClasses}}
@@ -223,27 +223,31 @@
                 <input id="privateCode" placeholder="Enter code here...">
             </div>
             <div id="settingClassWrapper">
-                <div id="label" class="classBox">
-                    <span class="name classText">Class Name</span>
-                    <span class="teacher classText">Teacher</span>
-                    <span class="hour classText">Hour</span>
-                    <span class="subscriptions classText">Members</span>
+                <div id="classHeader">
+                    <div id="label" class="classBox">
+                        <span class="name classText">Class Name</span>
+                        <span class="teacher classText">Teacher</span>
+                        <span class="hour classText">Hour</span>
+                        <span class="subscriptions classText">Members</span>
+                    </div>
                 </div>
-                {{#if notsearching}}
-                    {{#each classes}}
-                        {{> classDisplay}}
-                    {{/each}}
-                    {{#if noclass}}
-                        <h3>No results found...</h3>
+                <div id="classBody">
+                    {{#if notsearching}}
+                        {{#each classes}}
+                            {{> classDisplay}}
+                        {{/each}}
+                        {{#if noclass}}
+                            <h3>No results found...</h3>
+                        {{/if}}
+                    {{else}}
+                        {{#each autocompleteClasses}}
+                            {{> classDisplay}}
+                        {{/each}}
+                        {{#if notfound}}
+                            <h3>No results found...</h3>
+                        {{/if}}
                     {{/if}}
-                {{else}}
-                    {{#each autocompleteClasses}}
-                        {{> classDisplay}}
-                    {{/each}}
-                    {{#if notfound}}
-                        <h3>No results found...</h3>
-                    {{/if}}
-                {{/if}}
+                </div>
             </div>
         </div>
         <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
@@ -294,15 +298,19 @@
                 </div>
                 <div id="formContainer">
                     <div class="formDiv">
-                       {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
+                        <p class="profTitle">**School:</p>
+                        {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
                    </div>
                    <div class="formDiv">
+                    <p class="profTitle">Hour:</p>
                        <input class="creInput" type="text" form="hour" placeholder="Hour">
                    </div>
                    <div class="formDiv">
-                       {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" form="teacher" placeholder="Teacher | Ex: Marc DeZwaan" }}
+                        <p class="profTitle">Teacher:</p>
+                        {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" form="teacher" placeholder="Teacher | Ex: Marc DeZwaan" }}
                    </div>
                    <div class="formDiv">
+                        <p class="profTitle">**Class Name:</p>
                        <input class="creInput" type="text" form="name" placeholder="**Class Name">
                    </div>
                    <div class="formDiv">
@@ -324,7 +332,7 @@
                        </div>
                    </div>
                    <h3 id="creSubmit" style="border:1px solid {{divColor 'textColor'}}">Submit Request</h3>
-               </div>
+                </div>
             </div>
         </div>
     </div>

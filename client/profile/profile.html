@@ -35,27 +35,31 @@
                     <span id="createActivate">Class not here?</span>
                 </div>
                 <div id="settingClassWrapper">
-                    <div id="label" class="classBox">
-                        <span class="name classText">Class Name</span>
-                        <span class="teacher classText">Teacher</span>
-                        <span class="hour classText">Hour</span>
-                        <span class="subscriptions classText">Members</span>
+                    <div id="classHeader">
+                        <div id="label" class="classBox">
+                            <span class="name classText">Class Name</span>
+                            <span class="teacher classText">Teacher</span>
+                            <span class="hour classText">Hour</span>
+                            <span class="subscriptions classText">Members</span>
+                        </div>
                     </div>
-                    {{#if notsearching}}
-                        {{#each classes}}
-                            {{> classDisplay}}
-                        {{/each}}
-                        {{#if noclass}}
-                            <h3>No results found...</h3>
+                    <div id="classBody">
+                        {{#if notsearching}}
+                            {{#each classes}}
+                                {{> classDisplay}}
+                            {{/each}}
+                            {{#if noclass}}
+                                <h3>No results found...</h3>
+                            {{/if}}
+                        {{else}}
+                            {{#each autocompleteClasses}}
+                                {{> classDisplay}}
+                            {{/each}}
+                            {{#if notfound}}
+                                <h3>No results found...</h3>
+                            {{/if}}
                         {{/if}}
-                    {{else}}
-                        {{#each autocompleteClasses}}
-                            {{> classDisplay}}
-                        {{/each}}
-                        {{#if notfound}}
-                            <h3>No results found...</h3>
-                        {{/if}}
-                    {{/if}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,15 +77,19 @@
                 </div>
                 <div id="formContainer">
                     <div class="formDiv">
-                       {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
+                        <p class="profTitle">**School:</p>
+                        {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
                    </div>
                    <div class="formDiv">
+                    <p class="profTitle">Hour:</p>
                        <input class="creInput" type="text" form="hour" placeholder="Hour">
                    </div>
                    <div class="formDiv">
-                       {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" form="teacher" placeholder="Teacher | Ex: Marc DeZwaan" }}
+                        <p class="profTitle">Teacher:</p>
+                        {{> inputAutocomplete settings=teacherComplete class="form-control creInput" type="text" form="teacher" placeholder="Teacher | Ex: Marc DeZwaan" }}
                    </div>
                    <div class="formDiv">
+                        <p class="profTitle">**Class Name:</p>
                        <input class="creInput" type="text" form="name" placeholder="**Class Name">
                    </div>
                    <div class="formDiv">
@@ -105,6 +113,10 @@
                    <h3 id="creSubmit" style="border:1px solid {{divColor 'textColor'}}">Submit Request</h3>
                </div>
             </div>
+        </div>
+        <div id="profileSubmit">
+            <h3>Finish!</h3>
+            <i class="fa fa-chevron-right" aria-hidden="true"></i>
         </div>
         <div id="forwardArrow" class="circleIcon moveArrow" style="display:{{showArrow 'forward'}}">
             <i class="fa fa-chevron-down" aria-hidden="true"></i>

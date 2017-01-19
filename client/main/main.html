@@ -31,7 +31,7 @@
             </div>
         </div>
         <div id="divCenter">
-            <header id="mainHeader" style="background-color:{{divColor 'mainColor'}}{{refetchEvents}}">
+            <header id="mainHeader" style="background-color:{{divColor 'mainColor'}}">
                 <h1>Hourglass</h1><h2>{{schoolName}}</h2>
                 <div id="dropdown">
                     <img src="{{avatar}}">
@@ -81,7 +81,7 @@
                                 <div id="workComments">
                                     <h3>Comments</h3>
                                     <div>
-                                        <textarea id="workComment" class="restrict" rows="4" cols="50" maxlength="200"></textarea><br>
+                                        <textarea id="workComment" class="restrict" rows="4" cols="50" maxlength="200" style="color:{{divColor 'textColor'}}"></textarea><br>
                                         <div>
                                             <span class="resText">{{restrict 'workComment'}}</span>
                                             <div id="commentSubmit">Submit</div>
@@ -155,10 +155,6 @@
                 <p>{{username}}</p>
             </div>
             <div id="userFunctions" style="background-color:{{divColor 'userDropdownColor'}}">
-                <div id="myprofile" class="userFunction" onclick="window.location='/profile';">
-                    <i class="fa fa-user" aria-hidden="true"></i>
-                    <p>My Profile</p>
-                </div>
                 {{#if admin}}
                     <div id="myprofile" class="userFunction" onclick="window.location='/admin';">
                         <i class="fa fa-cogs" aria-hidden="true"></i>

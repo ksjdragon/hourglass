@@ -38,19 +38,23 @@ html {
 }
 
 ::-webkit-input-placeholder {
-   font-size: 70%;
+	color: #FCF0F0;
+	font-size: 70%;
 }
 
 :-moz-placeholder {
-   font-size: 70%;  
+	color: #FCF0F0;
+	font-size: 70%;  
 }
 
 ::-moz-placeholder {
-   font-size: 70%;  
+	color: #FCF0F0;
+	font-size: 70%;  
 }
 
-:-ms-input-placeholder {  
-   font-size: 70%;  
+:-ms-input-placeholder { 
+	color: #FCF0F0;
+	font-size: 70%;  
 }
 
 .formInvalid::-webkit-input-placeholder {
@@ -163,9 +167,8 @@ input {
 
 .noScroll input, .noScroll textarea {
 	font-family: 'Raleway';
-	background-color: #EBEBEB;
-	border: 3px solid #CECECE;
-	border-radius: 3px;
+	background-color: rgba(0,0,0,0.2);
+	border: 0;
 	resize: none;
 }
 
@@ -1287,12 +1290,14 @@ textarea.clickModify {
 }
 
 #requestArea {
-	font-size: 1.8vh;
-	width: 85%;
+	font-size: 1.5vh;
+	width: 80%;
 	height: 35%;
+	padding: 4%;
 	margin-left: calc(7.5% - 6px);
 	margin-bottom: 5px;
 
+	display: inline;
 	outline: none;
 }
 
