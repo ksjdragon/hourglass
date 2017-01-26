@@ -1,25 +1,12 @@
 <template name="login">
 	<div class="noScroll">
-		<div id="loginCont">
-			<header id="loginHeader">
-				<img id="logo" src="logo.png">
-				<h1 id="loginTitle">Hourglass</h1>
-			</header>
-			<div id="loginMain">
-				<img id="bannerBg" src="banner100.jpg">
-				<div id="circle">
-					<div id="loginContent">
-						<h2 class="text">Hourglass</h2>
-						<p class="text">All your work in one place. Finish before your time runs out.</p>
-						<h3 class="text" id="loginButton" onclick="document.getElementById('login-buttons-google').click();">Sign in</h3>
-					</div>
-				</div>
-			</div>
-			<footer id="loginFooter">
-				<p id="github">View the <a href="https://github.com/ksjdragon/hourglass">Code!</a></p>
-				<p id="version">Version 0.1.2</p>
-			</footer>
+		<div id="loginBody">
+			<img src="logo.png" id="loginLogo">
 		</div>
+		<footer id="loginFooter">
+			<p id="github">View the <a href="https://github.com/ksjdragon/hourglass">Code!</a></p>
+			<p id="version">Version 0.1.2</p>
+		</footer>
 	</div>
 	{{> loginButtons}}
 </template>
