@@ -69,6 +69,7 @@ Template.registerHelper('screen', (multiplier, fraction) => {
 });
 
 Template.registerHelper('divColor', (div) => { // Reactive color changing based on preferences. Colors stored in themeColors.
+    if(Session.get("user") === null) return;
     return (Object.keys(Session.get("user")).length === 0) ? themeColors["lux"][div] : Session.get("user").preferences.theme[div];
 });
 

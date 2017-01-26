@@ -58,7 +58,7 @@
 
 .opTitle {
 	font-weight: 200;
-	margin: 0;
+	margin: 1%;
 }
 
 #basicNext {
@@ -230,6 +230,7 @@
 
 #profPageWrapper #createWrapper {
 	margin: auto;
+	margin-top: -1%;
 	padding: 3%;
 	padding-bottom: 2%;
 	width: 30%;
@@ -237,12 +238,8 @@
 	background-color: rgba(255,255,255,0.2);
 }
 
-.formDiv {
-	width: 100%;
-	margin: 0;
-	padding: 2%;
-	background-color: transparent;
-	display: inline;
+#profPageWrapper .-autocomplete-container {
+	margin-top: -6%;
 }
 
 #profPageWrapper #creSubmit {
@@ -251,10 +248,6 @@
 
 #profPageWrapper .profTitle {
 	margin-bottom: 1%;
-}
-
-#createWrapper p {
-	margin: 0;
 }
 
 #profPageWrapper input {

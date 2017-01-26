@@ -65,7 +65,23 @@ Meteor.publish('classes', function() {
         } else {
             Meteor.call('createProfile', this.userId);
             return classes.find({
-                _id: null
+                privacy: false,
+                status: true,
+            }, {
+                // Return non-sensitive fields
+                fields: {
+                    school: 1,
+                    name: 1,
+                    hour: 1,
+                    teacher: 1,
+                    admin: 1,
+                    status: 1,
+                    privacy: 1,
+                    category: 1,
+                    moderators: 1,
+                    banned: 1,
+                    subscribers: 1
+                }
             });
         }
     }
@@ -108,6 +124,15 @@ Meteor.publish('requests', function() {
     }
 });
 
+Meteor.publish("personalUser", function() {
+    return Meteor.users.find({_id: this.userId}, {
+        fields: {
+            'services': 1,
+            'profile': 1
+        }
+    });
+});
+
 //Publishes every-persons email and user-ids
 
 Meteor.publish('users', function() {
@@ -119,16 +144,13 @@ Meteor.publish('users', function() {
             fields: {
                 'services.google.email': 1,
                 'services.google.picture': 1,
-                'profile.banner': 1,
                 'profile.grade': 1,
-                'profile.description': 1,
                 'profile.name': 1,
                 'profile.school': 1
             }
         });
     }
 });
-
 
 // Allows only superadmins to edit collections from client
 Security.permit(['insert', 'update', 'remove']).collections([schools, classes, work]).ifHasRole('superadmin');
@@ -595,7 +617,6 @@ Meteor.methods({
             throw new Meteor.Error(errors[security]);
         }
     },
-
     // User Functions
     'editProfile': function(change) {
         var refyear = new Date().getUTCFullYear();
@@ -605,15 +626,11 @@ Meteor.methods({
             "school": change.school,
             "grade": change.grade,
             "classes": current.classes,
-            "description": change.description,
-            "banner": change.banner,
             "preferences": change.preferences,
             "name": current.name,
-            "complete": current.complete
+            "complete": change.complete
         };
-        if (current.description && current.description.length > 50) {
-            current.description = current.description.slice(0, 50);
-        }
+
         if ((current.grade <= refyear || current.grade >= refyear + 4) && current.grade !== 0) {
             current.grade = refyear;
         }
@@ -646,7 +663,6 @@ Meteor.methods({
             _id: userId
         });
         var current = currentuser.profile;
-        current.banner = "/Banners/defaultcover.jpg";
         current.classes = [userId];
         current.preferences = {
             "theme": themeColors.lux,

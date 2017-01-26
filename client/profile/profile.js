@@ -215,22 +215,7 @@ Template.profile.events({
         });
         Session.set("newClasses", newClasses);
         $(".creInput").each(function(){$(this).val('');});
-        /*if (!teachers.findOne({
-                name: values.teacher
-            })) {
-            Meteor.call("createTeacher", values.teacher, values.school, function(error, result) {
-                if (error !== undefined) {
-                    sAlert.error(error.message, {
-                        effect: 'stackslide',
-                        position: 'top'
-                    });
-                } else {
-                    sendData("createClass");
-                }
-            });
-        } else {
-            sendData("createClass");
-        }*/
+        
     },
     'click #backArrow' () {
         slideToField(Session.get("sections")[1]-1);
@@ -343,9 +328,10 @@ Template.profile.events({
             }
         } catch(err) {}
     },
-    'click .classBox .fa-plus' (event) {
+    'click .classBox .fa-plus, click #classBody .classBox' (event) {
         var profile = Session.get("profile");
-        var id = event.target.parentNode.getAttribute("classid");
+        while(event.target.getAttribute("classid") === null) event.target = event.target.parentNode;
+        var id = event.target.getAttribute("classid");
         if(profile.classes.indexOf(id) === -1) {
             profile.classes.push(id);
             Session.set("profile", profile);
@@ -382,6 +368,74 @@ Template.profile.events({
                 return b.subscribers - a.subscribers;
             }));
         }
+    },
+    'click #profileSubmit' () {
+        // clear html and make page uninteractable
+        var myClasses = Session.get("profile").classes;
+        var newClasses = Session.get("newClasses");
+        var message = "Sorry, your profile couldn't be created. Please try again!";
+
+        _.each(myClasses, function(myClass) {
+            Meteor.call("joinClass", [myClass, ""], function(err, result) {
+                if(err !== undefined) {
+                    sAlert.error(message, {
+                        effect: 'stackslide',
+                        position: 'top'
+                    });
+                }
+            })  
+        });
+        _.each(newClasses, function(newClass) {
+            if (!teachers.findOne({
+                name: newClass.teacher
+            })) {
+                Meteor.call("createTeacher", newClass.teacher, newClass.school, function(error, result) {
+                    if (error !== undefined) {
+                        sAlert.error(message, {
+                            effect: 'stackslide',
+                            position: 'top'
+                        });
+                    } else {
+                        Meteor.call("createClass", newClass, function(error, result) {
+                            if(error !== undefined) {
+                                sAlert.error(message, {
+                                    effect: 'stackslide',
+                                    position: 'top'
+                                });    
+                            }
+                        });
+                    }
+                });
+            } else {
+                Meteor.call("createClass", newClass, function(error, result) {
+                    if(error !== undefined) {
+                        sAlert.error(message, {
+                            effect: 'stackslide',
+                            position: 'top'
+                        });    
+                    }
+                });
+            }
+        });
+        var profile = Session.get("profile");
+        profile.complete = true;
+        profile.preferences = Meteor.user().profile.preferences;
+        profile.classes.push(Meteor.userId());
+        Meteor.call("editProfile", profile, function(err, result) {
+            if(err !== undefined) {
+                sAlert.error(message, {
+                    effect: 'stackslide',
+                    position: 'top'
+                });
+            }
+            Meteor.subscribe('classes');
+            Meteor.subscribe('schools');
+            Meteor.subscribe('teachers');
+            Meteor.subscribe('work');
+            Meteor.subscribe('requests');
+            Meteor.subscribe("personalUser");
+            Meteor.subscribe('users');
+        });  
     }
 });
 
