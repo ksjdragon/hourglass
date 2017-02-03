@@ -116,7 +116,7 @@
                                     <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                     <p>{{work 'reports'}}</p>
                                 </div>
-                                <div class="workCreator doneUser" onclick="window.location='/user/{{work 'email'}}'">
+                                <div class="workCreator doneUser">
                                     <div style="display:inline-block;width:{{screen '3' '140'}}">
                                         <img src="{{work 'avatar'}}" style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
                                     </div>
@@ -237,14 +237,14 @@
         </div>
         <div class="commentInfo">
             <span class="commentComment">{{comment}}</span><br>
-            <span class="commentUser" onclick="window.location='/user/{{email}}'">{{user}}</span>
+            <span class="commentUser">{{user}}</span>
             <span class="commentDate">{{date}}</span>
         </div>
     </div>
 </template>
 
 <template name="doneUsers">
-    <div class="doneUser" onclick="window.location='/user/{{email}}'">
+    <div class="doneUser">
         <div style="display:inline-block">
             <img src='{{avatar}}' style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
         </div>

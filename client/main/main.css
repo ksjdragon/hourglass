@@ -328,14 +328,17 @@ input {
 }
 
 #exportDiv {
+	background-color: rgba(255,255,255,0.1);
 	position: absolute;
     bottom: 0;
 }
 
-#classListHolder {
-	max-height: 48%;
-	width: 100%;
+#exportDiv:hover {
+	background-color: rgba(255,255,255,0.2);
+}
 
+#classListHolder {
+	width: 100%;
 	overflow-y: auto;
 }
 
@@ -549,8 +552,11 @@ input.clickModify, textarea.clickModify {
 	width: 100%;
 	font-size: 2.2vh;
 	font-weight: 200;
+	padding: 1%;
+
 	background-color: rgba(0,0,0,0);
 	border-color: rgba(0,0,0,0);
+	outline:none;
 	cursor: pointer;
 
 	-webkit-transition: background-color 0.4s ease, border-color 0.4s ease;  
@@ -560,8 +566,7 @@ input.clickModify, textarea.clickModify {
 }
 
 input.clickModify:hover, textarea.clickModify:hover {
-	background-color: rgba(0,0,0,0.1);
-	
+	background-color: rgba(0,0,0,0.1) !important;
 }
 
 textarea.clickModify {
@@ -580,6 +585,8 @@ textarea.clickModify {
 #editWorkCont {
 	width: 100%;
 	height: 100%;
+
+	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.12);
 
 	position: relative;
 	display: table;
@@ -650,6 +657,7 @@ textarea.clickModify {
 .clickModify.dropdown {
 	font-size: 2.1vh;
 	width: calc(100% - 2px);
+	padding: none;
 
 	background-color: rgba(0,0,0,0.07);
 	cursor: pointer;
@@ -1032,7 +1040,6 @@ textarea.clickModify {
 
 .commentBox {
 	margin: 0 !important;
-	height: 50%;
 	padding: 2%;
 	background-color: rgba(255,255,255,0.1);
 	border-bottom: solid 1px #CCC;
@@ -1122,7 +1129,7 @@ textarea.clickModify {
 	background-color: rgba(0,0,0,0.1);
 
 	position: relative;
-	cursor: pointer;
+	cursor: default;
 
 	-webkit-transition: background-color 0.4s ease;  
 	-moz-transition: background-color 0.4s ease; 
@@ -1139,8 +1146,6 @@ textarea.clickModify {
 }
 
 .doneUser img {
-	margin-bottom: 0.3vw;
-
 	display: inline-block;
 	vertical-align: middle;
 	line-height: normal;

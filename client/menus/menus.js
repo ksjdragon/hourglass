@@ -10,6 +10,11 @@ var sidebarMode = [null, null];
 
 Template.sidebarMenuPlate.rendered = function() {
     $(".menuWrapper").slideDown(300);
+     $("#classListHolder").slimScroll({
+        width: '100%',
+        height: 'auto',
+        touchScrollStep: 90
+    });
 };
 Template.sidebarOptionPlate.rendered = function() {
     $(".menuWrapper").slideDown(300);
@@ -57,7 +62,7 @@ Template.sidebarMenuPlate.events({
     'click #filterHead' (event) {
         if (event.target.id === "disableFilter") return;
         if (!filterOpen[0]) {
-            $("#filterWrapper").slideDown(300);
+            $("#filterWrapper").slideDown(300, function(){recalcHeightScroll();});
         } else {
             $("#filterWrapper").slideUp(300);
         }
@@ -65,8 +70,9 @@ Template.sidebarMenuPlate.events({
     },
     'click #typeFilterWrapper' () {
         if (!filterOpen[1]) {
-            $("#classFilterHolder").slideDown(300);
+            $("#classFilterHolder").slideDown(300, function(){recalcHeightScroll();});
         } else {
+            recalcHeightScroll();
             $("#classFilterHolder").slideUp(300);
         }
         filterOpen[1] = !filterOpen[1];
@@ -655,3 +661,9 @@ toggleToClassInfoMode = function(mode) {
         $(this).fadeIn(250);
     });
 };
+
+function recalcHeightScroll() {
+    var height = (94-100*$("#classListHolder").offset().top / window.innerHeight) + "vh";
+    $("#classListHolder").css("height", height);
+    $("#classListHolder").parent().css("height", height);
+}

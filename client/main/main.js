@@ -46,6 +46,15 @@ Template.main.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
     setTimeout(startDragula, 300);
     $("#menuContainer").toggle();
+    $("#doneUsers").slimScroll({
+        height: '34vh',
+        touchScrollStep: 90
+    });
+    $("#comment").slimScroll({
+        width: '100%',
+        height: '20vh',
+        touchScrollStep: 90
+    });
     /*$("#classListHolder").slimScroll({
         height: '30vh',
         size: '5px',
@@ -53,6 +62,7 @@ Template.main.rendered = function() {
         railColor: '#222',
         railOpacity: 0.1,
     });*/
+
     document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
 
@@ -457,6 +467,7 @@ Template.main.events({
         if(!$("#"+modifyingInput)[0].className.includes("dropdown")) {
             event.target.select();
             event.target.style.cursor = "text";
+            event.target.style.backgroundColor = "rgba(0,0,0,0.1)";
         }
     },
     'keydown .dropdown' (event) {
@@ -664,6 +675,7 @@ function closeInput() { // Close a changeable input and change it back to span.
     Session.set("currentWork", data);
     Session.set("restrictText", {});
     $("#"+modifyingInput).css('cursor','pointer');
+    $("#"+modifyingInput).css('background-color', 'rgba(0,0,0,0)');
     if(!Session.get("newWork")) {
         serverData = Session.get("currentWork");
         if(checkMissing()) return;

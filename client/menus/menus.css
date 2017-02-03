@@ -73,6 +73,7 @@
 
 #filterWrapper {
 	display: none;
+	max-height: 64vh;
 }
 
 #backgroundOverlay {
