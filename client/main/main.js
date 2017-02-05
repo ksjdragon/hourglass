@@ -55,15 +55,16 @@ Template.main.rendered = function() {
         height: '20vh',
         touchScrollStep: 90
     });
-    /*$("#classListHolder").slimScroll({
-        height: '30vh',
-        size: '5px',
-        railVisible: true,
-        railColor: '#222',
-        railOpacity: 0.1,
-    });*/
 
     document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
+};
+
+Template.classesMode.rendered = function() {
+    $(".workHolder").slimScroll({
+        width: '100%',
+        height: '',
+        touchScrollStep: 90
+    });
 };
 
 // Global Helpers
@@ -227,7 +228,7 @@ Template.main.helpers({
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
-                $(".overlay").fadeIn(250);
+                $(".overlay").fadeIn(150);
             },
             eventMouseover: function(event, jsEvent, view) {
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
@@ -321,7 +322,7 @@ Template.main.events({
         }
 
         if (e === "overlay") { // Overlay closing.
-            $(".overlay").fadeOut(250);
+            $(".overlay").fadeOut(150);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
             }
@@ -348,7 +349,7 @@ Template.main.events({
         }
         Session.set("newWork", true);
         Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
-        $(".overlay").fadeIn(250);
+        $(".overlay").fadeIn(150);
     },
     'click .fa-check-circle-o' () { // Confirmation Button
         sendData(confirm);
@@ -391,7 +392,7 @@ Template.main.events({
                 var inputs = $('#editWork .clickModify').css("cursor", "default");
             }
         }
-        $(".overlay").fadeIn(250);
+        $(".overlay").fadeIn(150);
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");
@@ -585,12 +586,12 @@ Template.main.events({
         if(checkMissing()) return;
         sendData("createWork");
         Session.set("newWork",false);
-        $(".overlay").fadeOut(250);
+        $(".overlay").fadeOut(150);
     },
     'click #workDelete' () {
         serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
-        $(".overlay").fadeOut(250);
+        $(".overlay").fadeOut(150);
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];

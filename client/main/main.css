@@ -317,6 +317,11 @@ input {
 	vertical-align: middle;
 }
 
+.slimScrollBar {
+	border-radius: 1px !important;
+	z-index: 1 !important;
+}
+
 #divLeftBar .fa-university, #divLeftBar .fa-calendar, #divLeftBar .fa-download, #divLeftBar .fa-tasks,
 #divLeftBar .fa-graduation-cap, #divLeftBar .fa-book {
 	font-size: 2vh;
@@ -339,6 +344,7 @@ input {
 
 #classListHolder {
 	width: 100%;
+	max-height: 27.4507vh;
 	overflow-y: auto;
 }
 
@@ -414,8 +420,6 @@ input {
 
 .mainClass {
 	width: 100%;
-	padding-bottom: 1%;
-
 	box-shadow: 2px 2px 5px 1px #666;
 }
 
@@ -456,7 +460,6 @@ input {
 }
 
 .creWork {
-	margin-bottom: 5%;
 	cursor: pointer;
 	box-shadow: 0px 5px 5px -2px #666;
 
@@ -475,12 +478,22 @@ input {
 }
 
 .workHolder {
-	width: 100%;
+	width: 90% !important;
+	max-height: 71vh;
+	padding: 5%;
+}
+
+.workCard:first-child {
+	margin-top: 0%;
+}
+
+.workCard:last-child {
+	margin-bottom: 0%;
 }
 
 .workCard {
-	width: 90%;
-	margin: 5%;
+	width: 100%;
+	margin: 5% 0 5% 0;
 	background-color: rgba(255,255,255,0.3);
 	box-shadow: 1px 1px 5px 1px #666;
 	cursor: pointer;
@@ -1335,9 +1348,9 @@ textarea.clickModify {
 }
 
 .scaled {
-	-webkit-transform: scale(1.12);
-	-ms-transform: scale(1.12);
-	transform: scale(1.12);
+	-webkit-transform: scale(1.07);
+	-ms-transform: scale(1.07);
+	transform: scale(1.07);
 }
 
 .gu-mirror {

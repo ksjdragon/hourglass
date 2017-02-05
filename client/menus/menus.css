@@ -1,7 +1,3 @@
-#filterWrapper {
-	width: 100%;
-}
-
 .sectionTitle {
 	font-weight: 200;
 	font-size: 2vh;
@@ -72,8 +68,10 @@
 }
 
 #filterWrapper {
-	display: none;
+	width: 100%;
+	height: 64vh;
 	max-height: 64vh;
+	display: none;
 }
 
 #backgroundOverlay {
