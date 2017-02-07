@@ -1,3 +1,9 @@
+#loginHeader {
+	height: 6vh;
+	padding: 1%;
+	background-color: #222328;
+}
+
 #loginBody {
 	height: 94vh;
 	width: 100%;
@@ -13,7 +19,7 @@
 }
 
 #loginLogo {
-	height: 50vh;
+	height: 100%;
 }
 
 #github, #version {
