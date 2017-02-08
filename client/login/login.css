@@ -1,6 +1,6 @@
 #loginHeader {
 	height: 6vh;
-	padding: 2.1vh 0 0 1.5vh;
+	padding: 2.5vh 0 0 2vh;
 	background-color: #222328;
 }
 
@@ -13,7 +13,6 @@
 #loginFooter {
 	width: 100%;
 	height: 6vh;
-	background-color: #1C1C1F;
 	position: absolute;
 	bottom: 0;
 }
@@ -74,7 +73,7 @@
 
 	position: absolute;
 	top: 20vh;
-	left: 5vh;
+	left: 7vh;
 }
 
 #loginMidLogo {
@@ -82,7 +81,7 @@
 
 	position: absolute;
 	top: 26vh;
-	left: 10.5vh;
+	left: 12.5vh;
 }
 
 #loginButton {
@@ -110,21 +109,18 @@
 	background-color: rgba(0,0,0,0.2);
 }
 
-#aboutText, #version {
+#version {
 	font-size: 1.7vh;
 	color: #FFF !important;
+	margin-right: 1%;
 
 	height: 6vh;
 	margin: 0;
-	padding: 0 0 0 1vw;
+	padding-right: 1vw;
 
 	line-height: 6vh;
 	display: inline-block;
-}
-
-#version {
 	float: right;
-	margin-right: 1%;
 }
 
 a {
