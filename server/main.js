@@ -157,7 +157,9 @@ Security.permit(['insert', 'update', 'remove']).collections([schools, classes, w
 
 Accounts.validateLoginAttempt(function(info) {
     var user = info.user;
-    if(user.banned) throw new Meteor.Error(403, 'You are banned');
+    if(info.user) {
+       if(user.banned) throw new Meteor.Error(403, 'You are banned'); 
+    }
     return true;
 });
 

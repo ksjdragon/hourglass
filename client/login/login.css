@@ -1,6 +1,6 @@
 #loginHeader {
 	height: 6vh;
-	padding: 1%;
+	padding: 2.1vh 0 0 1.5vh;
 	background-color: #222328;
 }
 
@@ -20,10 +20,98 @@
 
 #loginLogo {
 	height: 100%;
+	cursor: pointer;
 }
 
-#github, #version {
-	font-size: 2.3vh;
+#loginTexts {
+	color: #FCF0F0;
+	width: 40%;
+	margin-left: 48%;
+	position: absolute;
+	top: 23vh;
+}
+
+#loginTexts h1 {
+	font-size: 7vh;
+	font-weight: 300;
+	margin: 0;
+	padding: 0;
+	line-height: 3vh;
+}
+
+#loginTexts h2 {
+	font-size: 15vh;
+}
+
+#loginTexts h5 {
+	font-size: 5vh;
+	font-weight: 100;
+}
+
+#loginDec {
+	width: 49vw;
+	height: 200vh;
+
+	background-color: rgba(255,255,255,0.1);
+	position: absolute;
+	top: -46vh;
+	right: 5vw;
+
+	-webkit-transform: rotate(150deg);
+	-ms-transform: rotate(150deg);
+	transform: rotate(150deg);
+}
+
+#loginCirc {
+	width: 55vh;
+	height: 55vh;
+
+	background-color: rgba(255,255,255,0.1);
+
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+
+	position: absolute;
+	top: 20vh;
+	left: 5vh;
+}
+
+#loginMidLogo {
+	height: 44vh;
+
+	position: absolute;
+	top: 26vh;
+	left: 10.5vh;
+}
+
+#loginButton {
+	font-size: 3.5vh;
+	width: 12vw;
+	margin-top: 4vh;
+	margin-left: 16vw;
+	padding: 1vh;
+
+	border: 1px solid #FCF0F0;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
+}
+
+#loginButton:hover {
+	background-color: rgba(0,0,0,0.2);
+}
+
+#aboutText, #version {
+	font-size: 1.7vh;
 	color: #FFF !important;
 
 	height: 6vh;
@@ -46,9 +134,28 @@ a {
 	-webkit-transition: color 0.4s ease;  
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;
-	transition: color 0.4s ease
+	transition: color 0.4s ease;
 }
 
 a:hover {
 	color: #00BFFF;
+}
+
+.github-corner:hover .octo-arm {
+	animation:octocat-wave 560ms ease-in-out
+}
+
+@keyframes octocat-wave {
+	0%,100% { transform:rotate(0) }
+	20%,60% { transform:rotate(-25deg) }
+	40%,80% { transform:rotate(10deg) }
+}
+
+@media (max-width:500px) {
+	.github-corner:hover .octo-arm {
+		animation:none
+	}
+	.github-corner .octo-arm {
+		animation:octocat-wave 560ms ease-in-out
+	}
 }
