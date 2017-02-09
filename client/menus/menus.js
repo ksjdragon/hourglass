@@ -15,6 +15,7 @@ Template.sidebarMenuPlate.rendered = function() {
         height: '',
         touchScrollStep: 90
     });
+    $("#filterWrapper.slimScrollBar").css("display", "none");
 };
 Template.sidebarOptionPlate.rendered = function() {
     $(".menuWrapper").slideDown(300);

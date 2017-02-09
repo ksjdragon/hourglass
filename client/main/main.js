@@ -65,6 +65,7 @@ Template.classesMode.rendered = function() {
         height: '',
         touchScrollStep: 90
     });
+    $(".mainClass .slimScrollBar").css("display", "none");
 };
 
 // Global Helpers
