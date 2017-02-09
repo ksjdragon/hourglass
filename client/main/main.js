@@ -363,6 +363,7 @@ Template.main.events({
             height: '20vh',
             touchScrollStep: 90
         });
+        $("#workComments .slimScrollBar").css("display", "none");
     },
     'click .fa-check-circle-o' () { // Confirmation Button
         sendData(confirm);
@@ -411,6 +412,7 @@ Template.main.events({
             height: '20vh',
             touchScrollStep: 90
         });
+        $("#workComments .slimScrollBar").css("display", "none");
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");
