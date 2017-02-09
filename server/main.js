@@ -429,7 +429,7 @@ Meteor.methods({
             _id: classId
         });
         var security = securityCheck([1, [5, 8, 9, true], false],
-                                     Object.assign(foundclass || {}, {userId: found._id}));
+                                     Object.assign({}, foundclass || {}, {userId: found._id}));
         if (!security) {
             classes.update({
                 _id: classId
@@ -452,7 +452,7 @@ Meteor.methods({
             _id: classId
         });
         var security = securityCheck([1, [[5, [13, 22, true], false], 9, 21, true], false],
-                                     Object.assign(foundclass, {userlist: userlist}));
+                                     Object.assign({}, foundclass, {userlist: userlist}));
         if (!security) {
             if (_.contains(foundclass[userlist], userId)) {
                 foundclass[userlist] = _.without(foundclass[userlist], userId);
@@ -506,9 +506,9 @@ Meteor.methods({
             _id: input.class
         });
         var security = securityCheck([[[8, 9, true], 16, false], 10, 20, 11, 12, true],
-                                     Object.assign(found || {}, input, {userId: Meteor.userId()}));
+                                     Object.assign({}, found || {}, input, {userId: Meteor.userId()}));
         if (!security) {
-            input = Object.assign(input, {confirmations: [Meteor.userId()], reports: [], done: [], numberdone: 0, comments: []});
+            input = Object.assign({}, input, {confirmations: [Meteor.userId()], reports: [], done: [], numberdone: 0, comments: []});
             work.insert(input);
         } else {
             throw new Meteor.Error(errors[security]);
@@ -523,7 +523,7 @@ Meteor.methods({
             _id: currentwork.class
         });
         var security = securityCheck([[1, 16, 13, 5, false], 11, 12, 10, 20, true],
-                                     Object.assign(currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
+                                     Object.assign({}, currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
         if (!security) {
             work.update({
                 _id: change._id
@@ -550,7 +550,7 @@ Meteor.methods({
         });
         var user = Meteor.userId();
         var security = securityCheck([15, [16, [8, 9, true], false]],
-                                     Object.assign(workobject, currentclass || {}, {userId: user, comment: comment}));
+                                     Object.assign({}, workobject, currentclass || {}, {userId: user, comment: comment}));
         if (!security) {
             var commentInfo = {
                 "comment": comment,
@@ -578,7 +578,7 @@ Meteor.methods({
             _id: workobject.class
         });
         var security = securityCheck([[16, 9, false], 23, true],
-                                     Object.assign(workobject, currentclass || {}, {userId: Meteor.userId(), toggle: input[1]}));
+                                     Object.assign({}, workobject, currentclass || {}, {userId: Meteor.userId(), toggle: input[1]}));
         if (!security) {
             var userindex = workobject[input[1]].indexOf(Meteor.userId());
             if (userindex === -1) {
@@ -610,7 +610,7 @@ Meteor.methods({
             _id: currentwork.class
         });
         var security = securityCheck([1, 16, 13, 5, false],
-                                     Object.assign(currentwork, currentclass || {}));
+                                     Object.assign({}, currentwork, currentclass || {}));
         if (!security) {
             work.remove({
                 _id: workId
@@ -694,7 +694,7 @@ Meteor.methods({
             _id: change
         });
         var security = securityCheck([17, [5, 24, false], 18, true],
-                                     Object.assign(found, {userId: Meteor.userId(), pass: pass}));
+                                     Object.assign({}, found, {userId: Meteor.userId(), pass: pass}));
         if (!security) {
             var foundsubs = found.subscribers;
             classes.update({

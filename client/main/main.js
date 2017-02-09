@@ -50,11 +50,6 @@ Template.main.rendered = function() {
         height: '34vh',
         touchScrollStep: 90
     });
-    $("#comment").slimScroll({
-        width: '100%',
-        height: '20vh',
-        touchScrollStep: 90
-    });
 
     document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 };
@@ -229,6 +224,11 @@ Template.main.helpers({
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
                 $(".overlay").fadeIn(150);
+                $("#comment").slimScroll({
+                    width: '100%',
+                    height: '20vh',
+                    touchScrollStep: 90
+                });
             },
             eventMouseover: function(event, jsEvent, view) {
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
@@ -350,6 +350,11 @@ Template.main.events({
         Session.set("newWork", true);
         Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
         $(".overlay").fadeIn(150);
+        $("#comment").slimScroll({
+            width: '100%',
+            height: '20vh',
+            touchScrollStep: 90
+        });
     },
     'click .fa-check-circle-o' () { // Confirmation Button
         sendData(confirm);
@@ -393,6 +398,11 @@ Template.main.events({
             }
         }
         $(".overlay").fadeIn(150);
+        $("#comment").slimScroll({
+            width: '100%',
+            height: '20vh',
+            touchScrollStep: 90
+        });
     },
     'click #requestSubmit' () {
         var area = document.getElementById("requestArea");

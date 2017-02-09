@@ -474,6 +474,7 @@ input {
 }
 
 .creWork h4 {
+	font-size: 100%;
 	padding-left: 0;
 }
 
@@ -590,7 +591,7 @@ textarea.clickModify {
 #editWork {
 	min-height: 68vh;
 	margin: auto;
-	margin-top: 5%;
+	margin-top: 2%;
 
 	box-shadow: 2px 2px 5px 3px #333;
 }
@@ -602,11 +603,6 @@ textarea.clickModify {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.12);
 
 	position: relative;
-	display: table;
-}
-
-#workInfoContainer {
-	min-height: 68vh;
 }
 
 #workTypeBar {
@@ -615,7 +611,11 @@ textarea.clickModify {
 }
 
 #workNameDiv {
-	padding: 4% 4% 0 3.5%;
+	padding: 4% 0 0 3.5%;
+}
+
+#workNameDiv .resText {
+	font-size: 1.6vh;
 }
 
 #wName {
@@ -634,7 +634,7 @@ textarea.clickModify {
 }
 
 .workTitle {
-	font-size: 150%;
+	font-size: 2.1vh;
 	font-weight: 400;
 	margin: 0 3% 1% 0;
 	cursor: default;
@@ -733,14 +733,14 @@ textarea.clickModify {
 
 #workInfoContainer, #workToggle {
 	height: 100%;
-	display: table-cell;
+	display: inline-block;
 	vertical-align: top;
 }
 
 #workInfoContainer {
 	width: 70%;
 	margin-right: 3%;
-	float: left;
+	min-height: 68vh;
 }
 
 #workToggle {
@@ -806,7 +806,7 @@ textarea.clickModify {
 
 #workSubmit, #workDelete {
 	font-weight: 200;
-	font-size: 140%;
+	font-size: 2vh;
 	padding: 2%;
 
 	background-color: rgba(0,0,0,0.25);
@@ -995,6 +995,15 @@ textarea.clickModify {
 	background-color: rgba(255,255,255,0.9) !important;
 }
 
+.fc-day-header {
+	font-weight: 100;
+}
+
+.fc-event {
+	border: 0 !important;
+	border-radius: 0px !important;
+}
+
 .workevent {
 	pointer-events: auto;
 
@@ -1053,6 +1062,7 @@ textarea.clickModify {
 
 .commentBox {
 	margin: 0 !important;
+	width: 100%;
 	padding: 2%;
 	background-color: rgba(255,255,255,0.1);
 	border-bottom: solid 1px #CCC;
@@ -1067,6 +1077,7 @@ textarea.clickModify {
 	border-radius: 10%;
 
 	display: inline-block;
+	vertical-align: top;
 }
 
 .commentAvatar {
@@ -1090,8 +1101,11 @@ textarea.clickModify {
 
 .commentInfo {
 	max-height: 5%;
+	width: 85%;
+	max-width: 85%;
 	margin: 0 !important;
 	display: inline-block;
+	word-wrap: break-word;
 }
 
 .commentUser:hover {
@@ -1099,11 +1113,17 @@ textarea.clickModify {
 }
 
 .commentUser, .commentDate {
-	font-size: 75%;
+	font-size: 55%;
 }
 
 .commentAvatar, .commentUser {
 	cursor: pointer;
+}
+
+.commentComment {
+	font-size: 1.7vh;
+	max-width: 85%;
+	width: 85%;
 }
 
 #commentRestrict {
