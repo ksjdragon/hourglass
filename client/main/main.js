@@ -40,6 +40,11 @@ Template.login.rendered = function() {
 Template.main.created = function() {
     Session.set("mode", Session.get("user").preferences.mode);
     Session.set("classInfo", null);
+    /*if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(function(result) {
+
+        });
+    }*/
 }
 
 Template.main.rendered = function() {
@@ -325,6 +330,9 @@ Template.main.events({
             $(".overlay").fadeOut(150);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
+                var res = Session.get("restrictText");
+                res[Object.keys(res)[0]] = "";
+                Session.set("restrictText", res);
             }
         }
 
@@ -468,8 +476,7 @@ Template.main.events({
     },
     // HANDLING INPUT CHANGING
     'focus .clickModify' (event) {
-        $(".optionHolder")
-        .fadeOut(100);
+        toggleOptionMenu(false, modifyingInput);
 
         if(modifyingInput !== null) {
             if(!$("#"+modifyingInput)[0].className.includes("dropdown")) closeInput(modifyingInput);
@@ -480,6 +487,16 @@ Template.main.events({
             event.target.style.cursor = "text";
             event.target.style.backgroundColor = "rgba(0,0,0,0.1)";
         }
+    },
+    'keydown #wName' (event) {
+        if(event.keyCode === 13) {
+            closeInput(modifyingInput);
+            event.target.blur();
+        }
+    },
+    'focus #workComment' () {
+        toggleOptionMenu(false, modifyingInput);
+        modifyingInput = null;
     },
     'keydown .dropdown' (event) {
         var first = $("#"+modifyingInput).next().children("p:first-child");
@@ -1028,4 +1045,8 @@ function calendarEvents(array) {
         }
     }
     Session.set("calendarEvents", events);
+}
+
+function notifyMe() {
+
 }

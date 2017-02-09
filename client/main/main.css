@@ -799,6 +799,7 @@ textarea.clickModify {
 }
 
 #workComments h3 {
+	font-weight: 400;
 	margin-bottom: 2%;
 	-webkit-filter: none;
 	filter: none;
@@ -963,7 +964,7 @@ textarea.clickModify {
 }
 
 .fc-left h2 {
-	font-weight: 400;
+	font-weight: 100;
 
 	-webkit-filter: none;
 	filter: none;
