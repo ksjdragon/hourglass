@@ -1,0 +1,18 @@
+<template name="mobile">
+	<div class="noScroll">
+		<header id="mobileHeader" style="background-color:{{divColor 'mainColor'}}">
+			<i class="fa fa-bars" style="color:{{iconStatus}}" aria-hidden="true"></i>
+        	<h2>{{schoolName}}</h2>
+        </header>
+        <div id="mobileBody" style="background-color:{{divColor 'secondaryColor'}}">
+        	{{#each myWork}}
+        		<div class="mobileClass">
+        			<div class="mobileType"></div>
+        			<div class="mobileClassContent">
+        				<h4>{{name}}</h4>
+        			</div>
+        		</div>
+        	{{/each}}
+        </div>
+	</div>
+</template>

@@ -902,7 +902,7 @@ startDragula = function() {
         });
 };
 
-function myClasses() {
+myClasses = function() {
     var array = [];
     var courses = Session.get("user").classes;
     var classDisp = Session.get("classDisp"); // Get sidebar class filter.
