@@ -501,6 +501,7 @@ Meteor.methods({
     // Work Functions
     'createWork': function(input) {
         input.creator = Meteor.userId();
+        if(input.description) input.description = input.description.trim();
         work.schema.validate(input);
         var found = classes.findOne({
             _id: input.class
@@ -522,6 +523,7 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
+        if(change.description) change.description = change.description.trim();
         var security = securityCheck([[1, 16, 13, 5, false], 11, 12, 10, 20, true],
                                      Object.assign({}, currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
         if (!security) {

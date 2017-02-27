@@ -2,17 +2,58 @@
 	<div class="noScroll">
 		<header id="mobileHeader" style="background-color:{{divColor 'mainColor'}}">
 			<i class="fa fa-bars" style="color:{{iconStatus}}" aria-hidden="true"></i>
-        	<h2>{{schoolName}}</h2>
-        </header>
-        <div id="mobileBody" style="background-color:{{divColor 'secondaryColor'}}">
-        	{{#each myWork}}
-        		<div class="mobileClass">
-        			<div class="mobileType"></div>
-        			<div class="mobileClassContent">
-        				<h4>{{name}}</h4>
-        			</div>
-        		</div>
-        	{{/each}}
-        </div>
+			<h2>{{schoolName}}</h2>
+		</header>
+		<div id="mobileBody">
+			{{#if showMode 'main'}}
+				<h4 class="minorHeader">Main</h4>
+				{{#each myWork}}
+					{{> mobileClass}}
+				{{/each}}
+			{{/if}}
+			{{#if showMode 'done'}}
+				<h4 class="minorHeader">Done</h4>
+				{{#each myWork "done"}}
+					{{> mobileClass}}
+				{{/each}}
+			{{/if}}
+			{{#if showMode 'addWork'}}
+			{{/if}}
+		</div>
+		<div id="mAddWork">
+			<i class="fa fa-pencil" aria-hidden="true"></i>
+		</div>
+		<div id="mOverlay">
+			<div id="mSidebar">
+				<div class="mSectionTitle">
+					<div class="mStatus" style="background-color:{{modeStatus 'main'}}"></div>
+		            <i class="fa fa-list-ul" aria-hidden="true"></i>
+		            <h4>Create Classes</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="mobileClass">
+	<div class="mClassContainer" workid="{{_id}}">
+		{{#if isDone}}
+			<h4 class="mUndoText" workid="{{_id}}">Unmarked as done!</h4>
+		{{else}}
+			<h4 class="mUndoText" workid="{{_id}}">Marked as done!</h4>
+		{{/if}}
+		<div class="mUndo" workid="{{_id}}">
+			<i class="fa fa-undo" aria-hidden="true"></i>
+			<p>Undo</p>	
+		</div>
+		<div class="mobileClass" style="background-color:{{divColor 'secondaryColor'}}" workid="{{_id}}">
+			<div class="mobileType" style="background-color:{{typeColor}}"></div>
+			<div class="mobileClassContent">
+				<h4 class="mName">{{name}}</h4>
+				<h4 class="mDate">{{dueDate}}</h4>
+				<h4 class="mClass">{{class}}</h4>
+				<h4 class="mDesc">{{shortdesc}}</h4>
+			</div>
+		</div>
 	</div>
 </template>

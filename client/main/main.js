@@ -279,22 +279,24 @@ Template.main.helpers({
     },
     inRole() { // Checks correct permissions.
         if(Session.equals("currentWork",null)) return;
-        var thisWork = work.findOne({
-            _id: Session.get("currentWork")._id
-        });
-        if (Session.get("newWork")) {
-            return true;
-        } else {
-            if (thisWork === undefined) return;
-            var currClass = classes.findOne({
-                _id: thisWork["class"]
+        try {
+            var thisWork = work.findOne({
+                _id: Session.get("currentWork")._id
             });
-            if (Meteor.userId() === thisWork.creator ||
-                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                currClass.banned.indexOf(Meteor.userId()) !== -1
-               ) return true;
-        }
+            if (Session.get("newWork")) {
+                return true;
+            } else {
+                if (thisWork === undefined) return;
+                var currClass = classes.findOne({
+                    _id: thisWork["class"]
+                });
+                if (Meteor.userId() === thisWork.creator ||
+                    Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+                    currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+                    currClass.banned.indexOf(Meteor.userId()) !== -1
+                   ) return true;
+            }
+        } catch(err) {}
     },
     admin() {
         return Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin']);
@@ -615,7 +617,6 @@ Template.main.events({
         serverData = Session.get("currentWork");
         if(checkMissing()) return;
         sendData("createWork");
-        Session.set("newWork",false);
         $(".overlay").fadeOut(150);
     },
     'click #workDelete' () {
@@ -780,88 +781,90 @@ function toDate(date) { // Turns formatted date back to Date constructor.
 }
 
 function formReadable(input, val) { // Makes work information readable by users.
-    switch (val) {
-    case "typeColor":
-        return input.typeColor = workColors[input.type];
-    case "name":
-        return input.name;
-    case "dueDate":
-        return getReadableDate(input.dueDate);
-    case "description":
-        return input.description;
-    case "type":
-        return input.type[0].toUpperCase() + input.type.slice(1);
-    case "comments":
-        var comments = input.comments;
-        var resort = [];
-        if (Session.get("newWork")) return []; // Don't display comments if user is creating work.
-        for (var k = 0; k < comments.length; k++) {
-            var re = comments.length - k - 1;
-            resort[re] = {
-                "comment": comments[k].comment,
-                "date": null,
-                "user": null,
-                "avatar": null,
-                "email": null
-            };
-            var user = Meteor.users.findOne({
-                _id: comments[k].user
-            });
-            resort[re].user = user.profile.name;
-            resort[re].date = moment(comments[k].date).fromNow();
-            resort[re].avatar = user.services.google.picture;
-            resort[re].email = user.services.google.email;
-        }
-        return resort;
-    case "done":
-        if (Session.get("newWork")) return [];
-        for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
-            var user = Meteor.users.findOne({
-                _id: input.done[i]
-            });
+    try {
+        switch (val) {
+            case "typeColor":
+                return input.typeColor = workColors[input.type];
+            case "name":
+                return input.name;
+            case "dueDate":
+                return getReadableDate(input.dueDate);
+            case "description":
+                return input.description;
+            case "type":
+                return input.type[0].toUpperCase() + input.type.slice(1);
+            case "comments":
+                var comments = input.comments;
+                var resort = [];
+                if (Session.get("newWork")) return []; // Don't display comments if user is creating work.
+                for (var k = 0; k < comments.length; k++) {
+                    var re = comments.length - k - 1;
+                    resort[re] = {
+                        "comment": comments[k].comment,
+                        "date": null,
+                        "user": null,
+                        "avatar": null,
+                        "email": null
+                    };
+                    var user = Meteor.users.findOne({
+                        _id: comments[k].user
+                    });
+                    resort[re].user = user.profile.name;
+                    resort[re].date = moment(comments[k].date).fromNow();
+                    resort[re].avatar = user.services.google.picture;
+                    resort[re].email = user.services.google.email;
+                }
+                return resort;
+            case "done":
+                if (Session.get("newWork")) return [];
+                for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
+                    var user = Meteor.users.findOne({
+                        _id: input.done[i]
+                    });
 
-            input.done[i] = {
-                "user": user.profile.name,
-                "avatar": user.services.google.picture,
-                "email": user.services.google.email
-            };
+                    input.done[i] = {
+                        "user": user.profile.name,
+                        "avatar": user.services.google.picture,
+                        "email": user.services.google.email
+                    };
+                }
+                return input.done;
+            case "doneCol":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "";
+                return "#27A127";
+            case "doneText":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "Mark done";
+                return "Done!";
+            case "doneIcon":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
+                return "fa-check-square-o";
+            case "userConfirm":
+                if (!_.contains(input.confirmations, Meteor.userId())) return "";
+                return "#27A127";
+            case "confirmations":
+                return input.confirmations.length;
+            case "userReport":
+                if (!_.contains(input.reports, Meteor.userId())) return "";
+                return "#FF1A1A";
+            case "reports":
+                return input.reports.length;
+            case "email":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).services.google.email;
+            case "avatar":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).services.google.picture;
+            case "creator":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).profile.name;
         }
-        return input.done;
-    case "doneCol":
-        if (Session.get("newWork")) return "";
-        if (!_.contains(input.done, Meteor.userId())) return "";
-        return "#27A127";
-    case "doneText":
-        if (Session.get("newWork")) return "";
-        if (!_.contains(input.done, Meteor.userId())) return "Mark done";
-        return "Done!";
-    case "doneIcon":
-        if (Session.get("newWork")) return "";
-        if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
-        return "fa-check-square-o";
-    case "userConfirm":
-        if (!_.contains(input.confirmations, Meteor.userId())) return "";
-        return "#27A127";
-    case "confirmations":
-        return input.confirmations.length;
-    case "userReport":
-        if (!_.contains(input.reports, Meteor.userId())) return "";
-        return "#FF1A1A";
-    case "reports":
-        return input.reports.length;
-    case "email":
-        return Meteor.users.findOne({
-            _id: input.creator
-        }).services.google.email;
-    case "avatar":
-        return Meteor.users.findOne({
-            _id: input.creator
-        }).services.google.picture;
-    case "creator":
-        return Meteor.users.findOne({
-            _id: input.creator
-        }).profile.name;
-    }
+    } catch(err){}
 }
 
 checkComplete = function(required, inputs) {

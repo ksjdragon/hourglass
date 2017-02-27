@@ -1,6 +1,7 @@
 <head>
     <title>Hourglass</title>
     <link rel="icon" href="/favicon.ico?v=2">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 </head>
 
 <template name="main">
@@ -68,7 +69,7 @@
         </div>
 
         <div class="overlay">
-            <div id="editWork" style="width:{{screen '.5'}};max-width:{{screen '.5'}}">
+            <div id="editWork" style="width:40%;max-width:40%">
                 <div id="editWorkCont" style="background-color:{{divColor 'mainColor'}};border-top:10px solid {{work 'typeColor'}};">
                     <div id="workInfoContainer">
                         {{#if inRole}}

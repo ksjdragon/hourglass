@@ -1,37 +1,204 @@
+#mobileHeader {
+	box-shadow: -1px 2px 2px 1px #444;
+	position: relative;
+}
+
 #mobileHeader h2 {
 	font-size: 3vh;
 	font-weight: 200;
 
 	padding: 0;
-	height: 6vh;
+	height: 8vh;
 
 	display: inline;
 
-	line-height: 6vh;
+	line-height: 8vh;
 	text-align: right;
 }
 
 #mobileHeader .fa-bars {
-	height: 6vh;
+	margin-left: 1vh;
+	height: 8vh;
 	border: 0;
+	line-height: 8vh;
 }
 
 #mobileBody {
 	width: 100%;
-	height: 94vh;
+	height: 92vh;
+	margin-bottom: 10%;
+	background-color: #111;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.mClassContainer {
+	border-bottom: 1px solid #AAA;
+	position: relative;
 }
 
 .mobileClass {
 	width: 100%;
-	height: 10vh;
-	border-bottom: 1px solid #AAA;
+	height: 20vw;
+	z-index: 30;
+}
+
+.mClassContainer:last-child {
+	margin-bottom: 20vw;
+	border: 0;
+}
+
+.mobileType {
+	width: 2vw;
+	height: 100%;
+
+	display: inline-block;
+	pointer-events: none;
 }
 
 .mobileClassContent {
-	padding: 2vh;
+	width: 88vw;
+	height: 12vw;
+	padding: 4vw;
+
+	display: inline-block;
+	vertical-align: top;
+	pointer-events: none;
 }
 
 .mobileClassContent h4 {
-	font-size: 3vh;
+	font-size: 5vw;
+	vertical-align: top;
+}
 
+.minorHeader {
+	font-size: 4vw !important;
+	width: 100%;
+	padding: 2%;
+	background-color: rgba(255,255,255,0.2);
+}
+
+.mContTop {
+	width: 100%;
+}
+
+.mName {
+	font-size: 4.3vw !important;
+	width: 50%;
+}
+
+.mDate {
+	font-size: 3.4vw !important;
+	width: 48%;
+	text-align: right;
+}
+
+.mClass {
+	font-size: 3.5vw !important;
+	width: 100%;
+}
+
+.mDesc {
+	font-size: 3.4vw !important;
+	color: #BBB;
+}
+
+#mAddWork {
+	width: 13vw;
+	height: 13vw;
+	position: absolute;
+	bottom: 6vw;
+	right: 6vw;
+
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;	
+
+	background-color: rgb(255, 26, 26);
+	-webkit-filter: drop-shadow(3px 4px 4px #111);
+	filter: drop-shadow(3px 4px 4px #111);
+}
+
+#mAddWork .fa {
+	font-size: 5vw;
+	margin-left: 4.25vw;
+	margin-top: 4vw;
+
+	pointer-events: none
+}
+
+.mUndo {
+	font-size: 4vw;
+	width: 13vw;
+	height: 13vw;
+
+	background-color: rgb(17,17,17);
+
+	display: none;
+	opacity: 0;
+
+	position: absolute;
+	top: 3.75vw;
+	right: 4vw;
+
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.mUndo .fa {
+	width: 100%;
+	height: 50%;
+
+	text-align: center;
+	line-height: 9vw;
+	pointer-events: none;
+}
+
+.mUndo p {
+	font-size: 3vw;
+	width: 100%;
+	height: 50%;
+	margin: 0;
+
+	text-align: center;
+	pointer-events: none;
+}
+
+.mUndoText {
+	font-size: 4vw !important;
+	height: 13vw;
+
+	display: none;
+	opacity: 0;
+
+	position: absolute;
+	top: 3.75vw;
+	left: 8vw;
+
+	line-height: 13vw;
+
+	pointer-events: none;
+}
+
+#mOverlay {
+	height: 100%;
+	width: 100%;
+
+	background-color: rgba(0,0,0,0.3);
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#mSidebar {
+	height: 100%;
+	width: 85%;
+
+	background-color: #fff;
+	box-shadow: 2px 0px 1px 1px #222;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
