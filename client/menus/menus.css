@@ -570,7 +570,7 @@
 
 .formDiv input {
 	font-size: 2vh;
-	width: calc(98% - 8px) !important;
+	width: 98% !important;
 	padding: 1%;
 }
 
@@ -582,6 +582,7 @@
 
 #formContainer {
 	margin: 2%;
+	position: relative;
 }
 
 #creSubmit {
