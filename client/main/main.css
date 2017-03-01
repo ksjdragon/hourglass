@@ -589,6 +589,8 @@ textarea.clickModify {
 }
 
 #editWork {
+	width: 45%;
+	max-width: 45%;
 	min-height: 68vh;
 	margin: auto;
 	margin-top: 2%;
