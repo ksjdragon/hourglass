@@ -66,6 +66,8 @@ Template.classesMode.rendered = function() {
         touchScrollStep: 90
     });
     $(".mainClass .slimScrollBar").css("display", "none");
+
+        
 };
 
 // Global Helpers

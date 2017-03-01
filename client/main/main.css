@@ -413,7 +413,7 @@ input {
 }
 
 #classesMode {
-	height: 94vh;
+	height: 96vh;
 
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -427,7 +427,7 @@ input {
 
 .classWrapper {
 	width: 300px;
-	height: 100%;
+	height: 95%;
 	margin: 10px;
 	margin-top: 20px;
 	display: inline-block;
