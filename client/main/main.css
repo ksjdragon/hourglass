@@ -167,9 +167,11 @@ input {
 
 .noScroll input, .noScroll textarea {
 	font-family: 'Raleway';
+	font-weight: 100;
 	background-color: rgba(0,0,0,0.2);
 	border: 0;
 	resize: none;
+	color: inherit;
 }
 
 .fa-bars, .fa-cog, .fa-question {

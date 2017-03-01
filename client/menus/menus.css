@@ -557,7 +557,6 @@
 	margin: 0;
 	padding: 0;
 	background-color: transparent;
-	position: relative;
 	display: inline;
 }
 
@@ -571,12 +570,8 @@
 
 .formDiv input {
 	font-size: 2vh;
-	width: calc(98% - 8px) !important;
+	width: 98% !important;
 	padding: 1%;
-}
-
-.formDiv .-autocomplete-container {
-	margin: 1% 0 0 0.5%;
 }
 
 .profTitle {
@@ -587,6 +582,7 @@
 
 #formContainer {
 	margin: 2%;
+	position: relative;
 }
 
 #creSubmit {
