@@ -557,7 +557,6 @@
 	margin: 0;
 	padding: 0;
 	background-color: transparent;
-	position: relative;
 	display: inline;
 }
 
@@ -573,10 +572,6 @@
 	font-size: 2vh;
 	width: calc(98% - 8px) !important;
 	padding: 1%;
-}
-
-.formDiv .-autocomplete-container {
-	margin: 1% 0 0 0.5%;
 }
 
 .profTitle {
