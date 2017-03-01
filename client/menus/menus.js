@@ -531,7 +531,7 @@ Template.createClass.events({
         }
         values.privacy = (values.privacy === "Public") ? false : true;
         values.status = false;
-        values.category.toLowerCase();
+        values.category = values.category.toLowerCase();
         values.code = "";
         serverData = values;
         if (!teachers.findOne({
