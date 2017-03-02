@@ -1,5 +1,6 @@
 Session.set("mobileWork", []);
 Session.set("mobileMode", "main");
+Session.set("mobileSidebar", false);
 
 Template.mobile.rendered = function() {
 	document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
@@ -15,9 +16,23 @@ Template.mobile.rendered = function() {
 				$("#mobileBody").velocity("fadeIn", 200);
 			}
 		});
-		
-
 	});
+
+	addMobileSideButton($("#mSidebarToggle")[0], 0.2, function() {
+		Session.set("mobileSidebar", true);
+		toggleSidebar(true);
+	});
+
+	addMobileSideButton($(".mSectionMode")[0], 0.2, function() {
+		Session.set("mobileMode","main");
+		toggleSidebar(false);
+	});
+
+	addMobileSideButton($(".mSectionMode")[1], 0.2, function() {
+		Session.set("mobileMode","done");
+		toggleSidebar(false);
+	});
+	
 }
 
 Template.mobile.helpers({
@@ -63,7 +78,20 @@ Template.mobile.helpers({
 	},
 	modeStatus(mode) {
 		return (Session.equals("mobileMode", mode)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)";
-	}
+	},
+	types() {
+        var types = Object.keys(workColors);
+        var array = [];
+        for (var i = 0; i < types.length; i++) {
+            array.push({
+                "type": types[i],
+                "typeName": types[i][0].toUpperCase() + types[i].slice(1),
+                "selected": (_.contains(Session.get("typeFilter"), types[i])) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"
+            });
+        }
+        return array;
+    }
+
 });
 
 function addListeners() {
@@ -171,4 +199,44 @@ function addMobileButton(element, lighten, thisFunction) {
 			complete: execute()
 		});
 	});
+}
+
+function addMobileSideButton(element, lighten, thisFunction) {
+	let button = new Hammer.Manager(element);
+	let add = lighten;
+	let ele = jQuery(element);
+	let execute = thisFunction;
+	let colors = parseFloat($.Velocity.hook(ele, "backgroundColorAlpha"));
+	var press = new Hammer.Press({
+		event: 'press',
+		pointers: 1,
+		time: 0.01,
+		threshold: 3000
+	});
+	button.add(press);
+
+	button.on('press', function(e) {
+		ele.velocity({backgroundColorAlpha: colors + add},100);
+	});
+	button.on('pressup', function(e) {
+		ele.velocity("stop");
+		ele.velocity(
+		{
+			backgroundColorAlpha: colors
+		},
+		{
+			duration: 200,
+			complete: execute()
+		});
+	});
+}
+
+function toggleSidebar(open) {
+	if(open) {
+		$("#mOverlay").velocity("fadeIn", 300);
+		$("#mSidebar").velocity({left: '0vw'}, 300);
+	} else {
+		$("#mOverlay").velocity("fadeOut", 300);
+		$("#mSidebar").velocity({left: '-100vw'});
+	}
 }

@@ -1,7 +1,9 @@
 <template name="mobile">
 	<div class="noScroll">
 		<header id="mobileHeader" style="background-color:{{divColor 'mainColor'}}">
-			<i class="fa fa-bars" style="color:{{iconStatus}}" aria-hidden="true"></i>
+			<div id="mSidebarToggle">
+				<i class="fa fa-bars" style="color:{{iconStatus}}" aria-hidden="true"></i>
+			</div>
 			<h2>{{schoolName}}</h2>
 		</header>
 		<div id="mobileBody">
@@ -23,15 +25,42 @@
 		<div id="mAddWork">
 			<i class="fa fa-pencil" aria-hidden="true"></i>
 		</div>
-		<div id="mOverlay">
-			<div id="mSidebar">
-				<div class="mSectionTitle">
-					<div class="mStatus" style="background-color:{{modeStatus 'main'}}"></div>
-		            <i class="fa fa-list-ul" aria-hidden="true"></i>
-		            <h4>Create Classes</h4>
-				</div>
+		<div id="mOverlay"></div>
+		<div id="mSidebar" style="background-color:{{divColor 'sidebarColor'}}">
+			<div class="mSectionTitle downOffset">
+		        <h3>Main</h3>
+		    </div>
+			<div class="mSectionMode">
+				<div class="mStatus" style="background-color:{{modeStatus 'main'}}"></div>
+	            <i class="fa fa-list-ul" aria-hidden="true"></i>
+	            <h4>Main Work</h4>
 			</div>
+			<div class="mSectionMode">
+				<div class="mStatus" style="background-color:{{modeStatus 'done'}}"></div>
+	            <i class="fa fa-check-square" aria-hidden="true"></i>
+	            <h4>Done Work</h4>
+			</div>
+			<div class="mSectionTitle downOffset">
+		        <h3>Filters</h3>
+		    </div>
+	        <div id="typeFilterWrapper" class="mSectionTitle">
+	            <h3>By Type</h3>
+	        </div>
+	        <div id="classFilterHolder">
+	            {{#each types}}
+	                {{> mSideTypeFilter}}
+	            {{/each}}
+	        </div>
+	        <div id="classFilterWrapper" class="mSectionTitle">
+                <h3>By Class</h3>
+	        </div> 
+	        <div id="classListHolder">    
+	            {{#each myClasses}}
+	                {{> mSidebarClasses}}
+	            {{/each}}
+	        </div>
 		</div>
+		
 	</div>
 </template>
 
@@ -56,4 +85,19 @@
 			</div>
 		</div>
 	</div>
+</template>
+
+<template name="mSideTypeFilter">
+	<div class="mSideFilter" type="{{type}}">
+        <div class="mStatus" style="background-color:{{selected}}"></div>
+        <span class="sideTypeName">{{typeName}}</span>
+    </div>
+</template>
+
+<template name="mSidebarClasses">
+    <div class="mSideClass" classid="{{_id}}">
+        <div class="mStatus" style="background-color:{{selected}}"></div>
+        <span class="mSideClassName">{{name}}</span>
+        <span class="mSideClassHour">{{hour}}</span>
+    </div>
 </template>
