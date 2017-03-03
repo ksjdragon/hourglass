@@ -102,7 +102,6 @@ function addListeners() {
 		new Hammer($(".mobileClass")[i], {
 			domEvents: true
 		});
-
 		$(".mobileClass[workid="+id+"]").on('panmove', function(e) {
 			var dX = deltaX + (e.originalEvent.gesture.deltaX);
 			if(dX < 0) {
@@ -186,7 +185,8 @@ function addMobileButton(element, lighten, thisFunction) {
 			backgroundColorBlue: colors[2] + add,
 		},100);
 	});
-	button.on('pressup', function(e) {
+
+	ele.bind('touchend', function(e) {
 		ele.velocity("stop");
 		ele.velocity(
 		{
@@ -206,19 +206,36 @@ function addMobileSideButton(element, lighten, thisFunction) {
 	let add = lighten;
 	let ele = jQuery(element);
 	let execute = thisFunction;
+	let care = true;
+
 	let colors = parseFloat($.Velocity.hook(ele, "backgroundColorAlpha"));
+
 	var press = new Hammer.Press({
 		event: 'press',
 		pointers: 1,
-		time: 0.01,
-		threshold: 3000
+		time: 0.01
 	});
+
+	var pan = new Hammer.Pan();
+
 	button.add(press);
+	button.add(pan);
 
 	button.on('press', function(e) {
+		care = true;
 		ele.velocity({backgroundColorAlpha: colors + add},100);
 	});
-	button.on('pressup', function(e) {
+
+	button.on('pan', function(e) {
+		if(element !== document.elementFromPoint(e.pX, e.pY)) {
+			care = false;
+			ele.velocity("stop");
+			ele.velocity({backgroundColorAlpha: colors}, 200);
+		}
+	});
+
+	ele.bind('touchend', function(e) {
+		if(!care) return;
 		ele.velocity("stop");
 		ele.velocity(
 		{

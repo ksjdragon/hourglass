@@ -277,3 +277,7 @@
 	display: table-cell;
 	vertical-align: middle;
 }
+
+#mTypeFilterWrapper {
+	margin-top: 0;
+}
