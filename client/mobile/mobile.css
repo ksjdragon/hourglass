@@ -34,6 +34,7 @@
 	background-color: rgba(255,255,255,0);
 
 	display: inline-block;
+	text-align: center;
 
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
@@ -241,6 +242,21 @@
 	line-height: 13vw;
 }
 
+.mOpenable .fa {
+	font-size: 4vw;
+	height: 13vw;
+	padding: 0;
+	padding-right: 6%;
+	float: right;
+	line-height: 13vw;
+}
+
+.mOpenable h3:first-child {
+	font-weight: 200;
+	display: inline-block;
+	pointer-events: none;
+}
+
 .mSectionMode {
 	font-size: 4vw !important;
 	width: 100%;
@@ -252,7 +268,6 @@
 .mStatus {
 	width: 2% !important;
 	height: 100%;
-	border-spacing: 6%;
 	display: table-cell;
 	
 	-webkit-transition: background-color 0.3s ease;  
@@ -262,6 +277,7 @@
 }
 
 .mSectionMode .fa {
+	font-size: 4vw;
 	width: 10%;
 	padding: 0 6% 0 6%;
 	line-height: 13vw;
@@ -278,6 +294,58 @@
 	vertical-align: middle;
 }
 
+#mFilterWrapper {
+	display: none;
+}
+
 #mTypeFilterWrapper {
 	margin-top: 0;
+}
+
+#mClassFilterWrapper {
+	margin-top: 0;
+}
+
+.mSideFilter, .mSideClass {
+	width: 100%;
+
+	background-color: rgba(0,0,0,0.1);
+	display: table;
+}
+
+.mSideTypeName {
+	font-size: 3.5vw;
+	width: 92%;
+	margin: 0;
+	padding: 5%;
+	padding-left: 5%;
+	
+	display: table-cell;
+}
+
+.mSideClass span {
+	font-weight: 200;
+	margin: 0;
+	font-size: 3.5vw;
+	padding: 5%;
+	display: table-cell;
+	pointer-events: none;
+}
+
+.mSideClassName {
+	width: 50%;
+	padding-left: 5%;
+}
+
+.mSideClassHour {
+	width: 50%;
+	color: #CCC;
+}
+
+#mSettings {
+	background-color: rgba(255,255,255,0.1);
+}
+
+#mSettings h3 {
+	padding: 0;
 }

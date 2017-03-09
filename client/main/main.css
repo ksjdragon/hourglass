@@ -174,7 +174,7 @@ input {
 	color: inherit;
 }
 
-.fa-bars, .fa-cog, .fa-question {
+.barIco {
 	font-size: 3.5vh;
 	width: 6vh;
 	height: calc(6vh - 1px);
@@ -193,7 +193,7 @@ input {
 	transition: color 0.5s ease, background-color 0.5s ease; 
 }
 
-.fa-bars:hover, .fa-cog:hover, .fa-question:hover {
+.barIco:hover {
 	background-color: rgba(0,0,0,0.2);
 }
 
@@ -294,7 +294,6 @@ input {
 .status {
 	width: 3% !important;
 	height: 100%;
-	border-spacing: 6%;
 	display: table-cell;
 
 	-webkit-transition: background-color 0.3s ease;  

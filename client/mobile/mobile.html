@@ -40,24 +40,33 @@
 	            <i class="fa fa-check-square" aria-hidden="true"></i>
 	            <h4>Done Work</h4>
 			</div>
-			<div class="mSectionTitle downOffset">
+			<div id="mFilterHead" class="mSectionTitle mOpenable downOffset">
 		        <h3>Filters</h3>
+		        <i class="fa fa-angle-down" aria-hidden="true"></i>
 		    </div>
-	        <div id="mTypeFilterWrapper" class="mSectionTitle">
-	            <h3>By Type</h3>
-	        </div>
-	        <div id="mClassFilterHolder">
-	            {{#each types}}
-	                {{> mSideTypeFilter}}
-	            {{/each}}
-	        </div>
-	        <div id="mClassFilterWrapper" class="mSectionTitle">
-                <h3>By Class</h3>
-	        </div> 
-	        <div id="mClassListHolder">    
-	            {{#each myClasses}}
-	                {{> mSidebarClasses}}
-	            {{/each}}
+		    <div id="mFilterWrapper">
+		        <div id="mTypeFilterWrapper" class="mSectionTitle mOpenable">
+		            <h3>By Type</h3>
+		            <i class="fa fa-angle-down" aria-hidden="true"></i>
+		        </div>
+		        <div id="mClassFilterHolder">
+		            {{#each types}}
+		                {{> mSideTypeFilter}}
+		            {{/each}}
+		        </div>
+		        <div id="mClassFilterWrapper" class="mSectionTitle mOpenable">
+	                <h3>By Class</h3>
+	                <i class="fa fa-angle-down" aria-hidden="true"></i>
+		        </div> 
+		        <div id="mClassListHolder">    
+		            {{#each myClasses}}
+		                {{> mSidebarClasses}}
+		            {{/each}}
+		        </div>
+		    </div>
+	        <div id="mSettings" class="mSectionTitle mSectionMode">
+	        	<i class="fa fa-cog" aria-hidden="true"></i>
+	        	<h3>Settings</h3>
 	        </div>
 		</div>
 		
@@ -90,7 +99,7 @@
 <template name="mSideTypeFilter">
 	<div class="mSideFilter" type="{{type}}">
         <div class="mStatus" style="background-color:{{selected}}"></div>
-        <span class="sideTypeName">{{typeName}}</span>
+        <span class="mSideTypeName">{{typeName}}</span>
     </div>
 </template>
 

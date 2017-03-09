@@ -2,6 +2,8 @@ Session.set("mobileWork", []);
 Session.set("mobileMode", "main");
 Session.set("mobileSidebar", false);
 
+var filterOpen = [false, true, true];
+
 Template.mobile.rendered = function() {
 	document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
 	
@@ -38,7 +40,94 @@ Template.mobile.rendered = function() {
 			toggleSidebar(false);
 		}
 	});
+
+	addMobileButton($("#mSettings"), 0.1, "brightness" , function() {
+		console.log("Go to settings!"); // Render setting template
+	});
+
+	addMobileButton($("#mFilterHead"), 0.1, "brightness", function() {
+		if (event.target.id === "disableFilter") return;
+        if (!filterOpen[0]) {
+            $("#mFilterWrapper").slideDown(300);
+        } else {
+            $("#mFilterWrapper").slideUp(300);
+        }
+        filterOpen[0] = !filterOpen[0];
+	});
+
+	addMobileButton($("#mTypeFilterWrapper"), 0.1, "brightness", function() {
+		if (!filterOpen[1]) {
+            $("#mClassFilterHolder").slideDown(300);
+        } else {
+            $("#mClassFilterHolder").slideUp(300);
+        }
+        filterOpen[1] = !filterOpen[1];
+	});
+
+	addMobileButton($("#mClassFilterWrapper"), 0.1, "brightness", function() {
+		if (!filterOpen[2]) {
+            $("#mClassListHolder").slideDown(300);
+        } else {
+            $("#mClassListHolder").slideUp(300);
+        }
+        filterOpen[2] = !filterOpen[2];
+	});
+
+	// FOR SIDEBAR SLIDEBACK
+	/*var deltaX = 0;
+	var sidebar = $("#mSidebar");
+	new Hammer(sidebar[0], {
+		domEvents: true
+	});
+
+	sidebar.on('panmove', function(e) {
+		var dX = deltaX + (e.originalEvent.gesture.deltaX);
+		if(dX > 0) {
+			$.Velocity.hook(jQuery(e.target), 'translateX', dX/70 + 'px');
+			$.Velocity.hook(jQuery)
+		} else {
+			$.Velocity.hook(jQuery(e.target), 'translateX', dX + 'px');
+		}
+	});
+
+	movable.on('panend', function(e) {
+		deltaX = deltaX + (e.originalEvent.gesture.deltaX);
+		if(deltaX <= window.innerWidth * 0.3) {
+			deltaX = 0;
+			jQuery(e.target).velocity(
+			{
+				translateX: window.innerWidth*1.2+"px"
+			},
+			{
+				duration: 150,
+				complete: function() {
+					undo[0].velocity("fadeIn", {duration: 300});
+					undo[1].velocity("fadeIn", {duration: 300});
+					var container = $(".mClassContainer[workid="+id+"]");
+					clearTile = setTimeout(function() {
+						container.velocity(
+						{
+							height: 0
+						},
+						{
+							duration: 200,
+							complete: function() {
+								serverData = [container[0].getAttribute("workid"), "done"];
+    							sendData("toggleWork");
+								container.remove();
+							}
+						});
+					}, 3000);
+				}
+			});
+
+		} else {
+			deltaX = 0;
+			jQuery(e.target).velocity({translateX: "0px"},300);
+		}
+	});*/
 }
+
 
 Template.mobileClass.rendered = function() {
 	var deltaX = 0;
@@ -53,11 +142,10 @@ Template.mobileClass.rendered = function() {
 	movable.on('panmove', function(e) {
 		var dX = deltaX + (e.originalEvent.gesture.deltaX);
 		if(dX < 0) {
-			$.Velocity.hook(jQuery(e.target), 'translateX', dX/45 + 'px');
+			$.Velocity.hook(jQuery(e.target), 'translateX', dX/25 + 'px');
 		} else {
 			$.Velocity.hook(jQuery(e.target), 'translateX', dX + 'px');
 		}
-		
 	});
 
 	movable.on('panend', function(e) {
@@ -179,7 +267,8 @@ function addMobileButton(element, lighten, animateType, completeFunction) {
 		parseFloat($.Velocity.hook(ele, "backgroundColorAlpha"))
 	];
 
-	ele.on('touchstart mousedown', function(e) {
+	ele.on('touchstart', function(e) {
+		console.log("start!");
 		care = true;
 		switch(type) {
 			case "color":
@@ -194,7 +283,7 @@ function addMobileButton(element, lighten, animateType, completeFunction) {
 		}
 	});
 
-	ele.on('touchend mouseup', function(e) {
+	ele.on('touchend', function(e) {
 		if(!care) return;
 		ele.velocity("stop");
 		switch(type) {
