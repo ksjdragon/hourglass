@@ -12,12 +12,14 @@
 				{{#each myWork}}
 					{{> mobileClass}}
 				{{/each}}
+				<h3 class="mNoneText" style="display:{{noMain}}">Nothing left here!</h3>
 			{{/if}}
 			{{#if showMode 'done'}}
 				<h4 class="minorHeader">Done</h4>
 				{{#each myWork "done"}}
 					{{> mobileClass}}
 				{{/each}}
+				<h3 class="mNoneText" style="display:{{noDone}}">You... should really get to work.</h3>
 			{{/if}}
 			{{#if showMode 'addWork'}}
 			{{/if}}
@@ -26,7 +28,7 @@
 			<i class="fa fa-pencil" aria-hidden="true"></i>
 		</div>
 		<div id="mOverlay"></div>
-		<div id="mSidebar" style="background-color:{{divColor 'sidebarColor'}}">
+		<div id="mSidebar" style="background-color:{{divColor 'sidebarColor'}};border-left:3vw solid {{divColor 'sidebarColor'}}">
 			<div class="mSectionTitle downOffset">
 		        <h3>Main</h3>
 		    </div>
@@ -42,6 +44,7 @@
 			</div>
 			<div id="mFilterHead" class="mSectionTitle mOpenable downOffset">
 		        <h3>Filters</h3>
+            	<h3 id="mDisableFilter" style="display:{{filterOn}}">Disable All</h3>
 		        <i class="fa fa-angle-down" aria-hidden="true"></i>
 		    </div>
 		    <div id="mFilterWrapper">

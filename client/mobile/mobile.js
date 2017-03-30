@@ -1,6 +1,8 @@
 Session.set("mobileWork", []);
 Session.set("mobileMode", "main");
 Session.set("mobileSidebar", false);
+Session.set("classDisp", []);
+Session.set("typeFilter", []);
 
 var filterOpen = [false, true, true];
 
@@ -29,6 +31,7 @@ Template.mobile.rendered = function() {
 		} else {
 			Session.set("mobileMode","main");
 			toggleSidebar(false);
+			timedPushback();
 		}
 	});
 
@@ -38,6 +41,7 @@ Template.mobile.rendered = function() {
 		} else {
 			Session.set("mobileMode","done");
 			toggleSidebar(false);
+			timedPushback();
 		}
 	});
 
@@ -45,8 +49,8 @@ Template.mobile.rendered = function() {
 		console.log("Go to settings!"); // Render setting template
 	});
 
-	addMobileButton($("#mFilterHead"), 0.1, "brightness", function() {
-		if (event.target.id === "disableFilter") return;
+	addMobileButton($("#mFilterHead")[0], 0.1, "brightness", function() {
+		if(event.target.id === "mDisableFilter") return;
         if (!filterOpen[0]) {
             $("#mFilterWrapper").slideDown(300);
         } else {
@@ -55,7 +59,7 @@ Template.mobile.rendered = function() {
         filterOpen[0] = !filterOpen[0];
 	});
 
-	addMobileButton($("#mTypeFilterWrapper"), 0.1, "brightness", function() {
+	addMobileButton($("#mTypeFilterWrapper")[0], 0.1, "brightness", function() {
 		if (!filterOpen[1]) {
             $("#mClassFilterHolder").slideDown(300);
         } else {
@@ -64,7 +68,7 @@ Template.mobile.rendered = function() {
         filterOpen[1] = !filterOpen[1];
 	});
 
-	addMobileButton($("#mClassFilterWrapper"), 0.1, "brightness", function() {
+	addMobileButton($("#mClassFilterWrapper")[0], 0.1, "brightness", function() {
 		if (!filterOpen[2]) {
             $("#mClassListHolder").slideDown(300);
         } else {
@@ -73,8 +77,14 @@ Template.mobile.rendered = function() {
         filterOpen[2] = !filterOpen[2];
 	});
 
+	addMobileButton($("#mDisableFilter")[0], -0.1, "brightness", function() {
+        Session.set("typeFilter", []);
+		Session.set("classDisp", []);
+        timedPushback();
+	});
+
 	// FOR SIDEBAR SLIDEBACK
-	/*var deltaX = 0;
+	var deltaX = 0;
 	var sidebar = $("#mSidebar");
 	new Hammer(sidebar[0], {
 		domEvents: true
@@ -84,48 +94,23 @@ Template.mobile.rendered = function() {
 		var dX = deltaX + (e.originalEvent.gesture.deltaX);
 		if(dX > 0) {
 			$.Velocity.hook(jQuery(e.target), 'translateX', dX/70 + 'px');
-			$.Velocity.hook(jQuery)
 		} else {
 			$.Velocity.hook(jQuery(e.target), 'translateX', dX + 'px');
 		}
 	});
 
-	movable.on('panend', function(e) {
-		deltaX = deltaX + (e.originalEvent.gesture.deltaX);
-		if(deltaX <= window.innerWidth * 0.3) {
+	sidebar.on('panend', function(e) {
+		deltaX += (e.originalEvent.gesture.deltaX);
+		if(deltaX >= -window.innerWidth * 0.4) {
 			deltaX = 0;
-			jQuery(e.target).velocity(
-			{
-				translateX: window.innerWidth*1.2+"px"
-			},
-			{
-				duration: 150,
-				complete: function() {
-					undo[0].velocity("fadeIn", {duration: 300});
-					undo[1].velocity("fadeIn", {duration: 300});
-					var container = $(".mClassContainer[workid="+id+"]");
-					clearTile = setTimeout(function() {
-						container.velocity(
-						{
-							height: 0
-						},
-						{
-							duration: 200,
-							complete: function() {
-								serverData = [container[0].getAttribute("workid"), "done"];
-    							sendData("toggleWork");
-								container.remove();
-							}
-						});
-					}, 3000);
-				}
-			});
-
+			jQuery(e.target).velocity({'translateX': "0px"}, 150);
 		} else {
 			deltaX = 0;
-			jQuery(e.target).velocity({translateX: "0px"},300);
+			toggleSidebar(false);
+
 		}
-	});*/
+	});
+	timedPushback();
 }
 
 
@@ -150,7 +135,8 @@ Template.mobileClass.rendered = function() {
 
 	movable.on('panend', function(e) {
 		if(e.target === document.getElementById("mobileBody")) return;
-		deltaX = deltaX + (e.originalEvent.gesture.deltaX);
+		deltaX += (e.originalEvent.gesture.deltaX);
+		var id = this.getAttribute("workid");
 		if(deltaX >= window.innerWidth * 0.5) {
 			deltaX = 0;
 			jQuery(e.target).velocity(
@@ -176,7 +162,7 @@ Template.mobileClass.rendered = function() {
 								container.remove();
 							}
 						});
-					}, 3000);
+					}, 1500);
 				}
 			});
 
@@ -191,6 +177,36 @@ Template.mobileClass.rendered = function() {
 		movable.velocity({translateX: "0px"},300);
 		undo[0].velocity("fadeOut", {duration: 300});
 		undo[1].velocity("fadeOut", {duration: 300});
+	});
+}
+
+Template.mSidebarClasses.rendered = function() {
+	let div = this.firstNode;
+	addMobileButton(div, 0.1, "brightness", function() {
+       	var classid = div.getAttribute("classid");
+        var array = Session.get("classDisp");
+        if (array.indexOf(classid) !== -1) {
+            array.splice(array.indexOf(classid), 1);
+        } else {
+            array.push(classid);
+        }
+        Session.set("classDisp", array);
+        timedPushback();
+	});
+}
+
+Template.mSideTypeFilter.rendered = function() {
+	let div = this.firstNode;
+	addMobileButton(div, 0.1, "brightness", function() {
+		var type = div.getAttribute("type");
+    	var array = Session.get("typeFilter");
+        if (array.indexOf(type) !== -1) {
+            array.splice(array.indexOf(type), 1);
+        } else {
+            array.push(type);
+        }
+        Session.set("typeFilter", array);
+        timedPushback();
 	});
 }
 
@@ -249,8 +265,20 @@ Template.mobile.helpers({
             });
         }
         return array;
+    },
+    filterOn() {
+        return (Session.get("classDisp").length !== 0 || Session.get("typeFilter").length !== 0) ? "inline-block" : "none";
+    },
+    noMain() {
+    	try {
+    		return (Session.get("mobileWork")[0].length === 0) ? "block" : "none";	
+    	} catch(err) {}
+    },
+    noDone() {
+    	try {
+    		return (Session.get("mobileWork")[1].length === 0) ? "block" : "none";
+    	} catch(err) {}
     }
-
 });
 
 function addMobileButton(element, lighten, animateType, completeFunction) {
@@ -268,7 +296,6 @@ function addMobileButton(element, lighten, animateType, completeFunction) {
 	];
 
 	ele.on('touchstart', function(e) {
-		console.log("start!");
 		care = true;
 		switch(type) {
 			case "color":
@@ -336,9 +363,51 @@ function addMobileButton(element, lighten, animateType, completeFunction) {
 function toggleSidebar(open) {
 	if(open) {
 		$("#mOverlay").velocity("fadeIn", 300);
-		$("#mSidebar").velocity({left: '0vw'}, 300);
+		$("#mSidebar").velocity({left: '-3vw'}, 300);
 	} else {
 		$("#mOverlay").velocity("fadeOut", 300);
-		$("#mSidebar").velocity({left: '-100vw'});
+		$("#mSidebar").velocity(
+		{
+			left: '-100vw'
+		}, 
+		{
+			duration: 300,
+			complete: function() {
+				$.Velocity.hook($("#mSidebar"), 'translateX', '0px');
+			}
+		});
+	}
+}
+
+function timedPushback() {
+	$(".mobileClass").velocity("stop", true);
+	if($(".mClassContainer").length === 0) {
+		$(".mNoneText").velocity("fadeOut", {
+			duration: 100,
+			complete: function() {
+				$(".mClassContainer").velocity({left: "-150vw"}, 0);
+				$(".mClassContainer").velocity("fadeIn", 0);
+				var i = 0;
+				var timer = setInterval(function() {
+					$($(".mClassContainer")[i]).velocity({left: ""});
+					if(i === $(".mClassContainer").length - 1) clearInterval(timer);
+					i += 1;
+				}, 100);
+			}
+		});
+	} else {
+		$(".mClassContainer").velocity("fadeOut", {
+			duration: 100,
+			complete: function() {
+				$(".mClassContainer").velocity({left: "-150vw"}, 0);
+				$(".mClassContainer").velocity("fadeIn", 0);
+				var i = 0;
+				var timer = setInterval(function() {
+					$($(".mClassContainer")[i]).velocity({left: ""});
+					if(i === $(".mClassContainer").length - 1) clearInterval(timer);
+					i += 1;
+				}, 100);
+			}
+		});
 	}
 }

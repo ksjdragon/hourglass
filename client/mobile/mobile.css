@@ -51,6 +51,7 @@
 }
 
 .mClassContainer {
+	opacity: 0;
 	border-bottom: 1px solid #AAA;
 	position: relative;
 }
@@ -298,6 +299,20 @@
 	display: none;
 }
 
+#mDisableFilter {
+	font-weight: 200;
+	font-size: 90%;
+	margin-left: 30%;
+	padding: 3%;
+
+	background-color: rgba(255,255,255,0.2);
+
+	display: none;
+	line-height: normal;
+	pointer-events: all;
+	z-index: 2;
+}
+
 #mTypeFilterWrapper {
 	margin-top: 0;
 }
@@ -348,4 +363,10 @@
 
 #mSettings h3 {
 	padding: 0;
+}
+
+.mNoneText {
+	font-weight: 300;
+	font-style: italic;
+	padding: 5%;
 }

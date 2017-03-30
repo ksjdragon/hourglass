@@ -383,6 +383,10 @@ input {
 	pointer-events: none;
 }
 
+.sideFilter span {
+	pointer-events: none;
+}
+
 .sideClassName {
 	width: 50%;
 	padding-left: 5%;

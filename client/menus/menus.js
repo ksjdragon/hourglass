@@ -101,10 +101,7 @@ Template.sidebarMenuPlate.events({
         Session.set("classDisp", array);
     },
     'click .sideFilter' (event) {
-        var div = event.target;
-        while (div.getAttribute("type") === null) div = div.parentNode;
-        var type = div.getAttribute("type");
-
+        var type = event.target.getAttribute("type");
         var array = Session.get("typeFilter");
         if (array.indexOf(type) !== -1) {
             array.splice(array.indexOf(type), 1);
