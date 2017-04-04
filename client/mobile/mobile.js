@@ -380,10 +380,10 @@ function toggleSidebar(open) {
 }
 
 function timedPushback() {
-	$(".mobileClass").velocity("stop", true);
+	$(".mClassContainer").velocity("stop", true);
 	if($(".mClassContainer").length === 0) {
 		$(".mNoneText").velocity("fadeOut", {
-			duration: 100,
+			duration: 10,
 			complete: function() {
 				$(".mClassContainer").velocity({left: "-150vw"}, 0);
 				$(".mClassContainer").velocity("fadeIn", 0);
@@ -397,7 +397,7 @@ function timedPushback() {
 		});
 	} else {
 		$(".mClassContainer").velocity("fadeOut", {
-			duration: 100,
+			duration: 10,
 			complete: function() {
 				$(".mClassContainer").velocity({left: "-150vw"}, 0);
 				$(".mClassContainer").velocity("fadeIn", 0);
