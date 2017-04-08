@@ -90,6 +90,7 @@ momentjs:moment@2.15.1
 mongo@1.1.14
 mongo-id@1.0.6
 mrt:jquery-ui@1.9.2
+mystor:device-detection@0.2.0
 natestrauser:select2@4.0.3
 npm-mongo@2.2.11_2
 oauth@1.1.12

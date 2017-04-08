@@ -1,6 +1,11 @@
 #mobileHeader {
 	border-bottom: 3px solid #999;
 	position: relative;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
 }
 
 #mobileHeader h2 {
@@ -16,7 +21,7 @@
 	text-align: right;
 }
 
-#mobileHeader .fa-bars {
+#mobileHeader .fa {
 	font-size: 5vw;
 	width: 10vw;
 	height: 10vw;
@@ -41,13 +46,23 @@
 	border-radius: 50%;	
 }
 
+.selectText {
+	margin: 0;
+	margin-top: 10%;
+	padding: 5%;
+}
+
 #mobileBody {
 	width: 100%;
 	height: 92vh;
 	margin-bottom: 10%;
-	background-color: #111;
 	overflow-y: auto;
 	overflow-x: hidden;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
 }
 
 .mClassContainer {
@@ -90,11 +105,17 @@
 	vertical-align: top;
 }
 
+.mobileClassContent div {
+	width: 30%;
+	display: inline-block;
+	text-align: right;
+}
+
 .minorHeader {
 	font-size: 4vw !important;
 	width: 96%;
 	padding: 2%;
-	background-color: rgba(255,255,255,0.15);
+	background-color: #444;
 }
 
 .mContTop {
@@ -118,32 +139,38 @@
 }
 
 .mDesc {
+	width: 69%;
 	font-size: 3.4vw !important;
 	color: #BBB;
 }
 
-#mAddWork {
-	width: 13vw;
-	height: 13vw;
+#mainCircleButton {
 	position: absolute;
 	bottom: 6vw;
 	right: 6vw;
 
+	background-color: rgb(255, 26, 26);
+}
+
+.mCircleButton {
+	width: 13vw;
+	height: 13vw;
+
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
-	border-radius: 50%;	
+	border-radius: 50%;
 
-	background-color: rgb(255, 26, 26);
+	
 	-webkit-filter: drop-shadow(3px 4px 4px #111);
 	filter: drop-shadow(3px 4px 4px #111);
 }
 
-#mAddWork .fa {
+.mCircleButton .fa {
 	font-size: 5vw;
 	margin-left: 4.25vw;
 	margin-top: 4vw;
 
-	pointer-events: none
+	pointer-events: none;
 }
 
 .mUndo {
@@ -227,6 +254,11 @@
 	left: -100vw;
 
 	overflow-y: auto;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease;
 }
 
 .mSectionTitle {
@@ -357,16 +389,131 @@
 	color: #CCC;
 }
 
-#mSettings {
+#mSettings, #mSignOut {
 	background-color: rgba(255,255,255,0.1);
 }
 
-#mSettings h3 {
+#mSettings h3, #mSignOut h3 {
 	padding: 0;
+}
+
+#mSignOut {
+	margin-top: 0;
 }
 
 .mNoneText {
 	font-weight: 300;
 	font-style: italic;
 	padding: 5%;
+}
+
+#dueDateCont, #typeCont {
+	position: relative;
+}
+
+#dueDateCont i, #typeCont i {
+	position: absolute;
+	top: calc(10% + 2vw);
+	right: 4%;
+}
+
+#name, #class, #dueDate, #type, #description {
+	font-size: 3.7vw;
+	width: 95%;
+	padding: 2.5%;
+	border-bottom: 1px solid #888;
+	outline: none;
+}
+
+#mRestrictText {
+	width: 94%;
+	text-align: right;
+	padding: 3%;
+}
+
+#mReport {
+	position: absolute;
+	bottom: 21vw;
+	right: 6vw;
+
+	background-color: rgb(101, 101, 101);
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#mReport .fa {
+	margin-left: 4vw;
+}
+
+#mConfirm {
+	position: absolute;
+	bottom: 36vw;
+	right: 6vw;
+
+	background-color: rgb(101, 101, 101);
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+.mNum {
+	font-size: 4vw;
+	width: 4vw;
+	margin: 0;
+	padding: 1.5%;
+
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+
+	text-align: center;
+	background-color: rgba(255,255,255,0.3);
+}
+
+#mConfirmNum {
+	position: absolute;
+	bottom: 38.5vw;
+	right: 21vw;
+}
+
+#mReportNum {
+	position: absolute;
+	bottom: 23.5vw;
+	right: 21vw;
+}
+
+.mOption {
+	font-size: 3.7vw;
+	width: 95%;
+	padding: 2.5%;
+	border-bottom: 1px solid #888;
+	background-color: rgba(255,255,255,0.05);
+	display: table;
+}
+
+.mOpTitle {
+	margin: 0;
+	width: 40%;
+	display: table-cell;
+}
+
+.mOpVal {
+	width: 30%;
+	display: table-cell;
+	text-align: right;
+}
+
+.mOptionText {
+	font-size: 3.5vw;
+	width: 92%;
+	margin: 0;
+	padding: 5%;
+	padding-left: 7%;
+
+	display: table-cell;
 }
