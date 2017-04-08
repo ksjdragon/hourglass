@@ -62,6 +62,7 @@
 }
 
 #basicNext {
+	font-weight: 200;
 	padding: 2%;
 	border: 1px solid #FCF0F0;
 	-moz-border-radius: 5px;

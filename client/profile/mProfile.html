@@ -1,3 +1,89 @@
 <template name="mProfile">
-	
+	<div class="noScroll">
+		<div id="mProfWrapper">
+			<div id="mProfMain">
+				<div id="schoolCont">
+					<input class="mSelect" id="school" form="school" onfocus="this.blur()" placeholder="School" readonly>
+					<i class="fa fa-angle-down" aria-hidden="true"></i>
+				</div>
+				<div id="gradeCont">
+					<input class="mSelect" id="grade" form="grade" onfocus="this.blur()" placeholder="Grade" readonly>
+					<i class="fa fa-angle-down" aria-hidden="true"></i>
+				</div>
+			</div>
+			<div id="mProfClass">
+				<div id="classCont" class="mDisable">
+					<h3>My Classes</h3>
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</div>
+				{{#each mProfClasses}}
+					{{> mClassDisplay2}}
+				{{/each}}
+			</div>
+            <p id="mProfSubmit">Finish!</p>
+		</div>
+		<div id="mOpOverlay">
+			<div id="mOpCont">
+				{{#if mProfOp 'class'}}
+					<div id="mProfClassTitle">
+						<h3>Select</h3>
+						{{> inputAutocomplete id="mClassSearch" settings=classSettings placeholder="Search..."}}
+					</div>
+					<div id="mOpProfCont">
+						{{#if notsearching}}
+                            {{#each classes}}
+                                {{> mClassDisplay}}
+                            {{/each}}
+                            {{#if noclass}}
+                                <h3>No results found...</h3>
+                            {{/if}}
+                        {{else}}
+                            {{#each autocompleteClasses}}
+                                {{> mClassDisplay}}
+                            {{/each}}
+                            {{#if notfound}}
+                                <h3>No results found...</h3>
+                            {{/if}}
+                        {{/if}}
+					</div>
+				{{else}}
+					<h3>Select</h3>
+					<div id="mOpProfCont">
+						{{#if mProfOp 'school'}}
+							{{#each selectOptions 'school'}}
+								{{> mOptionCard2}}
+							{{/each}}
+						{{/if}}
+						{{#if mProfOp 'grade'}}
+							{{#each selectOptions 'grade'}}
+								{{> mOptionCard2}}
+							{{/each}}
+						{{/if}}
+					</div>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+	{{> sAlert}}
+</template>
+
+<template name="mOptionCard2">
+	<h4 class="mOpCard2">{{alias}}</h4>
+</template>
+
+<template name="mClassDisplay">
+	<div class="mClassBox" classid="{{_id}}">
+		<span class="name classText">{{name}}</span>
+	    <span class="teacher classText">{{teachershort}}</span>
+	    <span class="hour classText">{{hour}}</span>
+    </div>
+</template>
+
+<template name="mClassDisplay2">
+	<div class="mClassBox" classid="{{_id}}">
+		<span class="name classText">{{name}}</span>
+	    <span class="teacher classText">{{teachershort}}</span>
+	    <span class="hour classText">{{hour}}</span>
+	    <i class="fa fa-times" aria-hidden="true"></i>
+    </div>
 </template>

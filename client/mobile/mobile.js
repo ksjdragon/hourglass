@@ -563,7 +563,7 @@ Template.mOptionCard.rendered = function() {
 	});
 }
 
-function addMobileButton(element, lighten, animateType, completeFunction) {
+addMobileButton = function(element, lighten, animateType, completeFunction) {
 	let add = lighten;
 	let type = animateType;
 	let ele = jQuery(element);

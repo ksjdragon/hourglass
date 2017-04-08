@@ -1,0 +1,163 @@
+#mProfWrapper {
+	width: 100%;
+	height: 100%;
+
+	background-color: #282933;
+	color: #FCF0F0 !important;
+	position: absolute;
+}
+
+.mSelect {
+	font-size: 4vw;
+	width: 100%;
+	padding: 4.5%;
+
+	border-bottom: 1px solid #888 !important;
+}
+
+#mOpOverlay {
+	color: #FCF0F0 !important;
+	height: 100%;
+	width: 100%;
+
+	background-color: rgba(0,0,0,0.3);
+
+	display: none;
+	opacity: 0;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#mProfMain {
+	margin-top: 10%;
+}
+
+#schoolCont, #gradeCont, #classCont {
+	position: relative;
+}
+
+#schoolCont .fa, #gradeCont .fa {
+	position: absolute;
+	top: 40%;
+	right: 4%;
+
+	pointer-events: none;
+}
+
+#classCont .fa {
+	padding: 0;
+	position: absolute;
+	top: 35%;
+	right: 3%;
+
+	pointer-events: none;
+}
+
+#mOpCont {
+	width: 70%;
+	margin: auto;
+	margin-top: 30%;
+	background-color: #444;
+}
+
+#mOpCont h3 {
+	font-weight: 200;
+	padding: 4%;
+
+	background-color: rgba(255,255,255,0.1);
+}
+
+#mOpProfCont {
+	max-height: 56vh;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.mOpCard2 {
+	width: 90%;
+	padding: 4% 4% 4% 6%;
+	border-bottom: 1px solid #555;
+	background-color: rgba(255,255,255,0.01);
+}
+
+#mProfClass {
+	margin-top: 10%;
+}
+
+#classCont {
+	padding: 3%;
+	background-color: rgba(255,255,255,0.2);
+}
+
+#classCont h3 {
+	font-weight: 100;
+	pointer-events: none;
+}
+
+.mDisable {
+	color: #888;
+}
+
+.mClassBox {
+	width: 90%;
+	padding: 4% 4% 4% 6%;
+
+	border-bottom: 1px solid #555;
+	background-color: rgba(255,255,255,0.01);
+
+	display: table;
+	table-layout: fixed;
+}
+
+.mClassBox .fa {
+	font-size: 4vw;
+	width: 2%;
+	display: table-cell;
+}
+
+#mProfClassTitle {
+	font-weight: 200;
+	width: 92%;
+	padding: 4%;
+
+	background-color: rgba(255,255,255,0.1);
+
+	display: table;
+}
+
+#mProfClassTitle h3 {
+	width: 40%;
+	background-color: rgba(0,0,0,0);
+	display: table-cell;
+}
+
+#mOpProfCont h3 {
+	background-color: rgba(255,255,255,0);
+}
+
+#mClassSearch {
+	font-size: 3.5vw;
+	width: 90%;
+	padding: 5%;
+	outline: none;
+}
+
+.-autocomplete-container {
+	display: none;
+}
+
+#mProfSubmit {
+	font-size: 4vw;
+	width: 15vw;
+	margin: auto;
+	padding: 3%;
+
+	background-color: rgba(255,255,255,0.2);
+	text-align: center;
+
+	position: absolute;
+	bottom: 3vh;
+	left: 42.5vw;
+}

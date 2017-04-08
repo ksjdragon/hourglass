@@ -12,14 +12,6 @@ Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
 
 Template.profile.helpers({
-    schoolgradenext() {
-        if(_.contains([null, undefined, ""], Meteor.user().profile.school ||
-                      _.contains([null, undefined, ""], Meteor.user().profile.grade))) {
-            return "";
-        } else {
-            return "disabled";
-        }
-    },
     showArrow(type) {
         var order = [
             {"back":false, "forward":true},
@@ -291,6 +283,12 @@ Template.profile.events({
         document.getElementById(modifyingInput).value = option;
         toggleOptionMenu(false, modifyingInput);
         $(".selectedOption").removeClass("selectedOption");
+        if(option !== Session.get("profile").school) {
+            newSetting = Session.get("profile");
+            newSetting["classes"] = [];
+            newSetting.school = option;
+            Session.set("profile", newSetting);
+        }
     },
     'input #classSearch' (event) { // Auto-complete updater
         if (event.target.value.length === 0) {
@@ -374,6 +372,14 @@ Template.profile.events({
         var myClasses = Session.get("profile").classes;
         var newClasses = Session.get("newClasses");
         var message = "Sorry, your profile couldn't be created. Please try again!";
+
+        if(myClasses.length === 0 && newClasses.length === 0) {
+            sAlert.error("Please enroll in a class!", {
+                effect: 'stackslide',
+                position: 'top'
+            });
+            return;
+        }
 
         _.each(myClasses, function(myClass) {
             Meteor.call("joinClass", [myClass, ""], function(err, result) {
