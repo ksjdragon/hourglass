@@ -559,6 +559,7 @@ Template.mOptionCard.rendered = function() {
         Session.set("user", newSetting);
         serverData = Session.get("user");
         sendData("editProfile");
+        mobileWork();
         toggleSidebar(false);
 	});
 }
