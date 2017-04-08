@@ -110,10 +110,12 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 });
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
-    var preferences = Session.get("user").preferences;
-    return options[val].filter(function(entry) {
-        return (val === 'theme') ? _.isEqual(preferences[val], themeColors[entry.val]) : preferences[val] === entry.val;
-    })[0].alias;
+    try {
+        var preferences = Session.get("user").preferences;
+        return options[val].filter(function(entry) {
+            return (val === 'theme') ? _.isEqual(preferences[val], themeColors[entry.val]) : preferences[val] === entry.val;
+        })[0].alias;
+    } catch(err) {}
 });
 
 Template.registerHelper('restrict', (input) => { // Returns characters left for comment length.
@@ -770,11 +772,11 @@ function checkMissing() {
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function getReadableDate(date) { // Get readable date from Date constructor.
+getReadableDate = function(date) { // Get readable date from Date constructor.
     return days[date.getDay()] + ", " + months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
 }
 
-function toDate(date) { // Turns formatted date back to Date constructor.
+toDate = function(date) { // Turns formatted date back to Date constructor.
     date = date.substring(date.search(",") + 2, date.length);
     month = months.indexOf(date.substring(0, date.search(" ")));
     day = date.substring(date.search(" ") + 1, date.search(","));
@@ -789,6 +791,9 @@ function formReadable(input, val) { // Makes work information readable by users.
                 return input.typeColor = workColors[input.type];
             case "name":
                 return input.name;
+            case "class":
+                var id = input["class"]; 
+                return (id === Meteor.userId()) ? "Personal" : classes.findOne({_id: id}).name;
             case "dueDate":
                 return getReadableDate(input.dueDate);
             case "description":
@@ -844,12 +849,12 @@ function formReadable(input, val) { // Makes work information readable by users.
                 if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
                 return "fa-check-square-o";
             case "userConfirm":
-                if (!_.contains(input.confirmations, Meteor.userId())) return "";
+                if (!_.contains(input.confirmations, Meteor.userId())) return (Session.get("mobileMode")) ? "rgb(101,101,101)" : "";
                 return "#27A127";
             case "confirmations":
                 return input.confirmations.length;
             case "userReport":
-                if (!_.contains(input.reports, Meteor.userId())) return "";
+                if (!_.contains(input.reports, Meteor.userId()))  return (Session.get("mobileMode")) ? "rgb(101,101,101)" : "";
                 return "#FF1A1A";
             case "reports":
                 return input.reports.length;
@@ -927,6 +932,7 @@ myClasses = function() {
             found = classes.findOne({
                 _id: courses[i]
             });
+            if(found === undefined) return;
             found.subscribers = found.subscribers.length;
             found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
             found.mine = true;
@@ -1025,7 +1031,7 @@ myClasses = function() {
 function calendarEvents(array) {
     var events = [];
     var userClasses = array;
-
+    if(userClasses === undefined) return;
     for (var i = 0; i < userClasses.length; i++) {
         var works = userClasses[i].thisClassWork;
         for (var j = 0; j < works.length; j++) {

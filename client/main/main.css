@@ -31,6 +31,8 @@ html {
 
 	pointer-events: all;
 
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	
 	-webkit-transition: color 0.5s ease;  
 	-moz-transition: color 0.5s ease; 
 	-ms-transition: color 0.5s ease;
