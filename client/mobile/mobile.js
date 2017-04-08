@@ -54,6 +54,7 @@ Template.mobile.rendered = function() {
 	        	sendData("editWork");
 	        }
 	        
+	        mobileWork();
 			$("#mainCircleButton").velocity("fadeOut", 200);
 	        $("#mobileBody").velocity("fadeOut", {
 				duration: 200,

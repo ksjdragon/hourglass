@@ -169,7 +169,7 @@ a:hover {
 	border-radius: 50%;
 
 	position: absolute;
-	top: 22vw;
+	top: 15vw;
 	left: 6.5vw;
 }
 
@@ -177,7 +177,7 @@ a:hover {
 	height: 70vw;
 
 	position: absolute;
-	top: 30.5vw;
+	top: 23.5vw;
 	left: 15vw;
 }
 
@@ -185,7 +185,7 @@ a:hover {
 	color: #FCF0F0;
 	width: 100%;
 	position: absolute;
-	top: 69vh;
+	top: 63vh;
 }
 
 #mLoginTexts h1 {
