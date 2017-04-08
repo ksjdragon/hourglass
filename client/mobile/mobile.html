@@ -12,14 +12,14 @@
 				{{#each myWork}}
 					{{> mobileClass}}
 				{{/each}}
-				<h3 class="mNoneText" style="display:{{noMain}}">Nothing left here!</h3>
+				<h3 class="mNoneText" style="display:{{noneText 'main'}}">Nothing left here!</h3>
 			{{/if}}
 			{{#if showMode 'done'}}
 				<h4 class="minorHeader">Done</h4>
 				{{#each myWork "done"}}
 					{{> mobileClass}}
 				{{/each}}
-				<h3 class="mNoneText" style="display:{{noDone}}">You... should really get to work.</h3>
+				<h3 class="mNoneText" style="display:{{noneText 'done'}}">You... should really get to work.</h3>
 			{{/if}}
 			{{#if showMode 'addWork'}}
 				{{> mAddWork}}
@@ -259,10 +259,6 @@
 	<div id="timeHide" class="mOption">
 		<p class="mOpTitle">Hide Homework:</p>
 		<p class="mOpVal">{{pref 'timeHide'}}</p>
-	</div>
-	<div id="done" class="mOption">
-		<p class="mOpTitle">Hide Done:</p>
-		<p class="mOpVal">{{pref 'done'}}</p>
 	</div>
 	<div id="hideReport" class="mOption">
 		<p class="mOpTitle">Hide Reported:</p>

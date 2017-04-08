@@ -16,9 +16,13 @@ Template.registerHelper('optionInfo', (type) => {
 	}
 });
 
+Template.mobile.created = function() {
+	mobileWork();
+}
+
 Template.mobile.rendered = function() {
 	document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
-	
+	// Buttons
 	addMobileButton($("#mainCircleButton")[0], 50, "color", function() {
 		if(Session.equals("mobileMode","main") || Session.equals("mobileMode","done")) {
 			Session.set("currentWork", null);
@@ -66,9 +70,7 @@ Template.mobile.rendered = function() {
 	addMobileButton($("#mSidebarToggle")[0], 0.2, "brightness", function() {
 		if(Session.equals("mobileMode","main") || Session.equals("mobileMode","done")) {
 			toggleSidebar(true);
-		} else if(Session.equals("mobileMode","addWork") || 
-			Session.equals("mobileMode", "editWork") || 
-			Session.equals("mobileMode", "settings")) {
+		} else {
 			$("#mainCircleButton").velocity("fadeOut", 200);
 			$("#mobileBody").velocity("fadeOut", {
 				duration: 200,
@@ -117,6 +119,7 @@ Template.defaultSidebar.rendered = function() {
 		if(Session.equals("mobileMode", "main")) {
 			toggleSidebar(false);
 		} else {
+			mobileWork();
 			Session.set("mobileMode","main");
 			toggleSidebar(false);
 			timedPushback();
@@ -127,6 +130,7 @@ Template.defaultSidebar.rendered = function() {
 		if(Session.equals("mobileMode", "done")) {
 			toggleSidebar(false);
 		} else {
+			mobileWork();
 			Session.set("mobileMode","done");
 			toggleSidebar(false);
 			timedPushback();
@@ -241,6 +245,8 @@ Template.mobileClass.rendered = function() {
 					undo[1].velocity("fadeIn", {duration: 300});
 					var container = $(".mClassContainer[workid="+id+"]");
 					clearTile = setTimeout(function() {
+						undo[0].velocity("fadeOut", {duration: 100});
+						undo[1].velocity("fadeOut", {duration: 100});
 						container.velocity(
 						{
 							height: 0
@@ -263,7 +269,7 @@ Template.mobileClass.rendered = function() {
 		}
 	});
 
-	addMobileButton(undo[1], 30, "color", function() {
+	addMobileButton(undo[1], -0.05, "brightness", function() {
 		clearTimeout(clearTile);
 		movable.velocity({translateX: "0px"},300);
 		undo[0].velocity("fadeOut", {duration: 300});
@@ -290,6 +296,7 @@ Template.mobileClass.rendered = function() {
         }
 
    		if(inRole) {
+   			$("#mainCircleButton").velocity("fadeOut", 200);
    			$("#mobileBody").velocity("fadeOut", {
 				duration: 200,
 				complete: function() {
@@ -299,6 +306,7 @@ Template.mobileClass.rendered = function() {
 				}
 			});
    		} else {
+   			$("#mainCircleButton").velocity("fadeOut", 200);
    			$("#mobileBody").velocity("fadeOut", {
 				duration: 200,
 				complete: function() {
@@ -394,34 +402,7 @@ Template.mobile.helpers({
 		return (Session.get("sidebarMode") === "mobile") ? Session.get("user").preferences.theme.iconHighlight : "";
 	},
 	myWork(done) {
-		var array = myClasses();
-		if(array === undefined) return;
-		var notDoneWork = [];
-		var doneWork = [];
-		for(var i = 0; i < array.length; i++) {
-			for(var j = 0; j < array[i].thisClassWork.length; j++) {
-				var classid = array[i].thisClassWork[j].classid;
-				var desc = array[i].thisClassWork[j].description;
-				if(desc) {
-					array[i].thisClassWork[j].shortdesc = (desc.length <= 40 ) ? desc : desc.substring(0,40) +"...";
-				}
-				array[i].thisClassWork[j]["class"] = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id:classid}).name;
-				if(_.contains(array[i].thisClassWork[j].done, Meteor.userId())) {
-					array[i].thisClassWork[j].isDone = true;
-					doneWork.push(array[i].thisClassWork[j]);
-				} else {
-					notDoneWork.push(array[i].thisClassWork[j]);
-				}
-			}
-		}
-		doneWork = doneWork.sort(function(a,b) {
-			return Date.parse(a.realDate) - Date.parse(b.realDate);
-		});
-		notDoneWork = notDoneWork.sort(function(a,b) {
-			return Date.parse(a.realDate) - Date.parse(b.realDate);
-		});
-
-		Session.set("mobileWork", [notDoneWork, doneWork]);
+		
 		return (done === "done") ? Session.get("mobileWork")[1] : Session.get("mobileWork")[0];
 	},
 	showMode(mode) {
@@ -439,15 +420,12 @@ Template.mobile.helpers({
         }
         return array;
     },
-    noMain() {
-    	try {
-    		return (Session.get("mobileWork")[0].length === 0) ? "block" : "none";	
-    	} catch(err) {}
-    },
-    noDone() {
-    	try {
-    		return (Session.get("mobileWork")[1].length === 0) ? "block" : "none";
-    	} catch(err) {}
+    noneText(type) {
+    	if(type === "main") {
+    		return Session.get("noneText")[0];
+    	} else {
+    		return Session.get("noneText")[1];
+    	}
     },
     buttonType() {
     	if(Session.equals("mobileMode","main") || Session.equals("mobileMode","done")) {
@@ -463,7 +441,7 @@ Template.mobile.helpers({
     		return "bars";
     	} else if(Session.equals("mobileMode","addWork") || Session.equals("mobileMode","editWork")) {
     		return "times";
-    	} else if(Session.equals("mobileMode", "settings")) {
+    	} else if(Session.equals("mobileMode", "viewWork") || Session.equals("mobileMode", "settings")) {
     		return "arrow-left";
     	}
     },
@@ -693,7 +671,6 @@ function toggleSidebar(open) {
 function timedPushback() {
 	var fadeTime = 10;
 	$(".mClassContainer").velocity("stop", true);
-	$(".mNoneText").velocity("fadeOut", fadeTime);
 	$(".mClassContainer").velocity("fadeOut", fadeTime);
 	setTimeout(function() {
 		$(".mClassContainer").velocity({left: "-150vw"}, 0);
@@ -706,5 +683,36 @@ function timedPushback() {
 			i += 1;
 		}, 100);
 	}, fadeTime);
-	
+}
+
+function mobileWork() {
+	var array = myClasses();
+	if(array === undefined) return;
+	var notDoneWork = [];
+	var doneWork = [];
+	for(var i = 0; i < array.length; i++) {
+		for(var j = 0; j < array[i].thisClassWork.length; j++) {
+			var classid = array[i].thisClassWork[j].classid;
+			var desc = array[i].thisClassWork[j].description;
+			if(desc) {
+				array[i].thisClassWork[j].shortdesc = (desc.length <= 40 ) ? desc : desc.substring(0,40) +"...";
+			}
+			array[i].thisClassWork[j]["class"] = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id:classid}).name;
+			if(_.contains(array[i].thisClassWork[j].done, Meteor.userId())) {
+				array[i].thisClassWork[j].isDone = true;
+				doneWork.push(array[i].thisClassWork[j]);
+			} else {
+				notDoneWork.push(array[i].thisClassWork[j]);
+			}
+		}
+	}
+	doneWork = doneWork.sort(function(a,b) {
+		return Date.parse(a.realDate) - Date.parse(b.realDate);
+	});
+	notDoneWork = notDoneWork.sort(function(a,b) {
+		return Date.parse(a.realDate) - Date.parse(b.realDate);
+	});
+
+	Session.set("mobileWork", [notDoneWork, doneWork]);
+	Session.set("noneText", [(notDoneWork.length === 0) ? "block": "none", (doneWork.length === 0) ? "block": "none"]);
 }

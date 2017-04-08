@@ -849,12 +849,12 @@ function formReadable(input, val) { // Makes work information readable by users.
                 if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
                 return "fa-check-square-o";
             case "userConfirm":
-                if (!_.contains(input.confirmations, Meteor.userId())) return (Session.get("mobileMode")) ? "rgb(101,101,101)" : "";
+                if (!_.contains(input.confirmations, Meteor.userId())) return (Meteor.Device.isPhone()) ? "rgb(101,101,101)" : "";
                 return "#27A127";
             case "confirmations":
                 return input.confirmations.length;
             case "userReport":
-                if (!_.contains(input.reports, Meteor.userId()))  return (Session.get("mobileMode")) ? "rgb(101,101,101)" : "";
+                if (!_.contains(input.reports, Meteor.userId()))  return (Meteor.Device.isPhone()) ? "rgb(101,101,101)" : "";
                 return "#FF1A1A";
             case "reports":
                 return input.reports.length;
@@ -963,7 +963,7 @@ myClasses = function() {
                 }
             }
 
-            if (thisWork[j] !== "no" && Session.get("user").preferences.done) { // If done filter is true
+            if (thisWork[j] !== "no" && Session.get("user").preferences.done && !Meteor.Device.isPhone()) { // If done filter is true and not mobile.
                 if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
                     thisWork[j] = "no";
                 }
