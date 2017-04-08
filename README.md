@@ -30,6 +30,17 @@ Every piece of work has a confirmed to reported ratio. This is the ratio of the 
 In the left sidebar, you find options for filtering. These include filtering by class or type of assignment.
 
 ##Changelog
+### 0.2.1
+- Mobile support added
+- Fixed visual bugs
+
+### 0.2.0
+- Large UI redesign
+- Scrollbars now functional
+- Redesigned logo
+- Fixed visual bugs
+- New profile creation page
+
 ### 0.1.3
 - Changed some icons
 - Fixed some resolution issues
@@ -39,11 +50,11 @@ In the left sidebar, you find options for filtering. These include filtering by 
 - Minor bug fixes
 
 ### 0.1.2
-  - First beta version
-  - Fixed resolution / display issues
-  - Bug fixes
+ - First beta version
+ - Fixed resolution / display issues
+ - Bug fixes
   
 ### 0.1.1
-  - Added dynamic resizing, zooming and scaling support for CSS.
-  - Fixed reactive updating on work.
-  - Added personal work.
+ - Added dynamic resizing, zooming and scaling support for CSS.
+ - Fixed reactive updating on work.
+ - Added personal work.
