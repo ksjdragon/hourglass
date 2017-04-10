@@ -403,7 +403,6 @@ Template.mobile.helpers({
 		return (Session.get("sidebarMode") === "mobile") ? Session.get("user").preferences.theme.iconHighlight : "";
 	},
 	myWork(done) {
-		
 		return (done === "done") ? Session.get("mobileWork")[1] : Session.get("mobileWork")[0];
 	},
 	showMode(mode) {
@@ -697,7 +696,7 @@ function mobileWork() {
 			var classid = array[i].thisClassWork[j].classid;
 			var desc = array[i].thisClassWork[j].description;
 			if(desc) {
-				array[i].thisClassWork[j].shortdesc = (desc.length <= 40 ) ? desc : desc.substring(0,40) +"...";
+				array[i].thisClassWork[j].shortdesc = (desc.length <= 40 ) ? desc : desc.substring(0,20) +"...";
 			}
 			array[i].thisClassWork[j]["class"] = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id:classid}).name;
 			if(_.contains(array[i].thisClassWork[j].done, Meteor.userId())) {
