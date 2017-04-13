@@ -1,4 +1,4 @@
-/* CSS Code Styling
+	/* CSS Code Styling
 Tag { Always spaces between values
 	Font:
 	Height
@@ -1048,6 +1048,10 @@ textarea.clickModify {
 
 .fc-day:not(.fc-past):hover {
 	box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1);
+}
+
+.fc-content {
+	cursor: pointer;
 }
 
 .fc-slats, .fc-content-skeleton {
