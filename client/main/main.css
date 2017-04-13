@@ -570,6 +570,23 @@ input {
 	text-align: right;
 }
 
+.cWorkBottom .fa-thumbs-up, .cWorkBottom .fa-exclamation-triangle {
+	pointer-events: all;
+
+	-webkit-transition: color 0.4s ease;  
+	-moz-transition: color 0.4s ease; 
+	-ms-transition: color 0.4s ease;
+	transition: color 0.4s ease; 
+}
+
+.cWorkBottom .fa-thumbs-up:hover {
+	color: #27A127;
+}
+
+.cWorkBottom .fa-exclamation-triangle:hover {
+	color: #FF1A1A;
+}
+
 input.clickModify, textarea.clickModify {
 	width: 100%;
 	font-size: 2.2vh;

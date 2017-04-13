@@ -112,6 +112,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     try {
+        if(val === "school") return Session.get("user").school;
         var preferences = Session.get("user").preferences;
         return options[val].filter(function(entry) {
             return (val === 'theme') ? _.isEqual(preferences[val], themeColors[entry.val]) : preferences[val] === entry.val;
@@ -395,6 +396,7 @@ Template.main.events({
         $("#userDropdown").fadeIn(250);
     },
     'click .workCard' (event) { // Display work information on work card click.
+        if(event.target.className.indexOf("fa") !== -1) return;
         var workid = event.target.getAttribute("workid");
         var thisWork = work.findOne({
             _id: workid
@@ -640,6 +642,14 @@ Template.main.events({
     'click #markReport' () { // Click report button.
         serverData = [Session.get("currentWork")._id, "reports"];
         sendData("toggleWork");
+    },
+    'click .cWorkBottom .fa-thumbs-up' (event) {
+        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "confirmations"]
+        sendData("toggleWork")
+    },
+    'click .cWorkBottom .fa-exclamation-triangle' (event) {
+        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "reports"]
+        sendData("toggleWork")
     }
 });
 
@@ -1011,7 +1021,11 @@ myClasses = function() {
             var repo = thisWork[j].reports.length;
             var ratio = conf / repo;
             var normalColor = Session.get("user").preferences.theme.text;
-            if (Math.abs(conf - repo)) {
+
+
+            thisWork[j].doneRatio = normalColor;
+            // Ratio color handling
+            /*if (Math.abs(conf - repo)) {
                 if ((conf + repo) <= 1) {
                     thisWork[j].doneRatio = normalColor;
                 } else {
@@ -1021,7 +1035,7 @@ myClasses = function() {
                 thisWork[j].doneRatio = "#33DD33";
             } else if (ratio <= 0.9) {
                 thisWork[j].doneRatio = "#FF1A1A";
-            }
+            }*/
         }
         array[i].thisClassWork = thisWork.sort(function(a, b) {
             return Date.parse(a.realDate) - Date.parse(b.realDate);

@@ -299,7 +299,7 @@
                 <div id="formContainer">
                     <div class="formDiv">
                         <p class="profTitle">**School:</p>
-                        {{> inputAutocomplete settings=schoolComplete class="form-control creInput"         type="text" form="school" placeholder="**School | Ex: International Academy" }}
+                         <input id="school" class="creInput" type="text" form="school" value="{{pref 'school'}}" readonly>
                    </div>
                    <div class="formDiv">
                     <p class="profTitle">Hour:</p>
