@@ -34,6 +34,7 @@ In the left sidebar, you find options for filtering. These include filtering by 
 - Fixed visual issues in mobile
 - Drag scrolling for classes mode on desktop version
 - Small name changes
+- Changed maximum characters of description to 300
 
 ### 0.2.1
 - Mobile support added
