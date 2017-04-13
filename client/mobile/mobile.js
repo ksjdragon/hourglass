@@ -692,8 +692,9 @@ mobileWork = function() {
 			var classid = array[i].thisClassWork[j].classid;
 			var desc = array[i].thisClassWork[j].description;
 			if(desc) {
-				array[i].thisClassWork[j].shortdesc = (desc.length <= 40 ) ? desc : desc.substring(0,20) +"...";
+				array[i].thisClassWork[j].shortdesc = (desc.length <= 30 ) ? desc : desc.substring(0,30) + "...";
 			}
+			array[i].thisClassWork[j].shortname = (name.length <= 20) ? name : name.substring(0,20) + "...";
 			array[i].thisClassWork[j]["class"] = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id:classid}).name;
 			if(_.contains(array[i].thisClassWork[j].done, Meteor.userId())) {
 				array[i].thisClassWork[j].isDone = true;

@@ -248,7 +248,7 @@ function securityCheck(checklist, input) {
             break;
         // Description too long
         case 12:
-            if ((typeof input.description !== "string" || input.description.length > 150) && input.description !== undefined) error = 11;
+            if ((typeof input.description !== "string" || input.description.length > 300) && input.description !== undefined) error = 11;
             break;
         // Moderator of class
         case 13:
