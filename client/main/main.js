@@ -92,8 +92,8 @@ Template.classesMode.rendered = function() {
 
 // Global Helpers
 
-Template.registerHelper('adminPage', () => {
-    return window.location.pathname.includes("/");
+Template.registerHelper('version', () => {
+    return version;
 });
 
 Template.registerHelper('screen', (multiplier, fraction) => {
