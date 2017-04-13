@@ -101,6 +101,7 @@ Template.registerHelper('myClasses', () => { // Gets all classes and respective 
         return [];
     } else {
         var array = myClasses();
+        if(Meteor.Device.isPhone()) mobileWork();
         Session.set("myClasses", array);
         calendarEvents(array);
         $("#fullcalendar").fullCalendar("removeEvents");
@@ -699,6 +700,7 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
                 toggleToMode("manageClass");
             }
         }
+        if(Meteor.Device.isPhone()) mobileWork();
         calendarEvents(myClasses());
         $("#fullcalendar").fullCalendar("removeEvents");
         $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
@@ -1002,7 +1004,7 @@ myClasses = function() {
             thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
             thisWork[j].reportLength = thisWork[j].reports.length;
 
-            thisWork[j].creator = Meteor.users.findOne({
+            thisWork[j].creatorname = Meteor.users.findOne({
                 _id: thisWork[j].creator
             }).profile.name;
             var conf = thisWork[j].confirmations.length;

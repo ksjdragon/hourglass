@@ -54,7 +54,6 @@ Template.mobile.rendered = function() {
 	        	sendData("editWork");
 	        }
 	        
-	        mobileWork();
 			$("#mainCircleButton").velocity("fadeOut", 200);
 	        $("#mobileBody").velocity("fadeOut", {
 				duration: 200,
@@ -120,7 +119,6 @@ Template.defaultSidebar.rendered = function() {
 		if(Session.equals("mobileMode", "main")) {
 			toggleSidebar(false);
 		} else {
-			mobileWork();
 			Session.set("mobileMode","main");
 			toggleSidebar(false);
 			timedPushback();
@@ -131,7 +129,6 @@ Template.defaultSidebar.rendered = function() {
 		if(Session.equals("mobileMode", "done")) {
 			toggleSidebar(false);
 		} else {
-			mobileWork();
 			Session.set("mobileMode","done");
 			toggleSidebar(false);
 			timedPushback();
@@ -559,7 +556,6 @@ Template.mOptionCard.rendered = function() {
         Session.set("user", newSetting);
         serverData = Session.get("user");
         sendData("editProfile");
-        mobileWork();
         toggleSidebar(false);
 	});
 }
@@ -686,7 +682,7 @@ function timedPushback() {
 	}, fadeTime);
 }
 
-function mobileWork() {
+mobileWork = function() {
 	var array = myClasses();
 	if(array === undefined) return;
 	var notDoneWork = [];

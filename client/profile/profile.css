@@ -38,10 +38,6 @@
 	border: 1px solid #FCF0F0 !important;
 }
 
-#profPageWrapper .optionHolder {
-	width: 100%;
-}
-
 #basicInfo {
 	width: 100%;
 	position: absolute;
@@ -54,6 +50,10 @@
 	margin: auto;
 
 	background-color: rgba(255,255,255,0.2);
+}
+
+#newUserWrapper .formDiv {
+	position: relative;
 }
 
 .opTitle {
@@ -233,13 +233,15 @@
 	margin: auto;
 	margin-top: -1%;
 	padding: 3%;
-	padding-bottom: 2%;
+	padding-top: 2%;
+	padding-bottom: 1%;
 	width: 30%;
 
 	background-color: rgba(255,255,255,0.2);
 }
 
 #profPageWrapper #creSubmit {
+	margin-top: 5%;
 	border: 1px solid #FCF0F0 !important;
 }
 
@@ -286,3 +288,7 @@
 #profileSubmit:hover {
 	background-color: rgba(0,0,0,0.3);
 }
+
+ #profPageWrapper #createInfo .formDiv:nth-child(5),  #profPageWrapper #createInfo .formDiv:nth-child(6) {
+ 	position: relative;
+ } 

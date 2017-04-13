@@ -144,7 +144,7 @@
 	outline: none;
 }
 
-.-autocomplete-container {
+#mProfWrapper .-autocomplete-container {
 	display: none;
 }
 

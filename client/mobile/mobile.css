@@ -54,7 +54,7 @@
 
 #mobileBody {
 	width: 100%;
-	height: 92vh;
+	height: 92%;
 	margin-bottom: 10%;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -106,9 +106,11 @@
 }
 
 .mobileClassContent div {
-	width: 28%;
-	display: inline-block;
+	position: absolute;
+	right: 6%;
+	bottom: 11%;
 	text-align: right;
+
 }
 
 .minorHeader {
@@ -166,9 +168,13 @@
 }
 
 .mCircleButton .fa {
-	font-size: 5vw;
-	margin-left: 4.25vw;
-	margin-top: 4vw;
+	font-size: 5vw !important;
+	padding: 0 !important;
+	width: 100%;
+	height: 100%;
+	margin: auto;
+	text-align: center;
+	line-height: 13.1vw;
 
 	pointer-events: none;
 }
@@ -442,10 +448,6 @@
 	-moz-transition: background-color 0.4s ease; 
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease; 
-}
-
-#mReport .fa {
-	margin-left: 4vw;
 }
 
 #mConfirm {
