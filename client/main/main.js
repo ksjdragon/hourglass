@@ -81,7 +81,21 @@ Template.classesMode.rendered = function() {
 
     area.add(new Hammer.Pan({ threshold: 0 }));
 
-    area.on('panmove', function(e) {
+    area.on('panmove', function(e) {    
+        if(e.srcEvent.srcElement.className === "classInfo") {
+            /*if(e.srcEvent.pageX <= .06*screen.width) {
+                dX = currX + 5;
+                $("#classesMode").scrollLeft(-dX);
+                return;    
+            } else if(e.srcEvent.pageX >= window.innerWidth-.06*screen.width) {
+                dX = currX + 5;
+                $("#classesMode").scrollLeft(dX);
+                return;
+            } else {
+                return;
+            }*/
+            return;   
+        }
         dX = currX + e.deltaX;
         $("#classesMode").scrollLeft(-dX);
     });
@@ -931,7 +945,7 @@ startDragula = function() {
     dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
         moves: function(el, container, handle) {
             // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
-            return _.intersection(["classInfo", "mainClassName", "mainClassHour", "mainClassTeacher"], handle.classList).length > 0;
+            return _.intersection(["classInfo"], handle.classList).length > 0;
         }
     })
         .on('out', function(el) {

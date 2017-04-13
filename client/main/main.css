@@ -461,10 +461,16 @@ input {
 
 	-webkit-filter: none !important;
 	filter: none !important;
+	pointer-events: none;
 }
 
 .mainClassHour {
 	margin-top: 0;
+	pointer-events: none;
+}
+
+.mainClassTeacher {
+	pointer-events: none;
 }
 
 .creWork {
