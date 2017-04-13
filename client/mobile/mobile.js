@@ -488,6 +488,10 @@ Template.mEditWork.rendered = function() {
 		Session.set("select", "type");
 		toggleSidebar(true);
 	});
+
+	/*addMobileButton($("#mDelete"), 0.2, "brightness", function() {
+		
+	})*/
 }
 
 Template.mAddWork.events({

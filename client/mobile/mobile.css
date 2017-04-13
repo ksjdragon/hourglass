@@ -489,6 +489,15 @@
 	right: 21vw;
 }
 
+#mDelete {
+	padding: 3%;
+	background-color: rgba(255,255,255,0.1);
+
+	position: absolute;
+	bottom: 7vw;
+	left: 7vw;
+}
+
 .mOption {
 	font-size: 3.7vw;
 	width: 92%;

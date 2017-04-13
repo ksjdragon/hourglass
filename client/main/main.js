@@ -73,21 +73,25 @@ Template.classesMode.rendered = function() {
     $(".mainClass .slimScrollBar").css("display", "none");
     
     // Classes mode drag scrolling
-    var dX = 0;
-    var currX = 0;
-    var sidebar = $("#classesMode");
-    new Hammer(sidebar[0], {
-        domEvents: true
+    var area = $("#classesMode");
+    var curDown;
+    var curXPos;
+
+    area.mousedown(function(m){
+        curDown = true;
+        curXPos = m.pageX;
     });
 
-    sidebar.on('panmove', function(e) {
-        dX = currX + (e.originalEvent.gesture.deltaX);
-        sidebar.scrollLeft(dX);
+    area.mouseup(function(){
+        curDown = false;
     });
 
-    sidebar.on('panend', function(e) {
-        currX = dX;
-    }); 
+    area.mousemove(function(m){
+        if(curDown) {
+            area.scrollLeft($(window).scrollLeft() + (curXPos - m.pageX));
+        }
+    });
+
 };
 
 // Global Helpers
