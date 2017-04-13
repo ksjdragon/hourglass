@@ -40,6 +40,11 @@ Template.login.rendered = function() {
 Template.main.created = function() {
     Session.set("mode", Session.get("user").preferences.mode);
     Session.set("classInfo", null);
+    $(document).on('keyup', (e) => {
+        if(event.keyCode === 27 && $(".overlay").css("display") !== "none") {
+            $(".overlay").fadeOut(150);
+        }
+    });
     /*if (Notification.permission !== "granted") {
         Notification.requestPermission().then(function(result) {
 
@@ -66,8 +71,23 @@ Template.classesMode.rendered = function() {
         touchScrollStep: 90
     });
     $(".mainClass .slimScrollBar").css("display", "none");
+    
+    // Classes mode drag scrolling
+    var dX = 0;
+    var currX = 0;
+    var sidebar = $("#classesMode");
+    new Hammer(sidebar[0], {
+        domEvents: true
+    });
 
-        
+    sidebar.on('panmove', function(e) {
+        dX = currX + (e.originalEvent.gesture.deltaX);
+        sidebar.scrollLeft(dX);
+    });
+
+    sidebar.on('panend', function(e) {
+        currX = dX;
+    }); 
 };
 
 // Global Helpers
