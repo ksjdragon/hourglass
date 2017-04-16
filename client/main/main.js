@@ -80,7 +80,7 @@ Template.classesMode.rendered = function() {
 
     area.on({
         'mousemove': function(e) {
-            if(clicked) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/25);
+            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/50);
         },
         'mousedown': function(e) {
             clicked = true;
