@@ -30,6 +30,12 @@ Every piece of work has a confirmed to reported ratio. This is the ratio of the 
 In the left sidebar, you find options for filtering. These include filtering by class or type of assignment.
 
 ## Changelog
+### 0.2.3 
+- Mobile sidebar closes on tap from the side
+- Mobile sign-up bug fixed
+- Calendar date bug fixed 
+- Fixed visual issues
+
 ### 0.2.2
 - Fixed visual issues in mobile
 - Drag scrolling for classes mode on desktop version
