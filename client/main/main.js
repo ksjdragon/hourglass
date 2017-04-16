@@ -8,6 +8,9 @@ import './main.html';
 var load = true;
 var calWorkOpen = null;
 var calWorkDate = null;
+var dragging = false;
+var clicked = false;
+
 
 var defaultWork = {
     name: "Name | Click here to edit...",
@@ -30,8 +33,6 @@ Session.set("typeFilterHover", null); // Stores current hovered type filter.
 Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("restrictText", {}); // Stores text for comment character restriction.
 Session.set("confirmText", ""); // Stores text for confirmations.
-
-var dragging = false;
 
 // On render actions
 
@@ -75,12 +76,11 @@ Template.classesMode.rendered = function() {
     $(".mainClass .slimScrollBar").css("display", "none");
     
     var area = $("#classesMode");
-    var clicked = false;
     var clickX = 0;
 
     area.on({
         'mousemove': function(e) {
-            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/50);
+            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/55);
         },
         'mousedown': function(e) {
             clicked = true;
@@ -960,6 +960,7 @@ startDragula = function() {
         var els = document.getElementsByClassName("classWrapper");
         if($(els[0]).hasClass("gu-transit")) return;
         dragging = false;
+        clicked = false;
         var final = [];
         for (var i = 0; i < els.length; i++) {
             var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
