@@ -432,11 +432,12 @@ input {
 }
 
 .classWrapper {
-	width: 300px;
+	width: 20vw;
 	height: 95%;
 	margin: 10px;
 	margin-top: 20px;
 	display: inline-block;
+	position: relative;
 	vertical-align: top;
 }
 
@@ -455,9 +456,8 @@ input {
 }
 
 .mainClassName {
-	font-size: 160%;
+	font-size: 2vw;
 	white-space: normal;
-	word-break: break-all;
 
 	-webkit-filter: none !important;
 	filter: none !important;
@@ -465,15 +465,18 @@ input {
 }
 
 .mainClassHour {
+	font-size: 1.1vw;
 	margin-top: 0;
 	pointer-events: none;
 }
 
 .mainClassTeacher {
+	font-size: 1.1vw;
 	pointer-events: none;
 }
 
 .creWork {
+	font-size: 1.1vw;
 	cursor: pointer;
 	box-shadow: 0px 5px 5px -2px #666;
 
@@ -494,7 +497,7 @@ input {
 
 .workHolder {
 	width: 90% !important;
-	max-height: 71vh;
+	max-height: 55.5vh;
 	padding: 5%;
 }
 
@@ -545,16 +548,16 @@ input {
 }
 
 .cWorkCont {
+	font-size: .97vw;
 	padding: 5%;
 }
 
 .cWorkType {
-	height: 5px;
+	height: .3vw;
 }
 
 .cWorkName {
 	font-weight: 400;
-	font-size: 100%;
 	width: 50%;
 	margin-top: 0;
 	

@@ -243,10 +243,11 @@ Template.mClassDisplay.rendered = function() {
 }
 
 Template.mClassDisplay2.rendered = function() {
-	var div = this.firstNode.children[3];
-	div.onclick = function() {
-		var newSetting = Session.get("profile");
-		newSetting.classes.splice(newSetting.classes.indexOf(div.getAttribute("classid")),1)
-		Session.set("profile", newSetting);
-	}
+	let div = this.firstNode.children[3];
+    addMobileButton(div, 0.1, "brightness", function() {
+        console.log(div);
+       var newSetting = Session.get("profile");
+        newSetting.classes.splice(newSetting.classes.indexOf(div.parentNode.getAttribute("classid")),1)
+        Session.set("profile", newSetting); 
+    });
 }

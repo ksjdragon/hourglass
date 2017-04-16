@@ -276,6 +276,16 @@ Template.registerHelper("classSelected", () => {
     return !Session.equals("classInfo", null);
 });
 
+Template.manageClass.rendered = function() {
+    $("#classBody").slimScroll({
+        width: '100%',
+        height: '',
+        touchScrollStep: 60,
+        color: '#FFF',
+        railOpacity: 0.7
+    });
+}
+
 Template.manageClass.events({
     'click .classBox' (event) {
         var classId = event.target.getAttribute("classid");
@@ -329,6 +339,16 @@ Template.manageClass.events({
         $("#confirmOverlay").fadeIn(250);
     }
 });
+
+Template.joinClass.rendered = function() {
+    $("#classBody").slimScroll({
+        width: '100%',
+        height: '',
+        touchScrollStep: 60,
+        color: '#FFF',
+        railOpacity: 0.7
+    });
+}
 
 Template.joinClass.helpers({
     classes() { // Loads all of the possible classes ( Limit of twenty shown ) ( Sorts by class size ) ( Only your school)

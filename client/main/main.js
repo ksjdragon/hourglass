@@ -31,6 +31,8 @@ Session.set("classDispHover", null); // Stores current hovered class filter.
 Session.set("restrictText", {}); // Stores text for comment character restriction.
 Session.set("confirmText", ""); // Stores text for confirmations.
 
+var dragging = false;
+
 // On render actions
 
 Template.login.rendered = function() {
@@ -72,37 +74,33 @@ Template.classesMode.rendered = function() {
     });
     $(".mainClass .slimScrollBar").css("display", "none");
     
-    // Classes mode drag scrolling
-    var dX = 0;
-    var currX = 0;
-    var area = new Hammer($("#classesMode")[0], {
-        domEvents: true
-    });
+    var area = $("#classesMode");
+    var clicked = false;
+    var clickX = 0;
 
-    area.add(new Hammer.Pan({ threshold: 0 }));
-
-    area.on('panmove', function(e) {    
-        if(e.srcEvent.srcElement.className === "classInfo") {
-            /*if(e.srcEvent.pageX <= .06*screen.width) {
-                dX = currX + 5;
-                $("#classesMode").scrollLeft(-dX);
-                return;    
-            } else if(e.srcEvent.pageX >= window.innerWidth-.06*screen.width) {
-                dX = currX + 5;
-                $("#classesMode").scrollLeft(dX);
-                return;
-            } else {
-                return;
-            }*/
-            return;   
+    area.on({
+        'mousemove': function(e) {
+            if(clicked) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/25);
+        },
+        'mousedown': function(e) {
+            clicked = true;
+            clickX = e.pageX;
+        },
+        'mouseup': function() {
+            clicked = false;
         }
-        dX = currX + e.deltaX;
-        $("#classesMode").scrollLeft(-dX);
     });
 
-    area.on('panend', function(e) {
-        currX = dX;
-    });
+    /*if(dragging) {
+        var onLeft = e.pageX <= .1*screen.width;
+        var onRight = e.pageX >= (window.innerWidth-.1*screen.width);
+        console.log(onLeft);
+        if(onLeft) {
+            area.scrollLeft(area.scrollLeft() - 5);
+        } else if(onRight) {
+            area.scrollLeft(area.scrollLeft() + 5);
+        }
+    }*/
 };
 
 // Global Helpers
@@ -285,8 +283,11 @@ Template.main.helpers({
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if (jsEvent.target.className.includes("fc-past")) return;
-                var realDate = date.format();
-                realDate = new Date(realDate[0], parseInt(realDate[1]) - 1, realDate[2], 11, 59, 59);
+                var realDate = date;
+                date.seconds(59);
+                date.minutes(59);
+                date.hour(15);
+                realDate = realDate._d;
                 Session.set("newWork", true);
                 Session.set("currentWork", {dueDate: realDate});
                 if(!Session.equals("sidebarMode", "create")) toggleToSidebar("create");
@@ -685,6 +686,11 @@ Template.main.events({
     'click .cWorkBottom .fa-exclamation-triangle' (event) {
         serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "reports"]
         sendData("toggleWork")
+    },
+    'click #signout' () {
+        $(".noScroll").velocity("fadeOut", 50);
+        Session.set('sidebarMode','');
+        document.getElementById('login-buttons-logout').click();
     }
 });
 
@@ -944,19 +950,23 @@ checkComplete = function(required, inputs) {
 startDragula = function() {
     dragula([document.querySelector('#classesMode'), document.querySelector('#nonexistant')], {
         moves: function(el, container, handle) {
-            // return handle.classList.contains("classInfo") || handle.classList.contains("mainClassName");
             return _.intersection(["classInfo"], handle.classList).length > 0;
         }
     })
-        .on('out', function(el) {
-            var els = document.getElementsByClassName("classWrapper");
-            var final = [];
-            for (var i = 0; i < els.length; i++) {
-                var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
-                final.push(classid);
-            }
-            Meteor.call("reorderClasses", final);
-        });
+    .on('drag', function() {
+        dragging = true;  
+    })
+    .on('out', function(el) {
+        var els = document.getElementsByClassName("classWrapper");
+        if($(els[0]).hasClass("gu-transit")) return;
+        dragging = false;
+        var final = [];
+        for (var i = 0; i < els.length; i++) {
+            var classid = els[i].getElementsByClassName("creWork")[0].getAttribute("classid");
+            final.push(classid);
+        }
+        Meteor.call("reorderClasses", final);
+    });
 };
 
 myClasses = function() {

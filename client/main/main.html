@@ -157,14 +157,14 @@
             </div>
             <div id="userFunctions" style="background-color:{{divColor 'userDropdownColor'}}">
                 {{#if admin}}
-                    <div id="myprofile" class="userFunction" onclick="window.location='/admin';">
+                    <div class="userFunction" onclick="window.location='/admin';">
                         <i class="fa fa-cogs" aria-hidden="true"></i>
                         <p>Admin Panel</p>
                     </div>
                 {{/if}}
             </div>
             <div style="background-color:{{divColor 'userDropdownColor'}}">
-                <div id="myprofile" class="userFunction" onclick="document.getElementById('login-buttons-logout').click();">
+                <div id="signout" class="userFunction">
                     <i class="fa fa-sign-out" aria-hidden="true"></i>
                     <p>Sign out</p>
                 </div>

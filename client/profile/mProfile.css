@@ -111,10 +111,25 @@
 	table-layout: fixed;
 }
 
-.mClassBox .fa {
-	font-size: 4vw;
-	width: 2%;
+.mProfClassDelete {
+	width: 9vw;
+	height: 9vw;
+	background-color: rgba(255,255,255,0.1);
 	display: table-cell;
+}
+
+.mClassBox .fa {
+	font-size: 4vw !important;
+	line-height: 9vw !important; 
+}
+
+#mProfClass .mClassBox {
+	width: 94%;
+	padding: 2% 2% 2% 4%;
+}
+
+#mProfClass .name {
+	width: 48%;
 }
 
 #mProfClassTitle {

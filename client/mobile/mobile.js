@@ -61,7 +61,7 @@ Template.mobile.rendered = function() {
 					Session.set("mobileMode", "main");
 			        $("#mobileBody").velocity("fadeIn", 200);
 					$("#mainCircleButton").velocity("fadeIn", 200);
-					timedPushback();
+					timedPushback(true);
 				}
 			});
     	}
@@ -78,7 +78,7 @@ Template.mobile.rendered = function() {
 					$("#mainCircleButton").velocity("fadeIn", 200);
 			        $("#mobileBody").velocity("fadeIn", 200);
 			        Session.set("mobileMode", "main");
-    				timedPushback();	
+    				timedPushback(false);	
 				}
 			});
     	}
@@ -111,8 +111,14 @@ Template.mobile.rendered = function() {
 
 		}
 	});
-	timedPushback();
+	timedPushback(true);
 }
+
+Template.mobile.events({
+	'click #mOverlay' () {
+		toggleSidebar(false);
+	}
+});
 
 Template.defaultSidebar.rendered = function() {
 	addMobileButton($(".mSectionMode")[0], 0.2, "brightness", function() {
@@ -121,7 +127,7 @@ Template.defaultSidebar.rendered = function() {
 		} else {
 			Session.set("mobileMode","main");
 			toggleSidebar(false);
-			timedPushback();
+			timedPushback(true);
 		}
 	});
 
@@ -131,7 +137,7 @@ Template.defaultSidebar.rendered = function() {
 		} else {
 			Session.set("mobileMode","done");
 			toggleSidebar(false);
-			timedPushback();
+			timedPushback(true);
 		}
 	});
 
@@ -182,7 +188,7 @@ Template.defaultSidebar.rendered = function() {
 	addMobileButton($("#mDisableFilter")[0], -0.1, "brightness", function() {
         Session.set("typeFilter", []);
 		Session.set("classDisp", []);
-        timedPushback();
+        timedPushback(true);
 	});
 }
 
@@ -364,7 +370,7 @@ Template.mSidebarClasses.rendered = function() {
 	            array.push(classid);
 	        }
 	        Session.set("classDisp", array);
-	        timedPushback();
+	        timedPushback(true);
 	    }
 	});
 }
@@ -386,7 +392,7 @@ Template.mSideTypeFilter.rendered = function() {
 	            array.push(type);
 	        }
 	        Session.set("typeFilter", array);
-	        timedPushback();
+	        timedPushback(true);
 		}
 	});
 }
@@ -490,7 +496,7 @@ Template.mEditWork.rendered = function() {
 	});
 
 	/*addMobileButton($("#mDelete"), 0.2, "brightness", function() {
-		
+
 	})*/
 }
 
@@ -669,21 +675,27 @@ function toggleSidebar(open) {
 	}
 }
 
-function timedPushback() {
+function timedPushback(type) {
 	var fadeTime = 10;
 	$(".mClassContainer").velocity("stop", true);
-	$(".mClassContainer").velocity("fadeOut", fadeTime);
-	setTimeout(function() {
-		$(".mClassContainer").velocity({left: "-150vw"}, 0);
-		$(".mClassContainer").velocity("fadeIn", 0);
-		$(".mClassContainer").velocity({opacity: 1}, 0);
-		var i = 0;
-		var timer = setInterval(function() {
-			$($(".mClassContainer")[i]).velocity({left: ""});
-			if(i === $(".mClassContainer").length - 1) clearInterval(timer);
-			i += 1;
-		}, 100);
-	}, fadeTime);
+	if(!type) {
+		setTimeout(function() {
+			$(".mClassContainer").velocity({opacity: 1}, 0);
+		}, fadeTime);	
+	} else {
+		$(".mClassContainer").velocity("fadeOut", fadeTime);
+		setTimeout(function() {
+			$(".mClassContainer").velocity({left: "-150vw"}, 0);
+			$(".mClassContainer").velocity("fadeIn", 0);
+			$(".mClassContainer").velocity({opacity: 1}, 0);
+			var i = 0;
+			var timer = setInterval(function() {
+				$($(".mClassContainer")[i]).velocity({left: ""});
+				if(i === $(".mClassContainer").length - 1) clearInterval(timer);
+				i += 1;
+			}, 100);
+		}, fadeTime);
+	}
 }
 
 mobileWork = function() {

@@ -169,9 +169,11 @@
                     <span class="hour classText">Hour</span>
                     <span class="subscriptions classText">Members</span>
                 </div>
-                {{#each myClasses}}
-                    {{> classDisplay}}
-                {{/each}}
+                <div id="classBody">
+                    {{#each myClasses}}
+                        {{> classDisplay}}
+                    {{/each}}
+                </div>
             </div>
         </div>
         <div id="colRight" style="background-color:{{divColor 'sidebarColor'}}">
