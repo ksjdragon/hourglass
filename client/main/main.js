@@ -80,7 +80,7 @@ Template.classesMode.rendered = function() {
 
     area.on({
         'mousemove': function(e) {
-            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/55);
+            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/70);
         },
         'mousedown': function(e) {
             clicked = true;
@@ -992,7 +992,7 @@ myClasses = function() {
             });
             if(found === undefined) return;
             found.subscribers = found.subscribers.length;
-            found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            if(found.teacher !== undefined) found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
             found.mine = true;
             if (found.admin === Meteor.userId()) { // If user owns this class.
                 found.box = " owned";

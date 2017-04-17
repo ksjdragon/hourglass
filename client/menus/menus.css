@@ -345,6 +345,7 @@
 
 #code {
 	margin: 0;
+	padding: 2%;
 	width: auto;
 
 	background-color: rgba(255,255,255,0.3);
@@ -360,9 +361,10 @@
 }
 
 #copyHolder {
-	visibility: hidden;
 	pointer-events: none;
 	position: absolute;
+
+	right: -500px;
 }
 
 #changeAdminWrapper {
