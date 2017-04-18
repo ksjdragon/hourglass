@@ -23,6 +23,7 @@ var defaultWork = {
 Session.set("user", {}); // Stores user preferences.
 Session.set("calendarEvents", []); // Stores calendar classes.
 Session.set("myClasses", []); // Stores user classes.
+Session.set("myWork", []); // Stores user related work.
 Session.set("requests", false); // Status of requests.
 Session.set("sidebarMode", ""); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
@@ -46,6 +47,18 @@ Template.main.created = function() {
     $(document).on('keyup', (e) => {
         if(event.keyCode === 27 && $(".overlay").css("display") !== "none") {
             $(".overlay").fadeOut(150);
+        }
+    });
+    getClasses();
+    work.find().observeChanges({
+        added: function (id, fields) {
+            updateWork(id, fields, "added");
+        },
+        changed: function (id, fields) {
+            updateWork(id, fields, "changed");
+        },
+        removed: function (id) {
+            updateWork(id, null, "remove");
         }
     });
     /*if (Notification.permission !== "granted") {
@@ -130,18 +143,170 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
-    if (Session.get("user").classes.length === 0) { // Null checking.
+    /*var myClasses = Session.get("user").classes;
+    var classDisp = Session.get("classDisp");
+    if (myClasses.length === 0) { // Null checking.
         return [];
     } else {
-        var array = myClasses();
+        var array = [];
+        for(var i = 0; i < myClasses.length; i++) {
+            var classObj;
+            if(myClasses[i] === Meteor.userId()) {
+                classObj.name = "Personal";
+                classObj.box = " owned";
+                classObj.mine = false; // Actual value is reversed.
+                classObj.subscribers = 1;
+            } else {
+                classObj = classes.findOne({_id: myClasses[i]});
+                if(classObj === undefined) return;
+                var isAdmin = classObj.admin === Meteor.userId();
+                classObj.box = (isAdmin) ?  " owned" : "";
+                classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
+                classObj.subscribers = classObj.subscribers.length;
+                classObj.teachershort = (found.teacher === undefined) ? "" : found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            }
+
+            classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
+            array.push(classObj);
+        }*/
+/*        var array = myClasses();
         if(Meteor.Device.isPhone()) mobileWork();
         Session.set("myClasses", array);
         calendarEvents(array);
         $("#fullcalendar").fullCalendar("removeEvents");
-        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"))
-        return array;
-    }
+        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"))*/
+        return Session.get("myClasses");
+    
 });
+
+Template.registerHelper('myWork', () => {
+    return Session.get("myWork");
+});
+
+getClasses = function() {
+    var array = [];
+    var myClasses = Session.get("user").classes;
+    var classDisp = Session.get("classDisp");
+    for(var i = 0; i < myClasses.length; i++) {
+        var classObj = {};
+        if(myClasses[i] === Meteor.userId()) {
+            classObj.name = "Personal";
+            classObj.box = " owned";
+            classObj.mine = false; // Actual value is reversed.
+            classObj.subscribers = 1;
+            classObj.admin = Meteor.userId();
+            classObj._id = Meteor.userId();
+        } else {
+            classObj = classes.findOne({_id: myClasses[i]});
+            if(classObj === undefined) return;
+            var isAdmin = classObj.admin === Meteor.userId();
+            classObj.box = (isAdmin) ?  " owned" : "";
+            classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
+            classObj.subscribers = classObj.subscribers.length;
+            classObj.teachershort = (classObj.teacher === undefined) ? "" : classObj.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+        }
+
+        classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
+        array.push(classObj);
+    }
+    Session.set("myClasses", array);
+}
+
+updateWork = function(id, fields, type) {
+    if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
+        return work._id === id;
+    }).length !== 0) {
+        Session.set("myWork", Session.get("myWork").filter(function(work) {
+            return work._id !== id;
+        }));
+        return;
+    }
+
+    var classDisp = Session.get("classDisp");
+    var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
+    var hideTime = Session.get("user").preferences.timeHide; 
+    var workObj;
+
+    if(type === "added") {
+        workObj = Object.assign({}, fields, {_id: id})
+    } else if(type === "changed") {
+        workObj = Object.assign(Session.get("myWork").filter(function(work) {
+            return work._id === id;
+        }), fields);
+    }
+
+    workObj.classid = workObj.class;
+    workObj.realDate = workObj.dueDate;
+    workObj.dueDate = moment(workObj.dueDate).calendar(null, {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: '[Last] dddd',
+        sameElse: 'MMMM Do'
+    });
+
+    if (workObj.dueDate === "Today") { // Font weight based on date proximity.
+        workObj.cardDate = "600";
+    } else if (workObj.dueDate === "Tomorrow") {
+        workObj.cardDate = "400";
+    }
+
+    workObj.typeColor = workColors[workObj.type];
+    workObj.confirmationLength = workObj.confirmations.length; // Counts the number of confirmations and reports for a particular work.
+    workObj.reportLength = workObj.reports.length;
+
+    workObj.creatorname = Meteor.users.findOne({
+        _id: workObj.creator
+    }).profile.name;
+
+    workObj.hide = false;
+
+    //Filters
+    var notInClassFilter = classDisp.length !== 0 && !_.contains(classDisp, workObj.classid);
+    var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.realDate))._d;
+    var markedDone = Session.get("user").preferences.done && !Meteor.Device.isPhone() && _.contains(workObj.done, Meteor.userId());
+    var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
+
+    if(notInClassFilter || pastHideDate || markedDone) workObj.hide = true;
+
+    var normalColor = Session.get("user").preferences.theme.text;
+    // Ratio color handling
+    /*var conf = workObj.confirmations.length;
+    var repo = workObj.reports.length;
+    var ratio = conf / repo;
+    
+    if (Math.abs(conf - repo)) {
+        if ((conf + repo) <= 1) {
+            thisWork[j].doneRatio = normalColor;
+        } else {
+            thisWork[j].doneRatio = "#F9F906";
+        }
+    } else if (ratio >= 2) {
+        thisWork[j].doneRatio = "#33DD33";
+    } else if (ratio <= 0.9) {
+        thisWork[j].doneRatio = "#FF1A1A";
+    }*/
+
+    workObj.doneRatio = normalColor;
+
+    var myWork;
+    if(type === "added") {
+        myWork = Session.get("myWork");
+    } else if(type === "changed") {
+        myWork = Session.get("myWork").filter(function(work) {
+            return work._id !== id;
+        });
+    }
+    myWork.push(workObj);
+    Session.set("myWork", myWork.sort(function(a,b) {
+        return Date.parse(a.realDate) - Date.parse(b.realDate);
+    }));
+
+    calendarEvents();
+    $("#fullcalendar").fullCalendar("removeEvents");
+    $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
+}
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     try {
@@ -215,7 +380,9 @@ Template.main.helpers({
         return " - " + Session.get("user").school;
     },
     avatar() { // Returns avatar.
-        return Meteor.user().services.google.picture;
+        try { 
+            return Meteor.user().services.google.picture;
+        } catch(err) {}
     },
     username() { // Returns user name.
         return Session.get("user").name;
@@ -681,16 +848,25 @@ Template.main.events({
     },
     'click .cWorkBottom .fa-thumbs-up' (event) {
         serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "confirmations"]
-        sendData("toggleWork")
+        sendData("toggleWork");
     },
     'click .cWorkBottom .fa-exclamation-triangle' (event) {
         serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "reports"]
-        sendData("toggleWork")
+        sendData("toggleWork");
     },
     'click #signout' () {
         $(".noScroll").velocity("fadeOut", 50);
         Session.set('sidebarMode','');
         document.getElementById('login-buttons-logout').click();
+    }
+});
+
+Template.classesMode.helpers({
+    thisClassWork() {
+        var id = this._id;
+        return Session.get("myWork").filter(function(work) {
+            return work.classid === id;
+        });
     }
 });
 
@@ -992,7 +1168,7 @@ myClasses = function() {
             });
             if(found === undefined) return;
             found.subscribers = found.subscribers.length;
-            if(found.teacher !== undefined) found.teachershort = found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            found.teachershort = (found.teacher === undefined) ? "" : found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
             found.mine = true;
             if (found.admin === Meteor.userId()) { // If user owns this class.
                 found.box = " owned";
@@ -1090,35 +1266,30 @@ myClasses = function() {
     return array;
 }
 
-function calendarEvents(array) {
+function calendarEvents() {
     var events = [];
-    var userClasses = array;
-    if(userClasses === undefined) return;
-    for (var i = 0; i < userClasses.length; i++) {
-        var works = userClasses[i].thisClassWork;
-        for (var j = 0; j < works.length; j++) {
-            var work = works[j];
-            var currClass = classes.findOne({
-                _id: work.class
-            });
-            var inRole = false;
+    var myWork = Session.get("myWork");
+    for(var i = 0; i < myWork.length; i++) {
+        var work = myWork[i];
+        var currClass = classes.findOne({ _id: work.classid});
+        var inRole = false;
 
-            if (work.class === Meteor.userId() ||
-                Meteor.userId() === work.creator ||
-                Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                currClass.banned.indexOf(Meteor.userId()) !== -1
-               ) inRole = true;
-            events.push({
-                id: work._id,
-                start: work.realDate.toISOString().slice(0, 10),
-                title: work.name,
-                backgroundColor: workColors[work.type],
-                borderColor: "#444",
-                startEditable: inRole,
-                className: work.type + " workevent " + work.class
-            });
-        }
+        if (work.class === Meteor.userId() ||
+            Meteor.userId() === work.creator ||
+            Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
+            currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
+            currClass.banned.indexOf(Meteor.userId()) !== -1
+           ) inRole = true;
+
+        events.push({
+            id: work._id,
+            start: work.realDate.toISOString().slice(0, 10),
+            title: work.name,
+            backgroundColor: workColors[work.type],
+            borderColor: "#444",
+            startEditable: inRole,
+            className: work.type + " workevent " + work.class
+        });
     }
     Session.set("calendarEvents", events);
 }

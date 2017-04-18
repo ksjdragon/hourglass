@@ -373,7 +373,7 @@ Template.joinClass.helpers({
         for (var i = 0; i < array.length; i++) {
             array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
-            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
+            if(array[i].teacher !== undefined) array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
                 return a + " " + b;
             });
         }
@@ -486,10 +486,11 @@ Template.joinClass.events({
         Meteor.call("joinPrivateClass", input.value, function(error, result) {
             if (result) {
                 sAlert.success("Joined!", {
-                    effect: 'genie',
+                    effect: 'stackslide',
                     position: 'bottom-right',
                     timeout: 1500
                 });
+                $("#privateCode").velocity("fadeOut",100);
             } else {
                 sAlert.error("Invalid code!", {
                     effect: 'stackslide',
@@ -497,7 +498,9 @@ Template.joinClass.events({
                     timeout: 1500
                 });
             }
+
         });
+
     }
 });
 

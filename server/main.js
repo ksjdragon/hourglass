@@ -754,11 +754,9 @@ Meteor.methods({
             var current = Meteor.user().profile;
             var index = current.classes.indexOf(change);
             if (index >= 0) {
-                console.log("hi");
                 if (classes.findOne({
                         _id: change
                     }).admin != Meteor.userId()) {
-                    console.log("f");
                     current.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()

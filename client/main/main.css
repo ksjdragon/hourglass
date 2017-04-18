@@ -1089,6 +1089,11 @@ textarea.clickModify {
 	pointer-events: auto;
 }
 
+.fc-day {
+	max-height: 11vh;
+	overflow-y: auto;
+}
+
 #workComment {
 	width: 99%;
 	margin-bottom: 3%;
