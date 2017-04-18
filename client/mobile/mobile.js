@@ -7,6 +7,7 @@ Session.set("select", "none");
 Session.set("options", null);
 
 var filterOpen = [false, true, true];
+var timeout;
 
 Template.registerHelper('optionInfo', (type) => {
 	var op = Session.get("options")
@@ -116,7 +117,7 @@ Template.mobile.rendered = function() {
 
 Template.mobile.events({
 	'click #mOverlay' () {
-		toggleSidebar(false);
+		if(timeout) toggleSidebar(false);
 	}
 });
 
@@ -604,6 +605,10 @@ addMobileButton = function(element, lighten, animateType, completeFunction) {
 	ele.on('touchend', function(e) {
 		if(!care) return;
 		ele.velocity("stop");
+		timeout = false;
+		setTimeout(function() {
+			timeout = true;
+		}, 100);
 		switch(type) {
 			case "color":
 				ele.velocity(

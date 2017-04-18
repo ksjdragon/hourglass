@@ -312,7 +312,7 @@ function securityCheck(checklist, input) {
             break;
         // Incorrect teacher format
         case 28:
-            if (input.teachername.split(" ").length < 2) error = 20;
+            if (input.teachername.split(" ").length < 2 && teachername !== "") error = 20;
             break;
         }
         results.push(error);
@@ -373,17 +373,17 @@ Meteor.methods({
         if (!security) {
             input.status = Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']);
             input.admin = Meteor.userId();
-            Meteor.call('genCode', function(error, result) {
+            Meteor.call('genCode', input.privacy, function(error, result) {
                 input.code = result;
-            });
-            if (input.category != "class" && input.category != "club") {
-                input.category = "other";
-            }
-            input.subscribers = [];
-            input.moderators = [];
-            input.banned = [];
-            classes.insert(input, function(err, result) {
-                Meteor.call('joinClass', [result, input.code]);
+                if (input.category != "class" && input.category != "club") {
+                    input.category = "other";
+                }
+                input.subscribers = [];
+                input.moderators = [];
+                input.banned = [];
+                classes.insert(input, function(err, result) {
+                    Meteor.call('joinClass', [result, input.code]);
+                });
             });
         } else {
             throw new Meteor.Error(errors[security]);
@@ -754,11 +754,9 @@ Meteor.methods({
             var current = Meteor.user().profile;
             var index = current.classes.indexOf(change);
             if (index >= 0) {
-                console.log("hi");
                 if (classes.findOne({
                         _id: change
                     }).admin != Meteor.userId()) {
-                    console.log("f");
                     current.classes.splice(index, 1);
                     Meteor.users.update({
                         _id: Meteor.userId()

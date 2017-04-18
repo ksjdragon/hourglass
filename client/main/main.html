@@ -122,7 +122,7 @@
                                         <img src="{{work 'avatar'}}" style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
                                     </div>
                                     <div style="display:inline-block;margin-left:0.3vw">
-                                        <span>{{work 'creatorname'}}</span>
+                                        <span>{{work 'creator'}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -265,6 +265,9 @@
     </div>
     <div id="workInfo1">
         <div>
+           <span class="workTitle">Class:</span><span style="font-size:2.2vh">{{work 'class'}}</span> 
+        </div>
+        <div>
             <span class="workTitle">Due Date:</span><br>
             <span id="wDescription" class="info">{{work 'dueDate'}}</span>
         </div>
@@ -291,6 +294,9 @@
         <span class="resText">{{restrict 'wName'}}</span>
     </div>
     <div id="workInfo1">
+        <div>
+           <span class="workTitle">Class:</span><span style="font-size:2.2vh">{{work 'class'}}</span> 
+        </div>
         <div>
             <span class="workTitle">Due Date:</span><br>
             <input id="wDueDate" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}" tabindex="11" readonly="readonly">

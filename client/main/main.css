@@ -432,7 +432,7 @@ input {
 }
 
 .classWrapper {
-	width: 20vw;
+	width: 35vh;
 	height: 95%;
 	margin: 10px;
 	margin-top: 20px;
@@ -450,13 +450,13 @@ input {
 }
 
 .classInfo {
-	padding: 6%;
+	padding: 3vh;
 	background-color: rgba(255,255,255,0.3); /* remove when class color */
 	cursor: pointer;
 }
 
 .mainClassName {
-	font-size: 2vw;
+	font-size: 3.7vh;
 	white-space: normal;
 
 	-webkit-filter: none !important;
@@ -465,18 +465,18 @@ input {
 }
 
 .mainClassHour {
-	font-size: 1.1vw;
+	font-size: 1.7vh;
 	margin-top: 0;
 	pointer-events: none;
 }
 
 .mainClassTeacher {
-	font-size: 1.1vw;
+	font-size: 1.7vh;
 	pointer-events: none;
 }
 
 .creWork {
-	font-size: 1.1vw;
+	font-size: 1.7vh;
 	cursor: pointer;
 	box-shadow: 0px 5px 5px -2px #666;
 
@@ -548,12 +548,12 @@ input {
 }
 
 .cWorkCont {
-	font-size: .97vw;
+	font-size: 1.7vh;
 	padding: 5%;
 }
 
 .cWorkType {
-	height: .3vw;
+	height: .8vh;
 }
 
 .cWorkName {
@@ -1087,6 +1087,11 @@ textarea.clickModify {
 .fc-more {
 	font-weight: 400;
 	pointer-events: auto;
+}
+
+.fc-day {
+	max-height: 11vh;
+	overflow-y: auto;
 }
 
 #workComment {

@@ -220,15 +220,12 @@ Template.registerHelper("classInfo", (info) => {
                 _id: (isYou) ? Meteor.userId() : thisClass.admin
             });
         case "code":
-            if (isYou) return {
-                exists: false
-            };
-            return (isYou || Meteor.userId() !== this.admin) ? {
-                exists: false
-            } : {
-                exists: true,
-                code: Meteor.call('getCode', thisClass._id)
-            };
+            if(isYou || Meteor.userId() !== thisClass.admin) return false;
+            var exist;
+            Meteor.call('getCode', thisClass._id, function(err, result) {
+                Session.set("code", [(result === undefined || result === "") ? false : true, result]);
+            });
+            break;
         case "mine":
             return (isYou) ? true : Meteor.userId() === thisClass.admin;
         case "moderators":
@@ -376,7 +373,7 @@ Template.joinClass.helpers({
         for (var i = 0; i < array.length; i++) {
             array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
-            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
+            if(array[i].teacher !== undefined) array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
                 return a + " " + b;
             });
         }
@@ -489,10 +486,11 @@ Template.joinClass.events({
         Meteor.call("joinPrivateClass", input.value, function(error, result) {
             if (result) {
                 sAlert.success("Joined!", {
-                    effect: 'genie',
+                    effect: 'stackslide',
                     position: 'bottom-right',
                     timeout: 1500
                 });
+                $("#privateCode").velocity("fadeOut",100);
             } else {
                 sAlert.error("Invalid code!", {
                     effect: 'stackslide',
@@ -500,7 +498,9 @@ Template.joinClass.events({
                     timeout: 1500
                 });
             }
+
         });
+
     }
 });
 
@@ -547,13 +547,14 @@ Template.createClass.events({
             return;
         }
         values.privacy = (values.privacy === "Public") ? false : true;
-        values.status = false;
+        values.status = false; 
         values.category = values.category.toLowerCase();
         values.code = "";
         serverData = values;
+
         if (!teachers.findOne({
                 name: values.teacher
-            })) {
+            }) && values.teacher !== "") {
             Meteor.call("createTeacher", values.teacher, values.school, function(error, result) {
                 if (error !== undefined) {
                     sAlert.error(error.message, {
@@ -569,6 +570,30 @@ Template.createClass.events({
         }
     }
 });
+
+Template.classInfoCode.events({
+    'click .fa' (event) {
+        document.getElementById("copyHolder").select();
+        document.execCommand("copy");
+        $(event.target.parentNode.childNodes[9]).fadeIn(100, function() {
+            setTimeout(function() {
+                $(event.target.parentNode.childNodes[9]).fadeOut(250);
+            }, 500);
+        });
+    }
+});
+
+Template.classInfoCode.helpers({
+    code(info) {
+        try {
+            if(info === "exists") {
+                return Session.get("code")[0];
+            } else {
+                return Session.get("code")[1];
+            }
+        } catch(err) {}
+    }
+})
 
 Template.classInfoUsers.events({
     'click .userAdder .fa' (event) {
@@ -618,18 +643,6 @@ Template.classInfoUsers.events({
             false
         ];
         sendData("trackUserInClass");
-    }
-});
-
-Template.classInfoCode.events({
-    'click .fa' (event) {
-        document.getElementById("copyHolder").select();
-        document.execCommand("copy");
-        $(event.target.parentNode.childNodes[9]).fadeIn(100, function() {
-            setTimeout(function() {
-                $(event.target.parentNode.childNodes[9]).fadeOut(250);
-            }, 500);
-        });
     }
 });
 

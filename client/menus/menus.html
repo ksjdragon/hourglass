@@ -411,7 +411,8 @@
             {{/if}}
         {{/unless}}
     </div>
-    {{> classInfoCode classInfo 'code'}}
+
+    {{> classInfoCode}}
 
     <div id="changeAdminWrapper">
         <span>Change Admin: </span>
@@ -484,13 +485,14 @@
 </template>
 
 <template name="classInfoCode">
-    {{#if exists}}
-        <div id="code" class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
+    {{classInfo 'code'}}
+    {{#if code 'exists'}}
+        <div class="infoCard" style="border:1px solid {{divColor 'textColor'}}">
             <h4 style="border-bottom:1px solid {{divColor 'textColor'}}">Code</h4>
-            <span>{{code}}</span>
-            <input id="copyHolder" value="{{code}}">
+            <span>{{code 'code'}}</span>
+            <input id="copyHolder" value="{{code 'code'}}">
             <i class="fa fa-files-o" aria-hidden="true" onmouseover="$(this).css('color','{{divColor 'iconHighlight'}}')" onmouseleave="$(this).css('color','{{divColor 'textColor'}}')"></i>
-            <div>Copied!</div>
+            <div id="code">Copied!</div>
         </div>
     {{/if}}
 </template>
