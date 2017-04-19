@@ -770,10 +770,6 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
                 toggleToMode("manageClass");
             }
         }
-        if(Meteor.Device.isPhone()) mobileWork();
-        calendarEvents(myClasses());
-        $("#fullcalendar").fullCalendar("removeEvents");
-        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
         document.getElementsByTagName("body")[0].style.color = Session.get("user").preferences.theme.textColor;
     });
 }
