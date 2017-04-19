@@ -1,4 +1,3 @@
-Session.set("mobileWork", []);
 Session.set("mobileMode", "main");
 Session.set("classDisp", []);
 Session.set("typeFilter", []);
@@ -18,7 +17,20 @@ Template.registerHelper('optionInfo', (type) => {
 });
 
 Template.mobile.created = function() {
-	mobileWork();
+	getClasses(Session.get("user").classes);
+	work.find().observeChanges({
+        added: function (id, fields) {
+            updateWork(id, fields, "added");
+            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+        },
+        changed: function (id, fields) {
+            updateWork(id, fields, "changed");
+            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+        },
+        removed: function (id) {
+            updateWork(id, null, "remove");
+        }
+    });
 }
 
 Template.mobile.rendered = function() {
@@ -225,6 +237,7 @@ Template.mobileClass.rendered = function() {
 	});
 
 	movable.on('panmove', function(e) {
+		if(Math.abs(e.originalEvent.gesture.deltaY) >= 10) return;
 		var dX = deltaX + (e.originalEvent.gesture.deltaX);
 		if(dX < 0) {
 			$.Velocity.hook(jQuery(e.target), 'translateX', dX/25 + 'px');
@@ -372,6 +385,7 @@ Template.mSidebarClasses.rendered = function() {
 	        }
 	        Session.set("classDisp", array);
 	        timedPushback(true);
+	        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
 	    }
 	});
 }
@@ -394,6 +408,7 @@ Template.mSideTypeFilter.rendered = function() {
 	        }
 	        Session.set("typeFilter", array);
 	        timedPushback(true);
+	        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
 		}
 	});
 }
@@ -407,7 +422,13 @@ Template.mobile.helpers({
 		return (Session.get("sidebarMode") === "mobile") ? Session.get("user").preferences.theme.iconHighlight : "";
 	},
 	myWork(done) {
-		return (done === "done") ? Session.get("mobileWork")[1] : Session.get("mobileWork")[0];
+		return (done === "done") ? 
+			Session.get("myWork").filter(function(work) {
+				return _.contains(work.done, Meteor.userId());
+			}) : 
+			Session.get("myWork").filter(function(work) {
+				return !_.contains(work.done, Meteor.userId());
+			})
 	},
 	showMode(mode) {
 		return Session.equals("mobileMode", mode);
@@ -425,11 +446,14 @@ Template.mobile.helpers({
         return array;
     },
     noneText(type) {
-    	if(type === "main") {
-    		return Session.get("noneText")[0];
-    	} else {
-    		return Session.get("noneText")[1];
-    	}
+		return (type === "main") ? 
+		(Session.get("myWork").filter(function(work) {
+			return _.contains(work.done, Meteor.userId());
+		}).length === 0) ? "none" : "block"
+		: 
+		(Session.get("myWork").filter(function(work) {
+			return !_.contains(work.done, Meteor.userId());
+		}).length === 0) ? "none" : "block";
     },
     buttonType() {
     	if(Session.equals("mobileMode","main") || Session.equals("mobileMode","done")) {
@@ -701,37 +725,4 @@ function timedPushback(type) {
 			}, 100);
 		}, fadeTime);
 	}
-}
-
-mobileWork = function() {
-	var array = myClasses();
-	if(array === undefined) return;
-	var notDoneWork = [];
-	var doneWork = [];
-	for(var i = 0; i < array.length; i++) {
-		for(var j = 0; j < array[i].thisClassWork.length; j++) {
-			var classid = array[i].thisClassWork[j].classid;
-			var desc = array[i].thisClassWork[j].description;
-			if(desc) {
-				array[i].thisClassWork[j].shortdesc = (desc.length <= 30 ) ? desc : desc.substring(0,30) + "...";
-			}
-			array[i].thisClassWork[j].shortname = (name.length <= 20) ? name : name.substring(0,20) + "...";
-			array[i].thisClassWork[j]["class"] = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id:classid}).name;
-			if(_.contains(array[i].thisClassWork[j].done, Meteor.userId())) {
-				array[i].thisClassWork[j].isDone = true;
-				doneWork.push(array[i].thisClassWork[j]);
-			} else {
-				notDoneWork.push(array[i].thisClassWork[j]);
-			}
-		}
-	}
-	doneWork = doneWork.sort(function(a,b) {
-		return Date.parse(a.realDate) - Date.parse(b.realDate);
-	});
-	notDoneWork = notDoneWork.sort(function(a,b) {
-		return Date.parse(a.realDate) - Date.parse(b.realDate);
-	});
-
-	Session.set("mobileWork", [notDoneWork, doneWork]);
-	Session.set("noneText", [(notDoneWork.length === 0) ? "block": "none", (doneWork.length === 0) ? "block": "none"]);
 }

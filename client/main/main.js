@@ -24,6 +24,7 @@ Session.set("user", {}); // Stores user preferences.
 Session.set("calendarEvents", []); // Stores calendar classes.
 Session.set("myClasses", []); // Stores user classes.
 Session.set("myWork", []); // Stores user related work.
+Session.set("filterWork", []); // Stores work that is filtered out.
 Session.set("requests", false); // Status of requests.
 Session.set("sidebarMode", ""); // Status of sidebars.
 Session.set("newWork", null); // If user creating new work.
@@ -49,13 +50,15 @@ Template.main.created = function() {
             $(".overlay").fadeOut(150);
         }
     });
-    console.log(Session.get("user"));
+
     work.find().observeChanges({
         added: function (id, fields) {
             updateWork(id, fields, "added");
+            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
         },
         changed: function (id, fields) {
             updateWork(id, fields, "changed");
+            filterWork(Session.get("classDisp"),Session.get("typeFilter"));
         },
         removed: function (id) {
             updateWork(id, null, "remove");
@@ -145,167 +148,8 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
     var myClasses = Session.get("user").classes;
     getClasses(myClasses);
-    /*var myClasses = Session.get("user").classes;
-    var classDisp = Session.get("classDisp");
-    if (myClasses.length === 0) { // Null checking.
-        return [];
-    } else {
-        var array = [];
-        for(var i = 0; i < myClasses.length; i++) {
-            var classObj;
-            if(myClasses[i] === Meteor.userId()) {
-                classObj.name = "Personal";
-                classObj.box = " owned";
-                classObj.mine = false; // Actual value is reversed.
-                classObj.subscribers = 1;
-            } else {
-                classObj = classes.findOne({_id: myClasses[i]});
-                if(classObj === undefined) return;
-                var isAdmin = classObj.admin === Meteor.userId();
-                classObj.box = (isAdmin) ?  " owned" : "";
-                classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
-                classObj.subscribers = classObj.subscribers.length;
-                classObj.teachershort = (found.teacher === undefined) ? "" : found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
-            }
-
-            classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
-            array.push(classObj);
-        }*/
-/*        var array = myClasses();
-        if(Meteor.Device.isPhone()) mobileWork();
-        Session.set("myClasses", array);
-        calendarEvents(array);
-        $("#fullcalendar").fullCalendar("removeEvents");
-        $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"))*/
-        return Session.get("myClasses");
-    
+    return Session.get("myClasses");
 });
-
-Template.registerHelper('myWork', () => {
-    return Session.get("myWork");
-});
-
-getClasses = function(myClasses) {
-    var array = [];
-    var classDisp = Session.get("classDisp");
-    for(var i = 0; i < myClasses.length; i++) {
-        var classObj = {};
-        if(myClasses[i] === Meteor.userId()) {
-            classObj.name = "Personal";
-            classObj.box = " owned";
-            classObj.mine = false; // Actual value is reversed.
-            classObj.subscribers = 1;
-            classObj.admin = Meteor.userId();
-            classObj._id = Meteor.userId();
-        } else {
-            classObj = classes.findOne({_id: myClasses[i]});
-            if(classObj === undefined) return;
-            var isAdmin = classObj.admin === Meteor.userId();
-            classObj.box = (isAdmin) ?  " owned" : "";
-            classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
-            classObj.subscribers = classObj.subscribers.length;
-            classObj.teachershort = (classObj.teacher === undefined) ? "" : classObj.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
-        }
-
-        classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
-        array.push(classObj);
-    }
-    Session.set("myClasses", array);
-}
-
-updateWork = function(id, fields, type) {
-    if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
-        return work._id === id;
-    }).length !== 0) {
-        Session.set("myWork", Session.get("myWork").filter(function(work) {
-            return work._id !== id;
-        }));
-        return;
-    }
-
-    var classDisp = Session.get("classDisp");
-    var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
-    var hideTime = Session.get("user").preferences.timeHide; 
-    var workObj;
-
-    if(type === "added") {
-        workObj = Object.assign({}, fields, {_id: id})
-    } else if(type === "changed") {
-        workObj = work.findOne({_id: id});
-    }
-
-    workObj.classid = workObj.class;
-    workObj.realDate = workObj.dueDate;
-    workObj.dueDate = moment(workObj.dueDate).calendar(null, {
-        sameDay: '[Today]',
-        nextDay: '[Tomorrow]',
-        nextWeek: 'dddd',
-        lastDay: '[Yesterday]',
-        lastWeek: '[Last] dddd',
-        sameElse: 'MMMM Do'
-    });
-
-    if (workObj.dueDate === "Today") { // Font weight based on date proximity.
-        workObj.cardDate = "600";
-    } else if (workObj.dueDate === "Tomorrow") {
-        workObj.cardDate = "400";
-    }
-
-    workObj.typeColor = workColors[workObj.type];
-    workObj.confirmationLength = workObj.confirmations.length; // Counts the number of confirmations and reports for a particular work.
-    workObj.reportLength = workObj.reports.length;
-
-    workObj.creatorname = Meteor.users.findOne({
-        _id: workObj.creator
-    }).profile.name;
-
-    workObj.hide = false;
-
-    //Filters
-    var notInClassFilter = classDisp.length !== 0 && !_.contains(classDisp, workObj.classid);
-    var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.realDate))._d;
-    var markedDone = Session.get("user").preferences.done && !Meteor.Device.isPhone() && _.contains(workObj.done, Meteor.userId());
-    var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
-
-    if(notInClassFilter || pastHideDate || markedDone) workObj.hide = true;
-
-    var normalColor = Session.get("user").preferences.theme.text;
-    // Ratio color handling
-    /*var conf = workObj.confirmations.length;
-    var repo = workObj.reports.length;
-    var ratio = conf / repo;
-    
-    if (Math.abs(conf - repo)) {
-        if ((conf + repo) <= 1) {
-            thisWork[j].doneRatio = normalColor;
-        } else {
-            thisWork[j].doneRatio = "#F9F906";
-        }
-    } else if (ratio >= 2) {
-        thisWork[j].doneRatio = "#33DD33";
-    } else if (ratio <= 0.9) {
-        thisWork[j].doneRatio = "#FF1A1A";
-    }*/
-
-    workObj.doneRatio = normalColor;
-
-    var myWork;
-    if(type === "added") {
-        myWork = Session.get("myWork");
-    } else if(type === "changed") {
-        myWork = Session.get("myWork").filter(function(work) {
-            return work._id !== id;
-        });
-    }
-    myWork.push(workObj);
-    Session.set("myWork", myWork.sort(function(a,b) {
-        return Date.parse(a.realDate) - Date.parse(b.realDate);
-    }));
-
-    calendarEvents();
-    $("#fullcalendar").fullCalendar("removeEvents");
-    $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
-}
 
 Template.registerHelper('pref', (val) => { // Obtains all user preferences.
     try {
@@ -1145,124 +989,143 @@ startDragula = function() {
     });
 };
 
-myClasses = function() {
+getClasses = function(myClasses) {
     var array = [];
-    var courses = Session.get("user").classes;
-    var classDisp = Session.get("classDisp"); // Get sidebar class filter.
-    var sideFilter = Session.get("typeFilter"); // Get sidebar type filter.
-    var hide = Session.get("user").preferences.timeHide;
-
-    for (var i = 0; i < courses.length; i++) { // For each user class.
-        if (courses[i] === Meteor.userId()) {
-            found = {
-                _id: courses[i],
-                name: "Personal",
-                subscribers: 1,
-                mine: false,
-                box: " owned"
-            };
+    var classDisp = Session.get("classDisp");
+    for(var i = 0; i < myClasses.length; i++) {
+        var classObj = {};
+        if(myClasses[i] === Meteor.userId()) {
+            classObj.name = "Personal";
+            classObj.box = " owned";
+            classObj.mine = false; // Actual value is reversed.
+            classObj.subscribers = 1;
+            classObj.admin = Meteor.userId();
+            classObj._id = Meteor.userId();
         } else {
-            found = classes.findOne({
-                _id: courses[i]
-            });
-            if(found === undefined) return;
-            found.subscribers = found.subscribers.length;
-            found.teachershort = (found.teacher === undefined) ? "" : found.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
-            found.mine = true;
-            if (found.admin === Meteor.userId()) { // If user owns this class.
-                found.box = " owned";
-                found.mine = false;
-            }
+            classObj = classes.findOne({_id: myClasses[i]});
+            if(classObj === undefined) return;
+            var isAdmin = classObj.admin === Meteor.userId();
+            classObj.box = (isAdmin) ?  " owned" : "";
+            classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
+            classObj.subscribers = classObj.subscribers.length;
+            classObj.teachershort = (classObj.teacher === undefined) ? "" : classObj.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
         }
 
-        found.selected = ((classDisp.indexOf(courses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
-        array.push(found);
+        classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
+        array.push(classObj);
+    }
+    Session.set("myClasses", array);
+}
 
-        var thisWork = work.find({
-            class: courses[i]
-        }).fetch();
+updateWork = function(id, fields, type) {
+    if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
+        return work._id === id;
+    }).length !== 0) {
+        Session.set("myWork", Session.get("myWork").filter(function(work) {
+            return work._id !== id;
+        }));
+        return;
+    }
 
-        if (classDisp.length !== 0 && classDisp.indexOf(found._id) === -1) { // Filter classes based on filter.
-            array[i].thisClassWork = [];
-            continue;
-        }
+    var workObj;
 
-        for (var j = 0; j < thisWork.length; j++) { // For each work in class.
-            if (hide !== 0) { // Time to hide isn't never.
-                var due = (moment(thisWork[j].dueDate))._d;
-                var offset = (moment().subtract(hide, 'days'))._d;
-                if (offset > due) { // If due is before hide days before today
-                    thisWork[j] = "no";
-                }
-            }
+    if(type === "added") {
+        workObj = Object.assign({}, fields, {_id: id})
+    } else if(type === "changed") {
+        workObj = work.findOne({_id: id});
+    }
 
-            if (thisWork[j] !== "no" && Session.get("user").preferences.done && !Meteor.Device.isPhone()) { // If done filter is true and not mobile.
-                if (thisWork[j].done.indexOf(Meteor.userId()) !== -1) { // If user marked this work done.
-                    thisWork[j] = "no";
-                }
-            }
+    workObj.classid = workObj.class;
 
-            if (thisWork[j] !== "no" && sideFilter.length !== 0 && !_.contains(sideFilter, thisWork[j].type)) {
-                thisWork[j] = "no";
-            }
+    workObj.shortname = (workObj.name.length <= 20) ? workObj.name : workObj.name.substring(0,20) + "...";
+    workObj.className = (workObj.classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: workObj.classid}).name;
 
-            if (thisWork[j] !== "no" && Session.get("user").preferences.hideReport && (thisWork[j].confirmations.length / thisWork[j].reports.length) <= 0.9) {
-                thisWork[j] = "no";
-            }
+    workObj.realDate = workObj.dueDate;
+    workObj.dueDate = moment(workObj.dueDate).calendar(null, {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: '[Last] dddd',
+        sameElse: 'MMMM Do'
+    });
 
-        }
-        while (thisWork.indexOf("no") !== -1) thisWork.splice(thisWork.indexOf("no"), 1); // Splice all filtered works.
+    workObj.shortdesc = (workObj.description === undefined) ? "" : (workObj.description.length <= 30 ) ? workObj.description : workObj.description.substring(0,30) + "...";
 
-        for (j = 0; j < thisWork.length; j++) {
-            thisWork[j].classid = courses[i];
-            thisWork[j].realDate = thisWork[j].dueDate;
-            thisWork[j].dueDate = moment(thisWork[j].dueDate).calendar(null, {
-                sameDay: '[Today]',
-                nextDay: '[Tomorrow]',
-                nextWeek: 'dddd',
-                lastDay: '[Yesterday]',
-                lastWeek: '[Last] dddd',
-                sameElse: 'MMMM Do'
-            });
+    if (workObj.dueDate === "Today") { // Font weight based on date proximity.
+        workObj.cardDate = "600";
+    } else if (workObj.dueDate === "Tomorrow") {
+        workObj.cardDate = "400";
+    }
 
-            if (thisWork[j].dueDate === "Today") { // Font weight based on date proximity.
-                thisWork[j].cardDate = "600";
-            } else if (thisWork[j].dueDate === "Tomorrow") {
-                thisWork[j].cardDate = "400";
-            }
-            thisWork[j].typeColor = workColors[thisWork[j].type];
+    workObj.confirmationLength = workObj.confirmations.length; // Counts the number of confirmations and reports for a particular work.
+    workObj.reportLength = workObj.reports.length;
 
-            thisWork[j].confirmationLength = thisWork[j].confirmations.length; // Counts the number of confirmations and reports for a particular work.
-            thisWork[j].reportLength = thisWork[j].reports.length;
+    workObj.typeColor = workColors[workObj.type];
 
-            thisWork[j].creatorname = Meteor.users.findOne({
-                _id: thisWork[j].creator
-            }).profile.name;
-            var conf = thisWork[j].confirmations.length;
-            var repo = thisWork[j].reports.length;
-            var ratio = conf / repo;
-            var normalColor = Session.get("user").preferences.theme.text;
+    workObj.creatorname = Meteor.users.findOne({
+        _id: workObj.creator
+    }).profile.name;
 
-
+    var normalColor = Session.get("user").preferences.theme.text;
+    // Ratio color handling
+    /*var conf = workObj.confirmations.length;
+    var repo = workObj.reports.length;
+    var ratio = conf / repo;
+    
+    if (Math.abs(conf - repo)) {
+        if ((conf + repo) <= 1) {
             thisWork[j].doneRatio = normalColor;
-            // Ratio color handling
-            /*if (Math.abs(conf - repo)) {
-                if ((conf + repo) <= 1) {
-                    thisWork[j].doneRatio = normalColor;
-                } else {
-                    thisWork[j].doneRatio = "#F9F906";
-                }
-            } else if (ratio >= 2) {
-                thisWork[j].doneRatio = "#33DD33";
-            } else if (ratio <= 0.9) {
-                thisWork[j].doneRatio = "#FF1A1A";
-            }*/
+        } else {
+            thisWork[j].doneRatio = "#F9F906";
         }
-        array[i].thisClassWork = thisWork.sort(function(a, b) {
-            return Date.parse(a.realDate) - Date.parse(b.realDate);
+    } else if (ratio >= 2) {
+        thisWork[j].doneRatio = "#33DD33";
+    } else if (ratio <= 0.9) {
+        thisWork[j].doneRatio = "#FF1A1A";
+    }*/
+
+    workObj.doneRatio = normalColor;
+
+    var myWork;
+    if(type === "added") {
+        myWork = Session.get("myWork");
+    } else if(type === "changed") {
+        myWork = Session.get("myWork").filter(function(work) {
+            return work._id !== id;
         });
     }
-    return array;
+    myWork.push(workObj);
+    Session.set("myWork", myWork);
+}
+
+filterWork = function(classDisp, typeFilter, hideTime) {
+    var allWork = Session.get("filterWork").concat(Session.get("myWork"));
+    var hideWork = [];
+    var displayWork = [];
+    
+    _.each(allWork, function(workObj) {
+        var notInClassFilter = classDisp.length !== 0 && !_.contains(classDisp, workObj.classid);
+        var notInTypeFilter = typeFilter.length !== 0 && !_.contains(typeFilter, workObj.type);
+        var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.realDate))._d;
+        var markedDone = Session.get("user").preferences.done && !Meteor.Device.isPhone() && _.contains(workObj.done, Meteor.userId());
+        var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
+
+        if(notInClassFilter || notInTypeFilter || pastHideDate || markedDone || reported) {
+            hideWork.push(workObj);
+        } else {
+            displayWork.push(workObj);
+        }
+    });
+
+    Session.set("myWork", displayWork.sort(function(a,b) { // Display work.
+        return Date.parse(a.realDate) - Date.parse(b.realDate);
+    }));
+    Session.set("filterWork", hideWork); // Not displayed
+
+    calendarEvents();
+    $("#fullcalendar").fullCalendar("removeEvents");
+    $("#fullcalendar").fullCalendar("addEventSource", Session.get("calendarEvents"));
 }
 
 function calendarEvents() {

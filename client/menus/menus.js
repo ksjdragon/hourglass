@@ -99,6 +99,7 @@ Template.sidebarMenuPlate.events({
             array.push(classid);
         }
         Session.set("classDisp", array);
+        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
     },
     'click .sideFilter' (event) {
         var type = event.target.getAttribute("type");
@@ -109,6 +110,7 @@ Template.sidebarMenuPlate.events({
             array.push(type);
         }
         Session.set("typeFilter", array);
+        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
     },
     'click #disableFilter' () {
         Session.set("classDisp", []);
