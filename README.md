@@ -36,6 +36,7 @@ In the left sidebar, you find options for filtering. These include filtering by 
 - Calendar date bug fixed 
 - Fixed visual issues
 - Class code bug fixes
+- Updating system fixed
 
 ### 0.2.2
 - Fixed visual issues in mobile
