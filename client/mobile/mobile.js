@@ -167,7 +167,10 @@ Template.defaultSidebar.rendered = function() {
 	});
 
 	addMobileButton($("#mSignOut"), 0.1, "brightness", function() {
-		document.getElementById('login-buttons-logout').click();
+		$(".noScroll").velocity("fadeOut", 50);
+        Session.set("myWork", []);
+        Session.set("filterWork", []);
+        document.getElementById('login-buttons-logout').click();
 	})
 
 	addMobileButton($("#mFilterHead")[0], 0.1, "brightness", function() {

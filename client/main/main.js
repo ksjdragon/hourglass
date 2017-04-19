@@ -700,6 +700,8 @@ Template.main.events({
     'click #signout' () {
         $(".noScroll").velocity("fadeOut", 50);
         Session.set('sidebarMode','');
+        Session.set("myWork", []);
+        Session.set("filterWork", []);
         document.getElementById('login-buttons-logout').click();
     }
 });
@@ -1113,7 +1115,6 @@ filterWork = function(classDisp, typeFilter, hideTime) {
             displayWork.push(workObj);
         }
     });
-
     Session.set("myWork", displayWork.sort(function(a,b) { // Display work.
         return Date.parse(a.realDate) - Date.parse(b.realDate);
     }));
