@@ -45,16 +45,8 @@ Template.mProfile.rendered = function() {
             return;
         }
 
-        _.each(myClasses, function(myClass) {
-            Meteor.call("joinClass", [myClass, ""], function(err, result) {
-                if(err !== undefined) {
-                    sAlert.error(message, {
-                        effect: 'stackslide',
-                        position: 'top'
-                    });
-                }
-            })  
-        });
+        joinClass(0);
+        
         var profile = Session.get("profile");
         profile.complete = true;
         profile.preferences = Meteor.user().profile.preferences;
@@ -249,5 +241,21 @@ Template.mClassDisplay2.rendered = function() {
        var newSetting = Session.get("profile");
         newSetting.classes.splice(newSetting.classes.indexOf(div.parentNode.getAttribute("classid")),1)
         Session.set("profile", newSetting); 
+    });
+}
+
+function joinClass(num) {
+    var joining = Session.get("profile").classes;
+    Meteor.call("joinClass", [joining[num], ""], function(err, result) {
+        if(err !== undefined) {
+            sAlert.error(err.message, {
+                effect: 'stackslide',
+                position: 'top'
+            });
+        }
+        joined++;
+        if(joined !== joining.length) {
+            joinClass(joined);
+        }
     });
 }

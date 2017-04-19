@@ -203,6 +203,7 @@ Template.registerHelper("classInfo", (info) => {
     var thisClass = classes.findOne({
         _id: Session.get("classInfo")
     });
+    if (thisClass === undefined) return;
     var isYou = Session.equals("classInfo", Meteor.userId());
     switch (info) {
         case "name":
@@ -498,7 +499,7 @@ Template.joinClass.events({
                     timeout: 1500
                 });
             }
-
+            Meteor.subscribe("classes");
         });
 
     }

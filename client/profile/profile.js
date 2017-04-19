@@ -50,7 +50,7 @@ Template.profile.helpers({
         for (var i = 0; i < array.length; i++) {
             array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
-            array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
+            array[i].teachershort = (array[i].teacher === undefined) ? "" : array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
                 return a + " " + b;
             });
         }
@@ -133,6 +133,9 @@ Template.profile.helpers({
             return {name:a.name,_id:(Math.floor(Math.random()*1000)).toString(),x:true};
         }));
         return array;
+    },
+    school() {
+        return Session.get("profile").school;
     }
 });
 
@@ -187,26 +190,51 @@ Template.profile.events({
         }
         values.privacy = (values.privacy === "Public") ? false : true;
         values.status = false;
-        values.category.toLowerCase();
+        values.category = values.category.toLowerCase();
         values.code = "";
+
         var newClasses = Session.get("newClasses");
         var duplicate = false;
         for(var i = 0; i < newClasses.length; i++) {
             if(JSON.stringify(newClasses[i]) === JSON.stringify(values)) duplicate = true;
+            if(newClasses[i].school === values.school && newClasses[i].teacher === values.teacher && newClasses[i].hour === values.hour) {
+                sAlert.error("This teacher is already teaching a class elsewhere!", {
+                    effect: 'stackslide',
+                    position: 'bottom-right',
+                    timeout: 3000
+                });
+                return;
+            }
         }
         if(!duplicate && newClasses.length < 8) newClasses.push(values);
-        if(duplicate) sAlert.error("You already created this class!", {
-            effect: 'stackslide',
-            position: 'bottom-right',
-            timeout: 3000
-        });
-        if(newClasses.length === 8) sAlert.error("You already created 8 classes!", {
-            effect: 'stackslide',
-            position: 'bottom-right',
-            timeout: 3000
-        });
+        if(duplicate) {
+            sAlert.error("You already created this class!", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 3000
+            });
+        }
+        if(newClasses.length === 8) {
+            sAlert.error("You already created 8 classes!", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 3000
+            });
+            return;
+        }
+        if(classes.findOne({school: values.school, teacher: values.teacher, status: true, privacy: false, hour: values.hour}) || (values.teacher === "" && values.hour === ""))  {
+            sAlert.error("This teacher is already teaching a class elsewhere!", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 3000
+            });
+            return;
+        }
+
         Session.set("newClasses", newClasses);
         $(".creInput").each(function(){$(this).val('');});
+        $(".creInput")[0].value = Session.get("profile").school;
+        slideToField(Session.get("sections")[1]-1);
         
     },
     'click #backArrow' () {
@@ -283,12 +311,15 @@ Template.profile.events({
         document.getElementById(modifyingInput).value = option;
         toggleOptionMenu(false, modifyingInput);
         $(".selectedOption").removeClass("selectedOption");
-        if(option !== Session.get("profile").school) {
-            newSetting = Session.get("profile");
-            newSetting["classes"] = [];
+        var newSetting = Session.get("profile");
+        if(modifyingInput === "school") {
+            if(option !== Session.get("profile").school) newSetting["classes"] = [];
             newSetting.school = option;
-            Session.set("profile", newSetting);
+        } else if(modifyingInput === "grade") {
+            newSetting = Session.get("profile");
+            newSetting.grade = option; 
         }
+        Session.set("profile", newSetting);
     },
     'input #classSearch' (event) { // Auto-complete updater
         if (event.target.value.length === 0) {
@@ -381,18 +412,10 @@ Template.profile.events({
             return;
         }
 
-        _.each(myClasses, function(myClass) {
-            Meteor.call("joinClass", [myClass, ""], function(err, result) {
-                if(err !== undefined) {
-                    sAlert.error(message, {
-                        effect: 'stackslide',
-                        position: 'top'
-                    });
-                }
-            })  
-        });
+        joinClass(0);
+
         _.each(newClasses, function(newClass) {
-            if (!teachers.findOne({
+            if(!teachers.findOne({
                 name: newClass.teacher
             })) {
                 Meteor.call("createTeacher", newClass.teacher, newClass.school, function(error, result) {
@@ -401,28 +424,13 @@ Template.profile.events({
                             effect: 'stackslide',
                             position: 'top'
                         });
-                    } else {
-                        Meteor.call("createClass", newClass, function(error, result) {
-                            if(error !== undefined) {
-                                sAlert.error(message, {
-                                    effect: 'stackslide',
-                                    position: 'top'
-                                });    
-                            }
-                        });
-                    }
-                });
-            } else {
-                Meteor.call("createClass", newClass, function(error, result) {
-                    if(error !== undefined) {
-                        sAlert.error(message, {
-                            effect: 'stackslide',
-                            position: 'top'
-                        });    
                     }
                 });
             }
         });
+
+        createClass(0);
+    
         var profile = Session.get("profile");
         profile.complete = true;
         profile.preferences = Meteor.user().profile.preferences;
@@ -459,6 +467,41 @@ function slideToField(field) {
             Session.set("sections", [Session.get("sections")[0],field]);
             $(".moveArrow").animate({"opacity":1});
             if(field === 1) $("#enrollClassList").fadeIn(200);
+        }
+    });
+}
+
+var joined = 0;
+var created = 0;
+
+function joinClass(num) {
+    var joining = Session.get("profile").classes;
+    Meteor.call("joinClass", [joining[num], ""], function(err, result) {
+        if(err !== undefined) {
+            sAlert.error(err.message, {
+                effect: 'stackslide',
+                position: 'top'
+            });
+        }
+        joined++;
+        if(joined !== joining.length) {
+            joinClass(joined);
+        }
+    });
+}
+
+function createClass(num) {
+    var creating = Session.get("newClasses");
+    Meteor.call("createClass", creating[num], function(error, result) {
+        if(error !== undefined) {
+            sAlert.error(error.message, {
+                effect: 'stackslide',
+                position: 'top'
+            });    
+        }
+        created++;
+        if(created !== creating.length) {
+            createClass(created);
         }
     });
 }

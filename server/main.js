@@ -318,9 +318,13 @@ function securityCheck(checklist, input) {
         results.push(error);
     }
     error = results.find(function(result){return result !== 0;});
-    if (checklist[checklist.length - 1] && error !== undefined) return error;
-    else if (results.find(function(result){return result === 0;}) === undefined) return results[0];
-    else return 0;
+    if (checklist[checklist.length - 1] && error !== undefined) {
+        return error;
+    } else if (results.find(function(result){return result === 0;}) === undefined) {
+        return results[0];
+    } else {
+        return 0;
+    }
 }
 
 Meteor.methods({
@@ -524,8 +528,9 @@ Meteor.methods({
             _id: currentwork.class
         });
         if(change.description) change.description = change.description.trim();
-        var security = securityCheck([[1, 16, 13, 5, false], 11, 12, 10, 20, true],
+        var security = securityCheck([[1,16, 13, 14, 5, false], 11, 12, 10, 20, true],
                                      Object.assign({}, currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
+
         if (!security) {
             work.update({
                 _id: change._id
@@ -706,8 +711,8 @@ Meteor.methods({
                     subscribers: foundsubs.concat(Meteor.userId())
                 }
             });
-            var current = Meteor.user().profile;
-            current.classes = current.classes.concat(change);
+            var current = Meteor.users.findOne({_id: Meteor.userId()}).profile;
+            current.classes.push(change);
             Meteor.users.update({
                 _id: Meteor.userId()
             }, {

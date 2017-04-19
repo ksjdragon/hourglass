@@ -49,7 +49,7 @@ Template.main.created = function() {
             $(".overlay").fadeOut(150);
         }
     });
-    getClasses();
+    console.log(Session.get("user"));
     work.find().observeChanges({
         added: function (id, fields) {
             updateWork(id, fields, "added");
@@ -143,6 +143,8 @@ Template.registerHelper('overlayDim', (part) => { // Gets size of the overlay co
 });
 
 Template.registerHelper('myClasses', () => { // Gets all classes and respective works.
+    var myClasses = Session.get("user").classes;
+    getClasses(myClasses);
     /*var myClasses = Session.get("user").classes;
     var classDisp = Session.get("classDisp");
     if (myClasses.length === 0) { // Null checking.
@@ -183,9 +185,8 @@ Template.registerHelper('myWork', () => {
     return Session.get("myWork");
 });
 
-getClasses = function() {
+getClasses = function(myClasses) {
     var array = [];
-    var myClasses = Session.get("user").classes;
     var classDisp = Session.get("classDisp");
     for(var i = 0; i < myClasses.length; i++) {
         var classObj = {};
@@ -230,9 +231,7 @@ updateWork = function(id, fields, type) {
     if(type === "added") {
         workObj = Object.assign({}, fields, {_id: id})
     } else if(type === "changed") {
-        workObj = Object.assign(Session.get("myWork").filter(function(work) {
-            return work._id === id;
-        }), fields);
+        workObj = work.findOne({_id: id});
     }
 
     workObj.classid = workObj.class;
