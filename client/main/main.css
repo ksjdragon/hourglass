@@ -1202,13 +1202,13 @@ textarea.clickModify {
 }
 
 .doneUser {
+	width: 90%;
 	font-size: 2vh;
 	margin: 0;
 	padding: 5%;
 	background-color: rgba(0,0,0,0.1);
 
 	position: relative;
-	cursor: default !important;
 	display: table;
 
 	-webkit-transition: background-color 0.4s ease;  
@@ -1222,13 +1222,13 @@ textarea.clickModify {
 }
 
 .doneUser div {
-	display: inline-block;
 	text-align: center;
 	display: table-cell;
+	vertical-align: middle;
 }
 
 .doneUser div:first-child {
-	width: 15%;
+	width: 4vh;
 	vertical-align: middle;
 }
 
@@ -1236,6 +1236,7 @@ textarea.clickModify {
 	width: 4vh;
 	height: 4vh;
 	line-height: 4vh;
+	vertical-align: middle;
 
 	-moz-border-radius: 50%;
 	-webkit-border-radius: 50%;
@@ -1264,6 +1265,10 @@ textarea.clickModify {
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;
 	transition: color 0.4s ease;
+}
+
+.workCreator, .workCreator div {
+	cursor: initial !important;
 }
 
 #markDone p {

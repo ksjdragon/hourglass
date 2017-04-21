@@ -219,7 +219,7 @@
                 <span class="cWorkCreator">{{creatorname}}</span>
             </div>
             <div class="cWorkBottom">
-                <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dueDate}}</span>
+                <span class="cWorkDate" style="font-weight:{{cardDate}}">{{dateWord}}</span>
                 <div style="color:{{doneRatio}}">
     				<i class="fa fa-thumbs-up" aria-hidden="true"></i>	
     				<span>{{confirmationLength}}</span>
@@ -246,10 +246,10 @@
 
 <template name="doneUsers">
     <div class="doneUser">
-        <div style="display:inline-block">
-            <img src='{{avatar}}' style="width:{{screen '3' '140'}};height:{{screen '3' '140'}}">
+        <div>
+            <img src='{{avatar}}'>
         </div>
-        <div style="display:inline-block;margin-left:0.3vw">
+        <div>
             <span>{{user}}</span>
         </div>
     </div>

@@ -5,11 +5,11 @@ Session.set("notsearching", true); // If user isn't searching
 Session.set("noclass", null); // If user doesn't have classes.
 Session.set("notfound", null); // If no results for autocomplete.
 
-var filterOpen = [false, true, true, true, true];
+var filterOpen = [true, true, true, true, true];
 var sidebarMode = [null, null];
 
 Template.sidebarMenuPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
+    $(".menuWrapper").velocity("slideDown", 150);
     $("#classListHolder").slimScroll({
         width: '100%',
         height: '',
@@ -18,13 +18,13 @@ Template.sidebarMenuPlate.rendered = function() {
     $("#filterWrapper.slimScrollBar").css("display", "none");
 };
 Template.sidebarOptionPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
+    $(".menuWrapper").velocity("slideDown", 150);
 };
 Template.sidebarRequestPlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
+    $(".menuWrapper").velocity("slideDown", 150);
 };
 Template.sidebarCreatePlate.rendered = function() {
-    $(".menuWrapper").slideDown(300);
+    $(".menuWrapper").velocity("slideDown", 150);
 };
 
 Template.sidebarMenuPlate.helpers({
@@ -63,19 +63,19 @@ Template.sidebarMenuPlate.events({
     'click #filterHead' (event) {
         if (event.target.id === "disableFilter") return;
         if (!filterOpen[0]) {
-            $("#filterWrapper").slideDown(300);
+            $("#filterWrapper").velocity("slideDown", 150);
         } else {
-            $("#filterWrapper").slideUp(300);
+            $("#filterWrapper").velocity("slideUp", 150);
         }
         filterOpen[0] = !filterOpen[0];
     },
     'click #typeFilterWrapper' () {
         if (!filterOpen[1]) {
-            $("#classFilterHolder").slideDown(300);
-            $("#classListHolder").animate({'max-height':'27.4507vh'},300);
+            $("#classFilterHolder").velocity("slideDown", 150);
+            $("#classListHolder").velocity({'max-height':'27.4507vh'},300);
         } else {
-            $("#classFilterHolder").slideUp(300)
-            $("#classListHolder").animate({'max-height':'52vh'},300);
+            $("#classFilterHolder").velocity("slideUp", 150);
+            $("#classListHolder").velocity({'max-height':'52vh'},300);
         }
         filterOpen[1] = !filterOpen[1];
     },
@@ -83,9 +83,9 @@ Template.sidebarMenuPlate.events({
         if (!filterOpen[2]) {
             var height = (88-100*$("#classFilterWrapper").offset().top / window.innerHeight) + "vh";
             $("#classListHolder").css('max-height',height);
-            $("#classListHolder").slideDown(300);
+            $("#classListHolder").velocity("slideDown", 150);
         } else {
-            $("#classListHolder").slideUp(300);
+            $("#classListHolder").velocity("slideUp", 150);
         }
         filterOpen[2] = !filterOpen[2];
     },
@@ -99,7 +99,7 @@ Template.sidebarMenuPlate.events({
             array.push(classid);
         }
         Session.set("classDisp", array);
-        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+        filterWork();
     },
     'click .sideFilter' (event) {
         var type = event.target.getAttribute("type");
@@ -110,7 +110,7 @@ Template.sidebarMenuPlate.events({
             array.push(type);
         }
         Session.set("typeFilter", array);
-        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+        filterWork();
     },
     'click #disableFilter' () {
         Session.set("classDisp", []);
@@ -175,17 +175,17 @@ Template.sidebarOptionPlate.events({
     },
     'click #settingMode' () {
         if (!filterOpen[3]) {
-            $("#settingModeWrapper").slideDown(300);
+            $("#settingModeWrapper").velocity("slideDown", 150);
         } else {
-            $("#settingModeWrapper").slideUp(300);
+            $("#settingModeWrapper").velocity("slideUp", 150);
         }
         filterOpen[3] = !filterOpen[3];
     },
     'click #preferencesWrapper' () {
         if (!filterOpen[4]) {
-            $("#prefCont").slideDown(300);
+            $("#prefCont").velocity("slideDown", 150);
         } else {
-            $("#prefCont").slideUp(300);
+            $("#prefCont").velocity("slideUp", 150);
         }
         filterOpen[4] = !filterOpen[4];
     }
@@ -301,7 +301,7 @@ Template.manageClass.events({
         toggleToClassInfoMode("users");
     },
     'click .infoCard .fa-pencil-square-o' () {
-        $("#changeAdminWrapper").fadeIn(250);
+        $("#changeAdminWrapper").velocity("fadeIn", 150);
     },
     'click #adminSubmit' () {
         var input = document.getElementById("changeAdmin");
@@ -324,19 +324,19 @@ Template.manageClass.events({
         ];
         Session.set("confirmText", "Change ownership?");
         confirm = "changeAdmin";
-        $("#confirmOverlay").fadeIn(250);
+        $("#confirmOverlay").velocity("fadeIn", 150);
     },
     'click #deleteClass' () {
         serverData = Session.get("classInfo");
         confirm = "deleteClass";
         Session.set("confirmText", "Delete this class?");
-        $("#confirmOverlay").fadeIn(250);
+        $("#confirmOverlay").velocity("fadeIn", 150);
     },
     'click .classBox .fa-times' (event) {
         serverData = event.target.parentNode.getAttribute("classid");
         confirm = "leaveClass";
         Session.set("confirmText", "Leave this class?");
-        $("#confirmOverlay").fadeIn(250);
+        $("#confirmOverlay").velocity("fadeIn", 150);
     }
 });
 
@@ -580,7 +580,7 @@ Template.classInfoCode.events({
         document.execCommand("copy");
         $(event.target.parentNode.childNodes[9]).fadeIn(100, function() {
             setTimeout(function() {
-                $(event.target.parentNode.childNodes[9]).fadeOut(250);
+                $(event.target.parentNode.childNodes[9]).velocity("fadeOut", 150);
             }, 500);
         });
     }
@@ -650,52 +650,52 @@ Template.classInfoUsers.events({
 });
 
 toggleToMode = function(mode) {
-    $("#mainBody").fadeOut(250, function() {
+    $("#mainBody").fadeOut(150, function() {
         (Session.equals("sidebarMode", "option")) ? Session.set("settingMode", mode): Session.set("mode", mode);
         Session.set("classInfo", null);
-        $("#mainBody").fadeIn(250);
+        $("#mainBody").fadeIn(150);
     });
 };
 
 toggleToSidebar = function(sidebar) {
     try {
-        $("#backgroundOverlay").fadeOut(250);
+        $("#backgroundOverlay").velocity("fadeOut", 200);
     } catch (err) {}
     if (Session.equals("sidebarMode", sidebar) || !sidebar) {
         $("#menuContainer").hide("slide", {
             direction: "left"
-        }, 250);
-        $("#divCenter").stop().animate({
+        }, 200);
+        $("#divCenter").stop().velocity({
             left: '6vh'
-        }, 250, function() {
+        }, 200, function() {
             Session.set("sidebarMode", "");
         });
     } else {
         $("#menuContainer").show("slide", {
             direction: "left"
-        }, 250);
-        $("#divCenter").stop().animate({
+        }, 200);
+        $("#divCenter").stop().velocity({
             left: '36vh'
-        }, 250);
+        }, 200);
         $(".menuWrapper").fadeOut(200, function() {
             Session.set("sidebarMode", sidebar);
         });
     }
-    filterOpen = [false, true, true, true, true];
+    filterOpen = [true, true, true, true, true];
 };
 
 toggleToClassInfo = function(classId) {
-    $("#changeAdminWrapper").fadeOut(250);
-    $("#infoClassCont").fadeOut(250, function() {
+    $("#changeAdminWrapper").fadeOut(150);
+    $("#infoClassCont").fadeOut(150, function() {
         Session.set("classInfo", classId);
         Session.set("classInfoMode", "general");
-        $(this).fadeIn(250);
+        $(this).fadeIn(150);
     });
 };
 
 toggleToClassInfoMode = function(mode) {
-    $("#infoClassCont").fadeOut(250, function() {
+    $("#infoClassCont").fadeOut(150, function() {
         Session.set("classInfoMode", mode);
-        $(this).fadeIn(250);
+        $(this).fadeIn(150);
     });
 };

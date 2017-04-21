@@ -10,6 +10,7 @@ var calWorkOpen = null;
 var calWorkDate = null;
 var dragging = false;
 var clicked = false;
+var workChanger = false;
 
 
 var defaultWork = {
@@ -44,21 +45,23 @@ Template.login.rendered = function() {
 
 Template.main.created = function() {
     Session.set("mode", Session.get("user").preferences.mode);
+    Session.set("myWork", []);
+    Session.set("filterWork", []);
     Session.set("classInfo", null);
     $(document).on('keyup', (e) => {
         if(event.keyCode === 27 && $(".overlay").css("display") !== "none") {
-            $(".overlay").fadeOut(150);
+            $(".overlay").velocity("fadeOut", 150);
         }
     });
 
     work.find().observeChanges({
         added: function (id, fields) {
             updateWork(id, fields, "added");
-            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+            filterWork();
         },
         changed: function (id, fields) {
             updateWork(id, fields, "changed");
-            filterWork(Session.get("classDisp"),Session.get("typeFilter"));
+            filterWork();
         },
         removed: function (id) {
             updateWork(id, null, "remove");
@@ -96,7 +99,10 @@ Template.classesMode.rendered = function() {
 
     area.on({
         'mousemove': function(e) {
-            if(clicked && !dragging) area.scrollLeft(area.scrollLeft() + (clickX - e.pageX)/70);
+            if(clicked && !dragging) {
+                area.scrollLeft(area.scrollLeft() + (clickX - e.pageX));
+                clickX = e.pageX;
+            }
         },
         'mousedown': function(e) {
             clicked = true;
@@ -278,7 +284,7 @@ Template.main.helpers({
             eventClick: function(event, jsEvent, view) { // On-click for work.
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
-                $(".overlay").fadeIn(150);
+                $(".overlay").velocity("fadeIn", 150);
                 $("#comment").slimScroll({
                     width: '100%',
                     height: '20vh',
@@ -382,7 +388,7 @@ Template.main.events({
         }
 
         if (e === "overlay") { // Overlay closing.
-            $(".overlay").fadeOut(150);
+            $(".overlay").velocity("fadeOut", 150);
             if (!Session.get("newWork")) {
                 document.getElementById("workComment").value = "";
                 var res = Session.get("restrictText");
@@ -391,7 +397,7 @@ Template.main.events({
             }
         }
 
-        if (!document.getElementById("userDropdown").contains(event.target)) $("#userDropdown").fadeOut(250);
+        if (!document.getElementById("userDropdown").contains(event.target)) $("#userDropdown").velocity("fadeOut", 150);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' (event) { // Click menu button.
@@ -412,7 +418,7 @@ Template.main.events({
         }
         Session.set("newWork", true);
         Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
-        $(".overlay").fadeIn(150);
+        $(".overlay").velocity("fadeIn", 150);
         $("#comment").slimScroll({
             width: '100%',
             height: '20vh',
@@ -422,24 +428,23 @@ Template.main.events({
     },
     'click .fa-check-circle-o' () { // Confirmation Button
         sendData(confirm);
-        $("#confirmOverlay").fadeOut(250);
+        $("#confirmOverlay").velocity("fadeOut", 150);
         if(confirm === "changeAdmin") {
-            $("#changeAdminWrapper").fadeOut(250);
+            $("#changeAdminWrapper").velocity("fadeOut", 150);
         } else if(confirm === "deleteClass") {
             Session.set("classInfo", null);
         }
         serverData = null;
-        confirm = null;
-        
+        confirm = null;     
     },
     'click .fa-times-circle-o' () { // Deny Button
-        $("#confirmOverlay").fadeOut(250);
+        $("#confirmOverlay").velocity("fadeOut", 150);
         serverData = null;
         confirm = null;
     },
     'click #dropdown' (event) {
         if (document.getElementById("userDropdown").style.display === "block") return;
-        $("#userDropdown").fadeIn(250);
+        $("#userDropdown").velocity("fadeIn", 150);
     },
     'click .workCard' (event) { // Display work information on work card click.
         if(event.target.className.indexOf("fa") !== -1) return;
@@ -462,7 +467,7 @@ Template.main.events({
                 var inputs = $('#editWork .clickModify').css("cursor", "default");
             }
         }
-        $(".overlay").fadeIn(150);
+        $(".overlay").velocity("fadeIn", 150);
         $("#comment").slimScroll({
             width: '100%',
             height: '20vh',
@@ -484,11 +489,11 @@ Template.main.events({
             area.value = "";
             Session.set("restrictText", {});
             $("#requestSubmit span:first-child").fadeOut(200, function() {
-                $("#requestSubmit span:nth-child(2)").fadeIn(200);
+                $("#requestSubmit span:nth-child(2)").velocity("fadeIn", 200);
             })
             setTimeout(function() {
                 $("#requestSubmit span:nth-child(2)").fadeOut(200, function() {
-                    $("#requestSubmit span:first-child").fadeIn(200);
+                    $("#requestSubmit span:first-child").velocity("fadeIn", 200);
                 })
             }, 1250);
         });
@@ -515,7 +520,7 @@ Template.main.events({
                 } else {
                     work.description = " - " + work.description;
                 }
-                var duedate = work.realDate.toJSON().slice(0,10).replace(/-/gi,"");
+                var duedate = work.dueDate.toJSON().slice(0,10).replace(/-/gi,"");
                 events += "\nBEGIN:VEVENT" +
                     "\nUID:" + timestamp + work._id + "@hourglass.tk" +
                     "\nDTSTAMP:" + timestamp +
@@ -670,12 +675,12 @@ Template.main.events({
         serverData = Session.get("currentWork");
         if(checkMissing()) return;
         sendData("createWork");
-        $(".overlay").fadeOut(150);
+        $(".overlay").velocity("fadeIn", 150);
     },
     'click #workDelete' () {
         serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
-        $(".overlay").fadeOut(150);
+        $(".overlay").velocity("fadeOut", 150);
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];
@@ -700,8 +705,6 @@ Template.main.events({
     'click #signout' () {
         $(".noScroll").velocity("fadeOut", 50);
         Session.set('sidebarMode','');
-        Session.set("myWork", []);
-        Session.set("filterWork", []);
         document.getElementById('login-buttons-logout').click();
     }
 });
@@ -720,17 +723,19 @@ Template.classesMode.helpers({
 toggleOptionMenu = function(toggle, menu) {
     if(toggle) {
         $(".selectedOption").removeClass("selectedOption");
-        $("#" + menu).next()
-        .css('opacity', 0)
-        .slideDown(300)
-        .animate(
+        $("#" + menu).next().css('opacity', 0)
+        $("#" + menu).next().velocity("slideDown", 100);
+        $("#" + menu).next().velocity(
             { opacity: 1 },
-            { queue: false, duration: 100 }
+            { queue: false, duration: 50 }
         );
         optionOpen = [menu, toggle];
     } else {
-        $("#" + menu).next().slideUp(100, function() {
-            $(this).css("opacity", 0);
+        $("#" + menu).next().velocity("slideUp", {
+            duration: 100,
+            complete: function() {
+                $("#" + menu).next().css("opacity", 0);
+            }
         });
         optionOpen = [null, toggle]; 
     }
@@ -741,29 +746,19 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
         for(var key in serverData) {
             if(serverData[key] === true) serverData[key] = "";
         }
+        
     }
+    if(funcName === "editWork") workChanger = true;
+    if(funcName === "editProfile") filterWork();
     Meteor.call(funcName, serverData, function(error, result) {
         serverData = null;
-        currWork = Session.get("currentWork");
 
-        if(currWork !== null && currWork._id !== undefined) {
-            Session.set("currentWork", work.findOne({
-                _id: currWork._id
-            }));
-        } else {
-            Session.set("currentWork",null);
-        }
         if (error !== undefined) {
             sAlert.error(error.error[1] || error.message, {
                 effect: 'stackslide',
                 position: 'top'
             });
         } else {
-            /*sAlert.success("Success!", {
-                effect: 'stackslide',
-                position: 'bottom-right',
-                timeout: 2500
-            });*/
             if(funcName === "createClass") {
                 var inputs = document.getElementsByClassName("creInput");
                 for(var i = 0; i < inputs.length; i++) {
@@ -919,12 +914,12 @@ function formReadable(input, val) { // Makes work information readable by users.
                 if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
                 return "fa-check-square-o";
             case "userConfirm":
-                if (!_.contains(input.confirmations, Meteor.userId())) return (Meteor.Device.isPhone()) ? "rgb(101,101,101)" : "";
+                if (!_.contains(input.confirmations, Meteor.userId())) return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
                 return "#27A127";
             case "confirmations":
                 return input.confirmations.length;
             case "userReport":
-                if (!_.contains(input.reports, Meteor.userId()))  return (Meteor.Device.isPhone()) ? "rgb(101,101,101)" : "";
+                if (!_.contains(input.reports, Meteor.userId()))  return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
                 return "#FF1A1A";
             case "reports":
                 return input.reports.length;
@@ -1016,6 +1011,7 @@ getClasses = function(myClasses) {
 }
 
 updateWork = function(id, fields, type) {
+    if(type === "remove" && Session.get("myWork").concat(Session.get("filterWork")).length === 0) return;
     if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
         return work._id === id;
     }).length !== 0) {
@@ -1033,13 +1029,15 @@ updateWork = function(id, fields, type) {
         workObj = work.findOne({_id: id});
     }
 
+    if(Meteor.users.findOne({_id: workObj.creator}) === undefined) return;
+    if(Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) && !_.contains(Session.get("user").classes, workObj["class"])) return;
+
     workObj.classid = workObj.class;
 
     workObj.shortname = (workObj.name.length <= 20) ? workObj.name : workObj.name.substring(0,20) + "...";
     workObj.className = (workObj.classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: workObj.classid}).name;
 
-    workObj.realDate = workObj.dueDate;
-    workObj.dueDate = moment(workObj.dueDate).calendar(null, {
+    workObj.dateWord = moment(workObj.dueDate).calendar(null, {
         sameDay: '[Today]',
         nextDay: '[Tomorrow]',
         nextWeek: 'dddd',
@@ -1050,9 +1048,9 @@ updateWork = function(id, fields, type) {
 
     workObj.shortdesc = (workObj.description === undefined) ? "" : (workObj.description.length <= 30 ) ? workObj.description : workObj.description.substring(0,30) + "...";
 
-    if (workObj.dueDate === "Today") { // Font weight based on date proximity.
+    if (workObj.dateWord === "Today") { // Font weight based on date proximity.
         workObj.cardDate = "600";
-    } else if (workObj.dueDate === "Tomorrow") {
+    } else if (workObj.dateWord === "Tomorrow") {
         workObj.cardDate = "400";
     }
 
@@ -1088,16 +1086,34 @@ updateWork = function(id, fields, type) {
     var myWork;
     if(type === "added") {
         myWork = Session.get("myWork");
+        myWork.push(workObj);
     } else if(type === "changed") {
         myWork = Session.get("myWork").filter(function(work) {
             return work._id !== id;
         });
+        myWork.push(workObj);
+        if(Session.get("currentWork")._id === id) {
+            Session.set("currentWork", workObj);
+            if($(".overlay").css("display") !== "none") { // If currently viewing work.
+                var message = Object.keys(fields)[0].replace("dueDate", "due date");
+                if(!workChanger && message !== "comments" && message !== "done" && message !== "confirmations") sAlert.success("The " + message + " of this work was updated by someone else!", {
+                    effect: 'stackslide',
+                    position: 'top',
+                    timeout: 1500
+                });
+                workChanger = false;
+            }
+        }
     }
-    myWork.push(workObj);
+        
     Session.set("myWork", myWork);
 }
 
-filterWork = function(classDisp, typeFilter, hideTime) {
+filterWork = function() {
+    var classDisp = Session.get("classDisp");
+    var typeFilter = Session.get("typeFilter");
+    var hideTime = Session.get("user").preferences.timeHide;
+
     var allWork = Session.get("filterWork").concat(Session.get("myWork"));
     var hideWork = [];
     var displayWork = [];
@@ -1105,8 +1121,8 @@ filterWork = function(classDisp, typeFilter, hideTime) {
     _.each(allWork, function(workObj) {
         var notInClassFilter = classDisp.length !== 0 && !_.contains(classDisp, workObj.classid);
         var notInTypeFilter = typeFilter.length !== 0 && !_.contains(typeFilter, workObj.type);
-        var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.realDate))._d;
-        var markedDone = Session.get("user").preferences.done && !Meteor.Device.isPhone() && _.contains(workObj.done, Meteor.userId());
+        var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.dueDate))._d;
+        var markedDone = Session.get("user").preferences.done && !(Meteor.Device.isPhone() || Meteor.Device.isTablet()) && _.contains(workObj.done, Meteor.userId());
         var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
 
         if(notInClassFilter || notInTypeFilter || pastHideDate || markedDone || reported) {
@@ -1116,7 +1132,7 @@ filterWork = function(classDisp, typeFilter, hideTime) {
         }
     });
     Session.set("myWork", displayWork.sort(function(a,b) { // Display work.
-        return Date.parse(a.realDate) - Date.parse(b.realDate);
+        return Date.parse(a.dueDate) - Date.parse(b.dueDate);
     }));
     Session.set("filterWork", hideWork); // Not displayed
 
@@ -1142,7 +1158,7 @@ function calendarEvents() {
 
         events.push({
             id: work._id,
-            start: work.realDate.toISOString().slice(0, 10),
+            start: work.dueDate.toISOString().slice(0, 10),
             title: work.name,
             backgroundColor: workColors[work.type],
             borderColor: "#444",

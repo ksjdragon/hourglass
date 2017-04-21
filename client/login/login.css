@@ -185,18 +185,21 @@ a:hover {
 	color: #FCF0F0;
 	width: 100%;
 	position: absolute;
-	top: 63vh;
+	bottom: 9vh;
 }
 
 #mLoginTexts h1 {
+	width: 90%;
 	font-size: 8vw;
 	font-weight: 300;
-	margin: 0;
+	margin: 0 auto 0 auto;
 	padding: 0;
 	text-align: center;
 }
 
 #mLoginTexts h5 {
+	width: 90%;
+	margin: 0 auto 0 auto;
 	font-size: 5vw;
 	font-weight: 100;
 	text-align: Center;

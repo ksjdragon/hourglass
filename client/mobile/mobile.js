@@ -17,15 +17,17 @@ Template.registerHelper('optionInfo', (type) => {
 });
 
 Template.mobile.created = function() {
+	Session.set("myWork", []);
+	Session.set("filterWork", []);
 	getClasses(Session.get("user").classes);
 	work.find().observeChanges({
         added: function (id, fields) {
             updateWork(id, fields, "added");
-            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+            filterWork();
         },
         changed: function (id, fields) {
             updateWork(id, fields, "changed");
-            filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+            filterWork();
         },
         removed: function (id) {
             updateWork(id, null, "remove");
@@ -168,8 +170,6 @@ Template.defaultSidebar.rendered = function() {
 
 	addMobileButton($("#mSignOut"), 0.1, "brightness", function() {
 		$(".noScroll").velocity("fadeOut", 50);
-        Session.set("myWork", []);
-        Session.set("filterWork", []);
         document.getElementById('login-buttons-logout').click();
 	})
 
@@ -388,7 +388,7 @@ Template.mSidebarClasses.rendered = function() {
 	        }
 	        Session.set("classDisp", array);
 	        timedPushback(true);
-	        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+	        filterWork();
 	    }
 	});
 }
@@ -411,7 +411,7 @@ Template.mSideTypeFilter.rendered = function() {
 	        }
 	        Session.set("typeFilter", array);
 	        timedPushback(true);
-	        filterWork(Session.get("classDisp"),Session.get("typeFilter"), Session.get("user").preferences.hideTime);
+	        filterWork();
 		}
 	});
 }
@@ -451,12 +451,12 @@ Template.mobile.helpers({
     noneText(type) {
 		return (type === "main") ? 
 		(Session.get("myWork").filter(function(work) {
-			return _.contains(work.done, Meteor.userId());
-		}).length === 0) ? "none" : "block"
+			return !_.contains(work.done, Meteor.userId());
+		}).length === 0) ? "block" : "none"
 		: 
 		(Session.get("myWork").filter(function(work) {
-			return !_.contains(work.done, Meteor.userId());
-		}).length === 0) ? "none" : "block";
+			return _.contains(work.done, Meteor.userId());
+		}).length === 0) ? "block" : "none";
     },
     buttonType() {
     	if(Session.equals("mobileMode","main") || Session.equals("mobileMode","done")) {
