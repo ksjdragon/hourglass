@@ -1071,9 +1071,9 @@ updateWork = function(id, fields, type) {
             return work._id !== id;
         });
         myWork.push(workObj);
-        /*if(!Session.equals("currentWork", null) && Session.get("currentWork")._id === id) {  Notification beta, probably rework.
+        if(!Session.equals("currentWork", null) && Session.get("currentWork")._id === id) {  //Notification beta, probably rework.
             Session.set("currentWork", workObj);
-            if($(".overlay").css("display") !== "none") { // If currently viewing work.
+            /*if($(".overlay").css("display") !== "none") { // If currently viewing work.
                 var message = Object.keys(fields)[0].replace("dueDate", "due date");
                 if(!workChanger && message !== "comments" && message !== "done" && message !== "confirmations") sAlert.success("The " + message + " of this work was updated by someone else!", {
                     effect: 'stackslide',
@@ -1081,8 +1081,8 @@ updateWork = function(id, fields, type) {
                     timeout: 1500
                 });
                 workChanger = false;
-            }
-        }*/
+            }*/
+        }
     }
         
     Session.set("myWork", myWork);
