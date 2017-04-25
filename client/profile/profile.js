@@ -193,6 +193,15 @@ Template.profile.events({
         values.category = values.category.toLowerCase();
         values.code = "";
 
+        if(values.teacher !== "" && values.teacher.split(" ").length < 2) {
+            sAlert.error("Please enter the full name of the teacher! Ex: Darrin Woods", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 3000
+            });
+            return;
+        }
+
         var newClasses = Session.get("newClasses");
         var duplicate = false;
         for(var i = 0; i < newClasses.length; i++) {

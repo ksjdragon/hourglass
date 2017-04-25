@@ -555,6 +555,15 @@ Template.createClass.events({
         values.code = "";
         serverData = values;
 
+        if(values.teacher !== "" && values.teacher.split(" ").length < 2) {
+            sAlert.error("Please enter the full name of the teacher! Ex: Darrin Woods", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 3000
+            });
+            return;
+        }
+
         if (!teachers.findOne({
                 name: values.teacher
             }) && values.teacher !== "") {
