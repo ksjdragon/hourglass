@@ -6,6 +6,8 @@ import {
     Mongo
 } from 'meteor/mongo';
 
+console.log("Server started!");
+
 // Defines who the admins are - not added
 var superadmins = [
     "ybq987@gmail.com",
