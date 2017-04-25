@@ -394,7 +394,7 @@ Template.main.helpers({
                 date.startOf("day");
                 realDate = realDate._d;
                 Session.set("newWork", true);
-                Session.set("currentWork", {dueDate: realDate});
+                Session.set("currentWork", {dueDate: realDate, type: "normal"});
                 if(!Session.equals("sidebarMode", "create")) toggleToSidebar("create");
             }
         };
@@ -1071,7 +1071,7 @@ updateWork = function(id, fields, type) {
             return work._id !== id;
         });
         myWork.push(workObj);
-        if(!Session.equals("currentWork", null) && Session.get("currentWork")._id === id) {
+        /*if(!Session.equals("currentWork", null) && Session.get("currentWork")._id === id) {  Notification beta, probably rework.
             Session.set("currentWork", workObj);
             if($(".overlay").css("display") !== "none") { // If currently viewing work.
                 var message = Object.keys(fields)[0].replace("dueDate", "due date");
@@ -1082,7 +1082,7 @@ updateWork = function(id, fields, type) {
                 });
                 workChanger = false;
             }
-        }
+        }*/
     }
         
     Session.set("myWork", myWork);
@@ -1102,7 +1102,8 @@ filterWork = function() {
         var notInTypeFilter = typeFilter.length !== 0 && !_.contains(typeFilter, workObj.type);
         var pastHideDate = hideTime !== 0 && (moment().subtract(hideTime, 'days'))._d > (moment(workObj.dueDate))._d;
         var markedDone = Session.get("user").preferences.done && !(Meteor.Device.isPhone() || Meteor.Device.isTablet()) && _.contains(workObj.done, Meteor.userId());
-        var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
+        var reported = false; // Temp, working on reporting.
+        //var reported = (workObj.reportLength / (workObj.reportLength + workObj.confirmationLength)) > 0.7; // Over 70% are reports
 
         if(notInClassFilter || notInTypeFilter || pastHideDate || markedDone || reported) {
             hideWork.push(workObj);

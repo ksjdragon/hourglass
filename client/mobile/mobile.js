@@ -431,7 +431,7 @@ Template.mobile.helpers({
 			}) : 
 			Session.get("myWork").filter(function(work) {
 				return !_.contains(work.done, Meteor.userId());
-			})
+			});
 	},
 	showMode(mode) {
 		return Session.equals("mobileMode", mode);
@@ -480,6 +480,12 @@ Template.mobile.helpers({
     	return Session.equals("select", type);
     }
 });
+
+Template.mobileClass.helpers({
+	isDone() {
+		return Session.equals("mobileMode", "done");
+	},
+})
 
 Template.mAddWork.rendered = function() {
 	addMobileButton($('#dueDate'), 0.2, "brightness", function() {
