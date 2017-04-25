@@ -12,14 +12,6 @@ var dragging = false;
 var clicked = false;
 var workChanger = false;
 
-
-var defaultWork = {
-    name: "Name | Click here to edit...",
-    dueDate: "Click here to edit...",
-    description: "Click here to edit...",
-    type: "Click here to edit..."
-};
-
 // Reactive variables.
 Session.set("user", {}); // Stores user preferences.
 Session.set("calendarEvents", []); // Stores calendar classes.
@@ -198,12 +190,111 @@ Template.registerHelper('selectOptions', (val) => {
 
 Template.registerHelper('work', (value) => {// Returns the specified work value.
     var thisWork = Session.get("currentWork");
-    if (Session.equals("currentWork", null)) return;
-    if (Session.get("newWork") && (thisWork[value] === true || thisWork[value] === undefined)) {
-        return defaultWork[value];
-    } else {
-        return formReadable(thisWork,value);
+    if(Session.equals("currentWork", null)) return;
+    if(Session.get("newWork")) {
+        switch(value) {
+            case "class":
+                var id = thisWork["class"];
+                return (id === Meteor.userId()) ? "Personal" : classes.findOne({_id: id}).name;
+            case "dueDate":
+                return getReadableDate(thisWork.dueDate);
+            case "type":
+                return options.type.filter(function(names) {
+                    return names.val === thisWork.type;
+                })[0].alias;
+            default:
+                return;
+        }
     }
+
+    var input = thisWork;
+    try {
+        switch (value) {
+            case "typeColor":
+                return input.typeColor = workColors[input.type];
+            case "name":
+                return input.name;
+            case "class":
+                var id = input["class"]; 
+                return (id === Meteor.userId()) ? "Personal" : classes.findOne({_id: id}).name;
+            case "dueDate":
+                return getReadableDate(input.dueDate);
+            case "description":
+                return input.description;
+            case "type":
+                return input.type[0].toUpperCase() + input.type.slice(1);
+            case "comments":
+                var comments = input.comments;
+                var resort = [];
+                if (Session.get("newWork")) return []; // Don't display comments if user is creating work.
+                for (var k = 0; k < comments.length; k++) {
+                    var re = comments.length - k - 1;
+                    resort[re] = {
+                        "comment": comments[k].comment,
+                        "date": null,
+                        "user": null,
+                        "avatar": null,
+                        "email": null
+                    };
+                    var user = Meteor.users.findOne({
+                        _id: comments[k].user
+                    });
+                    resort[re].user = user.profile.name;
+                    resort[re].date = moment(comments[k].date).fromNow();
+                    resort[re].avatar = user.services.google.picture;
+                    resort[re].email = user.services.google.email;
+                }
+                return resort;
+            case "done":
+                if (Session.get("newWork")) return [];
+                for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
+                    var user = Meteor.users.findOne({
+                        _id: input.done[i]
+                    });
+
+                    input.done[i] = {
+                        "user": user.profile.name,
+                        "avatar": user.services.google.picture,
+                        "email": user.services.google.email
+                    };
+                }
+                return input.done;
+            case "doneCol":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "";
+                return "#27A127";
+            case "doneText":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "Mark done";
+                return "Done!";
+            case "doneIcon":
+                if (Session.get("newWork")) return "";
+                if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
+                return "fa-check-square-o";
+            case "userConfirm":
+                if (!_.contains(input.confirmations, Meteor.userId())) return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
+                return "#27A127";
+            case "confirmations":
+                return input.confirmations.length;
+            case "userReport":
+                if (!_.contains(input.reports, Meteor.userId()))  return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
+                return "#FF1A1A";
+            case "reports":
+                return input.reports.length;
+            case "email":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).services.google.email;
+            case "avatar":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).services.google.picture;
+            case "creator":
+                return Meteor.users.findOne({
+                    _id: input.creator
+                }).profile.name;
+        }
+    } catch(err){}
 });
 
 Template.registerHelper('confirmText', () => {
@@ -300,9 +391,7 @@ Template.main.helpers({
             dayClick: function(date, jsEvent, view) { // On-click for each day.
                 if (jsEvent.target.className.includes("fc-past")) return;
                 var realDate = date;
-                date.seconds(59);
-                date.minutes(59);
-                date.hour(15);
+                date.startOf("day");
                 realDate = realDate._d;
                 Session.set("newWork", true);
                 Session.set("currentWork", {dueDate: realDate});
@@ -411,13 +500,9 @@ Template.main.events({
     },
     'click .creWork' (event) { // Cick add work button.
         var attr;
-        if (event.target.className !== "creWork") {
-            attr = event.target.parentNode.getAttribute("classid");
-        } else {
-            attr = event.target.getAttribute("classid");
-        }
+        attr = event.target.getAttribute("classid");
         Session.set("newWork", true);
-        Session.set("currentWork",{class: attr, dueDate: (new Date((new Date()).valueOf() + 1000*3600*24))});
+        Session.set("currentWork",{class: attr, dueDate: moment().startOf('day').add(1,"days")._d, type:"normal"});
         $(".overlay").velocity("fadeIn", 150);
         $("#comment").slimScroll({
             width: '100%',
@@ -447,7 +532,6 @@ Template.main.events({
         $("#userDropdown").velocity("fadeIn", 150);
     },
     'click .workCard' (event) { // Display work information on work card click.
-        if(event.target.className.indexOf("fa") !== -1) return;
         var workid = event.target.getAttribute("workid");
         var thisWork = work.findOne({
             _id: workid
@@ -456,17 +540,6 @@ Template.main.events({
         Session.set("newWork", false);
         Session.set("currentWork", thisWork);
 
-        if (!Session.get("newWork")) {
-            var currClass = classes.findOne({
-                _id: thisWork["class"]
-            });
-            if (!(Meteor.userId() === thisWork.creator || // If user has permission.
-                  Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
-                  currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                  currClass.banned.indexOf(Meteor.userId()) !== -1)) {
-                var inputs = $('#editWork .clickModify').css("cursor", "default");
-            }
-        }
         $(".overlay").velocity("fadeIn", 150);
         $("#comment").slimScroll({
             width: '100%',
@@ -613,15 +686,16 @@ Template.main.events({
     'click .optionText' (event) { // Click each preferences setting.
         var option = event.target.childNodes[0].nodeValue;
         if(modifyingInput[0] === 'w') {
+            document.getElementById(modifyingInput).children[0].childNodes[0].nodeValue = option;
             var newSetting = Session.get("currentWork");
-            newSetting[modifyingInput.charAt(1).toLowerCase() + modifyingInput.slice(2)] = option.toLowerCase();
+            newSetting.type = options.type.filter(function(names) {
+                return names.alias === option;
+            })[0].val;
             Session.set("currentWork", newSetting);
-            serverData = Session.get("currentWork");
-
+            console.log(newSetting);
+            closeInput();
             toggleOptionMenu(false, modifyingInput);
-            if(Session.get("newWork")) return;
-            if(checkMissing()) return;
-            sendData("editWork");
+            modifyingInput = null;
         } else if(modifyingInput.slice(0,3) === "cre") {
             document.getElementById(modifyingInput).value = option;
         } else {
@@ -672,10 +746,27 @@ Template.main.events({
         }
     },
     'click #workSubmit' () { // Click submit work to create a work.
-        serverData = Session.get("currentWork");
-        if(checkMissing()) return;
-        sendData("createWork");
-        $(".overlay").velocity("fadeIn", 150);
+        var thisWork = Session.get("currentWork");
+        var no = [];
+        if(thisWork.name === "") no.push("name");
+        if(thisWork.dueDate === "") no.push("due date");
+        if(thisWork.type === "") no.push("type");
+        
+        if(no.length === 0) {
+            serverData = Session.get("currentWork");
+            sendData("createWork");
+            $(".overlay").velocity("fadeOut", 150);
+        } else {
+            var message = no.reduce(function(a, b) {
+                return (b === no[no.length - 1]) ? a + ((no.length === 2) ? " and " : ", and ") + b : a + ", " + b;
+            });
+            sAlert.error("You are missing the " + message + "!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        } 
     },
     'click #workDelete' () {
         serverData = Session.get("currentWork")._id;
@@ -772,66 +863,44 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
 }
 
 function closeInput() { // Close a changeable input and change it back to span.
-    var data = getHomeworkFormData();
-    Session.set("currentWork", data);
+    var thisWork = Session.get("currentWork");
+    var inputs = $(".clickModify");
+
     Session.set("restrictText", {});
-    $("#"+modifyingInput).css('cursor','pointer');
-    $("#"+modifyingInput).css('background-color', 'rgba(0,0,0,0)');
+    if(modifyingInput !== "wType") {
+        $("#"+modifyingInput).css('cursor','pointer');
+        $("#"+modifyingInput).css('background-color', 'rgba(0,0,0,0)');
+    }
+
+    thisWork.name = inputs[0].value;
+    thisWork.dueDate = toDate(inputs[1].value);
+    thisWork.description = inputs[2].value;
+    thisWork.type = options.type.filter(function(names) {
+        return names.alias === inputs[3].children[0].innerHTML;
+    })[0].val;
+    Session.set("currentWork", thisWork);
+
     if(!Session.get("newWork")) {
-        serverData = Session.get("currentWork");
-        if(checkMissing()) return;
-        sendData("editWork");
-    }
-}
+        var no = [];
+        if(thisWork.name === "") no.push("name");
+        if(thisWork.dueDate === "") no.push("due date");
+        if(thisWork.type === "") no.push("type");
 
-function getHomeworkFormData() { // Get all data relating to work creation.
-    var inputs = ["wName", "wDueDate", "wDescription", "wType"]; // All work fields.
-    var optional = ["wDescription"]; // Optional work fields.
-    var data = Session.get("currentWork");
-    for(var i = 0; i < inputs.length; i++) {
-        var title = inputs[i].charAt(1).toLowerCase() + inputs[i].slice(2);
-        var thisData = (function() {
-            if(title === "type") {
-                return $("#"+inputs[i]+" span")[0].childNodes[0].nodeValue.toLowerCase();
-            } else if (title === "dueDate") {
-                var val = $("#"+inputs[i])[0].value;
-                return toDate(val);
-            } else {
-                return $("#"+inputs[i])[0].value;
-            }
-        })();
-        // True signifies missing field to prevent missing if value is'Missing field.'
-        data[title] =  data[title] = (thisData.toString().includes(defaultWork[title].slice(0,-3)) && !_.contains(optional, title)) ? true : thisData;
-    }
-    return data;
-}
-
-function checkMissing() {
-    var required = ["name","dueDate","type"];
-    var no = false;
-    if(serverData === null || Object.keys(serverData).length < 4) {
-        for(var i = 0; i < required.length; i++) {
-            var id = "w" + required[i].charAt(0).toUpperCase() + required[i].slice(1);
-            $("#"+id).addClass("formInvalid");
-            $("#"+id)[0].value = "";
-            $("#"+id)[0].placeholder = "Missing field";
-        }
-        return true;
-    }
-    for(var key in serverData) {
-        if(!_.contains(required, key)) continue;
-        var id = "w" + key.charAt(0).toUpperCase() + key.slice(1);
-        if(serverData[key] === true || serverData[key] === "" || serverData[key] === undefined) {
-            no = true;
-            $("#"+id).addClass("formInvalid");
-            $("#"+id)[0].value = "";
-            $("#"+id)[0].placeholder = "Missing field";
+        if(no.length === 0) {
+            serverData = Session.get("currentWork");
+            sendData("editWork");
         } else {
-            $("#"+id)[0].placeholder = "";
-            $("#"+id).removeClass("formInvalid");
-        }
+            var message = no.reduce(function(a, b) {
+                return (b === no[no.length - 1]) ? a + ((no.length === 2) ? " and " : ", and ") + b : a + ", " + b;
+            });
+            sAlert.error("You are missing " + message + "!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        } 
     }
-    return no;
 }
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -846,97 +915,7 @@ toDate = function(date) { // Turns formatted date back to Date constructor.
     month = months.indexOf(date.substring(0, date.search(" ")));
     day = date.substring(date.search(" ") + 1, date.search(","));
     year = date.substring(date.search(",") + 2, date.length);
-    return new Date(year, month, day, 11, 59, 59);
-}
-
-function formReadable(input, val) { // Makes work information readable by users.
-    try {
-        switch (val) {
-            case "typeColor":
-                return input.typeColor = workColors[input.type];
-            case "name":
-                return input.name;
-            case "class":
-                var id = input["class"]; 
-                return (id === Meteor.userId()) ? "Personal" : classes.findOne({_id: id}).name;
-            case "dueDate":
-                return getReadableDate(input.dueDate);
-            case "description":
-                return input.description;
-            case "type":
-                return input.type[0].toUpperCase() + input.type.slice(1);
-            case "comments":
-                var comments = input.comments;
-                var resort = [];
-                if (Session.get("newWork")) return []; // Don't display comments if user is creating work.
-                for (var k = 0; k < comments.length; k++) {
-                    var re = comments.length - k - 1;
-                    resort[re] = {
-                        "comment": comments[k].comment,
-                        "date": null,
-                        "user": null,
-                        "avatar": null,
-                        "email": null
-                    };
-                    var user = Meteor.users.findOne({
-                        _id: comments[k].user
-                    });
-                    resort[re].user = user.profile.name;
-                    resort[re].date = moment(comments[k].date).fromNow();
-                    resort[re].avatar = user.services.google.picture;
-                    resort[re].email = user.services.google.email;
-                }
-                return resort;
-            case "done":
-                if (Session.get("newWork")) return [];
-                for (var i = 0; i < input.done.length; i++) { // Display users who marked as done.
-                    var user = Meteor.users.findOne({
-                        _id: input.done[i]
-                    });
-
-                    input.done[i] = {
-                        "user": user.profile.name,
-                        "avatar": user.services.google.picture,
-                        "email": user.services.google.email
-                    };
-                }
-                return input.done;
-            case "doneCol":
-                if (Session.get("newWork")) return "";
-                if (!_.contains(input.done, Meteor.userId())) return "";
-                return "#27A127";
-            case "doneText":
-                if (Session.get("newWork")) return "";
-                if (!_.contains(input.done, Meteor.userId())) return "Mark done";
-                return "Done!";
-            case "doneIcon":
-                if (Session.get("newWork")) return "";
-                if (!_.contains(input.done, Meteor.userId())) return "fa-square-o";
-                return "fa-check-square-o";
-            case "userConfirm":
-                if (!_.contains(input.confirmations, Meteor.userId())) return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
-                return "#27A127";
-            case "confirmations":
-                return input.confirmations.length;
-            case "userReport":
-                if (!_.contains(input.reports, Meteor.userId()))  return (Meteor.Device.isPhone() || Meteor.Device.isTablet()) ? "rgb(101,101,101)" : "";
-                return "#FF1A1A";
-            case "reports":
-                return input.reports.length;
-            case "email":
-                return Meteor.users.findOne({
-                    _id: input.creator
-                }).services.google.email;
-            case "avatar":
-                return Meteor.users.findOne({
-                    _id: input.creator
-                }).services.google.picture;
-            case "creator":
-                return Meteor.users.findOne({
-                    _id: input.creator
-                }).profile.name;
-        }
-    } catch(err){}
+    return new Date(year, month, day, 0,0,0);
 }
 
 checkComplete = function(required, inputs) {
@@ -1092,7 +1071,7 @@ updateWork = function(id, fields, type) {
             return work._id !== id;
         });
         myWork.push(workObj);
-        if(Session.get("currentWork")._id === id) {
+        if(!Session.equals("currentWork", null) && Session.get("currentWork")._id === id) {
             Session.set("currentWork", workObj);
             if($(".overlay").css("display") !== "none") { // If currently viewing work.
                 var message = Object.keys(fields)[0].replace("dueDate", "due date");

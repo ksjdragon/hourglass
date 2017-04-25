@@ -528,7 +528,7 @@ Meteor.methods({
             _id: currentwork.class
         });
         if(change.description) change.description = change.description.trim();
-        var security = securityCheck([[1,16, 13, 14, 5, false], 11, 12, 10, 20, true],
+        var security = securityCheck([[1, 16, 13, 14, 5, false], 11, 12, 10, 20, true],
                                      Object.assign({}, currentclass || {}, currentwork, {description: change.description, name: change.name, dueDate: change.dueDate, type: change.type}));
 
         if (!security) {
@@ -616,7 +616,7 @@ Meteor.methods({
         var currentclass = classes.findOne({
             _id: currentwork.class
         });
-        var security = securityCheck([1, 16, 13, 5, false],
+        var security = securityCheck([1, 16, 13, 14, 5, false],
                                      Object.assign({}, currentwork, currentclass || {}));
         if (!security) {
             work.remove({

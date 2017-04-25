@@ -290,7 +290,7 @@
 
 <template name="workDisplayEdit">
     <div id="workNameDiv">
-        <input id="wName" class="clickModify restrict" style="color:{{divColor 'textColor'}}" value="{{work 'name'}}" tabindex="10" maxLength="50">
+        <input id="wName" class="clickModify restrict" style="color:{{divColor 'textColor'}}" value="{{work 'name'}}" placeholder="Name | Click here to edit..." tabindex="10" maxLength="50">
         <span class="resText">{{restrict 'wName'}}</span>
     </div>
     <div id="workInfo1">
@@ -299,11 +299,11 @@
         </div>
         <div>
             <span class="workTitle">Due Date:</span><br>
-            <input id="wDueDate" class="clickModify" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}" tabindex="11" readonly="readonly">
+            <input id="wDueDate" class="clickModify form-control" style="color:{{divColor 'textColor'}}" value="{{work 'dueDate'}}" tabindex="11" readonly="readonly">
         </div>
         <div>
             <span class="workTitle">Description:</span><br>
-            <textarea id="wDescription" class="clickModify restrict" style="color:{{divColor 'textColor'}}" value="{{work 'description'}}" rows="5" tabindex="12" maxLength="300"></textarea>
+            <textarea id="wDescription" class="clickModify restrict" style="color:{{divColor 'textColor'}}" placeholder="Click here to edit..." value="{{work 'description'}}" rows="5" tabindex="12" maxLength="300"></textarea>
             <span style="opacity:0">.</span>
             <span class="resText">{{restrict 'wDescription'}}</span>
         </div>

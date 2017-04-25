@@ -336,6 +336,10 @@ input {
 	padding: 5%;
 }
 
+.creWork .fa-plus, .creWork h4 {
+	pointer-events: none;
+}
+
 #exportDiv {
 	background-color: rgba(255,255,255,0.1);
 	position: absolute;
