@@ -971,6 +971,7 @@ getClasses = function(myClasses) {
             classObj.box = " owned";
             classObj.mine = false; // Actual value is reversed.
             classObj.subscribers = 1;
+            classObj.status = true;
             classObj.admin = Meteor.userId();
             classObj._id = Meteor.userId();
         } else {

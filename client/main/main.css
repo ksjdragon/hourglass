@@ -476,6 +476,16 @@ input {
 
 .mainClassTeacher {
 	font-size: 1.7vh;
+	width: 70%;
+	display: table-cell;
+	pointer-events: none;
+}
+
+.mainClassStatus {
+	font-size: 1.7vh;
+	font-weight: bold;
+	margin: 0;
+	display: table-cell;
 	pointer-events: none;
 }
 
@@ -1289,6 +1299,7 @@ textarea.clickModify {
 
 }
 #markDone, #markConfirm, #markReport {
+	font-size: 95%;
 	padding: 5%;
 	background-color: rgba(0,0,0,0.1);
 
