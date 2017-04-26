@@ -103,7 +103,7 @@ input {
 	width: 100%;
 	height: 6vh;
 	margin: 0;
-	box-shadow: 0px 5px 2px -2px #666;
+	box-shadow: 0px 5px 10px -4px #090909;
 
 	display: inline-block;
 	z-index: 0;
@@ -432,7 +432,7 @@ input {
 
 .mainClass {
 	width: 100%;
-	box-shadow: 2px 2px 5px 1px #666;
+	box-shadow: 2px 2px 15px 0px #090909;
 }
 
 .classWrapper {
@@ -482,7 +482,7 @@ input {
 .creWork {
 	font-size: 1.7vh;
 	cursor: pointer;
-	box-shadow: 0px 5px 5px -2px #666;
+	box-shadow: 0px 5px 10px -4px #090909;
 
 	-webkit-transition: background-color 0.4 ease;  
 	-moz-transition: background-color 0.4s ease; 
@@ -517,7 +517,7 @@ input {
 	width: 100%;
 	margin: 5% 0 5% 0;
 	background-color: rgba(255,255,255,0.3);
-	box-shadow: 1px 1px 5px 1px #666;
+	box-shadow: 1px 1px 10px 0px #090909;
 	cursor: pointer;
 
 	-webkit-transition: box-shadow 0.4s ease, transform 0.3s ease;  
@@ -527,7 +527,7 @@ input {
 }
 
 .workCard:hover {
-	box-shadow: 1px 1px 5px 1px #666, inset 0 0 0 99999px rgba(0,0,0,0.09);
+	box-shadow: 1px 1px 10px 0px #090909, inset 0 0 0 99999px rgba(0,0,0,0.09);
 }
 
 .workCard div {
@@ -633,7 +633,7 @@ textarea.clickModify {
 	margin: auto;
 	margin-top: 2%;
 
-	box-shadow: 2px 2px 5px 3px #333;
+	box-shadow: 2px 2px 15px 0px #090909;
 }
 
 #editWorkCont {
@@ -828,7 +828,7 @@ textarea.clickModify {
 }
 
 .datepicker {
-	box-shadow: 2px 2px 5px 3px #666;
+	box-shadow: 2px 2px 10px 0px #090909;
 	color: #000;
 	background-color: rgba(250,250,250,0.85);
 	position: absolute;
@@ -888,7 +888,7 @@ textarea.clickModify {
 	margin-top: 25vh;
 	padding: 1%;
 	
-	box-shadow: 2px 2px 5px 1px #666;
+	box-shadow: 2px 2px 10px 0px #090909;
 
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -1323,7 +1323,7 @@ textarea.clickModify {
 	width: 12vw;
 	margin-top: 10vh;
 
-	box-shadow: 1px 1px 3px 1px #666;	
+	box-shadow: 1px 1px 10px 0px #090909;	
 	display: none;
 
 	position: absolute;
