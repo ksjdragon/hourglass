@@ -858,8 +858,9 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
     if(funcName === "editProfile") filterWork();
     Meteor.call(funcName, serverData, function(error, result) {
         serverData = null;
-
         if (error !== undefined) {
+            console.log(funcName);
+            console.log(error);
             sAlert.error(error.error[1] || error.message, {
                 effect: 'stackslide',
                 position: 'top'
