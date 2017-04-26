@@ -373,6 +373,7 @@ Template.main.helpers({
                 sendData("editWork");
             },
             eventClick: function(event, jsEvent, view) { // On-click for work.
+                console.log(event);
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
                 $(".overlay").velocity("fadeIn", 150);
@@ -383,9 +384,25 @@ Template.main.helpers({
                 });
             },
             eventMouseover: function(event, jsEvent, view) {
+                console.log(event);
+                var classid = work.findOne({_id: event.id})["class"];
+                var className = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: classid}).name;
+                var span = this.children[0].children[0];
+                $(span).velocity("stop");
+                $(span).velocity({opacity:0}, 50, function() {
+                    span.childNodes[0].nodeValue = className;
+                    $(span).velocity({opacity:1}, 50);
+                });
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
             },
             eventMouseout: function(event, jsEvent, view) {
+                var workName = work.findOne({_id: event.id}).name;
+                var span = this.children[0].children[0];
+                $(span).velocity("stop");
+                $(span).velocity({opacity:0}, 50, function() {
+                    span.childNodes[0].nodeValue = workName;
+                    $(span).velocity({opacity:1}, 50);
+                });
                 this.style.boxShadow = "";
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
