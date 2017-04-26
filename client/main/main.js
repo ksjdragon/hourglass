@@ -373,7 +373,6 @@ Template.main.helpers({
                 sendData("editWork");
             },
             eventClick: function(event, jsEvent, view) { // On-click for work.
-                console.log(event);
                 Session.set("newWork", false);
                 Session.set("currentWork", work.findOne({_id: event.id}));
                 $(".overlay").velocity("fadeIn", 150);
@@ -384,7 +383,6 @@ Template.main.helpers({
                 });
             },
             eventMouseover: function(event, jsEvent, view) {
-                console.log(event);
                 var classid = work.findOne({_id: event.id})["class"];
                 var className = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: classid}).name;
                 var span = this.children[0].children[0];
@@ -1008,11 +1006,21 @@ getClasses = function(myClasses) {
 }
 
 updateWork = function(id, fields, type) {
+    if(type === "added") {
+        var allWork = Session.get("myWork").concat(Session.get("filterWork"));
+        if(allWork.filter(function(work) {
+            return work._id === id;
+        }).length !== 0) return;
+    }
+
     if(type === "remove" && Session.get("myWork").concat(Session.get("filterWork")).length === 0) return;
-    if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
+    if(type === "remove" && Session.get("myWork").concat(Session.get("filterWork")).filter(function(work) { // Removed work and exists in user data.
         return work._id === id;
     }).length !== 0) {
         Session.set("myWork", Session.get("myWork").filter(function(work) {
+            return work._id !== id;
+        }));
+        Session.set("filterWork", Session.get("filterWork").filter(function(work) {
             return work._id !== id;
         }));
         return;
