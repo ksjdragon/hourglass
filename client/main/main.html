@@ -190,13 +190,22 @@
 </template>
 
 <template name="classesMode">
-    <div class="classWrapper">
-        <div class="mainClass" style="background-color:{{divColor 'classCardColor'}}">
-            <div class="classInfo"> <!-- class color -->
-                <h3 class="mainClassName">{{name}}</h3>
-                <p class="mainClassHour">{{hour}}</p>
-                <p class="mainClassTeacher">{{teacher}}</p>
-            </div>
+    <div class="classWrapper"> <!-- class color -->
+        <div class="mainClass" style="background-color:{{divColor 'classCardColor'}}"> 
+            {{#if status}}
+                <div class="classInfo"> 
+                    <h3 class="mainClassName">{{name}}</h3>
+                    <p class="mainClassHour">{{hour}}</p>
+                    <p class="mainClassTeacher">{{teacher}}</p>
+                </div>
+            {{else}}
+                <div class="classInfo" style="border-top:1vh solid #E64F4F;padding-top:2vh"> 
+                    <h3 class="mainClassName">{{name}}</h3>
+                    <p class="mainClassHour">{{hour}}</p>
+                    <p class="mainClassTeacher">{{teacher}}</p>
+                    <p class="mainClassStatus">Unapproved</p>
+                </div>
+            {{/if}}
             <div class="creWork" classid="{{_id}}">
                 <i class="fa fa-plus" aria-hidden="true"></i>
                 <h4>Add Work</h4>

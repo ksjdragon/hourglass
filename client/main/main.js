@@ -383,9 +383,24 @@ Template.main.helpers({
                 });
             },
             eventMouseover: function(event, jsEvent, view) {
+                var classid = work.findOne({_id: event.id})["class"];
+                var className = (classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: classid}).name;
+                var span = this.children[0].children[0];
+                $(span).velocity("stop");
+                $(span).velocity({opacity:0}, 50, function() {
+                    span.childNodes[0].nodeValue = className;
+                    $(span).velocity({opacity:1}, 50);
+                });
                 this.style.boxShadow = "inset 0 0 0 99999px rgba(255,255,255,0.2)";
             },
             eventMouseout: function(event, jsEvent, view) {
+                var workName = work.findOne({_id: event.id}).name;
+                var span = this.children[0].children[0];
+                $(span).velocity("stop");
+                $(span).velocity({opacity:0}, 50, function() {
+                    span.childNodes[0].nodeValue = workName;
+                    $(span).velocity({opacity:1}, 50);
+                });
                 this.style.boxShadow = "";
             },
             dayClick: function(date, jsEvent, view) { // On-click for each day.
@@ -843,8 +858,9 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
     if(funcName === "editProfile") filterWork();
     Meteor.call(funcName, serverData, function(error, result) {
         serverData = null;
-
         if (error !== undefined) {
+            console.log(funcName);
+            console.log(error);
             sAlert.error(error.error[1] || error.message, {
                 effect: 'stackslide',
                 position: 'top'
@@ -971,6 +987,7 @@ getClasses = function(myClasses) {
             classObj.box = " owned";
             classObj.mine = false; // Actual value is reversed.
             classObj.subscribers = 1;
+            classObj.status = true;
             classObj.admin = Meteor.userId();
             classObj._id = Meteor.userId();
         } else {
@@ -990,11 +1007,21 @@ getClasses = function(myClasses) {
 }
 
 updateWork = function(id, fields, type) {
+    if(type === "added") {
+        var allWork = Session.get("myWork").concat(Session.get("filterWork"));
+        if(allWork.filter(function(work) {
+            return work._id === id;
+        }).length !== 0) return;
+    }
+
     if(type === "remove" && Session.get("myWork").concat(Session.get("filterWork")).length === 0) return;
-    if(type === "remove" && Session.get("myWork").filter(function(work) { // Removed work and exists in user data.
+    if(type === "remove" && Session.get("myWork").concat(Session.get("filterWork")).filter(function(work) { // Removed work and exists in user data.
         return work._id === id;
     }).length !== 0) {
         Session.set("myWork", Session.get("myWork").filter(function(work) {
+            return work._id !== id;
+        }));
+        Session.set("filterWork", Session.get("filterWork").filter(function(work) {
             return work._id !== id;
         }));
         return;
