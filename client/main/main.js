@@ -1065,6 +1065,8 @@ updateWork = function(id, fields, type) {
 
     workObj.confirmationLength = workObj.confirmations.length; // Counts the number of confirmations and reports for a particular work.
     workObj.reportLength = workObj.reports.length;
+    workObj.confirmed = (_.contains(workObj.confirmations, Meteor.userId())) ? "#27A127" : "";
+    workObj.reported = (_.contains(workObj.reports, Meteor.userId())) ? "#FF1A1A" : "";
 
     workObj.typeColor = workColors[workObj.type];
 
