@@ -501,7 +501,9 @@ Template.main.events({
             }
         }
 
-        if (!document.getElementById("userDropdown").contains(event.target)) $("#userDropdown").velocity("fadeOut", 150);
+        if (document.getElementById("userDropdown").style.display === "block" && 
+            !document.getElementById("userDropdown").contains(event.target)) 
+            $("#userDropdown").velocity("fadeOut", 150);
     },
     // MAIN MENU BUTTONS
     'click .fa-bars' (event) { // Click menu button.
