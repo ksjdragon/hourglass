@@ -376,9 +376,7 @@ Template.joinClass.helpers({
         for (var i = 0; i < array.length; i++) {
             array[i].join = true;
             array[i].subscribers = array[i].subscribers.length;
-            if(array[i].teacher !== undefined) array[i].teachershort = array[i].teacher.split(" ").slice(1).reduce(function(a, b) {
-                return a + " " + b;
-            });
+            array[i].teachershort = (array[i].teacher === undefined) ? "" : array[i].teacher.split(" ").slice(1);
         }
         if (array.length === 0) {
             Session.set("noclass", true);

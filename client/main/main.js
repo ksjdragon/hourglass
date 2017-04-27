@@ -997,7 +997,7 @@ getClasses = function(myClasses) {
             classObj.box = (isAdmin) ?  " owned" : "";
             classObj.mine = (isAdmin) ? false : true; // Actual value is reversed
             classObj.subscribers = classObj.subscribers.length;
-            classObj.teachershort = (classObj.teacher === undefined) ? "" : classObj.teacher.split(" ").slice(1).reduce(function(a,b) { return a+ " " + b;});
+            classObj.teachershort = (classObj.teacher === undefined) ? "" : classObj.teacher.split(" ").slice(1);
         }
 
         classObj.selected = ((classDisp.indexOf(myClasses[i]) !== -1)) ? Session.get("user").preferences.theme.modeHighlight : "rgba(0,0,0,0)"; // Filter selected.
