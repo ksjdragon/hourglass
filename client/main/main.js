@@ -549,6 +549,7 @@ Template.main.events({
         $("#userDropdown").velocity("fadeIn", 150);
     },
     'click .workCard' (event) { // Display work information on work card click.
+        if(event.target.className.indexOf("fa") !== -1) return;
         var workid = event.target.getAttribute("workid");
         var thisWork = work.findOne({
             _id: workid
