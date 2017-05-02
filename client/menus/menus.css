@@ -88,12 +88,12 @@
 
 #colLeft h2, #colRight h2 {
 	padding: 3% 3% 0 4%;
-	font-size: 4vh;
+	font-size: 2.3vw;
 	font-weight: 300;
 }
 
 #colLeft p, #colRight p {
-	font-size: 2vh;
+	font-size: 1.1vw;
 	margin: 0;
 	padding: 0 2% 0 7%;
 }
@@ -285,7 +285,7 @@
 #infoClassCont .infoCard {
 	margin: 2.5%;
 	padding: 2.5%;
-	width: 39%;
+	width: 38%;
 	text-align: center;
 	display: inline-block;
 	position: relative;
@@ -293,12 +293,12 @@
 }
 
 #infoClassCont h4 {
-	font-size: 2.5vh;
+	font-size: 1.5vw;
 	text-align: center;
 }
 
 #infoClassCont span {
-	font-size: 2.8vh;
+	font-size: 1.4vw;
 	margin-top: 5%;
 	display: block;
 	word-wrap: break-word;
@@ -415,6 +415,10 @@
 	-moz-transition: color 0.4s ease; 
 	-ms-transition: color 0.4s ease;
 	transition: color 0.4s ease;
+}
+
+#infoClassCont .userAdder {
+	border-bottom: 1px solid #FFF;
 }
 
 .userAdder {
