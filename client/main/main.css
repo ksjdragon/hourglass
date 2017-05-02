@@ -427,12 +427,14 @@ input {
 
 	overflow-x: auto;
 	overflow-y: hidden;
+	cursor: -webkit-grab;
 	white-space: nowrap;
 }
 
 .mainClass {
 	width: 100%;
 	box-shadow: 2px 2px 15px 0px #090909;
+	cursor: default !important;
 }
 
 .classWrapper {

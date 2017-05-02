@@ -112,17 +112,18 @@ Template.classesMode.rendered = function() {
     
     var area = $("#classesMode");
     var clickX = 0;
+    var reducer = 0.5;
 
     area.on({
         'mousemove': function(e) {
             if(clicked && !dragging) {
-                area.scrollLeft(area.scrollLeft() + (clickX - e.pageX));
-                clickX = e.pageX;
+                area.scrollLeft(area.scrollLeft() + (clickX - reducer*e.pageX));
+                clickX = reducer*e.pageX;
             }
         },
         'mousedown': function(e) {
             clicked = true;
-            clickX = e.pageX;
+            clickX = reducer*e.pageX;
         },
         'mouseup': function() {
             clicked = false;
