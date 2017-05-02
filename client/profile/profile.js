@@ -485,6 +485,7 @@ var created = 0;
 
 function joinClass(num) {
     var joining = Session.get("profile").classes;
+    if(joining.length === 0) return;
     Meteor.call("joinClass", [joining[num], ""], function(err, result) {
         if(err !== undefined) {
             sAlert.error(err.message, {
@@ -501,6 +502,7 @@ function joinClass(num) {
 
 function createClass(num) {
     var creating = Session.get("newClasses");
+    if(creating.length === 0) return;
     Meteor.call("createClass", creating[num], function(error, result) {
         if(error !== undefined) {
             sAlert.error(error.message, {

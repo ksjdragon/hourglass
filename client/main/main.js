@@ -11,6 +11,7 @@ var calWorkDate = null;
 var dragging = false;
 var clicked = false;
 var workChanger = false;
+var disconnect= false;
 
 // Reactive variables.
 Session.set("user", {}); // Stores user preferences.
@@ -31,6 +32,28 @@ Session.set("confirmText", ""); // Stores text for confirmations.
 
 // On render actions
 
+Meteor.autorun(function () {
+    if (Meteor.status().status !== "connected" && Meteor.status().status !== "connecting" && !disconnect) {
+        disconnect = true;
+        var div = document.createElement("div");
+        div.id = "disconnect"; 
+        var h = document.createElement("h3");
+        h.appendChild(document.createTextNode("Uh Oh. We can't reach you right now!"));
+        var h2 = document.createElement("h4");
+        h2.appendChild(document.createTextNode("Please check your connection, or reload the page!"));
+        var h5 = document.createElement("h5");
+        h5.appendChild(document.createTextNode("Reload!"));
+        h5.onclick = function() {
+            location.reload();
+        }
+        div.appendChild(h);
+        div.appendChild(h2);
+        div.appendChild(h5);
+        document.getElementsByTagName("body")[0].appendChild(div);
+        $("#disconnect").velocity("fadeIn", 150);
+    } 
+});
+
 Template.login.rendered = function() {
     Accounts._loginButtonsSession.set('dropdownVisible', true);
 };
@@ -43,6 +66,7 @@ Template.main.created = function() {
     $(document).on('keyup', (e) => {
         if(event.keyCode === 27 && $(".overlay").css("display") !== "none") {
             $(".overlay").velocity("fadeOut", 150);
+            Session.set("currentWork", null);
         }
     });
 
@@ -498,6 +522,7 @@ Template.main.events({
                 var res = Session.get("restrictText");
                 res[Object.keys(res)[0]] = "";
                 Session.set("restrictText", res);
+                Session.set("currentWork", null);
             }
         }
 
@@ -774,6 +799,7 @@ Template.main.events({
             serverData = Session.get("currentWork");
             sendData("createWork");
             $(".overlay").velocity("fadeOut", 150);
+            Session.set("currentWork", null);
         } else {
             var message = no.reduce(function(a, b) {
                 return (b === no[no.length - 1]) ? a + ((no.length === 2) ? " and " : ", and ") + b : a + ", " + b;
@@ -790,6 +816,7 @@ Template.main.events({
         serverData = Session.get("currentWork")._id;
         sendData("deleteWork");
         $(".overlay").velocity("fadeOut", 150);
+        Session.set("currentWork", null);
     },
     'click #markDone' () { // Click done button.
         serverData = [Session.get("currentWork")._id, "done"];
@@ -860,6 +887,7 @@ sendData = function(funcName) { // Call Meteor function, and do actions after fu
     if(funcName === "editWork") workChanger = true;
     if(funcName === "editProfile") filterWork();
     Meteor.call(funcName, serverData, function(error, result) {
+        if(funcName === "createWork") Session.set("currentWork", null);
         serverData = null;
         if (error !== undefined) {
             console.log(funcName);
@@ -1046,12 +1074,21 @@ updateWork = function(id, fields, type) {
     workObj.shortname = (workObj.name.length <= 20) ? workObj.name : workObj.name.substring(0,20) + "...";
     workObj.className = (workObj.classid === Meteor.userId()) ? "Personal" : classes.findOne({_id: workObj.classid}).name;
 
-    workObj.dateWord = moment(workObj.dueDate).calendar(null, {
+    workObj.dateWord = (!(Meteor.Device.isPhone() || Meteor.Device.isTablet())) ? 
+    moment(workObj.dueDate).calendar(null, {
         sameDay: '[Today]',
         nextDay: '[Tomorrow]',
         nextWeek: 'dddd',
         lastDay: '[Yesterday]',
         lastWeek: '[Last] dddd',
+        sameElse: 'MMMM Do'
+    }) :
+    moment(workObj.dueDate).calendar(null, {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: '[Last] ddd[.]',
         sameElse: 'MMMM Do'
     });
 

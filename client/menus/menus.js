@@ -370,7 +370,7 @@ Template.joinClass.helpers({
                 subscribers: -1
             }
         }, {
-            limit: 20
+            limit: 100
         }).fetch();
 
         for (var i = 0; i < array.length; i++) {

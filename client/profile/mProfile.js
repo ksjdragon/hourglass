@@ -246,6 +246,7 @@ Template.mClassDisplay2.rendered = function() {
 
 function joinClass(num) {
     var joining = Session.get("profile").classes;
+    if(joining.length === 0) return;
     Meteor.call("joinClass", [joining[num], ""], function(err, result) {
         if(err !== undefined) {
             sAlert.error(err.message, {

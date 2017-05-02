@@ -1450,3 +1450,72 @@ textarea.clickModify {
 	-ms-transform: rotate(6deg);
 	transform: rotate(6deg);
 }
+
+#disconnect {
+	width: 90%;
+	height: 100%;
+	padding: 5%;
+
+	background-color: #222328;
+	display: none;
+	opacity: 0;
+
+	z-index: 99;
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	cursor: default;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#disconnect h3 {
+	font-size: 5vh;
+	font-weight: 400;
+	margin-top: 20vh;
+	text-align: center;
+
+	-webkit-filter: drop-shadow(7px 7px 5px #111);
+	filter: drop-shadow(7px 7px 5px #111);
+}
+
+#disconnect h4 {
+	font-size: 4vh;
+	font-weight: 200;
+	text-align: center;
+
+	-webkit-filter: drop-shadow(7px 7px 5px #111);
+	filter: drop-shadow(7px 7px 5px #111);
+}
+
+#disconnect h5 {
+	font-size: 3vh;
+	font-weight: 200;
+	width: 15vh;
+	padding: 1vh;
+	margin: auto;
+	margin-top: 2%;
+
+	border: 1px solid #FFF;
+	
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	text-align: center;
+	cursor: pointer;
+
+	-webkit-transition: background-color 0.4s ease;  
+	-moz-transition: background-color 0.4s ease; 
+	-ms-transition: background-color 0.4s ease;
+	transition: background-color 0.4s ease; 
+}
+
+#disconnect h5:hover {
+	background-color: rgba(0,0,0,0.1);
+}
