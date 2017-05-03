@@ -196,8 +196,9 @@ Template.sidebarCreatePlate.events({
         var classid = event.target.getAttribute("classid");
         var newSetting = Session.get("currentWork");
         newSetting.class = classid;
+        Session.set("newWork", true);
         Session.set("currentWork", newSetting);
-        $(".overlay").fadeIn(250);
+        $(".overlay").velocity("fadeIn", 150);
     }
 });
 
@@ -477,7 +478,7 @@ Template.joinClass.events({
         serverData = [event.target.parentNode.getAttribute("classid"), ""];
         confirm = "joinClass";
         Session.set("confirmText", "Join this class?");
-        $("#confirmOverlay").fadeIn(250);
+        $("#confirmOverlay").velocity("fadeIn", 150);
     },
     'click #private' () {
         $("#privateCode").css('display', 'inline-block');
@@ -692,17 +693,17 @@ toggleToSidebar = function(sidebar) {
 };
 
 toggleToClassInfo = function(classId) {
-    $("#changeAdminWrapper").fadeOut(150);
-    $("#infoClassCont").fadeOut(150, function() {
+    $("#changeAdminWrapper").velocity("fadeOut", 150);
+    $("#infoClassCont").velocity("fadeOut", 150, function() {
         Session.set("classInfo", classId);
         Session.set("classInfoMode", "general");
-        $(this).fadeIn(150);
+        $(this).velocity("fadeIn", 150);
     });
 };
 
 toggleToClassInfoMode = function(mode) {
-    $("#infoClassCont").fadeOut(150, function() {
+    $("#infoClassCont").velocity("fadeOut", 150, function() {
         Session.set("classInfoMode", mode);
-        $(this).fadeIn(150);
+        $(this).velocity("fadeIn",150);
     });
 };

@@ -311,7 +311,8 @@ Template.mobileClass.rendered = function() {
         if (Meteor.userId() === thisWork.creator ||
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-            currClass.banned.indexOf(Meteor.userId()) !== -1
+            currClass.banned.indexOf(Meteor.userId()) !== -1 ||
+            currClass.admin === Meteor.userId()
            ) {
         	inRole = true;
         }
@@ -353,7 +354,8 @@ Template.mobileClass.helpers({
             if (Meteor.userId() === thisWork.creator ||
                 Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                 currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                currClass.banned.indexOf(Meteor.userId()) !== -1
+                currClass.banned.indexOf(Meteor.userId()) !== -1 ||
+                currClass.admin === Meteor.userId()
                ) return true;
             
         } catch(err) {}

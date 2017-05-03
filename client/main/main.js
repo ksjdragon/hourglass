@@ -11,7 +11,7 @@ var calWorkDate = null;
 var dragging = false;
 var clicked = false;
 var workChanger = false;
-var disconnect= false;
+var disconnect = false;
 
 // Reactive variables.
 Session.set("user", {}); // Stores user preferences.
@@ -32,7 +32,7 @@ Session.set("confirmText", ""); // Stores text for confirmations.
 
 // On render actions
 
-Meteor.autorun(function () {
+Meteor.autorun(function () { // Disconnect checking
     if (Meteor.status().status !== "connected" && Meteor.status().status !== "connecting" && !disconnect) {
         disconnect = true;
         var div = document.createElement("div");
@@ -51,7 +51,17 @@ Meteor.autorun(function () {
         div.appendChild(h5);
         document.getElementsByTagName("body")[0].appendChild(div);
         $("#disconnect").velocity("fadeIn", 150);
-    } 
+    } else if(Meteor.status().status === "connected" && disconnect) {
+        disconnect = false;
+        $("#disconnect").velocity("fadeOut", 150, function() {
+            document.getElementsByTagName("body")[0].removeChild(document.getElementById("disconnect"));
+            sAlert.success("You're back!", {
+                effect: 'stackslide',
+                position: 'bottom-right',
+                timeout: 1500
+            });
+        });
+    }
 });
 
 Template.login.rendered = function() {
@@ -220,6 +230,7 @@ Template.registerHelper('work', (value) => {// Returns the specified work value.
         switch(value) {
             case "class":
                 var id = thisWork["class"];
+                if(!id) return;
                 return (id === Meteor.userId()) ? "Personal" : classes.findOne({_id: id}).name;
             case "dueDate":
                 return getReadableDate(thisWork.dueDate);
@@ -432,8 +443,8 @@ Template.main.helpers({
                 if (jsEvent.target.className.includes("fc-past")) return;
                 var realDate = date;
                 date.startOf("day");
+                date.hour(12);
                 realDate = realDate._d;
-                Session.set("newWork", true);
                 Session.set("currentWork", {dueDate: realDate, type: "normal"});
                 if(!Session.equals("sidebarMode", "create")) toggleToSidebar("create");
             }
@@ -480,7 +491,8 @@ Template.main.helpers({
                 if (Meteor.userId() === thisWork.creator ||
                     Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
                     currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-                    currClass.banned.indexOf(Meteor.userId()) !== -1
+                    currClass.banned.indexOf(Meteor.userId()) !== -1 ||
+                    currClass.admin === Meteor.userId()
                    ) return true;
             }
         } catch(err) {}
@@ -736,7 +748,6 @@ Template.main.events({
                 return names.alias === option;
             })[0].val;
             Session.set("currentWork", newSetting);
-            console.log(newSetting);
             closeInput();
             toggleOptionMenu(false, modifyingInput);
             modifyingInput = null;
@@ -963,7 +974,7 @@ toDate = function(date) { // Turns formatted date back to Date constructor.
     month = months.indexOf(date.substring(0, date.search(" ")));
     day = date.substring(date.search(" ") + 1, date.search(","));
     year = date.substring(date.search(",") + 2, date.length);
-    return new Date(year, month, day, 0,0,0);
+    return new Date(year, month, day, 12,0,0);
 }
 
 checkComplete = function(required, inputs) {
@@ -1182,6 +1193,11 @@ filterWork = function() {
         }
     });
     Session.set("myWork", displayWork.sort(function(a,b) { // Display work.
+        if(Date.parse(a.dueDate) === Date.parse(b.dueDate)) {
+            var x = a.name.toLowerCase();
+            var y = b.name.toLowerCase();
+            return (x < y) ? -1 : (x > y) ? 1 : 0;
+        }
         return Date.parse(a.dueDate) - Date.parse(b.dueDate);
     }));
     Session.set("filterWork", hideWork); // Not displayed
@@ -1203,7 +1219,8 @@ function calendarEvents() {
             Meteor.userId() === work.creator ||
             Roles.userIsInRole(Meteor.userId(), ['superadmin', 'admin']) ||
             currClass.moderators.indexOf(Meteor.userId()) !== -1 ||
-            currClass.banned.indexOf(Meteor.userId()) !== -1
+            currClass.banned.indexOf(Meteor.userId()) !== -1 ||
+            currClass.admin === Meteor.userId()
            ) inRole = true;
 
         events.push({

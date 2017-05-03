@@ -589,18 +589,36 @@ Meteor.methods({
         var security = securityCheck([[16, 9, false], 23, true],
                                      Object.assign({}, workobject, currentclass || {}, {userId: Meteor.userId(), toggle: input[1]}));
         if (!security) {
-            var userindex = workobject[input[1]].indexOf(Meteor.userId());
-            if (userindex === -1) {
-                workobject[input[1]] = workobject[input[1]].concat(Meteor.userId());
-                if (input[1] === "confirmations" &&
-                    _.contains(workobject.reports, Meteor.userId())) {
-                    workobject.reports.splice(userindex, 1);
-                } else if (input[1] === "reports" &&
-                    _.contains(workobject.confirmations, Meteor.userId())) {
-                    workobject.confirmations.splice(userindex, 1);
-                }
-            } else {
-                workobject[input[1]].splice(userindex, 1);
+            var type = input[1];
+            var index = workobject[type].indexOf(Meteor.userId());
+            var cIndex = workobject["confirmations"].indexOf(Meteor.userId());
+            var rIndex = workobject["reports"].indexOf(Meteor.userId());
+            var dIndex = workobject["done"].indexOf(Meteor.userId());
+            switch(type) {
+                case "confirmations":
+                    if(index === -1) { // User hasn't confirmed.
+                        workobject[type] = workobject[type].concat(Meteor.userId());
+                        if(rIndex !== -1) workobject["reports"].splice(rIndex, 1); 
+                    } else { // Used has confirmed.
+                        workobject[type].splice(index, 1);
+                    }
+                    break;
+                case "reports":
+                    if(index === -1) { // User hasn't reported.
+                        workobject[type] = workobject[type].concat(Meteor.userId());
+                        if(cIndex !== -1) workobject["confirmations"].splice(cIndex, 1);
+                    } else { // Used has reported.
+                        workobject[type].splice(index, 1);
+                    }
+                    break;
+                case "done":
+                    if(index === -1) { // User isn't done.
+                        workobject[type] = workobject[type].concat(Meteor.userId());
+                        if(cIndex === -1) workobject["confirmations"] = workobject["confirmations"].concat(Meteor.userId());
+                    } else { // User is done
+                        workobject[type].splice(index, 1);
+                    }
+                    break;
             }
             work.update({
                 _id: input[0]
