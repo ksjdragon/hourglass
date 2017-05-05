@@ -204,6 +204,7 @@ Template.defaultSidebar.rendered = function() {
 	addMobileButton($("#mDisableFilter")[0], -0.1, "brightness", function() {
         Session.set("typeFilter", []);
 		Session.set("classDisp", []);
+		filterWork();
         timedPushback(true);
 	});
 }

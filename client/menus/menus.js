@@ -115,6 +115,7 @@ Template.sidebarMenuPlate.events({
     'click #disableFilter' () {
         Session.set("classDisp", []);
         Session.set("typeFilter", []);
+        filterWork();
     },
     'mouseover .sideClass' (event) { // Highlight/scale filter on-hover.
         var div;
