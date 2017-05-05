@@ -61,6 +61,13 @@ Meteor.autorun(function () { // Disconnect checking
                 timeout: 1500
             });
         });
+    } else if(Meteor.status().status === "connecting" && document.getElementById("disconnect") !== null) {
+        if(document.getElementById("disconnectLoad") !== null) return;
+        var h1 = document.createElement("h4");
+        h1.appendChild(document.createTextNode("Reconnecting..."));
+        h1.id = "disconnectLoad";
+        document.getElementById("disconnect").appendChild(h1);
+        $("#disconnectLoad").velocity("fadeIn", 150);
     }
 });
 
