@@ -878,19 +878,17 @@ Template.classesMode.helpers({
 toggleOptionMenu = function(toggle, menu) {
     if(toggle) {
         $(".selectedOption").removeClass("selectedOption");
-        $("#" + menu).next().css('opacity', 0)
-        $("#" + menu).next().velocity("slideDown", 100);
-        $("#" + menu).next().velocity(
+        $("#" + menu).next()
+        .css('opacity', 0)
+        .slideDown(300)
+        .animate(
             { opacity: 1 },
-            { queue: false, duration: 50 }
+            { queue: false, duration: 100 }
         );
         optionOpen = [menu, toggle];
     } else {
-        $("#" + menu).next().velocity("slideUp", {
-            duration: 100,
-            complete: function() {
-                $("#" + menu).next().css("opacity", 0);
-            }
+        $("#" + menu).next().slideUp(100, function() {
+            $(this).css("opacity", 0);
         });
         optionOpen = [null, toggle]; 
     }
