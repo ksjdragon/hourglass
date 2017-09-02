@@ -27,10 +27,30 @@
 	font-weight: 200;
 	margin: auto;
 	margin-top: 5%;
+	margin-bottom: 7%;
 	text-align: center;
 
 	-webkit-filter: drop-shadow(7px 7px 5px #111);
 	filter: drop-shadow(7px 7px 5px #111);
+}
+
+#third {
+	background-color: auto;
+	border: 1px solid white;
+	border-radius: 6px;
+	color: white;
+	cursor: pointer;
+	font-size: 2.5vh;
+	font-weight: 100;
+	margin: auto;
+	padding: 1vh 2vh 1vh 2vh;
+	text-align: center;
+	width: 15vh;
+}
+
+#third:hover {
+	background-color: rgba(0, 0, 0, 0.15);
+	transition: 0.5s;
 }
 
 #foot {
