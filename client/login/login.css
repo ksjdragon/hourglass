@@ -84,11 +84,11 @@
 	left: 12.5vh;
 }
 
-#loginButton {
+.loginButtons {
 	font-size: 3.5vh;
 	width: 12vw;
 	margin-top: 4vh;
-	margin-left: 16vw;
+	/* margin-left: 16vw; */
 	padding: 1vh;
 
 	border: 1px solid #FCF0F0;
@@ -99,14 +99,22 @@
 	text-align: center;
 	cursor: pointer;
 
-	-webkit-transition: background-color 0.4s ease;  
-	-moz-transition: background-color 0.4s ease; 
+	-webkit-transition: background-color 0.4s ease;
+	-moz-transition: background-color 0.4s ease;
 	-ms-transition: background-color 0.4s ease;
 	transition: background-color 0.4s ease;
 }
 
-#loginButton:hover {
+.loginButtons:hover {
 	background-color: rgba(0,0,0,0.2);
+}
+
+#loginContainer {
+    display: flex;
+}
+
+#demoButton {
+    margin-left: 11vw;
 }
 
 #version {

@@ -18,8 +18,11 @@
 				<h1>Everything in</h1>
 				<h2>One Place.</h2>
 				<h5><b>We</b> handle the organization, <b>you</b> handle the work.</h5>
-				<div id="loginButton" onclick="document.getElementById('login-buttons-google').click()">Sign in!</div>
-			</div>
+        <div id="loginContainer" >
+            <div class="loginButtons" onclick="document.getElementById('login-buttons-google').click()">Sign in!</div>
+            <div class="loginButtons" id="demoButton">Demo</div>
+        </div>
+      </div>
 		</div>
 		<footer id="loginFooter">
 			<p id="version">Version {{version}}</p>
