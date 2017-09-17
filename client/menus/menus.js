@@ -168,10 +168,26 @@ Template.sidebarOptionPlate.events({
     },
     'click .addClass' () { // Click classes mode button.
         if (Session.equals("settingMode", "addClass")) return;
+        if (Session.get("demo")) {
+            sAlert.error("Not available in demo!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        }
         toggleToMode("addClass");
     },
     'click .createClass' () { // Click classes mode button.
         if (Session.equals("settingMode", "createClass")) return;
+        if (Session.get("demo")) {
+            sAlert.error("Not available in demo!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        }
         toggleToMode("createClass");
     },
     'click #settingMode' () {
@@ -204,11 +220,18 @@ Template.sidebarCreatePlate.events({
 });
 
 Template.registerHelper("classInfo", (info) => {
-    var thisClass = classes.findOne({
-        _id: Session.get("classInfo")
-    });
-    if (thisClass === undefined) return;
-    var isYou = Session.equals("classInfo", Meteor.userId());
+    if(Session.get("demo")) {
+        if(Session.equals("classInfo", "Personal")) var isYou = true;
+        var thisClass = Session.get("myClasses").filter(function(obj) {
+            return obj.name === Session.get("classInfo");
+        })[0];
+    } else {
+        var thisClass = classes.findOne({
+            _id: Session.get("classInfo")
+        });
+        if (thisClass === undefined) return;
+        var isYou = Session.equals("classInfo", Meteor.userId());
+    }
     switch (info) {
         case "name":
             return (isYou) ? "Personal" : thisClass.name;
@@ -221,6 +244,7 @@ Template.registerHelper("classInfo", (info) => {
         case "privacy":
             return (isYou) ? true : thisClass.privacy;
         case "admin":
+            if(Session.get("demo")) return "A. Robot";
             return Meteor.users.findOne({
                 _id: (isYou) ? Meteor.userId() : thisClass.admin
             });
@@ -300,6 +324,14 @@ Template.manageClass.events({
     },
     'click #classInfoModeWrapper span:last-child' () {
         if (Session.equals("classInfoMode", "users")) return;
+        if (Session.get("demo")) {
+            sAlert.error("Not available in demo!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        }
         toggleToClassInfoMode("users");
     },
     'click .infoCard .fa-pencil-square-o' () {
