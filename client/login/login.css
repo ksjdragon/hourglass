@@ -88,10 +88,10 @@
 	font-size: 3.5vh;
 	width: 12vw;
 	margin-top: 4vh;
-	/* margin-left: 16vw; */
+	margin-left: 5vw; 
 	padding: 1vh;
+	background-color: #27A127;
 
-	border: 1px solid #FCF0F0;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
@@ -106,7 +106,7 @@
 }
 
 .loginButtons:hover {
-	background-color: rgba(0,0,0,0.2);
+	background-color: #239023;
 }
 
 #loginContainer {
@@ -114,7 +114,13 @@
 }
 
 #demoButton {
-    margin-left: 11vw;
+	border: 1px solid #FCF0F0;
+	background-color: rgba(0,0,0,0);
+    margin-left: 4vw;
+}
+
+#demoButton:hover {
+	background-color: rgba(255,255,255,0.1);
 }
 
 #version {
