@@ -212,7 +212,7 @@ Template.registerHelper('restrict', (input) => { // Returns characters left for 
 Template.registerHelper('selectOptions', (val) => {
     if(val === "grade") {
         var grade = [];
-        for(var i = 0; i < 5; i++) {
+        for(var i = 1; i < 5; i++) {
             var year = (new Date()).getFullYear() + i;
             grade.push( { "val": year, "alias": year.toString() } );
         }
@@ -626,11 +626,11 @@ Template.main.events({
             Session.set("restrictText", {});
             $("#requestSubmit span:first-child").fadeOut(200, function() {
                 $("#requestSubmit span:nth-child(2)").velocity("fadeIn", 200);
-            })
+            });
             setTimeout(function() {
                 $("#requestSubmit span:nth-child(2)").fadeOut(200, function() {
                     $("#requestSubmit span:first-child").velocity("fadeIn", 200);
-                })
+                });
             }, 1250);
         });
     },
@@ -639,15 +639,17 @@ Template.main.events({
         var userClasses = Session.get("myClasses");
         var timestamp = new Date().toJSON().replace(/-|:|\./gi, "");
         for (var i = 0; i < userClasses.length; i++) {
-            var works = userClasses[i].thisClassWork;
+            var works = Session.get("myWork").filter(function(work) {
+                return userClasses[i]._id;
+            });
             for (var j = 0; j < works.length; j++) {
                 var work = works[j];
                 var workclass = classes.findOne({
                     _id: work.class
                 });
-                if (work.description == defaultWork.description) work.description = "";
-                if (work.dueDate == defaultWork.dueDate) continue;
-                if (work.name == defaultWork.name) work.name = "";
+                // if (work.description == defaultWork.description) work.description = "";
+                // if (work.dueDate == defaultWork.dueDate) continue;
+                // if (work.name == defaultWork.name) work.name = "";
                 if (workclass === undefined) workclass = {
                     name: "Personal"
                 };
@@ -850,11 +852,11 @@ Template.main.events({
         sendData("toggleWork");
     },
     'click .cWorkBottom .fa-thumbs-up' (event) {
-        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "confirmations"]
+        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "confirmations"];
         sendData("toggleWork");
     },
     'click .cWorkBottom .fa-exclamation-triangle' (event) {
-        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "reports"]
+        serverData = [event.target.parentNode.parentNode.parentNode.parentNode.getAttribute("workid"), "reports"];
         sendData("toggleWork");
     },
     'click #signout' () {

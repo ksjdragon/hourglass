@@ -3,7 +3,7 @@ import {
     Template
 } from 'meteor/templating';
 
-Session.set("sections", [0,0]) // [Completed, Viewing] 
+Session.set("sections", [0,0]); // [Completed, Viewing]
 Session.set("profile", {classes: []});
 Session.set("newClasses", []);
 Session.set("autocompleteDivs", null);
