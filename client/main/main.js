@@ -949,6 +949,14 @@ Template.main.events({
     },
     // WORK OVERLAY BUTTONS
     'click #commentSubmit' (event) { // Click to submit a comment.
+        if (Session.get("demo")) {
+            sAlert.error("Not available in demo!", {
+                effect: 'stackslide',
+                position: 'top',
+                timeout: 2000
+            });
+            return;
+        }
         workId = Session.get("currentWork")._id;
         var input = document.getElementById('workComment');
         comment = input.value;
